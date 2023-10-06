@@ -1,0 +1,13 @@
+{
+    "nspanel-hmi-control": {
+        "label": {
+            "palette": "HMI Control",
+            "name": "Name",
+            "panel": "NSPanel"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "HMI Control"
+        }
+    }
+}

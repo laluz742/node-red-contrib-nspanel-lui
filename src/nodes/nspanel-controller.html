@@ -1,0 +1,65 @@
+<script type="text/javascript" src="resources/node-red-contrib-nspanel-lui/nspanel-lui.js"></script>
+<script type="text/javascript">
+    ;(function ($) {
+        RED.nodes.registerType('nspanel-controller', {
+            category: 'NSPanel',
+            paletteLabel: NSPanelLui._('label.palette', 'nspanel-controller'),
+
+            icon: 'font-awesome/fa-television',
+            color: 'rgb( 50, 120, 190)',
+
+            inputs: 1,
+            outputs: 1,
+
+            defaults: {
+                name: { value: NSPanelLui._('defaults.name', 'nspanel-controller') },
+                nsPanel: { value: '', type: 'nspanel-panel', required: true },
+                screenSaverOnStartup: { value: true },
+            },
+            label: function () {
+                var panelNode = RED.nodes.node(this.nsPanel)
+
+                var label =
+                    '[' + (panelNode ? panelNode.name : NSPanelLui._('label.unassigned', 'nspanel-controller')) + '] '
+                label += this.name || NSPanelLui._('defaults.name', 'nspanel-controller')
+
+                return label
+            },
+
+            oneditprepare: function () {},
+        })
+    })(jQuery)
+</script>
+
+<script type="text/html" data-template-name="nspanel-controller">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="icon-tag"></i>
+            <span data-i18n="nspanel-controller.label.name"></span>
+        </label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]nspanel-controller.placeholder.name" />
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-nsPanel">
+            <i class="fa fa-television"></i>
+            <span data-i18n="nspanel-controller.label.panel"></span>
+        </label>
+        <input type="text" id="node-input-nsPanel" />
+    </div>
+
+    <br />
+
+    <div class="form-row">
+        <input
+            type="checkbox"
+            id="node-input-screenSaverOnStartup"
+            style="display:inline-block; width:auto; vertical-align:top;"
+        />
+        <label
+            for="node-input-screenSaverOnStartup"
+            style="width:70%;"
+            data-i18n="nspanel-controller.label.screenSaverOnStartup"
+        ></label>
+    </div>
+</script>

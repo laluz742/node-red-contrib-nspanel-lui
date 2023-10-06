@@ -1,0 +1,105 @@
+<script type="text/javascript" src="resources/node-red-contrib-nspanel-lui/nspanel-lui.js"></script>
+<script type="text/javascript">
+    ;(function ($) {
+        RED.nodes.registerType('nspanel-config', {
+            category: 'config',
+
+            defaults: {
+                name: { value: NSPanelLui._('defaults.name', 'nspanel-config') },
+
+                broker: { value: '', required: true },
+                port: {
+                    value: 1883,
+                    required: true,
+                    validate: RED.validators.number(),
+                },
+                clientId: { value: '' },
+                keepAlive: { value: 60, validate: RED.validators.number() },
+                useTls: { value: false },
+                cleanSession: { value: false },
+            },
+
+            credentials: {
+                mqttUsername: { type: 'text' },
+                mqttPassword: { type: 'password' },
+            },
+
+            label: function () {
+                return this.name || NSPanelLui._('defaults.name', 'nspanel-config')
+            },
+
+            oneditprepare: function () {
+                if (typeof this.keepAlive === 'undefined') {
+                    this.keepAlive = 60
+                    $('#node-config-input-keepAlive').val(this.keepAlive)
+                }
+            },
+        })
+    })(jQuery)
+</script>
+
+<!--
+    config screen
+-->
+<script type="text/html" data-template-name="nspanel-config">
+    <div class="form-row node-input-broker">
+        <label for="node-config-input-broker">
+            <i class="fa fa-globe"></i>
+            <span data-i18n="nspanel-config.label.mqtt-address"></span>
+        </label>
+        <input
+            type="text"
+            id="node-config-input-broker"
+            style="width:40%;"
+            data-i18n="[placeholder]nspanel-config.placeholder.mqtt-address"
+        />
+
+        <label for="node-config-input-port" style="margin-left:20px; width:43px;">
+            <span data-i18n="nspanel-config.label.mqtt-port"></span>
+        </label>
+        <input
+            type="text"
+            id="node-config-input-port"
+            style="width:55px"
+            data-i18n="[placeholder]nspanel-config.placeholder.mqtt-port"
+        />
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-clientId">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="nspanel-config.label.mqtt-clientid"></span>
+        </label>
+        <input
+            type="text"
+            id="node-config-input-clientId"
+            data-i18n="[placeholder]nspanel-config.placeholder.mqtt-clientid"
+        />
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-mqttUsername">
+            <i class="fa fa-user"></i>
+            <span data-i18n="nspanel-config.label.mqtt-username"></span>
+        </label>
+        <input type="text" id="node-config-input-mqttUsername" />
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-mqttPassword">
+            <i class="fa fa-lock"></i>
+            <span data-i18n="nspanel-config.label.mqtt-password"></span>
+        </label>
+        <input type="password" id="node-config-input-mqttPassword" />
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-keepAlive">
+            <i class="fa fa-clock-o"></i>
+            <span data-i18n="nspanel-config.label.mqtt-keepalive"></span>
+        </label>
+        <input type="text" id="node-config-input-keepAlive" style="width: 50px" />
+        <label for="node-config-input-keepAlive" style="margin-left: 7px; width: auto">
+            <span data-i18n="nspanel-config.label.mqtt-keepalive-seconds"></span>
+        </label>
+    </div>
+</script>

@@ -1,0 +1,16 @@
+{
+    "nspanel-screensaver": {
+        "label": {
+            "palette": "ScreenSaver",
+            "name": "Name",
+            "panel": "NSPanel",
+            "doubleTapToExit": "zum Verlassen doppelt drücken",
+            "unassigned": "nicht zugewiesen",
+            "active": "Aktiv"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "ScreenSaver"
+        }
+    }
+}

@@ -1,1 +1,1 @@
-# node-red-contrib-nspanel
+# node-red-contrib-nspanel-lui

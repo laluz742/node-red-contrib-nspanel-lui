@@ -1,0 +1,228 @@
+<script type="text/javascript" src="resources/node-red-contrib-nspanel-lui/nspanel-lui.js"></script>
+<script type="text/javascript">
+    ;(function ($) {
+        const PANEL_DIMVALUE_MIN = 0
+        const PANEL_DIMVALUE_MAX = 100
+        const PANEL_TIMEOUT_MIN = 0
+        const PANEL_TIMEOUT_MAX = 65
+        const PANEL_TELEPERIOD_MIN = 10
+        const PANEL_TELEPERIOD_MAX = 3600
+
+        RED.nodes.registerType('nspanel-panel', {
+            category: 'config',
+            paletteLabel: NSPanelLui._('label.palette', 'nspanel-panel'),
+
+            icon: 'font-awesome/fa-television',
+            color: 'rgb( 50, 120, 190)',
+
+            inputs: 1,
+            outputs: 1,
+
+            defaults: {
+                name: { value: NSPanelLui._('defaults.name', 'nspanel-panel') },
+                topic: { value: '', required: true },
+                fullTopic: { value: '', required: true },
+
+                nsPanelConfig: { value: '', type: 'nspanel-config', required: true },
+                detachRelays: { value: false },
+                telePeriod: {
+                    value: 1,
+                    required: false,
+                    validate: (v) =>
+                        v == 0 || // disable
+                        v == 1 || // firmware default
+                        NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TELEPERIOD_MIN, PANEL_TELEPERIOD_MAX),
+                },
+
+                panelTimeout: {
+                    value: 10,
+                    required: true,
+                    validate: (v) =>
+                        NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TIMEOUT_MIN, PANEL_TIMEOUT_MAX),
+                },
+                panelDimLow: {
+                    value: 10,
+                    required: true,
+                    validate: (v) =>
+                        NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_DIMVALUE_MIN, PANEL_DIMVALUE_MAX),
+                },
+                panelDimLowNight: {
+                    value: 10,
+                    required: true,
+                    validate: (v) =>
+                        NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_DIMVALUE_MIN, PANEL_DIMVALUE_MAX),
+                },
+                panelDimLowStartTime: {
+                    value: '07:00',
+                },
+                panelDimLowNightStartTime: {
+                    value: '22:00',
+                },
+                panelDimHigh: {
+                    value: 100,
+                    required: true,
+                    validate: (v) =>
+                        NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_DIMVALUE_MIN, PANEL_DIMVALUE_MAX),
+                },
+                panelDimHighNight: {
+                    value: 40,
+                    required: true,
+                    validate: (v) =>
+                        NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_DIMVALUE_MIN, PANEL_DIMVALUE_MAX),
+                },
+            },
+
+            label: function () {
+                return this.name || NSPanelLui._('defaults.name', 'nspanel-panel')
+            },
+
+            oneditprepare: function () {
+                $('#node-config-input-panelDimLowStartTime').val(this.panelDimLowStartTime)
+                $('#node-config-input-panelDimLowNightStartTime').val(this.panelDimLowNightStartTime)
+            },
+        })
+    })(jQuery)
+</script>
+
+<!--
+    config screen
+-->
+<script type="text/html" data-template-name="nspanel-panel">
+    <div class="form-row">
+        <label for="node-config-input-name">
+            <i class="icon-tag"></i>
+            <span data-i18n="nspanel-panel.label.name"></span>
+        </label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]nspanel-panel.placeholder.name" />
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-nsPanelConfig">
+            <i class="fa fa-television"></i>
+            <span data-i18n="nspanel-panel.label.panel"></span>
+        </label>
+        <input type="text" id="node-config-input-nsPanelConfig" />
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-topic">
+            <i class="fa fa-tasks"></i>
+            <span data-i18n="nspanel-panel.label.device-topic"></span>
+        </label>
+        <input
+            type="text"
+            id="node-config-input-topic"
+            data-i18n="[placeholder]nspanel-panel.placeholder.device-topic"
+        />
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-fullTopic">
+            <i class="fa fa-tasks"></i>
+            <span data-i18n="nspanel-panel.label.full-topic"></span>
+        </label>
+        <input
+            type="text"
+            id="node-config-input-fullTopic"
+            data-i18n="[placeholder]nspanel-panel.placeholder.full-topic"
+        />
+    </div>
+
+    <br />
+    <div class="form-row">
+        <label for="node-config-input-panelTimeout">
+            <i class="fa fa-hourglass-end"></i>
+            <span data-i18n="nspanel-panel.label.panelTimeout"></span>
+        </label>
+        <input type="number" style="width: 5em;" id="node-config-input-panelTimeout" />
+        <label for="node-config-input-panelTimeout">
+            <span data-i18n="nspanel-panel.label.seconds"></span>
+        </label>
+    </div>
+
+    <br />
+
+    <div class="form-row" style="display: flex;">
+        <label for="node-config-input-panelDimHigh" style="flex-grow: 1;">
+            <i class="fa fa-television"></i>
+            <span data-i18n="nspanel-panel.label.displayBrightness"></span>
+        </label>
+    </div>
+
+    <div class="form-row"></div>
+
+    <div class="form-row">
+        <label for="node-config-input-panelDimLow" style="margin-left: 1.5em;">
+            <i class="fa fa-sun-o"></i>
+            <span data-i18n="nspanel-panel.label.brightnessScreenSaver"></span>
+        </label>
+        <label
+            for="node-config-input-panelDimLow"
+            style="width: 5em"
+            data-i18n="nspanel-panel.label.brightnessStandBy"
+        ></label>
+        <input type="number" id="node-config-input-panelDimLow" style="width: 5em;" />
+
+        <label
+            for="node-config-input-panelDimHigh"
+            style="margin-left: 1em; width: 4.2em;"
+            data-i18n="nspanel-panel.label.brightnessActive"
+        ></label>
+        <input type="number" id="node-config-input-panelDimHigh" style="margin-right: 14px; width: 5em;" />
+
+        <label for="node-config-input-panelDimLowStartTime" style="margin-left: 14px;">
+            <i class="fa fa-clock-o"></i>
+            <span data-i18n="nspanel-panel.label.brightnessStartTime"></span>
+        </label>
+        <input type="time" id="node-config-input-panelDimLowStartTime" style="margin-right: 14px; width: 5em;" />
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-panelDimLowNight" style="margin-left: 1.5em;">
+            <i class="fa fa-moon-o"></i>
+            <span data-i18n="nspanel-panel.label.brightnessScreenSaverNight"></span>
+        </label>
+
+        <label
+            for="node-config-input-panelDimLowNight"
+            style="width: 5em"
+            data-i18n="nspanel-panel.label.brightnessStandBy"
+        ></label>
+        <input type="number" id="node-config-input-panelDimLowNight" style="width: 5em;" />
+
+        <label
+            for="node-config-input-panelDimHighNight"
+            style="margin-left: 1em; width: 4.2em;"
+            data-i18n="nspanel-panel.label.brightnessActive"
+        ></label>
+        <input type="number" id="node-config-input-panelDimHighNight" style="margin-right: 14px; width: 5em;" />
+
+        <label for="node-config-input-panelDimLowNightStartTime" style="margin-left: 14px;">
+            <i class="fa fa-clock-o"></i>
+            <span data-i18n="nspanel-panel.label.brightnessStartTime"></span>
+        </label>
+        <input type="time" id="node-config-input-panelDimLowNightStartTime" style="margin-right: 14px; width: 5em;" />
+    </div>
+
+    <br />
+
+    <div class="form-row">
+        <label for="node-config-input-panelTimeout">
+            <i class="fa fa-hourglass-end"></i>
+            <span data-i18n="nspanel-panel.label.telePeriod"></span>
+        </label>
+        <input type="number" style="width: 5em;" id="node-config-input-telePeriod" />
+        <label for="node-config-input-telePeriod">
+            <span data-i18n="nspanel-panel.label.seconds"></span>
+        </label>
+    </div>
+    <div class="form-row">
+        <input
+            type="checkbox"
+            id="node-config-input-detachRelays"
+            style="display:inline-block; width:auto; vertical-align:top;"
+        />
+        <label for="node-config-input-detachRelays" style="width:70%;">
+            <span data-i18n="nspanel-panel.label.detachRelays"></span>
+        </label>
+    </div>
+</script>

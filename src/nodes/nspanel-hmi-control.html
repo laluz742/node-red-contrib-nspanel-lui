@@ -1,0 +1,43 @@
+<script type="text/javascript">
+    ;(function ($) {
+        RED.nodes.registerType('nspanel-hmi-control', {
+            category: 'NSPanel',
+            paletteLabel: NSPanelLui._('label.palette', 'nspanel-hmi-control'),
+
+            inputs: 1,
+            outputs: 1,
+
+            icon: 'font-awesome/fa-television',
+            color: 'rgb( 50, 120, 190)',
+
+            defaults: {
+                name: { value: '' },
+                nsPanel: { type: 'nspanel-panel', required: true },
+            },
+
+            label: function () {
+                return this.name || NSPanelLui._('defaults.name', 'nspanel-hmi-control')
+            },
+
+            oneditprepare: function () {},
+            oneditsave: function () {},
+        })
+    })(jQuery)
+</script>
+
+<script type="text/html" data-template-name="nspanel-hmi-control">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="icon-tag"></i>
+            <span data-i18n="nspanel-hmi-control.label.name"></span>
+        </label>
+        <input type="text" id="node-input-name" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-nsPanel">
+            <i class="fa fa-television"></i>
+            <span data-i18n="nspanel-hmi-control.label.panel"></span>
+        </label>
+        <input type="text" id="node-input-nsPanel" />
+    </div>
+</script>

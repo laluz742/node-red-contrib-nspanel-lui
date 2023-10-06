@@ -1,0 +1,20 @@
+{
+    "nspanel-page-qr": {
+        "label": {
+            "palette": "QR",
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Überschrift",
+            "qrCode": "QR-Code",
+            "events": "Events",
+            "unassigned": "nicht zugewiesen",
+            "active": "Aktiv",
+            "panelTimeout": "Stand-by Überschreibung",
+            "panelTimeoutSeconds": "Sekunden"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "QR"
+        }
+    }
+}

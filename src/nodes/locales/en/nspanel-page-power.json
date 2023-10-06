@@ -1,0 +1,19 @@
+{
+    "nspanel-page-power": {
+        "label": {
+            "palette": "Power",
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Überschrift",
+            "events": "Events",
+            "entities": "Elemente",
+            "active": "Aktiv",
+            "panelTimeout": "Stand-by Überschreibung",
+            "panelTimeoutSeconds": "Sekunden"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Page Power"
+        }
+    }
+}
