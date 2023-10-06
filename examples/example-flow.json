@@ -1,0 +1,992 @@
+[
+    {
+        "id": "b6c0ee55f6b2838a",
+        "type": "tab",
+        "label": "NSPanel Example",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "441d8435e5488242",
+        "type": "debug",
+        "z": "b6c0ee55f6b2838a",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "90ec2141f122bb4a",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "status",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "status",
+        "payload": "{\"icon\":\"shield-lock-outline\",\"iconColor\":\"#ff1402\",\"index\":1,\"text\":\" \"}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 380,
+        "wires": [["a57e173da303f179"]]
+    },
+    {
+        "id": "0464113ad0f058f6",
+        "type": "nspanel-controller",
+        "z": "b6c0ee55f6b2838a",
+        "name": "",
+        "nsPanel": "38d1307f947a8dfd",
+        "screenSaverOnStartup": true,
+        "x": 590,
+        "y": 140,
+        "wires": [["441d8435e5488242", "9d64389591edb965"]]
+    },
+    {
+        "id": "a57e173da303f179",
+        "type": "nspanel-screensaver",
+        "z": "b6c0ee55f6b2838a",
+        "name": "",
+        "nsPanel": "38d1307f947a8dfd",
+        "doubleTapToExit": false,
+        "events": [
+            {
+                "event": "bExit",
+                "t": "page",
+                "value": "df89140601666586"
+            }
+        ],
+        "x": 720,
+        "y": 320,
+        "wires": [[]]
+    },
+    {
+        "id": "86fdc92a887f89d0",
+        "type": "nspanel-page-qr",
+        "z": "b6c0ee55f6b2838a",
+        "name": "QR",
+        "title": "Guest WiFi",
+        "nsPanel": "38d1307f947a8dfd",
+        "timeout": "30",
+        "events": [
+            {
+                "event": "nav.prev",
+                "t": "page",
+                "value": "df89140601666586"
+            }
+        ],
+        "entities": [],
+        "qrCode": "WIFI:S:GuestWIFI;T:WPA;P:password;;",
+        "x": 690,
+        "y": 460,
+        "wires": [[]]
+    },
+    {
+        "id": "f485d0708ec645ce",
+        "type": "nspanel-page-entities",
+        "z": "b6c0ee55f6b2838a",
+        "name": "enitityTest",
+        "title": "w5",
+        "nsPanel": "38d1307f947a8dfd",
+        "timeout": "0",
+        "events": [
+            {
+                "event": "nav.prev",
+                "t": "page",
+                "value": "86fdc92a887f89d0",
+                "icon": ""
+            },
+            {
+                "event": "nav.next",
+                "t": "page",
+                "value": "df89140601666586",
+                "icon": "home"
+            }
+        ],
+        "entities": [
+            {
+                "type": "switch",
+                "entityId": "button.0",
+                "text": "switch",
+                "icon": "fan",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "text.0",
+                "text": "text.0 text",
+                "icon": "rabbit-variant-outline",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "delete",
+                "entityId": "",
+                "text": "",
+                "icon": "",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "text.1",
+                "text": "text.1 text",
+                "icon": "flower",
+                "iconColor": "#ffffff"
+            }
+        ],
+        "x": 680,
+        "y": 960,
+        "wires": [["8be7e03e4dcc6fba"]]
+    },
+    {
+        "id": "e90fd04fa628bac7",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "On",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "data",
+        "payload": "[{\"entityId\":\"button.0\",\"value\":1}]",
+        "payloadType": "json",
+        "x": 130,
+        "y": 940,
+        "wires": [["f485d0708ec645ce"]]
+    },
+    {
+        "id": "098f33ab140530a5",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "CMD switch 1 off",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "cmd",
+        "payload": "[{},{\"cmd\":\"switch\",\"params\":{\"id\":0,\"on\":\"off\"}}]",
+        "payloadType": "json",
+        "x": 240,
+        "y": 180,
+        "wires": [["0464113ad0f058f6"]]
+    },
+    {
+        "id": "03e7ae1b328583e2",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "CMD switch 1 on",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "cmd",
+        "payload": "[{\"cmd\":\"switch\",\"params\":{\"id\":0,\"on\":\"on\"}}]",
+        "payloadType": "json",
+        "x": 240,
+        "y": 220,
+        "wires": [["0464113ad0f058f6"]]
+    },
+    {
+        "id": "9e306515d48ac59b",
+        "type": "function",
+        "z": "b6c0ee55f6b2838a",
+        "name": "convertOpenWeatherData",
+        "func": "function iconToColor(icon) {\n    const condition = icon.substr(0, 2)\n    const dayNight = icon.substr(2, 1)\n    var result = '#abcabc'\n    /*\n    switch (condition) {\n        case '01': // clear sky\n            result = (dayNight === 'd')\n                ? 'rgb(255,255,0)'\n                : 'rgb(150,150,100)'\n            break\n        case '02': // few clouds\n            result = 'rgb(150,150,150)'\n            break\n        case '03': // scattered clouds\n            result = 'rgb(150,150,150)'\n            break\n        case '04': // broken clouds\n            result = 'rgb(150,150,150)'\n            break\n        case '09': // shower rain\n            result = 'rgb(50,50,150)'\n            break\n        case '10': // rain\n            result = 'rgb(100,100,150)'\n            break\n        case '11': // thunderstorm\n            result = 'rgb(200,200,0)'\n            break\n        case '13': // snow\n            result = 'rgb(150,150,150)'\n            break\n        case '50': // mist\n            result = 'rgb(150,150,150)'\n            break\n        default:\n            result = '#ffffff'\n    }*/\n\n    return result\n}\n\nfunction mapIcon(icon) {\n    const condition = icon.substr(0, 2)\n    const dayNight = icon.substr(2, 1)\n    var result\n    switch (condition) {\n        case '01': // clear sky\n            result = (dayNight === 'd') ?\n                'weather-sunny' : 'weather-night'\n            break\n        case '02': // few clouds\n            result = 'partly-cloudy'\n            break\n        case '03': // scattered clouds\n            result = 'weather-cloudy'\n            break\n        case '04': // broken clouds\n            result = 'partly-cloudy'\n            break\n        case '09': // shower rain\n            result = 'weather-pouring'\n            break\n        case '10': // rain\n            result = 'weather-rainy'\n            break\n        case '11': // thunderstorm\n            result = 'weather-lightning'\n            break\n        case '13': // snow\n            result = 'weather-snowy'\n            break\n        case '50': // mist\n            result = 'weather-fog'\n            break\n    }\n\n    if (!result.startsWith('weather')) {\n        result = 'weather-' +\n            ((dayNight == 'n') ? 'night-' : '') +\n            result\n    }\n\n    return result\n}\n\nfunction buildData(item, long=false) {\n    var tempC = Number(item.tempC)\n    \n    if (!isNaN(tempC)) {\n        tempC = (long) ? tempC.toFixed(1) : Math.round(tempC)\n        tempC +='°'\n    } else {\n        tempC = ''\n    }\n\n    const result = {\n        entityId: '',\n        value: tempC,\n        text: item.weekday || '',\n        icon: mapIcon(item.icon),\n        iconColor: iconToColor(item.icon)\n    }\n    return result\n}\n\nvar res = []\nconst data = msg.payload\nres.push(buildData(data.current, true))\n\nfor (var i=0; i<4 && i<data.forecast.length; i++)  {\n    const fcast = buildData(data.forecast[i])\n    if ( i==0 ) {\n        fcast.text='Heute'\n    }\n    res.push(fcast)\n}\n\nreturn {\n    topic: 'data',\n    payload: res\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 340,
+        "wires": [["a57e173da303f179"]]
+    },
+    {
+        "id": "04ba240e125de7c0",
+        "type": "link in",
+        "z": "b6c0ee55f6b2838a",
+        "name": "link in 1",
+        "links": ["e8bcca35674b83ec"],
+        "x": 45,
+        "y": 340,
+        "wires": [["9e306515d48ac59b"]]
+    },
+    {
+        "id": "9d64389591edb965",
+        "type": "switch",
+        "z": "b6c0ee55f6b2838a",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "sensor",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 810,
+        "y": 160,
+        "wires": [["6b67c640965d7487"], []]
+    },
+    {
+        "id": "6b67c640965d7487",
+        "type": "function",
+        "z": "b6c0ee55f6b2838a",
+        "name": "build status",
+        "func": "var tempC = Number(msg.payload.temp)\nvar newPayload = [\n    {\n        iconColor: \"#fcae1e\",\n        text: tempC.toFixed(1)+ '°',\n        index: 0,\n        prefix: ' '\n    }\n]\n\nreturn {\n    topic: 'status',\n    payload: newPayload\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 160,
+        "wires": [["871d86df8494863c"]]
+    },
+    {
+        "id": "b51ff352692a37b7",
+        "type": "link in",
+        "z": "b6c0ee55f6b2838a",
+        "name": "link in 2",
+        "links": ["871d86df8494863c"],
+        "x": 275,
+        "y": 280,
+        "wires": [["a57e173da303f179"]]
+    },
+    {
+        "id": "871d86df8494863c",
+        "type": "link out",
+        "z": "b6c0ee55f6b2838a",
+        "name": "link out 2",
+        "mode": "link",
+        "links": ["b51ff352692a37b7"],
+        "x": 1075,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "a5fe0885d61f19fe",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "status",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "status",
+        "payload": "[{\"icon\":\"home\",\"iconColor\":\"#ababab\",\"text\":\"text1\",\"index\":1},{\"icon\":\"home\",\"iconColor\":\"#ababab\",\"text\":\"text0\",\"index\":0}]",
+        "payloadType": "json",
+        "x": 270,
+        "y": 420,
+        "wires": [["a57e173da303f179"]]
+    },
+    {
+        "id": "df89140601666586",
+        "type": "nspanel-page-grid",
+        "z": "b6c0ee55f6b2838a",
+        "name": "Home",
+        "title": "Home",
+        "nsPanel": "38d1307f947a8dfd",
+        "timeout": "",
+        "events": [
+            {
+                "event": "nav.prev",
+                "t": "page",
+                "value": "f485d0708ec645ce",
+                "icon": ""
+            },
+            {
+                "event": "nav.next",
+                "t": "page",
+                "value": "86fdc92a887f89d0",
+                "icon": "qrcode"
+            }
+        ],
+        "entities": [
+            {
+                "type": "light",
+                "entityId": "light.0",
+                "text": "Licht",
+                "icon": "lightbulb",
+                "iconColor": "#b82ddb",
+                "optionalValue": "Licht",
+                "dimmable": true,
+                "hasColorTemperature": true,
+                "hasColor": true
+            },
+            {
+                "type": "fan",
+                "entityId": "fan.0",
+                "text": "Lüftung",
+                "icon": "fan",
+                "iconColor": "#1fbbe9",
+                "max": 3,
+                "fanMode1": "Stufe 1",
+                "fanMode2": "Stufe 2",
+                "fanMode3": "Stufe 3",
+                "min": 0
+            },
+            {
+                "type": "shutter",
+                "entityId": "shutter.0",
+                "text": "Rolladen",
+                "icon": "window-shutter",
+                "iconColor": "#b82ddb",
+                "iconDown": "arrow-down-bold",
+                "iconUp": "arrow-up-bold",
+                "iconStop": "stop",
+                "hasTilt": true,
+                "iconTiltLeft": "arrow-left-bold",
+                "iconTiltStop": "stop",
+                "iconTiltRight": "arrow-right-bold"
+            },
+            {
+                "type": "switch",
+                "entityId": "switch.0",
+                "text": "button1",
+                "icon": "home",
+                "iconColor": "#b82ddb"
+            },
+            {
+                "type": "button",
+                "entityId": "button.0",
+                "text": "Button",
+                "icon": "plus",
+                "iconColor": "#b82ddb",
+                "optionalValue": "Text2"
+            },
+            {
+                "type": "text",
+                "entityId": "text.0",
+                "text": "text",
+                "icon": "minus",
+                "iconColor": "#ffffff"
+            }
+        ],
+        "x": 670,
+        "y": 660,
+        "wires": [["ff3ddc13cb81c7ca"]]
+    },
+    {
+        "id": "da507cf77a10c553",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "reset panel",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "pageType~pageStartup",
+        "payloadType": "str",
+        "x": 250,
+        "y": 1200,
+        "wires": [["987e8c59c9c8aee6"]]
+    },
+    {
+        "id": "987e8c59c9c8aee6",
+        "type": "mqtt out",
+        "z": "b6c0ee55f6b2838a",
+        "name": "",
+        "topic": "home/panels/panelABCDEF/cmnd/CustomSend",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "67a8cb1b3287aeda",
+        "x": 790,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "e7a0616a4508c033",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "fan data",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "data",
+        "payload": "{\"entityId\":\"fan.0\",\"state\":1,\"speed\":2,\"maxSpeed\":3,\"text\":\"Stufe\",\"mode\":\"Stufe 2\",\"active\":1}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 660,
+        "wires": [["df89140601666586"]]
+    },
+    {
+        "id": "526c7fc3419b8625",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "fan data",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "data",
+        "payload": "{\"entityId\":\"fan.0\",\"speed\":3,\"maxSpeed\":3,\"text\":\"Stufe\",\"mode\":\"Stufe 3\",\"active\":1}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 700,
+        "wires": [["df89140601666586"]]
+    },
+    {
+        "id": "ed4ec5e462ffdcdd",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "light data ON",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "data",
+        "payload": "{\"entityId\":\"light.0\",\"active\":1,\"brightness\":80,\"colorTemperature\":100,\"hue\":60,\"saturation\":0.8}",
+        "payloadType": "json",
+        "x": 240,
+        "y": 560,
+        "wires": [["df89140601666586"]]
+    },
+    {
+        "id": "f6e338d6f4d5f36f",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "light data OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "5",
+        "topic": "data",
+        "payload": "{\"entityId\":\"light.0\",\"active\":0,\"brightness\":0,\"colorTemperature\":100,\"hue\":60,\"saturation\":0.8}",
+        "payloadType": "json",
+        "x": 240,
+        "y": 600,
+        "wires": [["df89140601666586"]]
+    },
+    {
+        "id": "ff3ddc13cb81c7ca",
+        "type": "debug",
+        "z": "b6c0ee55f6b2838a",
+        "name": "debug 9",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "f92a170fee1e87e3",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "Home",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "nav",
+        "payload": "Home",
+        "payloadType": "str",
+        "x": 1410,
+        "y": 140,
+        "wires": [["3332b51fa154044c"]]
+    },
+    {
+        "id": "3332b51fa154044c",
+        "type": "nspanel-hmi-control",
+        "z": "b6c0ee55f6b2838a",
+        "name": "Navigation",
+        "nsPanel": "38d1307f947a8dfd",
+        "x": 1610,
+        "y": 140,
+        "wires": [[]]
+    },
+    {
+        "id": "9c9c67b1fd3a0e13",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "shutter data 0",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "data",
+        "payload": "{\"entityId\":\"shutter.0\",\"value\":0,\"tilt\":0}",
+        "payloadType": "json",
+        "x": 240,
+        "y": 760,
+        "wires": [["df89140601666586"]]
+    },
+    {
+        "id": "620d85ff59b929b0",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "shutter data 80/20",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "data",
+        "payload": "{\"entityId\":\"shutter.0\",\"value\":80,\"tilt\":20}",
+        "payloadType": "json",
+        "x": 230,
+        "y": 800,
+        "wires": [["df89140601666586"]]
+    },
+    {
+        "id": "0ab4a18aa5ae857f",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "notify std",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "notify",
+        "payload": "{\"notifyId\":\"notify.0\",\"heading\":\"Wartungshinweis Lüftung\",\"headingColor\":\"#fcae1e\",\"okText\":\"OK\",\"text\":\"Filter wechseln\",\"textColor\":\"#ff22ff\",\"fontSize\":2,\"timeout\":0}",
+        "payloadType": "json",
+        "x": 280,
+        "y": 60,
+        "wires": [["0464113ad0f058f6"]]
+    },
+    {
+        "id": "7edf92749c9e8754",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "notify icon",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "notify",
+        "payload": "{\"notifyId\":\"notify.0\",\"heading\":\"Notify 2\",\"headingColor\":\"#fcae1e\",\"okText\":\"OK\",\"text\":\"lorem ipsum\",\"textColor\":\"#ff22ff\",\"fontSize\":2,\"timeout\":0,\"icon\":\"wrench\",\"iconColor\":\"#22ffff\"}",
+        "payloadType": "json",
+        "x": 260,
+        "y": 100,
+        "wires": [["0464113ad0f058f6"]]
+    },
+    {
+        "id": "20aec58aaa94cae3",
+        "type": "nspanel-page-power",
+        "z": "b6c0ee55f6b2838a",
+        "name": "PowerTest",
+        "title": "Strom",
+        "nsPanel": "38d1307f947a8dfd",
+        "timeout": "0",
+        "events": [
+            {
+                "event": "nav.prev",
+                "t": "page",
+                "value": "df89140601666586"
+            }
+        ],
+        "entities": [
+            {
+                "type": "text",
+                "entityId": "power.0",
+                "text": "0",
+                "icon": "home",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "power.1",
+                "text": "1",
+                "icon": "minus",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "power.2",
+                "text": "2",
+                "icon": "solar-panel",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "power.3",
+                "text": "3",
+                "icon": "home",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "power.4",
+                "text": "4",
+                "icon": "home",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "power.5",
+                "text": "5",
+                "icon": "home",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "power.6",
+                "text": "6",
+                "icon": "plus",
+                "iconColor": "#ffffff"
+            },
+            {
+                "type": "text",
+                "entityId": "power.7",
+                "text": "7",
+                "icon": "car",
+                "iconColor": "#ffffff"
+            }
+        ],
+        "x": 690,
+        "y": 380,
+        "wires": [[]]
+    },
+    {
+        "id": "a9ecd90bbdc7a192",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "enitityTest",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "nav",
+        "payload": "enitityTest",
+        "payloadType": "str",
+        "x": 1420,
+        "y": 200,
+        "wires": [["3332b51fa154044c"]]
+    },
+    {
+        "id": "8be7e03e4dcc6fba",
+        "type": "debug",
+        "z": "b6c0ee55f6b2838a",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "6a6b667274b7c66d",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "PowerTest",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "nav",
+        "payload": "PowerTest",
+        "payloadType": "str",
+        "x": 1420,
+        "y": 240,
+        "wires": [[]]
+    },
+    {
+        "id": "b81d37102eba303c",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "Off",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "data",
+        "payload": "[{\"entityId\":\"button.0\",\"value\":0}]",
+        "payloadType": "json",
+        "x": 130,
+        "y": 980,
+        "wires": [["f485d0708ec645ce"]]
+    },
+    {
+        "id": "fcc3be7bfa1545a6",
+        "type": "comment",
+        "z": "b6c0ee55f6b2838a",
+        "name": "manual navigation",
+        "info": "",
+        "x": 1370,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "b93528befb12cbb3",
+        "type": "function",
+        "z": "b6c0ee55f6b2838a",
+        "name": "test data",
+        "func": "var dataMsg = {\n    topic: \"data\",\n    payload: [\n        {\n            entityId: \"text.0\",\n            icon: \"thermometer-low\",\n            text: \"5.0 °\"\n        },\n        {\n            entityId: \"text.1\",\n            text: \"foobar\"\n        }\n    ]\n}\n\nreturn dataMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 1040,
+        "wires": [["f485d0708ec645ce"]]
+    },
+    {
+        "id": "ae70ba52a98bc681",
+        "type": "inject",
+        "z": "b6c0ee55f6b2838a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 1040,
+        "wires": [["b93528befb12cbb3"]]
+    },
+    {
+        "id": "38d1307f947a8dfd",
+        "type": "nspanel-panel",
+        "name": "Panel1",
+        "topic": "panelABCDEF",
+        "fullTopic": "w5/panels/%topic%/%prefix%",
+        "nsPanelConfig": "ca94ab84b0a0d042",
+        "detachRelays": false,
+        "telePeriod": "60",
+        "panelTimeout": "10",
+        "panelDimLow": "40",
+        "panelDimLowNight": "5",
+        "panelDimLowStartTime": "07:00",
+        "panelDimLowNightStartTime": "21:00",
+        "panelDimHigh": "100",
+        "panelDimHighNight": "20"
+    },
+    {
+        "id": "67a8cb1b3287aeda",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "1.2.3.4",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ca94ab84b0a0d042",
+        "type": "nspanel-config",
+        "broker": "1.2.3.4",
+        "port": "1883",
+        "clientId": "",
+        "keepAlive": "60"
+    }
+]
