@@ -1,0 +1,11 @@
+build/
+deploy.bat
+
+# npm
+package-lock.json
+node_modules
+*.tgz
+
+# code & test
+coverage/
+

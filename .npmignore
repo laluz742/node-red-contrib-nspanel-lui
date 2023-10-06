@@ -1,0 +1,19 @@
+src/
+build/
+tests/
+
+# node
+.npmignore
+package-lock.json
+
+# code & test
+.gitignore
+.prettier*
+coverage/
+jest.config.js
+tsconfig.json
+*.bat
+
+*.tgz
+*.backup
+TODO.md
