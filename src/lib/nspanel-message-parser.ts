@@ -49,12 +49,20 @@ export class NSPanelMessageParser {
         if (NSPanelMessageUtils.hasProperty(input, 'ANALOG')) {
             const analogSensorData = input['ANALOG']
             const temp = analogSensorData['Temperature1']
+            const tempUnit = input['TempUnit']
             if (temp !== undefined) {
                 result = {
                     topic: 'sensor',
                     source: 'temperature1',
                     event: 'measurement',
                     temp: Number(temp) ?? null,
+                    tempUnit: tempUnit ?? null,
+                }
+                if (NSPanelMessageUtils.hasProperty(input, 'Time')) {
+                    var date = NSPanelMessageUtils.toDate(input['Time'])
+                    if (date !== null) {
+                        result.date = date
+                    }
                 }
             }
         }
@@ -86,6 +94,7 @@ export class NSPanelMessageParser {
         if (result.length == 0) {
             var eventArgs: HardwareEventArgs = {
                 topic: 'hw',
+                date: new Date(),
                 event: '',
                 source: '',
                 data: input,
@@ -99,6 +108,7 @@ export class NSPanelMessageParser {
     private static convertToRelayEvent(input: any, property: string): HardwareEventArgs {
         var eventArgs: HardwareEventArgs = {
             topic: 'hw',
+            date: new Date(),
             event: 'relay',
             event2: 'state',
             source: property.toLowerCase(),
@@ -110,6 +120,7 @@ export class NSPanelMessageParser {
     private static convertToButtonEvent(input: any, property: string): HardwareEventArgs {
         var eventArgs: HardwareEventArgs = {
             topic: 'hw',
+            date: new Date(),
             event: 'button',
             event2: 'press',
             source: property.toLowerCase(),
@@ -121,6 +132,7 @@ export class NSPanelMessageParser {
     public static parseEvent(parts: Array<string>): EventArgs {
         var eventArgs: EventArgs = {
             topic: 'event',
+            date: new Date(),
             event: parts[1],
             source: parts[2],
         }
@@ -218,6 +230,7 @@ export class NSPanelMessageParser {
                     raw: parts.slice(2),
                 }
         }
+
         console.log('parseEvent', eventArgs)
         return eventArgs
     }
