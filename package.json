@@ -1,10 +1,16 @@
 {
     "name": "node-red-contrib-nspanel-lui",
-    "version": "0.0.1-alpha.19",
+    "version": "0.0.1-alpha.21",
     "description": "node-red-contrib-nspanel-lui",
     "license": "Apache-2.0",
-    "author": {
-        "name": "Sebastian Schneider"
+    "contributors": [
+        {
+            "name": "Sebastian Schneider"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/laluz742/node-red-contrib-nspanel-lui.git"
     },
     "node-red": {
         "nodes": {
@@ -16,6 +22,7 @@
             "nspanel-page-grid": "nodes/nspanel-page-grid.js",
             "nspanel-page-power": "nodes/nspanel-page-power.js",
             "nspanel-page-qr": "nodes/nspanel-page-qr.js",
+            "nspanel-page-thermo": "nodes/nspanel-page-thermo.js",
             "nspanel-screensaver": "nodes/nspanel-screensaver.js"
         }
     },
@@ -44,6 +51,7 @@
     "dependencies": {
         "cronosjs": "^1.7.1",
         "mqtt": "^4.3.7",
+        "ts-prune": "^0.10.3",
         "uuid": "^8.3.2"
     }
 }

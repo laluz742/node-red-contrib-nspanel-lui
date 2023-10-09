@@ -4,10 +4,11 @@ Alpha development stage of implementing a backend for [NsPanel Lovelace UI](http
 so contributors are welcome.
 
 Supported basic aspects for now:
-+ multiple panels
-+ Screensaver
-+ grid card
-+ entities card
-+ Wifi/QR card
-+ simple navigation
-+ data handling and caching
+
+-   multiple panels
+-   Screensaver
+-   grid card
+-   entities card
+-   Wifi/QR card
+-   simple navigation
+-   data handling and caching
