@@ -109,4 +109,13 @@ export class NSPanelMessageUtils {
 
         return null
     }
+
+    public static toDate(input: any): Date | null {
+        var date = new Date(input)
+        if (isNaN(date.getTime()) === false) {
+            return date
+        }
+
+        return null
+    }
 }

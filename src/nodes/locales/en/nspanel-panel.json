@@ -39,7 +39,8 @@
             "switch": "Schalter",
             "number": "Zahl",
             "button": "Taste",
-            "text": "Text"
+            "text": "Text",
+            "hvac_action": "Aktion"
         }
     }
 }

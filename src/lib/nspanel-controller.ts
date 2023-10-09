@@ -240,27 +240,27 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
             case 'relay':
             case 'button':
-                if (eventArgs.topic == 'hw') {
+                if (eventArgs.type == 'hw') {
                     this.notifyControllerNode(eventArgs)
                 }
-                this.notifyCurrentPage('input', eventArgs)
+                this.notifyCurrentPageOfEvent('input', eventArgs)
                 break
 
             case 'pageOpenDetail':
                 this.onPopupOpen(eventArgs)
-                this.notifyCurrentPage('input', eventArgs)
+                this.notifyCurrentPageOfEvent('input', eventArgs)
                 break
             case 'buttonPress2': // close pageOpenDetail
                 if (eventArgs.source.startsWith('popup') && eventArgs.event2 == 'bExit') {
                     this.onPopupClose()
                 }
-                this.notifyCurrentPage('input', eventArgs)
+                this.notifyCurrentPageOfEvent('input', eventArgs)
                 break
 
             default:
                 console.log('UNCATCHED onEvent default', eventArgs)
                 // dispatch to active page
-                this.notifyCurrentPage('input', eventArgs)
+                this.notifyCurrentPageOfEvent('input', eventArgs)
         }
     }
 
@@ -270,10 +270,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onSensorData(eventArgs: EventArgs) {
-        if (eventArgs.topic == 'sensor') {
+        if (eventArgs.type == 'sensor') {
             this.notifyControllerNode(eventArgs)
         }
-        this.notifyCurrentPage('input', eventArgs)
+        this.notifyCurrentPageOfEvent('input', eventArgs)
     }
 
     private onPageUpdateRequest(page: IPageNode): void {
@@ -424,8 +424,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         })
     }
 
-    private notifyCurrentPage(event: string, eventArgs: EventArgs) {
-        //FIXME: is actually notifyCurrentPage*OfEvent*!
+    private notifyCurrentPageOfEvent(event: string, eventArgs: EventArgs) {
         var currentPage: IPageHistory | null = this.getCurrentPage()
         if (currentPage !== null) {
             this.notifyPageNode(currentPage?.pageNode, event, eventArgs)
@@ -435,7 +434,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private notifyPageNode(page: IPageNode, event: string, eventArgs: EventArgs) {
         if (page !== null) {
             const nodeMsg = {
-                topic: eventArgs.topic,
+                topic: eventArgs.type,
                 payload: Object.assign({}, eventArgs),
             }
 
@@ -445,7 +444,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     private notifyControllerNode(eventArgs: EventArgs) {
         const nodeMsg = {
-            topic: eventArgs.topic,
+            topic: eventArgs.type,
             payload: Object.assign({}, eventArgs),
         }
 

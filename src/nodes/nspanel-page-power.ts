@@ -24,7 +24,7 @@ module.exports = (RED) => {
 
         protected override generateEntities(): string {
             var resultEntities = []
-            const entities = this.entitiesPageNodeConfig.entities
+            const entities = this.getEntities()
             for (var i = 0; i < this.options.maxEntities && i < entities.length; i++) {
                 var entityConfig = entities[i]
                 var entity = NSPanelUtils.makeEntity(

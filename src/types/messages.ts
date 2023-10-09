@@ -25,7 +25,7 @@ export interface SwitchCommandParams {
 // #region page input data messages
 export interface PageInputMessageParts extends NodeMessageParts {}
 
-export type PageInputTopic = 'data' | 'status' | 'notify' | 'event'
+export type PageInputTopic = 'data' | 'status' | 'notify' | 'event' | 'sensor'
 
 export interface NotifyData {
     notifyId?: string

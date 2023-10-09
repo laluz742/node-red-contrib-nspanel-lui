@@ -29,6 +29,7 @@ var NSPanelLui = NSPanelLui || {}
     //#region entities
     interface EventTypeAttrs {
         hasId: boolean
+        hasLabel: boolean
         hasIcon: boolean
         hasOptionalValue: boolean
         isShutter?: boolean
@@ -38,16 +39,17 @@ var NSPanelLui = NSPanelLui || {}
     }
 
     const PANEL_ENTITY_TYPE_ATTRS: Map<string, EventTypeAttrs> = new Map<string, EventTypeAttrs>([
-        ['delete', { hasId: false, hasIcon: false, hasOptionalValue: false }],
-        ['shutter', { hasId: true, hasIcon: true, hasOptionalValue: false, isShutter: true }],
-        ['light', { hasId: true, hasIcon: true, hasOptionalValue: false, isLight: true }],
-        ['fan', { hasId: true, hasIcon: true, hasOptionalValue: false, isFan: true }],
-        ['input_sel', { hasId: true, hasIcon: true, hasOptionalValue: false }],
-        ['timer', { hasId: true, hasIcon: true, hasOptionalValue: false }],
-        ['switch', { hasId: true, hasIcon: true, hasOptionalValue: false }],
-        ['number', { hasId: true, hasIcon: true, hasOptionalValue: false, isNumber: true }],
-        ['button', { hasId: true, hasIcon: true, hasOptionalValue: false }],
-        ['text', { hasId: true, hasIcon: true, hasOptionalValue: false }],
+        ['delete', { hasId: false, hasLabel: false, hasIcon: false, hasOptionalValue: false }],
+        ['shutter', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isShutter: true }],
+        ['light', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isLight: true }],
+        ['fan', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isFan: true }],
+        ['input_sel', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
+        ['timer', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
+        ['switch', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
+        ['number', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isNumber: true }],
+        ['button', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
+        ['text', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
+        ['hvac_action', { hasId: true, hasLabel: false, hasIcon: true, hasOptionalValue: false }],
     ])
 
     const ALL_PANEL_ENTITY_TYPES = (function () {
@@ -132,7 +134,7 @@ var NSPanelLui = NSPanelLui || {}
     const _validate = (function () {
         const _numberInRange = (v: any, min: number, max: number): boolean => {
             const n = Number(v)
-            return !isNaN(n) && n >= min && n <= max
+            return isNaN(n) === false && n >= min && n <= max
         }
 
         const _limitNumberToRange = (v: any, min: number, max: number, defaultValue: number): number => {
@@ -503,20 +505,19 @@ var NSPanelLui = NSPanelLui || {}
 
                         var row1_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(row1)
                         _createLabel(row1_2, 'Id:') //TODO: i18n
-
                         var entityIdField = $('<input/>', {
                             class: 'node-input-entity-id',
                             style: 'width: 10em',
                             type: 'text',
                         }).appendTo(row1_2)
 
-                        _createLabel(row1_2, 'Label:') //TODO: i18n
-
+                        var row1_3 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(row1)
+                        _createLabel(row1_3, 'Label:') //TODO: i18n
                         var entityTextField = $('<input/>', {
                             class: 'node-input-entity-text',
                             style: 'width: 10em',
                             type: 'text',
-                        }).appendTo(row1_2)
+                        }).appendTo(row1_3)
 
                         // #endregion row1
 
@@ -715,6 +716,7 @@ var NSPanelLui = NSPanelLui || {}
                             const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
                             if (entityTypeAttrs !== undefined) {
                                 row1_2.toggle(entityTypeAttrs.hasId)
+                                row1_3.toggle(entityTypeAttrs.hasLabel)
                                 rowOptionalValue.toggle(entityTypeAttrs.hasOptionalValue ?? false)
                                 rowIcon.toggle(entityTypeAttrs.hasIcon ?? false)
                                 rowShutter.toggle(entityTypeAttrs.isShutter ?? false)
