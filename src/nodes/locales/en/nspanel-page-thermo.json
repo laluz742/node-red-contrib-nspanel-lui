@@ -1,0 +1,32 @@
+{
+    "nspanel-page-thermo": {
+        "label": {
+            "palette": "Thermo",
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Überschrift",
+            "events": "Events",
+            "actions": "Aktionen",
+            "active": "Aktiv",
+            "panelTimeout": "Stand-by Überschreibung",
+            "panelTimeoutSeconds": "Sekunden",
+            "options": "Options",
+            "currentTemperatureLabel": "Current Temperature Label",
+            "statusLabel": "Status Label",
+            "useOwnTempSensor": "Use panel temperature sensor",
+            "showDetailsPopup": "Show details popup",
+            "setpoints": "Set Points",
+            "targetTemperature": "Target Temperature",
+            "minHeatSetpointLimit": "Minimum Heating Setpoint",
+            "maxHeatSetpointLimit": "Maximum Heating Setpoint",
+            "temperatureSteps": "Temperature Steps",
+            "temperatureUnit": "Temperature Unit",
+            "unitCelsius": "Celsius",
+            "unitFahrenheit": "Fahrenheit"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Page Thermo"
+        }
+    }
+}

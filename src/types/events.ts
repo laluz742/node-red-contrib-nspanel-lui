@@ -17,7 +17,7 @@ export declare interface EventMapping {
 }
 
 export interface EventArgs {
-    topic: string
+    type: string
     date?: Date
 
     source: string
@@ -45,11 +45,11 @@ export interface HMIVersion {
 }
 
 export interface HardwareEventArgs extends EventArgs {
-    topic: 'hw'
+    type: 'hw'
 }
 
 export interface SensorEventArgs extends EventArgs {
-    topic: 'sensor'
+    type: 'sensor'
     temp?: number
     tempUnit?: ['C', 'F']
 }

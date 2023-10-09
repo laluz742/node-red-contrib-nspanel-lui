@@ -198,11 +198,14 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
             switch (msg.topic) {
                 case 'event':
                     const eventArgs = <EventArgs>msg.payload
-                    this._handleUiEventInput(eventArgs, send)
+                    const uiEventHandled = this._handleUiEventInput(eventArgs, send)
+                    if (!uiEventHandled) {
+                        this._handleInput(msg, send)
+                    }
                     break
 
                 default:
-                    const handled: boolean = this._handleInput(msg, send)
+                    const handled = this._handleInput(msg, send)
                     if (handled) {
                         this.requestUpdate()
                     }
@@ -252,7 +255,9 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         return true
     }
 
-    private _handleUiEventInput(eventArgs: EventArgs, send: NodeRedSendCallback): void {
+    private _handleUiEventInput(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
+        var handled = false
+
         // event mapped in config?
         if (this.configuredEvents.has(eventArgs.event2)) {
             const cfgEvent = this.configuredEvents.get(eventArgs.event2)
@@ -264,14 +269,18 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
                     if (preHandleResult !== false) {
                         this.handlePageNavigationEvent(eventArgs, cfgEvent)
                     }
+                    handled = true
                     break
 
                 // mapped to out msg
                 case 'msg':
                     this.handlePageMessageEvent(eventArgs, cfgEvent, send)
+                    handled = true
                     break
             }
         }
+
+        return handled
     }
 
     private registerAtPanel() {

@@ -1,0 +1,324 @@
+<script type="text/javascript">
+    $.getScript('resources/node-red-contrib-nspanel-lui/nspanel-lui.js')
+</script>
+<script type="text/javascript">
+    ;(function ($) {
+        const allValidEvents = [
+            { event: 'nav.prev', label: 'nav.prev' },
+            { event: 'nav.next', label: 'nav.next' },
+        ]
+
+        const MAX_ENTITIES = 8
+
+        var editableEventList, editableEntitiesList
+
+        RED.nodes.registerType('nspanel-page-thermo', {
+            category: 'NSPanel',
+            paletteLabel: NSPanelLui._('label.palette', 'nspanel-page-thermo'),
+
+            inputs: 1,
+            outputs: 1,
+
+            icon: 'font-awesome/fa-television',
+            color: 'rgb( 50, 120, 190)',
+
+            defaults: {
+                name: { value: '' },
+                title: { value: '' },
+                nsPanel: { type: 'nspanel-panel', required: true },
+                timeout: { value: null },
+                events: { value: [] },
+                entities: { value: [] },
+                useOwnTempSensor: { value: true },
+                showDetailsPopup: { value: false },
+                currentTemperatureLabel: { value: '' },
+                statusLabel: { value: '' },
+                targetTemperature: {
+                    value: 25,
+                    required: true,
+                    validate: function (v) {
+                        var vNum = Number(v)
+                        if (isNaN(vNum) === true) return false
+
+                        var minLimit = Number($('#node-input-minHeatSetpointLimit').val())
+                        var maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
+                        if (isNaN(minLimit) && isNaN(maxLimit)) {
+                            return true
+                        } else if (isNaN(minLimit) && !isNaN(maxLimit)) {
+                            return vNum <= maxLimit
+                        } else if (!isNaN(minLimit) && isNaN(maxLimit)) {
+                            return vNum >= minLimit
+                        }
+
+                        return NSPanelLui.Editor.validate.isNumberInRange(v, minLimit, maxLimit)
+                    },
+                },
+                minHeatSetpointLimit: {
+                    value: 7,
+                    required: true,
+                    validate: function (v) {
+                        var vNum = Number(v)
+                        if (isNaN(vNum) === true) return false
+
+                        var targetTemp = Number($('#node-input-targetTemperature').val())
+                        var maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
+                        return isNaN(targetTemp) === false
+                            ? vNum <= targetTemp && (isNaN(maxLimit) ? true : vNum < maxLimit)
+                            : true
+                    },
+                },
+                maxHeatSetpointLimit: {
+                    value: 30,
+                    required: true,
+                    validate: function (v) {
+                        var vNum = Number(v)
+                        if (isNaN(vNum) === true) return false
+
+                        var targetTemp = Number($('#node-input-targetTemperature').val())
+                        var minLimit = Number($('#node-input-minHeatSetpointLimit').val())
+                        return isNaN(targetTemp) === false
+                            ? vNum >= targetTemp && (isNaN(minLimit) ? true : vNum > minLimit)
+                            : true
+                    },
+                },
+                temperatureSteps: { value: '0.1', required: true, validate: RED.validators.number() },
+                temperatureUnit: { value: 'C', required: true },
+            },
+
+            label: function () {
+                return this.name || NSPanelLui._('defaults.name', 'nspanel-page-thermo')
+            },
+
+            oneditprepare: function () {
+                var self = this
+                eventInputControl = $('#node-input-event-control')
+                nsPanelInputField = $('#node-input-nsPanel')
+                var nsPanelInputField_lastVal = this.nsPanel
+
+                nsPanelInputField.on('change', function () {
+                    if (nsPanelInputField.val() == '_ADD_') {
+                        eventInputControl.hide()
+                        //TODO remove all events? ... keep track of original nsPanelId
+                    } else {
+                        if (nsPanelInputField.val() != nsPanelInputField_lastVal) eventInputControl.empty()
+                        eventInputControl.show()
+                    }
+                })
+                nsPanelInputField.change()
+
+                editableEntitiesList = NSPanelLui.Editor.make.editableEntitiesList(
+                    this,
+                    '#node-input-entities-control',
+                    MAX_ENTITIES,
+                    this.entities,
+                    ['delete', 'hvac_action']
+                )
+
+                editableEventList = NSPanelLui.Editor.make.editableEventList(
+                    this,
+                    '#node-input-event-control',
+                    allValidEvents,
+                    this.events
+                )
+
+                var tabs = RED.tabs.create({
+                    id: 'nspanel-page-tabs',
+                    onchange: function (tab) {
+                        $('#nspanel-page-tabs-content').children().hide()
+                        $('#' + tab.id).show()
+                    },
+                })
+                tabs.addTab({
+                    id: 'nspanel-page-tab-general',
+                    iconClass: 'fa fa-cog',
+                    label: NSPanelLui._('common.general', 'nspanel-panel'),
+                })
+                tabs.addTab({
+                    id: 'nspanel-page-tab-entities',
+                    iconClass: 'fa fa-list',
+                    label: NSPanelLui._('label.actions', 'nspanel-page-thermo'),
+                })
+                tabs.addTab({
+                    id: 'nspanel-page-tab-events',
+                    iconClass: 'fa fa-list',
+                    label: NSPanelLui._('common.events', 'nspanel-panel'),
+                })
+            },
+            oneditsave: function () {
+                this.events = editableEventList.getEvents() || []
+                this.entities = editableEntitiesList.getEntities() || []
+
+                if (!NSPanelLui.Editor.validate.stringIsNotNullOrEmpty(this.timeout)) {
+                    this.timeout = undefined
+                }
+            },
+        })
+    })(jQuery)
+</script>
+
+<script type="text/html" data-template-name="nspanel-page-thermo">
+    <div class="form-row nspanel-page-tabs-row">
+        <ul style="min-width: 600px; margin-bottom: 20px;" id="nspanel-page-tabs"></ul>
+    </div>
+
+    <div id="nspanel-page-tabs-content" style="min-height: calc(100% - 100px);">
+        <div id="nspanel-page-tab-general" style="display:none">
+            <div class="form-row">
+                <label for="node-input-name">
+                    <i class="fa fa-tag"></i>
+                    <span data-i18n="nspanel-page-thermo.label.name"></span>
+                </label>
+                <input type="text" id="node-input-name" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-nsPanel">
+                    <i class="fa fa-television"></i>
+                    <span data-i18n="nspanel-page-thermo.label.panel"></span>
+                </label>
+                <input type="text" id="node-input-nsPanel" />
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-title">
+                    <i class="fa fa-header"></i>
+                    <span data-i18n="nspanel-page-thermo.label.title"></span>
+                </label>
+                <input type="text" id="node-input-title" />
+            </div>
+
+            <br />
+            <div class="form-row">
+                <label for="node-input-timeout">
+                    <i class="fa fa-hourglass-end"></i>
+                    <span data-i18n="nspanel-page-thermo.label.panelTimeout"></span>
+                </label>
+                <input type="number" id="node-input-timeout" style="width: 7em;" />
+                <label for="node-input-timeout" data-i18n="nspanel-page-thermo.label.panelTimeoutSeconds"></label>
+            </div>
+
+            <br />
+            <div class="form-row">
+                <label>
+                    <i class="fa fa-cog"></i>
+                    <span data-i18n="nspanel-page-thermo.label.options"></span>
+                </label>
+            </div>
+            <div class="form-row">
+                <label for="node-input-currentTemperatureLabel">
+                    <i class="fa fa-i-cursor"></i>
+                    <span data-i18n="nspanel-page-thermo.label.currentTemperatureLabel"></span>
+                </label>
+                <input type="text" id="node-input-currentTemperatureLabel" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-statusLabel">
+                    <i class="fa fa-i-cursor"></i>
+                    <span data-i18n="nspanel-page-thermo.label.statusLabel"></span>
+                </label>
+                <input type="text" id="node-input-statusLabel" />
+            </div>
+            <div class="form-row">
+                <input
+                    type="checkbox"
+                    id="node-input-useOwnTempSensor"
+                    style="display:inline-block; width:auto; vertical-align:top;"
+                />
+                <label for="node-input-useOwnTempSensor" style="width:70%;">
+                    <span data-i18n="nspanel-page-thermo.label.useOwnTempSensor"></span>
+                </label>
+            </div>
+            <div class="form-row">
+                <input
+                    type="checkbox"
+                    id="node-input-showDetailsPopup"
+                    style="display:inline-block; width:auto; vertical-align:top;"
+                />
+                <label for="node-input-showDetailsPopup" style="width:70%;">
+                    <span data-i18n="nspanel-page-thermo.label.showDetailsPopup"></span>
+                </label>
+            </div>
+
+            <br />
+            <div class="form-row">
+                <label>
+                    <i class="fa fa-cog"></i>
+                    <span data-i18n="nspanel-page-thermo.label.setpoints"></span>
+                </label>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-targetTemperature">
+                    <i class="fa fa-thermometer-half"></i>
+                    <span data-i18n="nspanel-page-thermo.label.targetTemperature"></span>
+                </label>
+                <input type="number" id="node-input-targetTemperature" style="width: 7em;" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-minHeatSetpointLimit">
+                    <i class="fa fa-thermometer-empty"></i>
+                    <span data-i18n="nspanel-page-thermo.label.minHeatSetpointLimit"></span>
+                </label>
+                <input type="number" id="node-input-minHeatSetpointLimit" style="width: 7em;" />
+            </div>
+            <div class="form-row">
+                    <label for="node-input-maxHeatSetpointLimit">
+                        <i class="fa fa-thermometer-full"></i>
+                        <span data-i18n="nspanel-page-thermo.label.maxHeatSetpointLimit"></span>
+                    </label>
+                    <input type="number" id="node-input-maxHeatSetpointLimit" style="width: 7em;" />
+               </div>
+
+            <div class="form-row">
+                    <label for="node-input-temperatureSteps">
+                        <i class="fa fa-sliders"></i>
+                        <span data-i18n="nspanel-page-thermo.label.temperatureSteps"></span>
+                    </label>
+                    <input type="text" id="node-input-temperatureSteps" autocomplete="off" style="width: 7em;" />
+            </div>
+            <div class="form-row">
+                    <label for="node-input-temperatureUnit">
+                        <i class="fa"></i>
+                        <span data-i18n="nspanel-page-thermo.label.temperatureUnit"></span>
+                    </label>
+                    <select id="node-input-temperatureUnit" style="width: 7em;" >
+                        <option value="C" data-i18n="nspanel-page-thermo.label.unitCelsius"></option>
+                        <option value="F" data-i18n="nspanel-page-thermo.label.unitFahrenheit"></option>
+                        </select>
+            </div>
+                <!--
+      targetTemperature: {value: 25 },
+                    minHeatSetpointLimit: { value: 7 },
+                    : { value: 30 },
+                    temperatureSteps: { value: 0.1 },
+                    temperatureUnit: { value: "C" }
+
+                -->
+
+        </div>
+
+            <div id="nspanel-page-tab-entities" style="display:none">
+                <div
+                    class="form-row node-input-entities-control"
+                    id="node-input-entities-control"
+                    style="min-height: calc(100% - 100px);"
+                >
+                    <div class="form-row node-input-entities-container-row">
+                        <ol id="node-input-entities-container" style="min-width: 580px"></ol>
+                    </div>
+                </div>
+            </div>
+
+            <div id="nspanel-page-tab-events" style="display:none">
+                <div
+                    class="form-row node-input-event-control"
+                    style="min-height: calc(100% - 100px);"
+                    id="node-input-event-control"
+                >
+                    <div class="form-row node-input-event-container-row">
+                        <ol id="node-input-event-container" style="min-width: 520px"></ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

@@ -5,7 +5,7 @@ import { NSPanelUtils } from './nspanel-utils'
 export class NSPanelMessageParser {
     public static parse(payloadStr: string): EventArgs {
         var result: EventArgs = {
-            topic: '',
+            type: '',
             event: '',
             event2: '',
             source: '',
@@ -28,7 +28,7 @@ export class NSPanelMessageParser {
 
     public static parseCustomMessage(parts: Array<string>): EventArgs {
         var result: EventArgs = {
-            topic: 'event',
+            type: 'event',
             event: '',
             event2: '',
             source: '',
@@ -52,7 +52,7 @@ export class NSPanelMessageParser {
             const tempUnit = input['TempUnit']
             if (temp !== undefined) {
                 result = {
-                    topic: 'sensor',
+                    type: 'sensor',
                     source: 'temperature1',
                     event: 'measurement',
                     temp: Number(temp) ?? null,
@@ -93,7 +93,7 @@ export class NSPanelMessageParser {
 
         if (result.length == 0) {
             var eventArgs: HardwareEventArgs = {
-                topic: 'hw',
+                type: 'hw',
                 date: new Date(),
                 event: '',
                 source: '',
@@ -107,7 +107,7 @@ export class NSPanelMessageParser {
 
     private static convertToRelayEvent(input: any, property: string): HardwareEventArgs {
         var eventArgs: HardwareEventArgs = {
-            topic: 'hw',
+            type: 'hw',
             date: new Date(),
             event: 'relay',
             event2: 'state',
@@ -119,7 +119,7 @@ export class NSPanelMessageParser {
 
     private static convertToButtonEvent(input: any, property: string): HardwareEventArgs {
         var eventArgs: HardwareEventArgs = {
-            topic: 'hw',
+            type: 'hw',
             date: new Date(),
             event: 'button',
             event2: 'press',
@@ -131,7 +131,7 @@ export class NSPanelMessageParser {
 
     public static parseEvent(parts: Array<string>): EventArgs {
         var eventArgs: EventArgs = {
-            topic: 'event',
+            type: 'event',
             date: new Date(),
             event: parts[1],
             source: parts[2],

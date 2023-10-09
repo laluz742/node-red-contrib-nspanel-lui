@@ -82,4 +82,34 @@ export class NSPanelUtils {
 
         return active ? '1' : '0'
     }
+
+    public static convertTemperature(
+        temperature: number,
+        sourceUnit: string,
+        targetUnit: string
+    ): number | null | undefined {
+        if (
+            sourceUnit == targetUnit ||
+            NSPanelUtils.stringIsNullOrEmpty(sourceUnit) ||
+            NSPanelUtils.stringIsNullOrEmpty(targetUnit)
+        )
+            return temperature
+
+        if (temperature === undefined || temperature == null) return temperature
+
+        var result = null
+        switch (targetUnit.toLowerCase()) {
+            case 'c':
+            case '°c':
+                result = (5 / 9) * (temperature - 32)
+                break
+
+            case 'f':
+            case '°f':
+                result = (temperature * 9) / 5 + 32
+                break
+        }
+
+        return result
+    }
 }
