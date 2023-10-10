@@ -14,11 +14,11 @@ export type PageId = string
 export type ConfiguredEventsMap = Map<string, EventMapping>
 export type PageCache = string | string[] | null
 
-export interface PanelBasedConfig extends INodeConfig {
+export type PanelBasedConfig = INodeConfig & {
     nsPanel: string
 }
 
-export interface IPageConfig extends PanelBasedConfig {
+export type IPageConfig = PanelBasedConfig & {
     timeout: number | string
     title: string | undefined
 

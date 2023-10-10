@@ -1,12 +1,12 @@
 import { ActiveCharacteristic, HSVColor, RGBColor } from '.'
 
-export declare interface ValidEventSpec {
+export type ValidEventSpec = {
     //FIXME: naming
     event: string
     label: string
 }
 
-export declare interface EventMapping {
+export declare type EventMapping = {
     event: string
     value: string
     t: string

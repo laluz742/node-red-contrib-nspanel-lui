@@ -1,28 +1,51 @@
-//FIXME: cannot use imports.... due to Object.defineProperty(exports, "__esModule", { value: true }) issue
+//#region types
+type ValidEventSpec = import('../types').ValidEventSpec
+type EventMapping = import('../types').EventMapping
+type PanelEntity = import('../types').PanelEntity
+type IPageConfig = import('../types').IPageConfig
+type PanelBasedConfig = import('../types').PanelBasedConfig
+
+type EventTypeAttrs = {
+    hasId: boolean
+    hasLabel: boolean
+    hasIcon: boolean
+    hasOptionalValue: boolean
+    isShutter?: boolean
+    isNumber?: boolean
+    isFan?: boolean
+    isLight?: boolean
+}
+
+type PanelEntityContainer = {
+    entry: PanelEntity
+    element?: any
+}
+
+type typedInputParams = {
+    default?: string
+    types: typedInputTypeParams[]
+}
+
+type typedInputTypeParams = {
+    value: string
+    icon?: string
+    label: string
+    type: string
+    types?: string | string[]
+    options?: any
+}
 
 declare var RED
+//#endregion types
 
 var NSPanelLui = NSPanelLui || {}
 
 ;(function (RED, $) {
     //#region events
-    interface ValidEventSpec {
-        event: string
-        label: string
-    }
+
     interface EventMappingContainer {
         entry: EventMapping
         element?: any
-    }
-
-    interface EventMapping {
-        event: string
-        value: string
-        t: string
-        icon?: string
-        iconColor?: string
-        data?: string
-        dataType?: string
     }
 
     const _allValidNavigationEvents = [
@@ -35,18 +58,6 @@ var NSPanelLui = NSPanelLui || {}
     ]
 
     //#endregion events
-
-    //#region entities
-    interface EventTypeAttrs {
-        hasId: boolean
-        hasLabel: boolean
-        hasIcon: boolean
-        hasOptionalValue: boolean
-        isShutter?: boolean
-        isNumber?: boolean
-        isFan?: boolean
-        isLight?: boolean
-    }
 
     const PANEL_ENTITY_TYPE_ATTRS: Map<string, EventTypeAttrs> = new Map<string, EventTypeAttrs>([
         ['delete', { hasId: false, hasLabel: false, hasIcon: false, hasOptionalValue: false }],
@@ -66,71 +77,6 @@ var NSPanelLui = NSPanelLui || {}
         var result: string[] = Array.from(PANEL_ENTITY_TYPE_ATTRS.keys())
         return result
     })()
-
-    interface PanelEntity {
-        type: string
-        text?: string
-        icon?: string
-        iconColor?: string
-        entityId: string
-        optionalValue?: string | number
-
-        // number
-        min?: number
-        max?: number
-
-        // shutter
-        iconUp?: string
-        iconDown?: string
-        iconStop?: string
-        hasTilt?: boolean
-        iconTiltLeft?: string
-        iconTiltStop?: string
-        iconTiltRight?: string
-
-        // fan
-        fanMode1?: string
-        fanMode2?: string
-        fanMode3?: string
-
-        // light
-        dimmable?: boolean
-        hasColorTemperature?: boolean
-        hasColor?: boolean
-    }
-
-    interface PanelEntityContainer {
-        entry: PanelEntity
-        element?: any
-    }
-    //#endregion entities
-
-    interface PanelBasedConfig {
-        id: string
-        type: string
-        name: string
-
-        nsPanel: string
-        title: string | undefined
-    }
-
-    interface IPageConfig extends PanelBasedConfig {
-        events: EventMapping[]
-    }
-
-    interface typedInputParams {
-        default?: string
-        types: typedInputTypeParams[]
-    }
-
-    interface typedInputTypeParams {
-        value: string
-        icon?: string
-        label: string
-        type: string
-        types?: string | string[]
-        options?: any
-    }
 
     const DEFAULT_COLOR = '#ffffff'
 
