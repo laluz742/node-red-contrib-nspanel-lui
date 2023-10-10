@@ -13,7 +13,6 @@ import {
     PanelMessage,
 } from '../types'
 import { NSPanelController } from '../lib/nspanel-controller'
-import { NodeStatusFill } from 'node-red'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 
 interface NSPanelControllerConfig extends PanelBasedConfig {

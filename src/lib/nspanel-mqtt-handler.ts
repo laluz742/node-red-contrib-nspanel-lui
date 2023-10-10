@@ -169,7 +169,6 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                 break
 
             case this.panelMqttSensorTopic:
-                let result: SensorEventArgs
                 try {
                     const temp = JSON.parse(payloadStr)
                     let sensorEvent: SensorEventArgs = NSPanelMessageParser.parseSensorEvent(temp)

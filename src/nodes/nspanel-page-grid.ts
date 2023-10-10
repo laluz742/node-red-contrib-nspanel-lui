@@ -1,4 +1,4 @@
-import { IEntityBasedPageConfig, PageCache } from '../types'
+import { IEntityBasedPageConfig } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
 
 interface PageGridConfig extends IEntityBasedPageConfig {}

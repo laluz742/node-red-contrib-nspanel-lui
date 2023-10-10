@@ -24,6 +24,16 @@ var NSPanelLui = NSPanelLui || {}
         data?: string
         dataType?: string
     }
+
+    const _allValidNavigationEvents = [
+        { event: 'nav.prev', label: 'nav.prev' },
+        { event: 'nav.next', label: 'nav.next' },
+    ]
+    const _allValidButtonEvents = [
+        { event: 'nav.prev', label: 'nav.prev' },
+        { event: 'nav.next', label: 'nav.next' },
+    ]
+
     //#endregion events
 
     //#region entities
@@ -134,7 +144,7 @@ var NSPanelLui = NSPanelLui || {}
     const _getNodeLabel = function (node: any) {
         var panelNode = RED.nodes.node(node.nsPanel)
 
-        var label = '[' + (panelNode ? panelNode.name : NSPanelLui._('label.unassigned', node.type, 'common')) + '] '
+        var label = '[' + (panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')) + '] '
         label += node.name || NSPanelLui._('defaults.name', node.type)
 
         return label
@@ -182,11 +192,11 @@ var NSPanelLui = NSPanelLui || {}
                 types: [{ value: 'msg', label: 'msg.', type: 'msg', types: ['str'] }],
             }
 
-            if (currentPanel != '_ADD_' && currentPanel !== undefined) {
+            if (currentPanel != '_ADD_' && currentPanel != '' && currentPanel !== undefined) {
                 const myId = nodeConfig.id
                 var panelNode = RED.nodes.node(currentPanel)
                 // @ts-ignore 2339
-                var knownPages: nodeRed.Node<any>[] = panelNode.users || []
+                var knownPages: nodeRed.Node<any>[] = panelNode?.users ?? []
                 var pageNodeType: typedInputTypeParams = {
                     value: 'page',
                     icon: 'fa fa-desktop',
@@ -958,6 +968,10 @@ var NSPanelLui = NSPanelLui || {}
             _normalizeLabel: _normalizeLabel,
             getNodeLabel: _getNodeLabel,
         },
+    }
+    NSPanelLui.Events = NSPanelLui.Events || {
+        allNavigationEvents: _allValidNavigationEvents,
+        allButtonEvents: _allValidButtonEvents,
     }
     //#endregion API generation
 })(RED, $)

@@ -1,22 +1,10 @@
 import { PageNode } from '../lib/page-node'
-import {
-    EventArgs,
-    EventMapping,
-    IPageConfig,
-    NodeRedSendCallback,
-    PageData,
-    PageInputMessage,
-    StatusItemData,
-} from '../types'
+import { EventArgs, EventMapping, IPageConfig, NodeRedSendCallback, PageInputMessage, StatusItemData } from '../types'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 
 interface ScreenSaverConfig extends IPageConfig {
     doubleTapToExit: boolean
-}
-
-interface ScreenSaverPageData extends PageData {
-    status: StatusItemData[]
 }
 
 const MAX_ENTITIES = 6

@@ -1,18 +1,27 @@
 {
     "compilerOptions": {
+        // build
+        "incremental": true,
         "target": "es6",
         "module": "CommonJS",
         "jsx": "preserve",
         "declaration": false,
         "sourceMap": false,
         "outDir": "build",
-        "moduleResolution": "node",
+        //"moduleResolution": "node",
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "removeComments": true,
         "rootDir": "src",
         "lib": ["es6", "dom"]
+
+        // lint
+        //"noImplicitAny": false,
+        //"noFallthroughCasesInSwitch": true,
+        //"noImplicitReturns": true,
+        //"noUnusedLocals": true
+        //"noUnusedParameters": true
     },
     "include": ["src"],
     "exclude": ["node_modules", "**/test/*", "lib/interfaces/*", "build"]
