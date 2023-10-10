@@ -85,7 +85,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
             if (entity !== null) {
                 //FIXME: meaning entityData???
-                const result = NSPanelPopupHelpers.generatePopup(entity, entityData)
+                const result = NSPanelPopupHelpers.generatePopup(this, entity, entityData)
                 return result
             }
         }

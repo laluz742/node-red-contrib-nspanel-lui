@@ -16,14 +16,9 @@
                 nsPanel: { value: '', type: 'nspanel-panel', required: true },
                 screenSaverOnStartup: { value: true },
             },
+
             label: function () {
-                var panelNode = RED.nodes.node(this.nsPanel)
-
-                var label =
-                    '[' + (panelNode ? panelNode.name : NSPanelLui._('label.unassigned', 'nspanel-controller')) + '] '
-                label += this.name || NSPanelLui._('defaults.name', 'nspanel-controller')
-
-                return label
+                return NSPanelLui.Editor.util.getNodeLabel(this)
             },
 
             oneditprepare: function () {},
@@ -35,15 +30,15 @@
     <div class="form-row">
         <label for="node-input-name">
             <i class="fa fa-tag"></i>
-            <span data-i18n="nspanel-controller.label.name"></span>
+            <span data-i18n="common.label.name"></span>
         </label>
-        <input type="text" id="node-config-input-name" data-i18n="[placeholder]nspanel-controller.placeholder.name" />
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]common.label.name" />
     </div>
 
     <div class="form-row">
         <label for="node-input-nsPanel">
             <i class="fa fa-television"></i>
-            <span data-i18n="nspanel-controller.label.panel"></span>
+            <span data-i18n="common.label.panel"></span>
         </label>
         <input type="text" id="node-input-nsPanel" />
     </div>

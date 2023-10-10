@@ -3,13 +3,13 @@
         "label": {
             "name": "Name",
             "panel": "NSPanel",
-            "unassigned": "not assiged"
+            "unassigned": "nicht zugewiesen"
+        },
+        "status": {
+            "notAssignedToAPanel": "Kein NSPanel zugeordnet"
         },
         "placeholder": {
             "name": "Name"
-        },
-        "status": {
-            "notAssignedToAPanel": "No NSPanel assigned"
         }
     },
     "nspanel-hmi-control": {

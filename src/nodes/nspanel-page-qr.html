@@ -30,13 +30,7 @@
             },
 
             label: function () {
-                var panelNode = RED.nodes.node(this.nsPanel)
-
-                var label =
-                    '[' + (panelNode ? panelNode.name : NSPanelLui._('label.unassigned', 'nspanel-page-qr')) + '] '
-                label += this.name || NSPanelLui._('defaults.name', 'nspanel-page-qr')
-
-                return label
+                return NSPanelLui.Editor.util.getNodeLabel(this)
             },
 
             oneditprepare: function () {
@@ -81,17 +75,17 @@
                 tabs.addTab({
                     id: 'nspanel-page-tab-general',
                     iconClass: 'fa fa-cog',
-                    label: NSPanelLui._('common.general', 'nspanel-panel'),
+                    label: NSPanelLui._('label.general', 'nspanel-panel', 'common'),
                 })
                 tabs.addTab({
                     id: 'nspanel-page-tab-entities',
                     iconClass: 'fa fa-list',
-                    label: NSPanelLui._('common.entities', 'nspanel-panel'),
+                    label: NSPanelLui._('label.entities', 'nspanel-panel', 'common'),
                 })
                 tabs.addTab({
                     id: 'nspanel-page-tab-events',
                     iconClass: 'fa fa-list',
-                    label: NSPanelLui._('common.events', 'nspanel-panel'),
+                    label: NSPanelLui._('label.events', 'nspanel-panel', 'common'),
                 })
             },
             oneditsave: function () {
@@ -116,14 +110,14 @@
             <div class="form-row">
                 <label for="node-input-name" style="vertical-align: middle">
                     <i class="fa fa-tag"></i>
-                    <span data-i18n="nspanel-page-qr.label.name"></span>
+                    <span data-i18n="common.label.name"></span>
                 </label>
-                <input type="text" id="node-input-name" />
+                <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
             </div>
             <div class="form-row">
                 <label for="node-input-nsPanel" style="vertical-align: middle">
                     <i class="fa fa-television"></i>
-                    <span data-i18n="nspanel-page-qr.label.panel"></span>
+                    <span data-i18n="common.label.panel"></span>
                 </label>
                 <input type="text" id="node-input-nsPanel" />
             </div>
@@ -131,7 +125,7 @@
             <div class="form-row">
                 <label for="node-input-title" style="vertical-align: middle">
                     <i class="fa fa-header"></i>
-                    <span data-i18n="nspanel-page-qr.label.title"></span>
+                    <span data-i18n="common.label.title"></span>
                 </label>
                 <input type="text" id="node-input-title" />
             </div>
@@ -148,10 +142,10 @@
             <div class="form-row">
                 <label for="node-input-timeout" style="vertical-align: middle">
                     <i class="fa fa-hourglass-end"></i>
-                    <span data-i18n="nspanel-page-qr.label.panelTimeout"></span>
+                    <span data-i18n="common.label.panelTimeout"></span>
                 </label>
                 <input type="number" id="node-input-timeout" style="width: 7em;" />
-                <label for="node-input-timeout" data-i18n="nspanel-page-qr.label.panelTimeoutSeconds"></label>
+                <label for="node-input-timeout" data-i18n="common.label.panelTimeoutSeconds"></label>
             </div>
         </div>
 

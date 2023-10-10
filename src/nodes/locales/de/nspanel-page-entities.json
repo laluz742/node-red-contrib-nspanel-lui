@@ -2,18 +2,18 @@
     "common": {
         "label": {
             "name": "Name",
-            "title": "Title",
             "panel": "NSPanel",
-            "unassigned": "not assiged",
-            "panelTimeout": "Stand-by timeout override",
-            "seconds": "seconds"
+            "title": "Überschrift",
+            "unassigned": "nicht zugewiesen",
+            "panelTimeout": "Stand-by Überschreibung",
+            "seconds": "Sekunden"
         },
         "placeholder": {
             "name": "Name"
         },
         "status": {
-            "active": "Active",
-            "notAssignedToAPanel": "No NSPanel assigned"
+            "active": "Aktiv",
+            "notAssignedToAPanel": "Kein NSPanel zugeordnet"
         }
     },
     "nspanel-page-entities": {

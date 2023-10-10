@@ -215,7 +215,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.panelUpdater = panelUpdater
 
         // notify controller node about state
-        this.emit('status', { type: 'info', msg: 'ctrl.waitForPages' })
+        this.emit('status', { type: 'info', msg: 'common.status.waitForPages' })
 
         /*setTimeout(() => {
             this.#delayPanelStartupFlag = false
@@ -297,7 +297,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (this.delayPanelStartupFlag) return
 
         this.panelUpdater.setHmiVersion(startupEventArgs.hmiVersion)
-        this.emit('status', { type: 'info', msg: 'ctrl.panelInit' })
+        this.emit('status', { type: 'info', msg: 'common.status.panelInit' })
 
         // prepare dim mode
         var now: Date = new Date()
@@ -351,7 +351,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (this.panelConfig.panel.screenSaverOnStartup) {
             this.activateScreenSaver()
         }
-        this.emit('status', { type: 'info', msg: 'ctrl.panelStarted' })
+        this.emit('status', { type: 'info', msg: 'common.status.panelStarted' })
     }
 
     private getCurrentPage(): IPageHistory | null {
@@ -469,11 +469,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.setCurrentPage(pageHistory)
 
             if (screenSaverPageNodes.length >= 2) {
-                this.emit('status', { type: 'warn', msg: 'ctrl.tooManyScreenSaver' })
+                this.emit('status', { type: 'warn', msg: 'common.status.tooManyScreenSaver' })
                 log.warn('More than one screensaver attached. Found ' + screenSaverPageNodes.length)
             }
         } else {
-            this.emit('status', { type: 'warn', msg: 'ctrl.noScreenSaverPage' })
+            this.emit('status', { type: 'warn', msg: 'common.status.noScreenSaverPage' })
             log.warn('No screensaver found.')
             this.sendToPanel(`pageType~screensaver`)
         }

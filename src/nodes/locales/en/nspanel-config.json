@@ -2,28 +2,28 @@
     "nspanel-config": {
         "label": {
             "name": "Name",
-            "device-topic": "Geräte-Topic",
-            "full-topic": "Vollständiges Topic",
-            "brightnessScreenSaver": "Helligkeit Bildschirmschoner",
-            "brightnessActive": "Helligkeit",
-            "timeoutScreenSaver": "Standby nach (s)",
-            "tab-settings": "Einstellungen",
+            "device-topic": "Device Topic",
+            "full-topic": "Full Topic",
+            "brightnessScreenSaver": "Screensaver Brightness",
+            "brightnessActive": "Brightness",
+            "timeoutScreenSaver": "Standby Timeout",
+            "tab-settings": "Settings",
             "tab-mqtt": "MQTT Broker",
-            "mqtt-address": "Adresse",
+            "mqtt-address": "Server",
             "mqtt-port": "Port",
             "mqtt-clientid": "Client Id",
-            "mqtt-username": "Benutzername",
-            "mqtt-password": "Passwort",
+            "mqtt-username": "Username",
+            "mqtt-password": "Password",
             "mqtt-keepalive": "Keepalive",
-            "mqtt-keepalive-seconds": "Sekunden"
+            "mqtt-keepalive-seconds": "seconds"
         },
         "placeholder": {
             "name": "Name",
-            "device-topic": "Geräte-Topic",
-            "full-topic": "bspw. %topic%/%prefix%/",
+            "device-topic": "Device Topic",
+            "full-topic": "e.g. %topic%/%prefix%/",
             "mqtt-address": "localhost",
             "mqtt-port": "1883",
-            "mqtt-clientid": "leer für automatisch"
+            "mqtt-clientid": "Leave blank for auto generated"
         },
         "defaults": {
             "name": "NSPanel Config"

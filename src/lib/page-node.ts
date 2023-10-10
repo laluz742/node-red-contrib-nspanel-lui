@@ -48,7 +48,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
             this.status({
                 fill: 'red',
                 shape: 'dot',
-                text: 'Panel not configured', //TODO: i18n
+                text: RED._('common.status.notAssignedToAPanel'),
             })
         } else {
             this.panelNode = panelNode
@@ -129,9 +129,9 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     public setActive(state: boolean) {
         this.isActive = state
         if (state) {
-            this.status({ fill: 'green', shape: 'dot', text: this.type + '.label.active' })
+            this.setNodeStatus('success', 'common.status.active')
         } else {
-            this.status({})
+            this.clearNodeStatus()
         }
     }
 
@@ -178,7 +178,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     private initPageNode(config: TConfig, options: IPageOptions) {
-        this.status({})
+        this.clearNodeStatus()
 
         // build event mapping index
         const allEventsMappings = config.events ?? []
