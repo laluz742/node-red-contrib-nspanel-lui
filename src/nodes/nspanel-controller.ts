@@ -91,27 +91,31 @@ module.exports = (RED) => {
 
         private init(config: NSPanelControllerConfig) {
             // build panel config
-            const panelConfig = this.panelNode.getPanelConfig()
-            panelConfig.panel.screenSaverOnStartup = config.screenSaverOnStartup
+            if (this.panelNode === null) {
+                this.setNodeStatus('error', RED._('common.status.notAssignedToAPanel'))
+            } else {
+                const panelConfig = this.panelNode.getPanelConfig()
+                panelConfig.panel.screenSaverOnStartup = config.screenSaverOnStartup
 
-            // init controller and link events
-            const controller = new NSPanelController(panelConfig, RED._)
-            this.nsPanelController = controller
-            controller.on('status', (eventArgs) => this.onControllerStatusEvent(eventArgs))
-            controller.on('sensor', (sensorData) => this.onControllerSensorEvent(sensorData))
-            controller.on('event', (eventArgs) => this.onControllerEvent(eventArgs))
+                // init controller and link events
+                const controller = new NSPanelController(panelConfig, RED._)
+                this.nsPanelController = controller
+                controller.on('status', (eventArgs) => this.onControllerStatusEvent(eventArgs))
+                controller.on('sensor', (sensorData) => this.onControllerSensorEvent(sensorData))
+                controller.on('event', (eventArgs) => this.onControllerEvent(eventArgs))
 
-            controller.registerPages(this.panelNode.getAllPages())
-            this.panelNode.on('page:register', (pageNode) => {
-                controller.registerPage(pageNode)
-            })
-            this.panelNode.on('page:deregister', (pageNode) => {
-                controller.deregisterPage(pageNode)
-            })
+                controller.registerPages(this.panelNode.getAllPages())
+                this.panelNode.on('page:register', (pageNode) => {
+                    controller.registerPage(pageNode)
+                })
+                this.panelNode.on('page:deregister', (pageNode) => {
+                    controller.deregisterPage(pageNode)
+                })
 
-            // forward RED events
-            RED.events.on('flows:starting', () => this.nsPanelController.onFlowsStarting())
-            RED.events.on('flows:started', () => this.nsPanelController.onFlowsStarted()) //TODO: need done?
+                // forward RED events
+                RED.events.on('flows:starting', () => this.nsPanelController.onFlowsStarting())
+                RED.events.on('flows:started', () => this.nsPanelController.onFlowsStarted()) //TODO: need done?
+            }
         }
 
         private onControllerEvent(eventArgs: EventArgs) {
@@ -123,23 +127,7 @@ module.exports = (RED) => {
         }
 
         private onControllerStatusEvent(eventArgs) {
-            //FIXME:
-            var statusFill: NodeStatusFill
-            switch (eventArgs.topic) {
-                case 'error':
-                    statusFill = 'red'
-                    break
-                case 'warn':
-                    statusFill = 'yellow'
-                    break
-                case 'info':
-                    statusFill = 'blue'
-                    break
-                default:
-                    statusFill = 'grey'
-            }
-
-            this.status({ fill: statusFill, shape: 'dot', text: this.type + '.' + eventArgs.msg })
+            this.setNodeStatus(eventArgs.topic, eventArgs.msg)
         }
     }
 

@@ -3,22 +3,24 @@
         "label": {
             "name": "Name",
             "panel": "NSPanel",
-            "unassigned": "not assiged"
+            "unassigned": "nicht zugewiesen"
         },
         "placeholder": {
             "name": "Name"
         },
         "status": {
-            "notAssignedToAPanel": "No NSPanel assigned"
+            "active": "Aktiv",
+            "notAssignedToAPanel": "Kein NSPanel zugeordnet"
         }
     },
-    "nspanel-hmi-control": {
+    "nspanel-screensaver": {
         "label": {
-            "palette": "HMI Control"
+            "palette": "ScreenSaver",
+            "doubleTapToExit": "Zum Verlassen doppelt tippen"
         },
         "placeholder": {},
         "defaults": {
-            "name": "HMI Control"
+            "name": "ScreenSaver"
         }
     }
 }

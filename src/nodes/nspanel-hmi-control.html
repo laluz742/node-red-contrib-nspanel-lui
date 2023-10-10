@@ -16,7 +16,7 @@
             },
 
             label: function () {
-                return this.name || NSPanelLui._('defaults.name', 'nspanel-hmi-control')
+                return NSPanelLui.Editor.util.getNodeLabel(this)
             },
 
             oneditprepare: function () {},
@@ -29,14 +29,14 @@
     <div class="form-row">
         <label for="node-input-name">
             <i class="fa fa-tag"></i>
-            <span data-i18n="nspanel-hmi-control.label.name"></span>
+            <span data-i18n="common.label.name"></span>
         </label>
-        <input type="text" id="node-input-name" />
+        <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
     </div>
     <div class="form-row">
         <label for="node-input-nsPanel">
             <i class="fa fa-television"></i>
-            <span data-i18n="nspanel-hmi-control.label.panel"></span>
+            <span data-i18n="common.label.panel"></span>
         </label>
         <input type="text" id="node-input-nsPanel" />
     </div>

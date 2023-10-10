@@ -1,0 +1,32 @@
+{
+    "nspanel-config": {
+        "label": {
+            "name": "Name",
+            "device-topic": "Geräte-Topic",
+            "full-topic": "Vollständiges Topic",
+            "brightnessScreenSaver": "Helligkeit Bildschirmschoner",
+            "brightnessActive": "Helligkeit",
+            "timeoutScreenSaver": "Standby nach (s)",
+            "tab-settings": "Einstellungen",
+            "tab-mqtt": "MQTT Broker",
+            "mqtt-address": "Adresse",
+            "mqtt-port": "Port",
+            "mqtt-clientid": "Client Id",
+            "mqtt-username": "Benutzername",
+            "mqtt-password": "Passwort",
+            "mqtt-keepalive": "Keepalive",
+            "mqtt-keepalive-seconds": "Sekunden"
+        },
+        "placeholder": {
+            "name": "Name",
+            "device-topic": "Geräte-Topic",
+            "full-topic": "bspw. %topic%/%prefix%/",
+            "mqtt-address": "localhost",
+            "mqtt-port": "1883",
+            "mqtt-clientid": "leer für automatisch"
+        },
+        "defaults": {
+            "name": "NSPanel Config"
+        }
+    }
+}

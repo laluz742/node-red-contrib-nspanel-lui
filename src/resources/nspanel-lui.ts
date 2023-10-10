@@ -93,7 +93,7 @@ var NSPanelLui = NSPanelLui || {}
         entry: PanelEntity
         element?: any
     }
-    //#region entities
+    //#endregion entities
 
     interface PanelBasedConfig {
         id: string
@@ -124,13 +124,24 @@ var NSPanelLui = NSPanelLui || {}
 
     const DEFAULT_COLOR = '#ffffff'
 
-    const _i18n = (key: string, dict: string) => {
-        return RED._(`node-red-contrib-nspanel-lui/${dict}:${dict}.${key}`)
+    //#region i18n and labels
+    const _i18n = (key: string, dict: string, group?: string) => {
+        return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
     }
     const _normalizeLabel = function (node: any) {
         return _validate.stringIsNotNullOrEmpty(node.name) ? node.name : '[' + node.type + ':' + node.id + ']'
     }
+    const _getNodeLabel = function (node: any) {
+        var panelNode = RED.nodes.node(node.nsPanel)
 
+        var label = '[' + (panelNode ? panelNode.name : NSPanelLui._('label.unassigned', node.type, 'common')) + '] '
+        label += node.name || NSPanelLui._('defaults.name', node.type)
+
+        return label
+    }
+    //#endregion i18n and labels
+
+    //#region validation helpers
     const _validate = (function () {
         const _numberInRange = (v: any, min: number, max: number): boolean => {
             const n = Number(v)
@@ -155,7 +166,9 @@ var NSPanelLui = NSPanelLui || {}
             stringIsNotNullOrEmpty: _stringIsNotNullOrEmpty,
         }
     })()
+    //#endregion validation helpers
 
+    //#region ui generation
     const _make = (function () {
         function _makePageTypedInput(
             field: JQuery,
@@ -499,7 +512,7 @@ var NSPanelLui = NSPanelLui || {}
                             style: 'min-width: 120px; width:120px; margin-right: 10px',
                         }).appendTo(row1_1)
                         validEntities.forEach((item) => {
-                            var i18n = _i18n('common.' + item, 'nspanel-panel')
+                            var i18n = _i18n('label.' + item, 'nspanel-panel', 'common')
                             $('<option/>').val(item).text(i18n).appendTo(selectTypeField)
                         })
 
@@ -932,7 +945,9 @@ var NSPanelLui = NSPanelLui || {}
             payloadTypedInput: _makePayloadTypedInput,
         }
     })()
+    //#endregion ui generation
 
+    //#region API generation
     NSPanelLui['_'] = _i18n
 
     NSPanelLui.Editor = NSPanelLui.Editor || {
@@ -941,6 +956,8 @@ var NSPanelLui = NSPanelLui || {}
         make: _make,
         util: {
             _normalizeLabel: _normalizeLabel,
+            getNodeLabel: _getNodeLabel,
         },
     }
+    //#endregion API generation
 })(RED, $)

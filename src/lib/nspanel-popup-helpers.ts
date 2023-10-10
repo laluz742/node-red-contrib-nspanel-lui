@@ -1,4 +1,13 @@
-import { FanEntityData, LightEntityData, NotifyData, PageEntityData, PanelEntity, ShutterEntityData } from '../types'
+import {
+    FanEntityData,
+    INodeConfig,
+    LightEntityData,
+    NotifyData,
+    PageEntityData,
+    PanelEntity,
+    ShutterEntityData,
+} from '../types'
+import { NodeBase } from './node-base'
 import {
     DEFAULT_FONTSIZE,
     DEFAULT_HMI_COLOR,
@@ -11,20 +20,24 @@ import {
 import { NSPanelUtils } from './nspanel-utils'
 
 export class NSPanelPopupHelpers {
-    public static generatePopup(entity: PanelEntity, entityData: PageEntityData): string | string[] | null {
+    public static generatePopup(
+        node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData
+    ): string | string[] | null {
         var result: string | string[] = null
 
         switch (entity.type) {
             case 'fan':
-                result = NSPanelPopupHelpers.generatePopupFan(entity, entityData)
+                result = NSPanelPopupHelpers.generatePopupFan(node, entity, entityData)
                 break
 
             case 'light':
-                result = NSPanelPopupHelpers.generatePopupLight(entity, entityData)
+                result = NSPanelPopupHelpers.generatePopupLight(node, entity, entityData)
                 break
 
             case 'shutter':
-                result = NSPanelPopupHelpers.generatePopupShutter(entity, entityData)
+                result = NSPanelPopupHelpers.generatePopupShutter(node, entity, entityData)
                 break
 
             case 'thermo':
@@ -61,7 +74,11 @@ export class NSPanelPopupHelpers {
         return result.join(STR_LUI_DELIMITER)
     }
 
-    private static generatePopupFan(entity: PanelEntity, entityData: PageEntityData): string | string[] | null {
+    private static generatePopupFan(
+        node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData
+    ): string | string[] | null {
         const fanEntityData: FanEntityData = <FanEntityData>entityData
         const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
 
@@ -78,7 +95,11 @@ export class NSPanelPopupHelpers {
         return result.join('~')
     }
 
-    private static generatePopupLight(entity: PanelEntity, entityData: PageEntityData): string | string[] | null {
+    private static generatePopupLight(
+        node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData
+    ): string | string[] | null {
         const lightEntityData: LightEntityData = <LightEntityData>entityData
         const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
 
@@ -100,7 +121,11 @@ export class NSPanelPopupHelpers {
         return result.join(STR_LUI_DELIMITER)
     }
 
-    private static generatePopupShutter(entity: PanelEntity, entityData: PageEntityData): string | string[] | null {
+    private static generatePopupShutter(
+        node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData
+    ): string | string[] | null {
         const shutterEntityData: ShutterEntityData = <ShutterEntityData>entityData // TODO: type guard
         const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
 

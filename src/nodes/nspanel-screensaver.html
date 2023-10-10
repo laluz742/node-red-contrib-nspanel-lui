@@ -22,7 +22,7 @@
             color: 'rgb( 50, 120, 190)',
 
             defaults: {
-                name: { value: NSPanelLui._('defaults.name', 'nspanel-screensaver') },
+                name: { value: '' },
                 nsPanel: { value: '', type: 'nspanel-panel', required: true },
                 doubleTapToExit: { value: false },
                 timeout: { value: null },
@@ -31,13 +31,7 @@
             },
 
             label: function () {
-                var panelNode = RED.nodes.node(this.nsPanel)
-
-                var label =
-                    '[' + (panelNode ? panelNode.name : NSPanelLui._('label.unassigned', 'nspanel-screensaver')) + '] '
-                label += this.name || NSPanelLui._('defaults.name', 'nspanel-screensaver')
-
-                return label
+                return NSPanelLui.Editor.util.getNodeLabel(this)
             },
 
             oneditprepare: function () {
@@ -75,12 +69,12 @@
                 tabs.addTab({
                     id: 'nspanel-page-tab-general',
                     iconClass: 'fa fa-cog',
-                    label: NSPanelLui._('common.general', 'nspanel-panel'),
+                    label: NSPanelLui._('label.general', 'nspanel-panel', 'common'),
                 })
                 tabs.addTab({
                     id: 'nspanel-page-tab-events',
                     iconClass: 'fa fa-list',
-                    label: NSPanelLui._('common.events', 'nspanel-panel'),
+                    label: NSPanelLui._('label.events', 'nspanel-panel', 'common'),
                 })
             },
             oneditsave: function () {
@@ -102,15 +96,15 @@
             <div class="form-row">
                 <label for="node-input-name">
                     <i class="fa fa-tag"></i>
-                    <span data-i18n="nspanel-screensaver.label.name"></span>
+                    <span data-i18n="common.label.name"></span>
                 </label>
-                <input type="text" id="node-input-name" />
+                <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
             </div>
 
             <div class="form-row">
                 <label for="node-input-nsPanel">
                     <i class="fa fa-television"></i>
-                    <span data-i18n="nspanel-screensaver.label.panel"></span>
+                    <span data-i18n="common.label.panel"></span>
                 </label>
                 <input type="text" id="node-input-nsPanel" />
             </div>

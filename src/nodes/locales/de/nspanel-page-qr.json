@@ -3,23 +3,23 @@
         "label": {
             "name": "Name",
             "panel": "NSPanel",
-            "title": "Title",
-            "unassigned": "not assiged",
-            "panelTimeout": "Stand-by timeout override",
-            "panelTimeoutSeconds": "seconds"
+            "title": "Überschrift",
+            "unassigned": "nicht zugewiesen",
+            "panelTimeout": "Stand-by Überschreibung",
+            "seconds": "Sekunden"
         },
         "placeholder": {
             "name": "Name"
         },
         "status": {
-            "active": "Active",
-            "notAssignedToAPanel": "No NSPanel assigned"
+            "active": "Aktiv",
+            "notAssignedToAPanel": "Kein NSPanel zugeordnet"
         }
     },
     "nspanel-page-qr": {
         "label": {
             "palette": "QR",
-            "qrCode": "QR Code"
+            "qrCode": "QR-Code"
         },
         "placeholder": {},
         "defaults": {

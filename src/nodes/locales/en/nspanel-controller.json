@@ -1,28 +1,33 @@
 {
-    "nspanel-controller": {
+    "common": {
         "label": {
-            "palette": "Panel Controller",
-            "panel": "NSPanel",
             "name": "Name",
-            "unassigned": "nicht zugewiesen",
-            "screenSaverOnStartup": "Bildschirmschoner nach Start aktivieren"
+            "panel": "NSPanel",
+            "unassigned": "not assiged"
         },
         "placeholder": {
             "name": "Name"
         },
+        "status": {
+            "notAssignedToAPanel": "No NSPanel assigned",
+            "waitForPages": "Waiting for pages",
+            "tooManyScreenSaver": "Too many screensaver nodes found",
+            "noScreenSaverPage": "No screensaver found",
+            "panelInit": "Initializing panel",
+            "panelStarted": "Panel started"
+        }
+    },
+    "nspanel-controller": {
+        "label": {
+            "palette": "Panel Controller",
+            "screenSaverOnStartup": "Activate screensaver after startup"
+        },
         "defaults": {
             "name": "Controller"
         },
-        "ctrl": {
-            "waitForPages": "Warte auf Seiten",
-            "tooManyScreenSaver": "Mehr als ein Bildschirmschoner",
-            "noScreenSaverPage": "Kein Bildschirmschoner",
-            "panelInit": "Initialisiere Panel",
-            "panelStarted": "Panel gestartet"
-        },
         "panel": {
             "offline": "Offline",
-            "serverStopped": "Server angehalten"
+            "serverStopped": "Server stopped"
         }
     }
 }

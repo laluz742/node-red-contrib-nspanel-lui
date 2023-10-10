@@ -8,3 +8,5 @@ export declare type SplitTime = {
     hours: number
     minutes: number
 }
+
+export type StatusLevel = 'error' | 'warn' | 'info' | 'success' | null

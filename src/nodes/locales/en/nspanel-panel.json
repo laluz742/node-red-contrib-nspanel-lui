@@ -1,46 +1,48 @@
 {
+    "common": {
+        "label": {
+            "general": "General",
+            "events": "Events",
+            "entities": "Entities",
+            "delete": "blank",
+            "shutter": "Shutter",
+            "light": "Light",
+            "fan": "Fan",
+            "input_sel": "Input",
+            "timer": "Timer",
+            "switch": "Switch",
+            "number": "Number",
+            "button": "Button",
+            "text": "Text",
+            "hvac_action": "Action"
+        }
+    },
     "nspanel-panel": {
         "label": {
             "palette": "NSPanel",
-            "panelConfig": "NSPanel-Konfiguration",
+            "panelConfig": "NSPanel Configuration",
             "name": "Name",
-            "device-topic": "Geräte-Topic",
-            "full-topic": "Vollständiges Topic",
-            "displayBrightness": "Display-Helligkeit",
-            "panelTimeout": "Stand by nach",
-            "seconds": "Sekunden",
-            "brightness": "Helligkeit",
-            "brightnessScreenSaver": "Tag",
-            "brightnessScreenSaverNight": "Nacht",
-            "brightnessStartTime": "ab Uhrzeit:",
+            "device-topic": "Device Topic",
+            "full-topic": "Full Topic",
+            "displayBrightness": "Display Brightness",
+            "panelTimeout": "Standby timeout",
+            "seconds": "Seconds",
+            "brightness": "Brightness",
+            "brightnessScreenSaver": "Day",
+            "brightnessScreenSaverNight": "Night",
+            "brightnessStartTime": "Starting time:",
             "brightnessStandBy": "Stand by:",
-            "brightnessActive": "Aktiv:",
-            "detachRelays": "Tasten von Relais entkoppeln",
-            "telePeriod": "Telemtrie-Intervall"
+            "brightnessActive": "Active:",
+            "detachRelays": "Decouple buttons from relays",
+            "telePeriod": "Telemetry Period"
         },
         "placeholder": {
             "name": "Name",
-            "device-topic": "Geräte-Topic",
-            "full-topic": "bspw. panels/%topic%/%prefix%/"
+            "device-topic": "Device Topic",
+            "full-topic": "e.g. panels/%topic%/%prefix%/"
         },
         "defaults": {
             "name": "NSPanel"
-        },
-        "common": {
-            "general": "Allgemein",
-            "events": "Ereignisse",
-            "entities": "Elemente",
-            "delete": "leer",
-            "shutter": "Rollladen",
-            "light": "Licht",
-            "fan": "Ventilator",
-            "input_sel": "Eingang",
-            "timer": "Timer",
-            "switch": "Schalter",
-            "number": "Zahl",
-            "button": "Taste",
-            "text": "Text",
-            "hvac_action": "Aktion"
         }
     }
 }

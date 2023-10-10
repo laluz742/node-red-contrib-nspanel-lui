@@ -25,14 +25,11 @@ module.exports = (RED) => {
 
             if (!panelNode || panelNode.type !== 'nspanel-panel') {
                 this.warn('Panel configuration is wrong or missing, please review the node settings') //FIXME i18n panel missing
-                this.status({
-                    fill: 'red',
-                    shape: 'dot',
-                    text: 'Panel not configured', //TODO: i18n
-                })
+                this.setNodeStatus('error', RED._('common.status.notAssignedToAPanel'))
             } else {
                 this.panelNode = panelNode
                 this.panelNode.registerPage(this)
+                this.clearNodeStatus()
             }
 
             this.on('close', (done: () => void) => this._onClose(done))
