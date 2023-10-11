@@ -1,4 +1,3 @@
-import { Logger } from '../lib/logger'
 import { NodeBase } from '../lib/node-base'
 
 import {
@@ -10,13 +9,11 @@ import {
     NodeRedSendCallback,
 } from '../types'
 
-const log = Logger('NSPanelHMIControlNode')
-
 interface NSPanelNavToConfig extends IPageConfig {}
 
 module.exports = (RED) => {
     class NSPanelHMIControlNode extends NodeBase<NSPanelNavToConfig> implements IPageNode {
-        private panelNode: IPanelNode = null
+        private panelNode: IPanelNode | null = null
 
         constructor(config: NSPanelNavToConfig) {
             super(config, RED)
@@ -38,7 +35,7 @@ module.exports = (RED) => {
             )
         }
 
-        private _onHmiControlInput(msg: NodeMessageInFlow, send: NodeRedSendCallback, done: NodeRedOnErrorCallback) {
+        private _onHmiControlInput(msg: NodeMessageInFlow, _send: NodeRedSendCallback, done: NodeRedOnErrorCallback) {
             if ('payload' in msg && typeof msg['payload'] === 'string') {
                 this.emit('nav:page', msg.payload)
             }
@@ -46,23 +43,23 @@ module.exports = (RED) => {
         }
 
         private _onClose(done: () => void) {
-            this.panelNode.deregisterPage(this)
+            this.panelNode?.deregisterPage(this)
             done()
         }
 
-        public getPageType(): string {
+        public getPageType() {
             return '@hmi-control'
         }
 
-        public generatePage(): string | string[] {
+        public generatePage() {
             return ''
         }
 
-        public generatePopupDetails(type: string, entityId: string): string | string[] {
+        public generatePopupDetails(_type: string, _entityId: string) {
             return null
         }
 
-        public setActive(state: boolean): void {}
+        public setActive(_state: boolean) {}
 
         public isScreenSaver(): boolean {
             return false
@@ -72,7 +69,7 @@ module.exports = (RED) => {
             return this.panelNode
         }
 
-        public getTimeout(): number {
+        public getTimeout() {
             return null
         }
     }

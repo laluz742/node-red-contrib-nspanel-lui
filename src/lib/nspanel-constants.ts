@@ -8,6 +8,7 @@ export const STR_ENABLE: string = 'enable'
 export const STR_DISABLE: string = 'disable'
 export const STR_LUI_DELIMITER: string = '~'
 
+export const STR_CMD_LUI_ENTITYUPDATE: string = 'entityUpd'
 export const STR_CMD_LUI_ENTITYUPDATEDETAIL: string = 'entityUpdateDetail'
 
 export const STR_CMD_TASMOTA_DETACH_RELAYS = 'SetOption73'

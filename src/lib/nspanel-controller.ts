@@ -75,12 +75,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         //TODO: if empty nav to last page
 
         if (this.cache.isPageKnown(pageId)) {
-            var pageNode: IPageNode | undefined = this.cache.getPage(pageId)
+            var pageNode: IPageNode | null = this.cache.getPage(pageId)
             if (pageNode !== null) {
                 const pageHistory: IPageHistory = {
                     historyType: 'page',
                     pageNode: pageNode,
-                    popupType: null,
                 }
                 this.setCurrentPage(pageHistory)
             }
@@ -95,7 +94,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         const allKnownPages: IPageNode[] = this.cache.getAllKnownPages()
-        var pageNodeId: string = null
+        var pageNodeId: string | null = null
         for (var i = 0; i < allKnownPages.length; i++) {
             if (allKnownPages[i].name == page) {
                 pageNodeId = allKnownPages[i].id
@@ -103,7 +102,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             }
         }
 
-        if (pageNodeId !== null) {
+        if (pageNodeId != null) {
             this.onPageIdNavigationRequest(pageNodeId)
         }
     }
@@ -127,10 +126,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (page === undefined) return
 
         this.cache.removePage(page)
-        const currentPage: IPageHistory = this.getCurrentPage()
-        const currentPageNode: IPageNode = currentPage?.pageNode
+        const currentPage: IPageHistory | null = this.getCurrentPage()
+        const currentPageNode: IPageNode | null = currentPage?.pageNode ?? null
 
-        if (currentPage !== undefined && page.id == currentPageNode.id) {
+        if (currentPage != null && page.id == currentPageNode?.id) {
             //TODO: check if all pages have bExit events... so long... restart panel
             this.activateStartupPage() //FIXME: navigate to bExit or activate scrensaver?
         }
@@ -158,7 +157,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const notifyHistory: IPageHistory = {
             historyType: 'notify',
             entityId: notifyData.notifyId ?? 'notify.' + uuidv4(),
-            pageNode: null,
             notifyData: notifyData,
         }
 
@@ -277,9 +275,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onPageUpdateRequest(page: IPageNode): void {
-        const currentPage: IPageHistory = this.getCurrentPage()
-        const currentPageNode: IPageNode = currentPage?.pageNode
-        if (currentPage !== undefined && currentPageNode?.id == page.id) {
+        const currentPage = this.getCurrentPage()
+        const currentPageNode = currentPage?.pageNode
+        if (currentPage != null && currentPageNode?.id == page.id) {
             this.renderPage(currentPage)
         }
     }
@@ -296,7 +294,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         //delay startup until pages had time to register
         if (this.delayPanelStartupFlag) return
 
-        this.panelUpdater.setHmiVersion(startupEventArgs.hmiVersion)
+        this.panelUpdater?.setHmiVersion(startupEventArgs.hmiVersion)
         this.emit('status', { type: 'info', msg: 'common.status.panelInit' })
 
         // prepare dim mode
@@ -369,11 +367,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private renderPage(pageHistory: IPageHistory, fullUpdate: boolean = false) {
-        const pageNode: IPageNode = pageHistory?.pageNode
+        const pageNode = pageHistory?.pageNode
 
         switch (pageHistory.historyType) {
             case 'page':
-                if (pageNode !== null) {
+                if (pageNode != null) {
                     if (fullUpdate) {
                         this.sendToPanel(`pageType~${pageNode.getPageType()}`)
                         this.sendTimeoutToPanel(pageNode.getTimeout())
@@ -384,7 +382,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 break
 
             case 'popup':
-                if (pageNode !== null) {
+                if (pageNode != null && pageHistory.popupType && pageHistory.entityId) {
                     this.updatePopup(pageNode, pageHistory.popupType, pageHistory.entityId)
                 }
                 break
@@ -396,7 +394,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onPopupOpen(eventArgs: EventArgs) {
-        const currentPage: IPageHistory | undefined = this.getCurrentPage()
+        const currentPage = this.getCurrentPage()
 
         if (currentPage !== null) {
             const popupHistory: IPageHistory = {
@@ -426,16 +424,24 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     private notifyCurrentPageOfEvent(event: string, eventArgs: EventArgs) {
         var currentPage: IPageHistory | null = this.getCurrentPage()
-        if (currentPage !== null) {
-            this.notifyPageNode(currentPage?.pageNode, event, eventArgs)
-        }
+
+        this.notifyPageNode(currentPage?.pageNode, event, eventArgs)
     }
 
     private notifyPageNode(page: IPageNode, event: string, eventArgs: EventArgs) {
-        if (page !== null) {
+        if (page != null) {
             const nodeMsg = {
                 topic: eventArgs.type,
                 payload: Object.assign({}, eventArgs),
+            }
+            // when hw buttons do not control power outputs translate to event
+            if (
+                this.panelConfig.panel.detachRelays &&
+                eventArgs.type == 'hw' &&
+                eventArgs.event == 'button' &&
+                eventArgs.event2 == 'press'
+            ) {
+                nodeMsg.topic = 'event'
             }
 
             page.emit(event, nodeMsg)
@@ -509,8 +515,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private sendToPanel(data: Array<string> | string) {
-        if (this.panelMqttHandler === null) return
+    private sendToPanel(data: Array<string> | string | null) {
+        if (data == null || this.panelMqttHandler === null) return
 
         if (typeof data === 'object') {
             for (var d in data) {

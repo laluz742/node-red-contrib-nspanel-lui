@@ -1,5 +1,6 @@
 build/
 deploy.bat
+*.tsbuildinfo
 
 # npm
 package-lock.json

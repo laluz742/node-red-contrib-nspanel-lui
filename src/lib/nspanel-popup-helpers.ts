@@ -23,9 +23,9 @@ export class NSPanelPopupHelpers {
     public static generatePopup(
         node: NodeBase<INodeConfig>,
         entity: PanelEntity,
-        entityData: PageEntityData
+        entityData: PageEntityData | null
     ): string | string[] | null {
-        var result: string | string[] = null
+        var result: string | string[] | null = null
 
         switch (entity.type) {
             case 'fan':
@@ -51,7 +51,7 @@ export class NSPanelPopupHelpers {
     }
 
     public static generatePopupNotify(notifyData?: NotifyData): string | string[] | null {
-        if (notifyData === undefined || notifyData === null || typeof notifyData !== 'object') {
+        if (notifyData == null || typeof notifyData !== 'object') {
             return null
         }
 
@@ -75,10 +75,12 @@ export class NSPanelPopupHelpers {
     }
 
     private static generatePopupFan(
-        node: NodeBase<INodeConfig>,
+        _node: NodeBase<INodeConfig>,
         entity: PanelEntity,
-        entityData: PageEntityData
+        entityData: PageEntityData | null
     ): string | string[] | null {
+        if (entityData == null) return null
+
         const fanEntityData: FanEntityData = <FanEntityData>entityData
         const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
 
@@ -92,14 +94,16 @@ export class NSPanelPopupHelpers {
         result.push(fanEntityData?.mode ?? STR_EMPTY) // current mode value
         result.push(`${entity.fanMode1}?${entity.fanMode2}?${entity.fanMode3}`)
 
-        return result.join('~')
+        return result.join(STR_LUI_DELIMITER)
     }
 
     private static generatePopupLight(
-        node: NodeBase<INodeConfig>,
+        _node: NodeBase<INodeConfig>,
         entity: PanelEntity,
-        entityData: PageEntityData
+        entityData: PageEntityData | null
     ): string | string[] | null {
+        if (entityData == null) return null
+
         const lightEntityData: LightEntityData = <LightEntityData>entityData
         const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
 
@@ -111,8 +115,8 @@ export class NSPanelPopupHelpers {
         const colorTemp = entity.hasColorTemperature ? lightEntityData?.colorTemperature : STR_DISABLE
         const colorMode = entity.hasColor ? '1' : STR_DISABLE // FIXME: check with HMI
         result.push(NSPanelUtils.toHmiState(lightEntityData?.active ?? 0))
-        result.push(brightness)
-        result.push(colorTemp)
+        result.push(brightness ?? '')
+        result.push(colorTemp ?? '')
         result.push(colorMode)
         result.push(entity.hasColor ? 'Farbe' : STR_EMPTY) //FIXME: i18n
         result.push(entity.hasColorTemperature ? 'Lichttemperatur' : STR_EMPTY) //FIXME: i18n
@@ -122,10 +126,12 @@ export class NSPanelPopupHelpers {
     }
 
     private static generatePopupShutter(
-        node: NodeBase<INodeConfig>,
+        _node: NodeBase<INodeConfig>,
         entity: PanelEntity,
-        entityData: PageEntityData
+        entityData: PageEntityData | null
     ): string | string[] | null {
+        if (entityData == null) return null
+
         const shutterEntityData: ShutterEntityData = <ShutterEntityData>entityData // TODO: type guard
         const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
 

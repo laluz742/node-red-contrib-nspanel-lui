@@ -13,6 +13,7 @@ coverage/
 jest.config.js
 tsconfig.json
 *.bat
+*.tsbuildinfo
 
 *.tgz
 *.backup

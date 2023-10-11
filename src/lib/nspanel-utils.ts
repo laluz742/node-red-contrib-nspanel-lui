@@ -1,11 +1,11 @@
 import { IconProvider } from './icon-provider'
 import { ActiveCharacteristic, HSVColor, PanelColor, RGBColor, RGBHSVTuple, SplitTime } from '../types'
 import { NSPanelColorUtils } from './nspanel-colorutils'
-import { DEFAULT_HMI_COLOR } from './nspanel-constants'
+import { DEFAULT_HMI_COLOR, STR_LUI_DELIMITER } from './nspanel-constants'
 
 export class NSPanelUtils {
-    public static getIcon(name: string): string {
-        return IconProvider.GetIcon(name) ?? ''
+    public static getIcon(name: string | undefined | null): string {
+        return name != null ? IconProvider.GetIcon(name) ?? '' : ''
     }
 
     public static makeEntity(
@@ -18,11 +18,17 @@ export class NSPanelUtils {
     ): string {
         if (type === 'delete') return 'delete~~~~~'
 
-        return `${type}~${entityId ?? ''}~${icon ?? ''}~${iconColor ?? ''}~${displayName ?? ''}~${optionalValue ?? ''}`
+        return `${type}${STR_LUI_DELIMITER}${entityId ?? ''}${STR_LUI_DELIMITER}${icon ?? ''}${STR_LUI_DELIMITER}${
+            iconColor ?? ''
+        }${STR_LUI_DELIMITER}${displayName ?? ''}${STR_LUI_DELIMITER}${optionalValue ?? ''}`
     }
 
-    public static makeIcon(icon: string | null | undefined, iconColor: PanelColor | null, value?: string): string {
-        return `${icon ?? ''}${value ?? ''}~${iconColor ?? ''}`
+    public static makeIcon(
+        icon: string | null | undefined,
+        iconColor: PanelColor | undefined | null,
+        value?: string
+    ): string {
+        return `${icon ?? ''}${value ?? ''}${STR_LUI_DELIMITER}${iconColor ?? ''}`
     }
 
     // #region colors
@@ -83,11 +89,7 @@ export class NSPanelUtils {
         return active ? '1' : '0'
     }
 
-    public static convertTemperature(
-        temperature: number,
-        sourceUnit: string,
-        targetUnit: string
-    ): number | null | undefined {
+    public static convertTemperature(temperature: number, sourceUnit: string, targetUnit: string): number | null {
         if (
             sourceUnit == targetUnit ||
             NSPanelUtils.stringIsNullOrEmpty(sourceUnit) ||
@@ -97,7 +99,7 @@ export class NSPanelUtils {
 
         if (temperature === undefined || temperature == null) return temperature
 
-        var result = null
+        var result: number = NaN
         switch (targetUnit.toLowerCase()) {
             case 'c':
             case '°c':

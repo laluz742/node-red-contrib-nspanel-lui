@@ -2,15 +2,15 @@ import { NSPanelUtils } from './nspanel-utils'
 import { CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '../types'
 import { DEFAULT_HMI_COLOR } from './nspanel-constants'
 
-const DEFAULT_STATUS: StatusItemData = { icon: null, iconColor: DEFAULT_HMI_COLOR, text: null }
-const DEFAULT_DATA: PageEntityData = { icon: null, iconColor: DEFAULT_HMI_COLOR, text: null }
+const DEFAULT_STATUS: StatusItemData = { icon: undefined, iconColor: DEFAULT_HMI_COLOR, text: undefined }
+const DEFAULT_DATA: PageEntityData = { icon: undefined, iconColor: DEFAULT_HMI_COLOR, text: undefined }
 
 export class NSPanelMessageUtils {
     public static convertToStatusItemData(
         input: unknown,
         defaultStatus: StatusItemData = DEFAULT_STATUS
-    ): StatusItemData {
-        if (input === undefined) return null
+    ): StatusItemData | null {
+        if (input == null) return null
 
         //TODO: iconFont!
         var result: StatusItemData = Object.assign({}, defaultStatus)
@@ -31,7 +31,7 @@ export class NSPanelMessageUtils {
         return result
     }
 
-    public static convertToEntityItemData(input: unknown, defaultData: PageEntityData = DEFAULT_DATA): PageEntityData {
+    public static convertToEntityItemData(input: any, defaultData: PageEntityData = DEFAULT_DATA): PageEntityData {
         var result: PageEntityData = Object.assign({}, defaultData)
 
         //TODO: intNameEntity
@@ -45,7 +45,7 @@ export class NSPanelMessageUtils {
         return result
     }
 
-    public static convertToCommandData(input: unknown): CommandData | null {
+    public static convertToCommandData(input: object | Array<any>): CommandData | null {
         var commandResult: CommandData | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'cmd')) {

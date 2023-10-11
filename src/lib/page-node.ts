@@ -20,10 +20,10 @@ import { NSPanelMessageUtils } from './nspanel-message-utils'
 import { NSPanelUtils } from './nspanel-utils'
 
 export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> implements IPageNode {
-    private panelNode: IPanelNode = null
+    private panelNode: IPanelNode | null = null
     private pageNodeConfig: IPageConfig
-    protected options: IPageOptions = null
-    private __log: ILogger = null
+    protected options: IPageOptions | null = null
+    private __log: ILogger | null = null
     protected pageData: PageData = {
         entities: [],
     }
@@ -59,27 +59,23 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         this.on('input', (msg, send, done) => this._onInput(msg, send, done))
     }
 
-    public getTimeout(): number | null {
-        if (
-            this.pageNodeConfig.timeout === null ||
-            this.pageNodeConfig.timeout === undefined ||
-            this.pageNodeConfig.timeout == ''
-        )
-            return null
+    public getTimeout() {
+        if (this.pageNodeConfig.timeout == null || this.pageNodeConfig.timeout == '') return null
 
         const num = Number(this.pageNodeConfig.timeout)
         return isNaN(num) ? null : num
     }
 
     public getPageType() {
+        if (this.options == null) throw 'Illegal state'
         return this.options.pageType
     }
 
-    public generatePage(): string | string[] {
-        return ''
+    public generatePage(): string | string[] | null {
+        return null
     }
 
-    public generatePopupDetails(type: string, entityId: string): string | string[] {
+    public generatePopupDetails(_type: string, _entityId: string): string | string[] | null {
         return null
     }
 
@@ -112,13 +108,13 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         return navPrev + '~' + navNext
     }
 
-    protected requestUpdate() {
+    protected requestUpdate(): void {
         if (this.isActive) {
             this.emit('page:update', this)
         }
     }
 
-    protected sendToPanel(data) {
+    protected sendToPanel(data): void {
         this.emit('ctrl:send', { page: this, data: data })
     }
 
@@ -139,20 +135,22 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         return this.panelNode
     }
 
-    protected handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
+    protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
         return false
     }
 
-    protected prePageNavigationEvent(eventArgs: EventArgs, eventConfig: EventMapping) {
+    protected prePageNavigationEvent(_eventArgs: EventArgs, _eventConfig: EventMapping): boolean {
         return true
     }
 
-    private handlePageNavigationEvent(eventArgs: EventArgs, eventConfig: EventMapping) {
+    private handlePageNavigationEvent(_eventArgs: EventArgs, eventConfig: EventMapping): void {
         //FIXME: better naming
         this.emit('nav:pageId', eventConfig.value)
     }
 
-    private handlePageMessageEvent(eventArgs: EventArgs, eventConfig: EventMapping, send: NodeRedSendCallback) {
+    private handlePageMessageEvent(_eventArgs: EventArgs, eventConfig: EventMapping, send: NodeRedSendCallback): void {
+        if (eventConfig.value == null) return
+
         //FIXME: better naming
         var outMsg = {}
         var data: any
@@ -164,7 +162,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
 
             case 'json':
                 try {
-                    data = JSON.parse(eventConfig.data)
+                    data = eventConfig.data ? JSON.parse(eventConfig.data) : undefined
                 } catch (err: unknown) {
                     this.warn('Data not JSON compliant, sending as string') //TODO i18n
                     data = eventConfig.data
@@ -177,7 +175,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         send(outMsg)
     }
 
-    private initPageNode(config: TConfig, options: IPageOptions) {
+    private initPageNode(config: TConfig, _options: IPageOptions): void {
         this.clearNodeStatus()
 
         // build event mapping index
@@ -190,7 +188,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         this.configuredEvents = cfgEvents
     }
 
-    private _onInput(msg: PageInputMessage, send: NodeRedSendCallback, done: NodeRedOnErrorCallback) {
+    private _onInput(msg: PageInputMessage, send: NodeRedSendCallback, done: NodeRedOnErrorCallback): void {
         // forward message to node output
         send(msg) // TODO: really? or just consume?
 
@@ -198,7 +196,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
             switch (msg.topic) {
                 case 'event':
                     const eventArgs = <EventArgs>msg.payload
-                    const uiEventHandled = this._handleUiEventInput(eventArgs, send)
+                    const uiEventHandled = this._handleUiEvent(eventArgs, send)
                     if (!uiEventHandled) {
                         this._handleInput(msg, send)
                     }
@@ -217,13 +215,13 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     private _handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-        var handled: boolean = false
+        var handled = false
 
         try {
             handled = this.handleInput(msg, send)
         } catch (err: unknown) {
             if (err instanceof Error) {
-                this.__log.error('Error handling input: ' + err.message)
+                this.__log?.error('Error handling input: ' + err.message)
             }
         }
 
@@ -238,7 +236,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         return handled
     }
 
-    private _handleDataInputInternal(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
+    private _handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
         var result: PageEntityData[] = []
 
         //TODO: take msg.parts or index into account to allow to set specific status
@@ -251,44 +249,49 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
             })
         }
 
-        this.pageData.entities = result.slice(0, this.options.maxEntities ?? 0)
+        this.pageData.entities = result.slice(0, this.options?.maxEntities ?? 0)
         return true
     }
 
-    private _handleUiEventInput(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
+    private _handleUiEvent(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
         var handled = false
 
+        // translate possible hardware button press when hw buttons do not controll power outputs (@see
+        const event2 = eventArgs.type == 'hw' ? eventArgs.type + '.' + eventArgs.source : eventArgs.event2
+
         // event mapped in config?
-        if (this.configuredEvents.has(eventArgs.event2)) {
-            const cfgEvent = this.configuredEvents.get(eventArgs.event2)
+        if (event2 != null && this.configuredEvents.has(event2)) {
+            const cfgEvent = this.configuredEvents.get(event2)
 
-            switch (cfgEvent.t) {
-                // mapped to navigation action
-                case 'page':
-                    const preHandleResult = this.prePageNavigationEvent(eventArgs, cfgEvent)
-                    if (preHandleResult !== false) {
-                        this.handlePageNavigationEvent(eventArgs, cfgEvent)
-                    }
-                    handled = true
-                    break
+            if (cfgEvent) {
+                switch (cfgEvent.t) {
+                    // mapped to navigation action
+                    case 'page':
+                        const preHandleResult = this.prePageNavigationEvent(eventArgs, cfgEvent)
+                        if (preHandleResult !== false) {
+                            this.handlePageNavigationEvent(eventArgs, cfgEvent)
+                        }
+                        handled = true
+                        break
 
-                // mapped to out msg
-                case 'msg':
-                    this.handlePageMessageEvent(eventArgs, cfgEvent, send)
-                    handled = true
-                    break
+                    // mapped to out msg
+                    case 'msg':
+                        this.handlePageMessageEvent(eventArgs, cfgEvent, send)
+                        handled = true
+                        break
+                }
             }
         }
 
         return handled
     }
 
-    private registerAtPanel() {
-        this.panelNode.registerPage(this)
+    private registerAtPanel(): void {
+        this.panelNode?.registerPage(this)
     }
 
     private _onClose(done: () => void) {
-        this.panelNode.deregisterPage(this)
+        this.panelNode?.deregisterPage(this)
         done()
     }
 }

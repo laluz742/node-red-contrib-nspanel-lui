@@ -15,7 +15,7 @@ export type PanelColor = number | string | number[]
 
 export type PanelEntityType = typeof PANEL_ENTITY_TYPES
 
-export interface PanelEntity {
+export type PanelEntity = {
     type: string
     text?: string
     icon?: string

@@ -8,6 +8,7 @@ const MAX_ENTITIES = 4
 
 module.exports = (RED) => {
     class PageEntitiesNode extends EntitiesPageNode<PageEntitiesConfig> {
+        // @ts-ignore 6133
         private config: PageEntitiesConfig = undefined
 
         constructor(config: PageEntitiesConfig) {

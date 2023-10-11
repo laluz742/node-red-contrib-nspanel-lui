@@ -1,4 +1,4 @@
-import { IEntityBasedPageConfig, PageCache } from '../types'
+import { IEntityBasedPageConfig, PageCacheData } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
 
 interface PageQRConfig extends IEntityBasedPageConfig {
@@ -11,7 +11,7 @@ const MAX_ENTITIES = 2
 module.exports = (RED) => {
     class QrPageNode extends EntitiesPageNode<PageQRConfig> {
         private config: PageQRConfig
-        private pageCache: PageCache = null
+        private pageCache: PageCacheData = null
 
         constructor(config: PageQRConfig) {
             super(config, RED, { pageType: PAGE_TYPE, maxEntities: MAX_ENTITIES })

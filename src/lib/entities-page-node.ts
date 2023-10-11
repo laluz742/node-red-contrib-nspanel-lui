@@ -1,21 +1,21 @@
 import {
     IPageOptions,
     IEntityBasedPageConfig,
-    PageCache,
+    PageCacheData,
     PanelEntity,
     NodeAPI,
     PageInputMessage,
     NodeRedSendCallback,
     PageEntityData,
 } from '../types'
-import { DEFAULT_HMI_COLOR } from './nspanel-constants'
+import { DEFAULT_HMI_COLOR, STR_CMD_LUI_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 import { NSPanelUtils } from './nspanel-utils'
 import { PageNode } from './page-node'
 
 export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends PageNode<TConfig> {
     protected entitiesPageNodeConfig: IEntityBasedPageConfig
-    private entitiesPageNodePageCache: PageCache = null
+    private entitiesPageNodePageCache: PageCacheData = null
     private entities: Map<string, PanelEntity> = new Map<string, PanelEntity>()
     private entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>()
 
@@ -29,7 +29,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         })
     }
 
-    protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
+    protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback) {
         switch (msg.topic) {
             case 'data':
                 //copy cached data
@@ -38,8 +38,8 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
                 var dirty = false
 
                 // TODO: dirty management
-                entityInputData.forEach((item, idx) => {
-                    if ('entityId' in item) {
+                entityInputData.forEach((item) => {
+                    if (item && 'entityId' in item) {
                         const entityId = item.entityId ?? null
                         if (entityId !== null && this.entities.has(entityId)) {
                             entityData.set(entityId, item)
@@ -58,10 +58,10 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         return false
     }
 
-    public generatePage(): string | string[] {
+    public generatePage(): string | string[] | null {
         if (this.hasPageCache()) return this.getPageCache()
 
-        var result = ['entityUpd']
+        var result: string[] = [STR_CMD_LUI_ENTITYUPDATE]
         result.push(this.entitiesPageNodeConfig.title ?? '')
         const titleNav = this.generateTitleNav()
         result.push(titleNav)
@@ -69,22 +69,21 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         const entitites = this.generateEntities()
         result.push(entitites)
 
-        const pageData: string = result.join('~')
+        const pageData: string = result.join(STR_LUI_DELIMITER)
         this.setPageCache(pageData)
 
         return pageData
     }
 
-    public generatePopupDetails(type: string, entityId: string): string | string[] | null {
+    public generatePopupDetails(_type: string, entityId: string): string | string[] | null {
         const entities = this.entitiesPageNodeConfig.entities ?? []
 
         var entity: PanelEntity = entities.filter((entity) => entity.entityId == entityId)[0] ?? null
 
-        if (entity !== null) {
-            const entityData: PageEntityData = this.entityData.get(entity.entityId)
+        if (entity != null) {
+            const entityData = this.entityData.get(entity.entityId)
 
-            if (entity !== null) {
-                //FIXME: meaning entityData???
+            if (entityData != null) {
                 const result = NSPanelPopupHelpers.generatePopup(this, entity, entityData)
                 return result
             }
@@ -98,17 +97,18 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         return entities
     }
 
-    protected getEntityData(entityId: string): PageEntityData | undefined {
-        const entityData: PageEntityData = this.entityData.get(entityId)
-        return entityData
+    protected getEntityData(entityId: string): PageEntityData | null {
+        const entityData = this.entityData.get(entityId)
+        return entityData ?? null
     }
 
     protected generateEntities(): string {
-        var resultEntities = []
+        var resultEntities: string[] = []
+
         const entities = this.getEntities()
-        for (var i = 0; i < this.options.maxEntities && i < entities.length; i++) {
+        for (var i = 0; this.options ? i < this.options.maxEntities : true && i < entities.length; i++) {
             var entityConfig = entities[i]
-            const entityData: PageEntityData = this.getEntityData(entityConfig.entityId)
+            const entityData = this.getEntityData(entityConfig.entityId)
             const optionalValue = entityData?.value ?? entityConfig.optionalValue
 
             const icon = entityData?.icon ?? entityConfig.icon
@@ -126,7 +126,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
             resultEntities.push(entity)
         }
 
-        return resultEntities.join('~')
+        return resultEntities.join(STR_LUI_DELIMITER)
     }
 
     // #region cache
@@ -134,11 +134,11 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         return this.entitiesPageNodePageCache !== null
     }
 
-    protected getPageCache(): PageCache {
+    protected getPageCache(): PageCacheData {
         return this.entitiesPageNodePageCache
     }
 
-    protected setPageCache(data: PageCache): void {
+    protected setPageCache(data: PageCacheData): void {
         this.entitiesPageNodePageCache = data
     }
 

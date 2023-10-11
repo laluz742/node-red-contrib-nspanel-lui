@@ -12,13 +12,13 @@ import {
 
 export type PageId = string
 export type ConfiguredEventsMap = Map<string, EventMapping>
-export type PageCache = string | string[] | null
+export type PageCacheData = string | string[] | null
 
-export interface PanelBasedConfig extends INodeConfig {
+export type PanelBasedConfig = INodeConfig & {
     nsPanel: string
 }
 
-export interface IPageConfig extends PanelBasedConfig {
+export type IPageConfig = PanelBasedConfig & {
     timeout: number | string
     title: string | undefined
 
@@ -31,16 +31,16 @@ export interface IEntityBasedPageConfig extends IPageConfig {
 
 export declare interface IPageOptions {
     pageType: string
-    maxEntities?: number
+    maxEntities: number
 }
 
 export interface IPageNode extends INodeConfig {
     getPageType(): string
-    generatePage(): string | string[]
-    generatePopupDetails(type: string, entityId: string): string | string[]
+    generatePage(): string | string[] | null
+    generatePopupDetails(type: string, entityId: string): string | string[] | null
     isScreenSaver(): boolean
     setActive(state: boolean): void
-    getPanel(): IPanelNode
+    getPanel(): IPanelNode | null
     getTimeout(): number | null
 
     emit(event: string | symbol, ...args: any[]): boolean
@@ -49,6 +49,9 @@ export interface IPageNode extends INodeConfig {
     on(event: 'nav:page', listener: PageIdEventCallbackType): void
     on(event: 'input', listener: PageOnInputCallback): void
 }
+
+export interface EntitiesPageNode extends IPageNode {}
+
 export declare interface PageData {
     entities: PageEntityData[]
 }

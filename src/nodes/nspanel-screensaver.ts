@@ -1,13 +1,5 @@
 import { PageNode } from '../lib/page-node'
-import {
-    EventArgs,
-    EventMapping,
-    IPageConfig,
-    NodeRedSendCallback,
-    PageData,
-    PageInputMessage,
-    StatusItemData,
-} from '../types'
+import { EventArgs, EventMapping, IPageConfig, NodeRedSendCallback, PageInputMessage, StatusItemData } from '../types'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 
@@ -15,16 +7,12 @@ interface ScreenSaverConfig extends IPageConfig {
     doubleTapToExit: boolean
 }
 
-interface ScreenSaverPageData extends PageData {
-    status: StatusItemData[]
-}
-
 const MAX_ENTITIES = 6
 
 module.exports = (RED) => {
     class ScreenSaverNode extends PageNode<ScreenSaverConfig> {
         private config: ScreenSaverConfig
-        protected statusData: StatusItemData[] = [undefined, undefined]
+        protected statusData: StatusItemData[] = []
 
         constructor(config: ScreenSaverConfig) {
             super(config, RED, { pageType: 'screensaver', maxEntities: MAX_ENTITIES })
@@ -36,7 +24,7 @@ module.exports = (RED) => {
             return true
         }
 
-        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
+        protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
             if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return false
 
             switch (msg.topic) {
@@ -50,7 +38,7 @@ module.exports = (RED) => {
         }
 
         public generatePage(): string | string[] {
-            var result = []
+            var result: string[] = []
 
             const statusUpdate = this.generateStatusUpdate()
             if (statusUpdate) result.push(statusUpdate)
@@ -61,9 +49,9 @@ module.exports = (RED) => {
             return result
         }
 
-        public prePageNavigationEvent(eventArgs: EventArgs, eventConfig: EventMapping) {
+        public prePageNavigationEvent(eventArgs: EventArgs, _eventConfig: EventMapping) {
             if (eventArgs.event2 == 'bExit' && this.config.doubleTapToExit) {
-                return eventArgs.value >= 2
+                return eventArgs.value ? eventArgs.value >= 2 : false
             }
 
             return true
@@ -75,9 +63,8 @@ module.exports = (RED) => {
             }
 
             var cmd = 'statusUpdate~'
-            var cmdParams = []
+            var cmdParams: string[] = []
 
-            const data = this.statusData
             for (var idx = 0; idx < 2; idx++) {
                 const item = this.statusData[idx]
                 var tmp: string =
@@ -99,7 +86,7 @@ module.exports = (RED) => {
             }
 
             var result = 'weatherUpdate~'
-            var resultEntities = []
+            var resultEntities: string[] = []
             const data = this.pageData.entities
 
             for (var i in data) {
@@ -108,7 +95,7 @@ module.exports = (RED) => {
                     '',
                     '',
                     NSPanelUtils.getIcon(item.icon),
-                    NSPanelUtils.toHmiIconColor(item.iconColor),
+                    NSPanelUtils.toHmiIconColor(item.iconColor ?? NaN),
                     item.text,
                     item.value
                 )
@@ -129,14 +116,16 @@ module.exports = (RED) => {
             if (Array.isArray(statusInputData)) {
                 for (var i = 0; i < 2; i++) {
                     if (statusInputData[i] !== undefined) {
-                        const item = NSPanelMessageUtils.convertToStatusItemData(statusInputData[i])
+                        const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
+                            statusInputData[i]
+                        ) as StatusItemData
                         const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', i)
                         statusItems[idx] = item
                     }
                 }
             } else {
                 if (statusInputData !== undefined) {
-                    const item = NSPanelMessageUtils.convertToStatusItemData(statusInputData)
+                    const item = NSPanelMessageUtils.convertToStatusItemData(statusInputData) as StatusItemData
                     const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', 0)
                     statusItems[idx] = item
                 }

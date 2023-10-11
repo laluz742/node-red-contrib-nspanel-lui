@@ -1,4 +1,4 @@
-import { IEntityBasedPageConfig, PageCache } from '../types'
+import { IEntityBasedPageConfig } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
 
 interface PageGridConfig extends IEntityBasedPageConfig {}
@@ -8,6 +8,7 @@ const MAX_ENTITIES = 6
 
 module.exports = (RED) => {
     class PageGridNode extends EntitiesPageNode<PageGridConfig> {
+        // @ts-ignore 6133
         private config: PageGridConfig = undefined
 
         constructor(config: PageGridConfig) {
