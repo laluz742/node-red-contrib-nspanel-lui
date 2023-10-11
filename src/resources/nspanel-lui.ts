@@ -210,14 +210,6 @@ var NSPanelLui = NSPanelLui || {}
             allValidEvents: ValidEventSpec[],
             initialData: EventMapping[]
         ) {
-            const _api = {
-                setPanel: (_panel) => {}, //FIXME: update on panel changed
-                addItems: (items) => _addItems(items),
-                empty: () => _empty(),
-                getEvents: () => _getEvents(),
-                setAvailableEvents: (allValidEvents: ValidEventSpec[]) => _setAvailableEvents(allValidEvents),
-            }
-
             const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
                 node.nsPanel,
                 allValidEvents
@@ -432,7 +424,13 @@ var NSPanelLui = NSPanelLui || {}
             _makeControl()
             _addItems(initialData)
 
-            return _api
+            return {
+                setPanel: (_panel) => {}, //FIXME: update on panel changed
+                addItems: (items) => _addItems(items),
+                empty: () => _empty(),
+                getEvents: () => _getEvents(),
+                setAvailableEvents: (allValidEvents: ValidEventSpec[]) => _setAvailableEvents(allValidEvents),
+            }
         }
         // #endregion editable event list
 

@@ -50,7 +50,12 @@
                             nsPanelId,
                             ALL_VALID_EVENTS_BASE
                         )
-                        editableEventList?.setAvailableEvents(allValidEvents)
+                        if (
+                            editableEventList != null &&
+                            Object.prototype.hasOwnProperty.call(editableEventList, 'setAvailableEvents')
+                        ) {
+                            editableEventList.setAvailableEvents(allValidEvents)
+                        }
 
                         eventInputControl.show()
                     }

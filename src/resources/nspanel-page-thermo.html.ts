@@ -3,7 +3,8 @@
     const ALLOWED_ENTITIES = ['delete', 'hvac_action']
     const ALL_VALID_EVENTS_BASE: ValidEventSpec[] = NSPanelLui.Events.allNavigationEvents
 
-    var editableEventList, editableEntitiesList
+    var editableEventList = null,
+        editableEntitiesList = null
 
     const registerType = () =>
         RED.nodes.registerType('nspanel-page-thermo', {
@@ -103,7 +104,12 @@
                             nsPanelId,
                             ALL_VALID_EVENTS_BASE
                         )
-                        editableEventList?.setAvailableEvents(allValidEvents)
+                        if (
+                            editableEventList != null &&
+                            Object.prototype.hasOwnProperty.call(editableEventList, 'setAvailableEvents')
+                        ) {
+                            editableEventList.setAvailableEvents(allValidEvents)
+                        }
 
                         eventInputControl.show()
                     }
