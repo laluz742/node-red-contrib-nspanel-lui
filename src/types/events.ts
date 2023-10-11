@@ -8,8 +8,8 @@ export type ValidEventSpec = {
 
 export declare type EventMapping = {
     event: string
-    value: string
-    t: string
+    value: string | null
+    t: string | null
     data?: string
     dataType?: string
     icon?: string

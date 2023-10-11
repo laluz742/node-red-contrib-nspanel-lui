@@ -1,36 +1,39 @@
 ;(function ($) {
-    RED.nodes.registerType('nspanel-config', {
-        category: 'config',
+    const registerType = () =>
+        RED.nodes.registerType('nspanel-config', {
+            category: 'config',
 
-        defaults: {
-            name: { value: NSPanelLui._('defaults.name', 'nspanel-config') },
+            defaults: {
+                name: { value: NSPanelLui._('defaults.name', 'nspanel-config') },
 
-            broker: { value: '', required: true },
-            port: {
-                value: 1883,
-                required: true,
-                validate: RED.validators.number(),
+                broker: { value: '', required: true },
+                port: {
+                    value: 1883,
+                    required: true,
+                    validate: RED.validators.number(),
+                },
+                clientId: { value: '' },
+                keepAlive: { value: 60, validate: RED.validators.number() },
+                useTls: { value: false },
+                cleanSession: { value: false },
             },
-            clientId: { value: '' },
-            keepAlive: { value: 60, validate: RED.validators.number() },
-            useTls: { value: false },
-            cleanSession: { value: false },
-        },
 
-        credentials: {
-            mqttUsername: { type: 'text' },
-            mqttPassword: { type: 'password' },
-        },
+            credentials: {
+                mqttUsername: { type: 'text' },
+                mqttPassword: { type: 'password' },
+            },
 
-        label: function () {
-            return this.name || NSPanelLui._('defaults.name', 'nspanel-config')
-        },
+            label: function () {
+                return this.name || NSPanelLui._('defaults.name', 'nspanel-config')
+            },
 
-        oneditprepare: function () {
-            if (typeof this.keepAlive === 'undefined') {
-                this.keepAlive = 60
-                $('#node-config-input-keepAlive').val(this.keepAlive)
-            }
-        },
-    })
+            oneditprepare: function () {
+                if (typeof this.keepAlive === 'undefined') {
+                    this.keepAlive = 60
+                    $('#node-config-input-keepAlive').val(this.keepAlive)
+                }
+            },
+        })
+
+    $.getScript('resources/node-red-contrib-nspanel-lui/nspanel-lui.js').done(registerType)
 })(jQuery)

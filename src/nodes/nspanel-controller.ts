@@ -1,4 +1,3 @@
-import { Logger } from '../lib/logger'
 import { NodeBase } from '../lib/node-base'
 import {
     CommandData,
@@ -19,12 +18,10 @@ interface NSPanelControllerConfig extends PanelBasedConfig {
     screenSaverOnStartup: boolean
 }
 
-const log = Logger('NSPanelControllerNode')
-
 module.exports = (RED) => {
     class NSPanelControllerNode extends NodeBase<NSPanelControllerConfig> {
-        private nsPanelController: IPanelController = null
-        private panelNode: IPanelNodeEx = null
+        private nsPanelController: IPanelController | null = null
+        private panelNode: IPanelNodeEx | null = null
         private config: NSPanelControllerConfig
 
         constructor(config: NSPanelControllerConfig) {
@@ -39,7 +36,7 @@ module.exports = (RED) => {
         }
 
         private onClose(done: NodeRedOnErrorCallback) {
-            this.nsPanelController.dispose()
+            this.nsPanelController?.dispose()
             done()
         }
 
@@ -54,7 +51,7 @@ module.exports = (RED) => {
 
                 case 'notify':
                     const notifyData: NotifyData = <NotifyData>msg.payload
-                    this.nsPanelController.showNotification(notifyData)
+                    this.nsPanelController?.showNotification(notifyData)
                     break
             }
 
@@ -73,7 +70,7 @@ module.exports = (RED) => {
                 }
             })
 
-            this.nsPanelController.executeCommand(allCommands)
+            this.nsPanelController?.executeCommand(allCommands)
 
             /*TODO: Beep command   switch (payload.cmd) {
                    case 'beep':
@@ -112,8 +109,8 @@ module.exports = (RED) => {
                 })
 
                 // forward RED events
-                RED.events.on('flows:starting', () => this.nsPanelController.onFlowsStarting())
-                RED.events.on('flows:started', () => this.nsPanelController.onFlowsStarted()) //TODO: need done?
+                RED.events.on('flows:starting', () => this.nsPanelController?.onFlowsStarting())
+                RED.events.on('flows:started', () => this.nsPanelController?.onFlowsStarted()) //TODO: need done?
             }
         }
 

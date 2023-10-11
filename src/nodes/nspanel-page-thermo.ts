@@ -8,7 +8,7 @@ import {
 } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
-import { DEFAULT_HMI_COLOR } from '../lib/nspanel-constants'
+import { DEFAULT_HMI_COLOR, STR_CMD_LUI_ENTITYUPDATE } from '../lib/nspanel-constants'
 
 interface PageThermoConfig extends IEntityBasedPageConfig {
     /* options */
@@ -63,9 +63,9 @@ detailButton (1=hide)
 
 module.exports = (RED) => {
     class PageThermoNode extends EntitiesPageNode<PageThermoConfig> {
-        private config: PageThermoConfig = undefined
+        private config: PageThermoConfig | null = null
         private data: PageThermoData = {
-            targetTemperature: null,
+            targetTemperature: NaN,
             currentTemperature: null,
             status: null,
         }
@@ -82,43 +82,46 @@ module.exports = (RED) => {
             this.data.targetTemperature = this.config.targetTemperature
         }
 
-        public override generatePage(): string | string[] {
+        public override generatePage(): string | string[] | null {
             if (this.hasPageCache()) return this.getPageCache()
 
-            var result = []
-            result.push('entityUpd')
+            var result: string[] = []
+            result.push(STR_CMD_LUI_ENTITYUPDATE)
 
             result.push(this.entitiesPageNodeConfig.title ?? '')
             const titleNav = this.generateTitleNav()
             result.push(titleNav)
 
-            result.push(this.config.name) //TODO: should be configurable entityId?
+            result.push(this.config?.name ?? '') //TODO: should be configurable entityId?
 
             const currTemp =
                 this.data.currentTemperature == null || isNaN(this.data.currentTemperature)
                     ? ''
-                    : this.data.currentTemperature.toFixed(1) + ' °' + this.config.temperatureUnit
+                    : this.data.currentTemperature.toFixed(1) + ' °' + this.config?.temperatureUnit
+
+            const targetTemp = this.data.targetTemperature * TEMPERATURE_RESOLUTION_FACTOR ?? 0
+
+            const minHeatSetPoint: number = this.config?.minHeatSetpointLimit ?? 0 * TEMPERATURE_RESOLUTION_FACTOR
+            const maxHeatSetPoint: number = this.config?.maxHeatSetpointLimit ?? 0 * TEMPERATURE_RESOLUTION_FACTOR
+            const tempStep = Number(this.config?.temperatureSteps) * TEMPERATURE_RESOLUTION_FACTOR //TODO: NaN check
             result.push(currTemp)
-
-            result.push(this.data.targetTemperature * TEMPERATURE_RESOLUTION_FACTOR ?? 0)
+            result.push(targetTemp.toString())
             result.push(this.data.status ?? '')
-            result.push(this.config.minHeatSetpointLimit * TEMPERATURE_RESOLUTION_FACTOR)
-            result.push(this.config.maxHeatSetpointLimit * TEMPERATURE_RESOLUTION_FACTOR)
-
-            const tempStep = Number(this.config.temperatureSteps) * TEMPERATURE_RESOLUTION_FACTOR //TODO: NaN check
-            result.push(tempStep)
+            result.push(minHeatSetPoint.toString())
+            result.push(maxHeatSetPoint.toString())
+            result.push(tempStep.toString())
 
             const actions = this.generateActions()
             result.push(actions)
 
-            result.push(this.config.currentTemperatureLabel ?? '')
-            result.push(this.config.statusLabel ?? '')
+            result.push(this.config?.currentTemperatureLabel ?? '')
+            result.push(this.config?.statusLabel ?? '')
             result.push('')
-            result.push('°' + this.config.temperatureUnit)
+            result.push('°' + this.config?.temperatureUnit)
 
             result.push('') //TODO: second target temperature
 
-            result.push(this.config.showDetailsPopup ? '' : '1')
+            result.push(this.config?.showDetailsPopup ? '' : '1')
 
             const pageData = result.join('~')
             this.setPageCache(pageData)
@@ -126,12 +129,12 @@ module.exports = (RED) => {
         }
 
         protected generateActions(): string {
-            var resultActions = []
+            var resultActions: string[] = []
             const entities = this.getEntities()
 
-            for (var i = 0; i < this.options.maxEntities && i < entities.length; i++) {
+            for (var i = 0; (this.options ? i < this.options.maxEntities : true) && i < entities.length; i++) {
                 var entityConfig = entities[i]
-                const entityData: PageEntityData = this.getEntityData(entityConfig.entityId)
+                const entityData: PageEntityData | null = this.getEntityData(entityConfig.entityId)
 
                 const icon = entityData?.icon ?? entityConfig.icon
                 const iconColor = entityData?.iconColor ?? entityConfig.iconColor
@@ -147,8 +150,10 @@ module.exports = (RED) => {
 
                 resultActions.push(entity)
             }
-            for (; i < this.options.maxEntities; i++) {
-                resultActions.push(ACTION_EMPTY)
+            if (this.options) {
+                for (; i < this.options.maxEntities; i++) {
+                    resultActions.push(ACTION_EMPTY)
+                }
             }
 
             return resultActions.join('~')
@@ -172,16 +177,18 @@ module.exports = (RED) => {
 
             switch (msg.topic) {
                 case 'sensor':
-                    if (this.config.useOwnTempSensor) {
+                    if (this.config?.useOwnTempSensor) {
                         var sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
-                        const tempMeasurement = NSPanelUtils.convertTemperature(
-                            sensorEventArgs.temp,
-                            sensorEventArgs.tempUnit.toString(),
-                            this.config.temperatureUnit
-                        )
-                        if (tempMeasurement != this.data.currentTemperature) {
-                            this.data.currentTemperature = tempMeasurement
-                            dirty = true
+                        if (sensorEventArgs.temp) {
+                            const tempMeasurement = NSPanelUtils.convertTemperature(
+                                sensorEventArgs.temp,
+                                sensorEventArgs.tempUnit?.toString() ?? '',
+                                this.config.temperatureUnit
+                            )
+                            if (tempMeasurement != this.data.currentTemperature) {
+                                this.data.currentTemperature = tempMeasurement
+                                dirty = true
+                            }
                         }
                     }
                     break

@@ -1,10 +1,7 @@
-import { Logger } from '../lib/logger'
 import { NodeBase } from '../lib/node-base'
 import { INodeConfig, IPanelConfigNode, PanelMqttConfig, VoidCallback } from '../types'
 
 module.exports = (RED) => {
-    const log = Logger('NSPanelConfigNode')
-
     interface NSPanelConfig extends INodeConfig, PanelMqttConfig {}
 
     interface NSPanelMqttCreds {

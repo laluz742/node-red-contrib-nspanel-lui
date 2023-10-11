@@ -45,14 +45,14 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
     sendToPanel(data: any) {
         // FIXME: check data (payload == null | undefined...??...)
         if (data === undefined || data === null) return
-
+        const self = this
         try {
             if (Array.isArray(data)) {
                 data.forEach(function (temp) {
-                    this.mqttClient?.publish(this.panelMqttCustomCommandTopic, temp.payload)
+                    self.mqttClient?.publish(self.panelMqttCustomCommandTopic, temp.payload)
                 })
             } else {
-                this.mqttClient?.publish(this.panelMqttCustomCommandTopic, data.payload)
+                self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data.payload)
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -171,8 +171,8 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             case this.panelMqttSensorTopic:
                 try {
                     const temp = JSON.parse(payloadStr)
-                    let sensorEvent: SensorEventArgs = NSPanelMessageParser.parseSensorEvent(temp)
-                    if (sensorEvent !== null) {
+                    let sensorEvent: SensorEventArgs | null = NSPanelMessageParser.parseSensorEvent(temp)
+                    if (sensorEvent != null) {
                         this.emit('sensor', sensorEvent)
                     }
                 } catch (err: unknown) {

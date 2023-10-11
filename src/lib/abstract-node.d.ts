@@ -9,7 +9,7 @@ export declare abstract class AbstractRedNode<TConfig extends INodeConfig, TCred
     id: string
     type: string
     z: string
-    name: string | undefined
+    name: string
     credentials: TCreds
 
     emit(event: string | symbol, ...args: any[]): boolean

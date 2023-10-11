@@ -25,19 +25,19 @@ export class SimpleControllerCache implements IControllerCache {
     public resetHistory(): void {
         const newHistory: IPageHistory[] = []
 
-        const lastPageOnHistory: IPageHistory = this.findLastPageInHistory()
-        if (lastPageOnHistory !== null) {
+        const lastPageOnHistory = this.findLastPageInHistory()
+        if (lastPageOnHistory != null) {
             newHistory.push(lastPageOnHistory)
         }
 
         this.history = newHistory
     }
 
-    public findLastPageInHistory(): IPageHistory {
+    public findLastPageInHistory(): IPageHistory | null {
         if (this.history.length > 0) {
             const currentHistory: IPageHistory[] = this.history.map((x) => x)
 
-            var lastHistoryOfTypePage: IPageHistory = null
+            var lastHistoryOfTypePage: IPageHistory | null = null
             for (var i = currentHistory.length - 1; i >= 0; i--) {
                 if (currentHistory[i].historyType == 'page') {
                     lastHistoryOfTypePage = currentHistory[i]

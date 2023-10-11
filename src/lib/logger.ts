@@ -3,7 +3,7 @@ import { IRedNode } from '../types'
 const dateOptions: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }
 const timeOptions: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric' }
 
-type LogFunction = (message: string, node?: IRedNode<any>) => void
+type LogFunction = (message: string | undefined, node?: IRedNode<any>) => void
 export interface ILogger {
     info: LogFunction
     warn: LogFunction
@@ -26,20 +26,26 @@ const logMessage = (callback: Function, facility: string, prefix: string, node?:
 }
 
 export const Logger = (prefix: string): ILogger => {
-    const logError: LogFunction = (message: string, node?: IRedNode<any>) => {
-        node?.error(message)
+    const logError: LogFunction = (message: string | undefined, node?: IRedNode<any>) => {
+        if (message != null) {
+            node?.error(message)
 
-        logMessage(console.error, 'error', prefix, node)(message)
+            logMessage(console.error, 'error', prefix, node)(message)
+        }
     }
 
-    const logWarn: LogFunction = (message: string, node?: IRedNode<any>) => {
-        node?.warn(message)
+    const logWarn: LogFunction = (message: string | undefined, node?: IRedNode<any>) => {
+        if (message != null) {
+            node?.warn(message)
 
-        logMessage(console.warn, 'warn', prefix, node)(message)
+            logMessage(console.warn, 'warn', prefix, node)(message)
+        }
     }
 
-    const logInfo: LogFunction = (message: string, node?: IRedNode<any>) => {
-        logMessage(console.log, 'info', prefix, node)(message)
+    const logInfo: LogFunction = (message: string | undefined, node?: IRedNode<any>) => {
+        if (message != null) {
+            logMessage(console.log, 'info', prefix, node)(message)
+        }
     }
 
     var logger: ILogger = {

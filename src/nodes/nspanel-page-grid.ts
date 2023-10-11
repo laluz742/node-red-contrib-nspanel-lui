@@ -8,6 +8,7 @@ const MAX_ENTITIES = 6
 
 module.exports = (RED) => {
     class PageGridNode extends EntitiesPageNode<PageGridConfig> {
+        // @ts-ignore 6133
         private config: PageGridConfig = undefined
 
         constructor(config: PageGridConfig) {

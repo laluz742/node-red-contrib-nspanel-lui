@@ -10,6 +10,7 @@ const MAX_ENTITIES = 8
 
 module.exports = (RED) => {
     class PagePowerNode extends EntitiesPageNode<PageEntitiesConfig> {
+        // @ts-ignore 6133
         private config: PageEntitiesConfig = undefined
 
         constructor(config: PageEntitiesConfig) {
@@ -23,9 +24,9 @@ module.exports = (RED) => {
         }
 
         protected override generateEntities(): string {
-            var resultEntities = []
+            var resultEntities: string[] = []
             const entities = this.getEntities()
-            for (var i = 0; i < this.options.maxEntities && i < entities.length; i++) {
+            for (var i = 0; this.options ? i < this.options.maxEntities : true && i < entities.length; i++) {
                 var entityConfig = entities[i]
                 var entity = NSPanelUtils.makeEntity(
                     entityConfig.type,

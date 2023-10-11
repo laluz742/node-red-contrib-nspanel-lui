@@ -4,7 +4,7 @@ export type PageMap = Map<string, IPageNode>
 
 export interface IPageHistory {
     historyType: 'page' | 'popup' | 'notify'
-    pageNode: IPageNode
+    pageNode?: IPageNode
     popupType?: string
     entityId?: string
     notifyData?: NotifyData
@@ -15,7 +15,7 @@ export interface IControllerCache {
     getCurrentPage(): IPageHistory | null
     addToHistory(pageHistory: IPageHistory): void
     resetHistory(): void
-    findLastPageInHistory(): IPageHistory
+    findLastPageInHistory(): IPageHistory | null
     removeLastFromHistory(): void
     getLastFromHistory(): IPageHistory
 

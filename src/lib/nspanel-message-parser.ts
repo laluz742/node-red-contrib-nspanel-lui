@@ -43,8 +43,8 @@ export class NSPanelMessageParser {
         return result
     }
 
-    public static parseSensorEvent(input: any): SensorEventArgs {
-        let result: SensorEventArgs = null
+    public static parseSensorEvent(input: any): SensorEventArgs | null {
+        let result: SensorEventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'ANALOG')) {
             const analogSensorData = input['ANALOG']
@@ -164,7 +164,7 @@ export class NSPanelMessageParser {
                     case 'OnOff':
                         eventArgs.source = parts[2]
                         eventArgs.entityId = parts[2]
-                        eventArgs.active = NSPanelMessageUtils.toBoolean(parts[4])
+                        eventArgs.active = NSPanelMessageUtils.toBoolean(parts[4]) || undefined
                         break
 
                     case 'number-set':

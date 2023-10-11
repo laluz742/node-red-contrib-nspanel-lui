@@ -1,14 +1,14 @@
 export const IconProvider = {
-    GetIcon: (name: string) => {
-        if (_ICONS.has(name)) {
-            return _ICONS.get(name)
+    GetIcon: (key: string): string => {
+        if (_ICONS.has(key)) {
+            return _ICONS.get(key) ?? ''
         }
 
-        return name
+        return key
     },
 }
 
-const _ICONS = new Map([
+const _ICONS = new Map<string, string>([
     ['ab-testing', ''],
     ['abacus', ''],
     ['abjad-arabic', ''],

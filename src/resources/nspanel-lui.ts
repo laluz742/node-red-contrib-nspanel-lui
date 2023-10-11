@@ -53,9 +53,26 @@ var NSPanelLui = NSPanelLui || {}
         { event: 'nav.next', label: 'nav.next' },
     ]
     const _allValidButtonEvents = [
-        { event: 'nav.prev', label: 'nav.prev' },
-        { event: 'nav.next', label: 'nav.next' },
+        { event: 'hw.button1', label: 'hw.button1' },
+        { event: 'hw.button2', label: 'hw.button2' },
     ]
+
+    const _addHardwareButtonEventsIfApplicable = (
+        nsPanelId: string,
+        validEventsBase: ValidEventSpec[]
+    ): ValidEventSpec[] => {
+        var result = validEventsBase
+
+        var panelNode = RED.nodes.node(nsPanelId)
+        if (panelNode) {
+            const detachedRelays = panelNode.detachRelays ?? false
+            if (detachedRelays === true) {
+                result = validEventsBase.concat(NSPanelLui.Events.allButtonEvents)
+            }
+        }
+
+        return result
+    }
 
     //#endregion events
 
@@ -125,8 +142,8 @@ var NSPanelLui = NSPanelLui || {}
     //#endregion validation helpers
 
     //#region ui generation
-    const _make = (function () {
-        function _makePageTypedInput(
+    const _create = (function () {
+        function _createPageTypedInput(
             field: JQuery,
             defaultType: string,
             nodeConfig: PanelBasedConfig,
@@ -169,7 +186,7 @@ var NSPanelLui = NSPanelLui || {}
             field.typedInput(typedInputParams)
         }
 
-        function _makePayloadTypedInput(field, defaultType = undefined) {
+        function _createPayloadTypedInput(field, defaultType = undefined) {
             return field.typedInput({
                 default: defaultType || 'str',
                 //['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 'env'],
@@ -187,14 +204,32 @@ var NSPanelLui = NSPanelLui || {}
 
         // #region editable event list
 
-        const _makeEditableEventList = function (
+        const _createEditableEventList = function (
             node: IPageConfig,
             controlDomSelector: string,
             allValidEvents: ValidEventSpec[],
             initialData: EventMapping[]
         ) {
-            var pageEvents = {
-                all: allValidEvents.slice(),
+            const _api = {
+                setPanel: (_panel) => {}, //FIXME: update on panel changed
+                addItems: (items) => _addItems(items),
+                empty: () => _empty(),
+                getEvents: () => _getEvents(),
+                setAvailableEvents: (allValidEvents: ValidEventSpec[]) => _setAvailableEvents(allValidEvents),
+            }
+
+            const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
+                node.nsPanel,
+                allValidEvents
+            )
+
+            var updateLock = false
+            var pageEvents: {
+                all: ValidEventSpec[]
+                available: string[]
+                used: string[]
+            } = {
+                all: allValidEventsWithHardwareButtons,
                 available: [],
                 used: [],
             }
@@ -203,21 +238,22 @@ var NSPanelLui = NSPanelLui || {}
             const domControl = $(controlDomSelector) //TODO: if (domControl.length = 0) => not found
             const domControlList = domControl.prop('tagName') == 'ol' ? domControl : domControl.find('ol')
 
-            if (domControlList.length == 0) return //TODO: if (domControl.length = 0) => not found
+            if (domControlList.length == 0) return {} //TODO: if (domControl.length = 0) => not found
 
-            var updateLock = false
-            function _updateSelectEventFields(fieldToFocus = null) {
+            function _updateSelectEventFields(): void {
                 if (updateLock) return
 
                 updateLock = true
-                var usedEvents = []
-                var avaiableEvents = []
-                var eventInputNode = []
+                var usedEvents: string[] = []
+                var avaiableEvents: string[] = []
+                var eventInputNode: any[] = []
 
-                domControl.find('.node-input-event').each((i, ele) => {
-                    usedEvents.push($(ele).val())
+                domControl.find('.node-input-event').each((_i, ele) => {
+                    const v = $(ele).val() as string
+                    if (v) usedEvents.push(v)
                     eventInputNode.push($(ele))
                 })
+
                 pageEvents.all.forEach((item) => {
                     if (!usedEvents.includes(item.event)) avaiableEvents.push(item.event)
                 })
@@ -239,6 +275,11 @@ var NSPanelLui = NSPanelLui || {}
                 updateLock = false
             }
 
+            function _setAvailableEvents(allValidEvents: ValidEventSpec[]): void {
+                pageEvents.all = allValidEvents.slice()
+                _updateSelectEventFields()
+            }
+
             function _makeControl() {
                 var editableListAddButton
                 function _updateEditableListAddButton() {
@@ -247,12 +288,12 @@ var NSPanelLui = NSPanelLui || {}
                 }
 
                 domControlList.editableList({
-                    addItem: function (container, i, data: EventMappingContainer) {
+                    addItem: function (container, _i, data: EventMappingContainer) {
                         _updateEditableListAddButton()
                         data.element = container
 
                         if (!data.hasOwnProperty('entry')) {
-                            data.entry = { event: pageEvents.available[0], t: undefined, value: undefined }
+                            data.entry = { event: pageEvents.available[0], t: null, value: null }
                         }
                         var entry = data.entry
                         if (!entry.hasOwnProperty('event')) {
@@ -301,17 +342,17 @@ var NSPanelLui = NSPanelLui || {}
                             style: 'width: 100%',
                         }).appendTo(row2_2)
 
-                        _makePageTypedInput(valueField, entry.t, node, 'nsPanel')
-                        _makePayloadTypedInput(valueDataField)
+                        _createPageTypedInput(valueField, entry.t, node, 'nsPanel')
+                        _createPayloadTypedInput(valueDataField)
                         // #endregion create fragment
 
                         // placeholder for following call to update event select fields
-                        selectEventField.append($('<option />').val(pageEvents.available[0]))
+                        selectEventField.append($('<option />').val(entry.event ?? pageEvents.available[0]))
 
                         selectEventField.on('change', () => {
                             _updateSelectEventFields()
                         })
-                        valueField.on('change', (event, type, value) => {
+                        valueField.on('change', (_event, type, _value) => {
                             if (type == 'msg') {
                                 row2.show()
                             } else {
@@ -335,12 +376,12 @@ var NSPanelLui = NSPanelLui || {}
                         _updateSelectEventFields()
                     },
 
-                    removeItem: function (listItem) {
+                    removeItem: function (_listItem) {
                         _updateSelectEventFields()
                         _updateEditableListAddButton()
                     },
 
-                    sortItems: function (events) {},
+                    sortItems: function (_events) {},
 
                     sortable: true,
                     removable: true,
@@ -364,15 +405,15 @@ var NSPanelLui = NSPanelLui || {}
             }
 
             function _getEvents() {
-                var events = []
+                var events: EventMapping[] = []
                 var eventItems = domControlList.editableList('items')
 
-                eventItems.each((i, ele) => {
+                eventItems.each((_i, ele) => {
                     const listItem = $(ele)
 
                     var entry: EventMapping
-                    const eventName = listItem.find('select').val().toString()
-                    const icon = listItem.find('.node-input-event-icon').val().toString()
+                    const eventName = listItem?.find('select')?.val()?.toString() ?? ''
+                    const icon = listItem?.find('.node-input-event-icon')?.val()?.toString() ?? ''
                     const entryT = listItem.find('.node-input-event-value').typedInput('type').toString()
                     const entryValue = listItem.find('.node-input-event-value').typedInput('value').toString()
 
@@ -391,33 +432,34 @@ var NSPanelLui = NSPanelLui || {}
             _makeControl()
             _addItems(initialData)
 
-            return {
-                setPanel: (panel) => {}, //FIXME: update on panel changed
-                addItems: (items) => _addItems(items),
-                empty: () => _empty(),
-                getEvents: () => _getEvents(),
-            }
+            return _api
         }
         // #endregion editable event list
 
         // #region editable entity list
-        const _makeEditableEntitiesList = function (
-            node: IPageConfig,
+        const _createEditableEntitiesList = function (
+            _node: IPageConfig,
             controlDomSelector: string,
             maxEntities: number,
             initialData: PanelEntity[],
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
         ) {
+            const _api = {
+                addItems: (items) => _addItems(items),
+                empty: () => _empty(),
+                getEntities: () => _getEntities(),
+            }
+
             const domControl = $(controlDomSelector) //TODO: if (domControl.length = 0) => not found
             const domControlList = domControl.prop('tagName') == 'ol' ? domControl : domControl.find('ol')
 
-            if (domControlList.length == 0) return //TODO: if (domControl.length = 0) => not found
+            if (domControlList.length == 0) return _api //TODO: if (domControl.length = 0) => not found
 
             function _makeControl() {
                 var editableListAddButton
                 var count: number = 0
                 domControlList.editableList({
-                    addItem: function (container, i, data: PanelEntityContainer) {
+                    addItem: function (container, _i, data: PanelEntityContainer) {
                         count++
                         if (count >= maxEntities) {
                             editableListAddButton.prop('disabled', true)
@@ -679,6 +721,7 @@ var NSPanelLui = NSPanelLui || {}
                         }).appendTo(rowLight_2)
 
                         // #endregion rowLight
+                        // #endregion create fragment
 
                         selectTypeField.on('change', () => {
                             const val = '' + selectTypeField.val()
@@ -743,11 +786,11 @@ var NSPanelLui = NSPanelLui || {}
                         container[0].append(fragment)
                     },
 
-                    removeItem: function (listItem) {
+                    removeItem: function (_listItem) {
                         count--
                     },
 
-                    sortItems: function (events) {},
+                    sortItems: function (_events) {},
 
                     sortable: true,
                     removable: true,
@@ -770,10 +813,10 @@ var NSPanelLui = NSPanelLui || {}
             }
 
             function _getEntities() {
-                var entities = []
+                var entities: PanelEntity[] = []
                 var entityItems = domControlList.editableList('items')
 
-                entityItems.each((i, ele) => {
+                entityItems.each((_i, ele) => {
                     var entity: PanelEntity
                     const listItem = $(ele)
 
@@ -886,19 +929,15 @@ var NSPanelLui = NSPanelLui || {}
             _makeControl()
             _addItems(initialData)
 
-            return {
-                addItems: (items) => _addItems(items),
-                empty: () => _empty(),
-                getEntities: () => _getEntities(),
-            }
+            return _api
         }
         // #endregion editable entity list
 
         return {
-            editableEntitiesList: _makeEditableEntitiesList,
-            editableEventList: _makeEditableEventList,
-            pageTypedInput: _makePageTypedInput,
-            payloadTypedInput: _makePayloadTypedInput,
+            editableEntitiesList: _createEditableEntitiesList,
+            editableEventList: _createEditableEventList,
+            pageTypedInput: _createPageTypedInput,
+            payloadTypedInput: _createPayloadTypedInput,
         }
     })()
     //#endregion ui generation
@@ -909,7 +948,7 @@ var NSPanelLui = NSPanelLui || {}
     NSPanelLui.Editor = NSPanelLui.Editor || {
         _: _i18n,
         validate: _validate,
-        make: _make,
+        create: _create,
         util: {
             _normalizeLabel: _normalizeLabel,
             getNodeLabel: _getNodeLabel,
@@ -918,6 +957,7 @@ var NSPanelLui = NSPanelLui || {}
     NSPanelLui.Events = NSPanelLui.Events || {
         allNavigationEvents: _allValidNavigationEvents,
         allButtonEvents: _allValidButtonEvents,
+        addHardwareButtonEventsIfApplicable: _addHardwareButtonEventsIfApplicable,
     }
     //#endregion API generation
 })(RED, $)
