@@ -1,14 +1,31 @@
 # node-red-contrib-nspanel-lui
 
-Alpha development stage of implementing a backend for [NsPanel Lovelace UI](https://docs.nspanel.pky.eu/),
-so contributors are welcome.
+![Project Development](https://img.shields.io/badge/under-Development-blue)
+[![GitHub Release](https://img.shields.io/badge/alpha-releases-blue)](https://github.com/laluz742/node-red-contrib-nspanel-lui/releases)
+[![GitHub Activity](https://img.shields.io/github/commit-activity/m/laluz742/node-red-contrib-nspanel-lui)](https://github.com/laluz742/node-red-contrib-nspanel-lui/commits/main)
 
-Supported basic aspects for now:
+This project is in a early development stage (alpha),
+This project is in an earlier stage of development (alpha), so use at your own risk. However, in my personal daily use it runs stable.
 
--   multiple panels
--   Screensaver
--   grid card
--   entities card
--   Wifi/QR card
--   simple navigation
--   data handling and caching
+## Support & Contributing
+If you like to support this free project, any help is welcome. You can donate by clicking the following link:
+<a target="blank" href="https://www.paypal.me/laluz742"><img src="https://img.shields.io/badge/Donate-PayPal-blue.svg"/></a>
+
+Contributors are welcome.
+
+## Requirements
+The NSPanels to be used with these package must be flashed with an alternative firmware (Tasmota and custom NextIon HMI). For further details see [NsPanel Lovelace UI Docs](https://docs.nspanel.pky.eu/)
+
+This package requires at least Node-RED version 3.0.0.
+
+## Project Status
+Currently following features are supported:
+- multiple panels supported
+- screensaver with status icons
+- grid card
+- entities card
+- WiFi/QR card
+- basic implementation of thermo card
+- simple navigation between cards using screen and hardware buttons
+- input data handling
+- control of relays

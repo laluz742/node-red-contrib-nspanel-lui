@@ -13,6 +13,7 @@
         "url": "https://github.com/laluz742/node-red-contrib-nspanel-lui.git"
     },
     "node-red": {
+        "version": ">=3.0.0",
         "nodes": {
             "nspanel-config": "nodes/nspanel-config.js",
             "nspanel-panel": "nodes/nspanel-panel.js",
