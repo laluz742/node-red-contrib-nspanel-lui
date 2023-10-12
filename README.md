@@ -4,7 +4,6 @@
 [![GitHub Release](https://img.shields.io/badge/alpha-releases-blue)](https://github.com/laluz742/node-red-contrib-nspanel-lui/releases)
 [![GitHub Activity](https://img.shields.io/github/commit-activity/m/laluz742/node-red-contrib-nspanel-lui)](https://github.com/laluz742/node-red-contrib-nspanel-lui/commits/main)
 
-This project is in a early development stage (alpha),
 This project is in an earlier stage of development (alpha), so use at your own risk. However, in my personal daily use it runs stable.
 
 ## Support & Contributing
@@ -29,3 +28,7 @@ Currently following features are supported:
 - simple navigation between cards using screen and hardware buttons
 - input data handling
 - control of relays
+
+## Documentation
+
+Please see documentation in [docs folder](./docs/index.md).
