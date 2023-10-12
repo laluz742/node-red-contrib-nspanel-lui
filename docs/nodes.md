@@ -1,23 +1,26 @@
-# Main Nodes Documentation
+# Basic Nodes Documentation
 
 ## Contents
-- [Controller](#1-controller)
-- [ScreenSaver Node](#2-screensaver-node)
-- [HMI Control Node](#3-hmi-control-node)
+
+-   [Controller](#1-controller)
+-   [ScreenSaver Node](#2-screensaver-node)
+-   [HMI Control Node](#3-hmi-control-node)
 
 Further details about the page-specific nodes representing the different types of screens / cards, see [Page Nodes](./page-nodes.md)
-
 
 ## 1. Controller
 
 The controller is the basis for managing cards for the NSPanel. It integrates communication with the panel and controls the page flow.
 
 ### 1.1 Configuration
+
 _to be added later_
 
 ### 1.2 Messages
 
-#### 1.2.1 Relay control
+#### 1.2.1 Input Messages
+
+##### 1.2.1.1 Relay control
 
 The relays can be switched on or off via messages using the _cmd_ topic.
 
@@ -38,7 +41,7 @@ var switchCmdMsg = {
 | `cmd`    | "switch" for relay control                                                                                                   |
 | `params` | `id` = [`0` \| `1`]; `on` = [ `false` \| `0` \| `'0'`] to switch relay off, and [`true` \| `1` \| `'1'`] for on respectively |
 
-#### 1.2.2 Notifications
+#### 1.2.1.2 Notifications
 
 To notify the user about special events, notifications can be displayed using the following command syntax using the _notify_ topic. Notifications will be stored in the page history, so after being closed, the last page is shown.
 
@@ -73,6 +76,66 @@ To notify the user about special events, notifications can be displayed using th
 | `icon`         | optional, icon to show                                                                                                     |
 | `iconColor`    | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
 
+#### 1.2.2 Output Messages
+
+Any message received from the panel is forwarded to the output of the controller node. If a page node is active, it also forwards these messages.
+
+#### 1.2.2.1 Sensor Data
+
+Each temperature measurement reading sent from the panel is forwarded with the following message using the _sensor_ topic:
+
+```javascript
+// example message
+var sensorMsg = {
+    topic: 'sensor',
+    payload: {
+        type: 'sensor',
+        event: 'measurement',
+        source: 'temperature1',
+        temp: 23.2,
+        tempUnit: 'C',
+        date: '2023-10-12T20:00:00.000Z',
+    },
+}
+```
+
+| Key        | Type   | Description                                                |
+| ---------- | ------ | ---------------------------------------------------------- |
+| `type`     | string | `sensor`                                                   |
+| `event`    | string | `measurement`                                              |
+| `source`   | string | lower-case name used in tasmota                            |
+| `temp`     | number | temperature reading                                        |
+| `tempUnit` | string | temperature unit as configured in tasmota ([`'C'`\|`'F'`]) |
+| `date`     | string | date in ISO 8601 format                                    |
+
+#### 1.2.2.1 Relay Event
+
+When the state of a relay changes a message like the following is sent from the output of the node using the topic _hw_. If the relays are decoupled from the physical panel buttons (option _Decouple buttons from relays_ in _nspanel-panel_ configuration node), the topic _event_ is used instead.
+
+```javascript
+    // example relay state message
+    var relayStateMsg {
+        topic: 'hw',
+        payload: {
+            type: 'hw'
+            event: 'relay',
+            event2: 'state',
+            source: 'power1',
+            active: true,
+            date: '2023-10-12T20:00:00.000Z'
+        }
+    }
+```
+
+| Key      | Type    | Description                              |
+| -------- | ------- | ---------------------------------------- |
+| `type`   | string  | `hw`                                     |
+| `event`  | string  | `relay`                                  |
+| `event2` | string  | `state`                                  |
+| `source` | string  | name of relay a configured in tasmota    |
+| `active` | boolean | `true` if switched on, `false` otherwise |
+| `date`   | string  | date in ISO 8601 format                  |
+
 ### 2. ScreenSaver Node
 
 The screensaver node serves as a standby screen for your panel and is automatically activated after startup when the _Activate screensaver after startup_ option is checked in your controller node.
@@ -83,6 +146,7 @@ It can process input messages with the topic
 -   _data_ for wheater data
 
 #### 2.1 Configuration
+
 _to be added later_
 
 #### 2.2 Messages
@@ -166,20 +230,21 @@ Key | Description
 `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`).
 
 ### 3. HMI Control Node
+
 The HMI control node can be used to activate the page defined by a page nodes like _Entities_, _Grid_, or _Thermo_ by messages in the flow.
 
 #### 3.1 Configuration
+
 _to be added later_
 
 #### 3.2 Messages
+
 ```javascript
-    var hmiControlMsg = {
-        payload: '<page name>'
-    }
+var hmiControlMsg = {
+    payload: '<page name>',
+}
 ```
 
-Key | Description
--- | --
-`payload` | the name of the page node to be activated, as specified in the target node configuration
-
-
+| Key       | Description                                                                              |
+| --------- | ---------------------------------------------------------------------------------------- |
+| `payload` | the name of the page node to be activated, as specified in the target node configuration |

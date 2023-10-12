@@ -17,6 +17,8 @@ After dragging the node into your flow, please edit it to create a new NSPanel c
 To enable communication with your panel using your MQTT server, please add a new NSPanel configuration.
 
 ## Nodes
+
 There are different types of nodes
-* [main nodes](./nodes.md) to establish control, default behavior in stand-by mode and navigation flow
-* [page nodes](./page-nodes.md) defining different type of cards, that the Lovelace UI incorporates
+
+-   [main nodes](./nodes.md) to establish control, default behavior in stand-by mode and navigation flow
+-   [page nodes](./page-nodes.md) defining different type of cards, that the Lovelace UI incorporates
