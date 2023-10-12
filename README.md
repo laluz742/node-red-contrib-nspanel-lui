@@ -7,27 +7,31 @@
 This project is in an earlier stage of development (alpha), so use at your own risk. However, in my personal daily use it runs stable.
 
 ## Support & Contributing
+
 If you like to support this free project, any help is welcome. You can donate by clicking the following link:
 <a target="blank" href="https://www.paypal.me/laluz742"><img src="https://img.shields.io/badge/Donate-PayPal-blue.svg"/></a>
 
 Contributors are welcome.
 
 ## Requirements
+
 The NSPanels to be used with these package must be flashed with an alternative firmware (Tasmota and custom NextIon HMI). For further details see [NsPanel Lovelace UI Docs](https://docs.nspanel.pky.eu/)
 
 This package requires at least Node-RED version 3.0.0.
 
 ## Project Status
+
 Currently following features are supported:
-- multiple panels supported
-- screensaver with status icons
-- grid card
-- entities card
-- WiFi/QR card
-- basic implementation of thermo card
-- simple navigation between cards using screen and hardware buttons
-- input data handling
-- control of relays
+
+-   multiple panels supported
+-   screensaver with status icons
+-   grid card
+-   entities card
+-   WiFi/QR card
+-   basic implementation of thermo card
+-   simple navigation between cards using screen and hardware buttons
+-   input data handling
+-   control of relays
 
 ## Documentation
 
