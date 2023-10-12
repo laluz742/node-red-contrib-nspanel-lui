@@ -28,3 +28,7 @@ Currently following features are supported:
 - simple navigation between cards using screen and hardware buttons
 - input data handling
 - control of relays
+
+## Documentation
+
+Please see documentation in [docs folder](./docs/index.md).
