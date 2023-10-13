@@ -7,6 +7,10 @@ interface PageQRConfig extends IEntityBasedPageConfig {
 }
 
 const MAX_ENTITIES = 2
+const EMPTY_ENTITY: PanelEntity = {
+    type: 'text',
+    entityId: 'text.'
+}
 
 module.exports = (RED) => {
     class QrPageNode extends EntitiesPageNode<PageQRConfig> {
@@ -14,6 +18,16 @@ module.exports = (RED) => {
         private pageCache: PageCacheData = null
 
         constructor(config: PageQRConfig) {
+            config.entities = config.entities || []
+
+            if (config.entities.length < MAX_ENTITIES) {
+                for (var i = 0; i < MAX_ENTITIES - config.entities.length; i++) {
+                    const entityFill = Object.assign({}, EMPTY_ENTITY)
+                    entityFill.entityId += +i
+                    config.entities.push(entityFill)
+                }
+            }
+
             super(config, RED, { pageType: STR_PAGE_TYPE_CARD_QR, maxEntities: MAX_ENTITIES })
 
             this.config = Object.assign({}, config)

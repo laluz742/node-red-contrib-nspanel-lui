@@ -86,7 +86,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            var result = 'weatherUpdate'+STR_LUI_DELIMITER
+            var result = 'weatherUpdate' + STR_LUI_DELIMITER
             var resultEntities: string[] = []
             const data = this.pageData.entities
 

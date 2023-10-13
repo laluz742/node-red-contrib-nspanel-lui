@@ -106,7 +106,11 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         var resultEntities: string[] = []
 
         const entities = this.getEntities()
-        for (var i = 0; this.options ? i < this.options.maxEntities : true && i < entities.length; i++) {
+        const maxEntities = this.options?.maxEntities
+            ? Math.min(this.options.maxEntities, entities.length)
+            : entities.length
+
+        for (var i = 0; i < maxEntities; i++) {
             var entityConfig = entities[i]
             const entityData = this.getEntityData(entityConfig.entityId)
             const optionalValue = entityData?.value ?? entityConfig.optionalValue
