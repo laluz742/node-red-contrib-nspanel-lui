@@ -28,10 +28,20 @@ import {
 import { SimpleControllerCache } from './nspanel-controller-cache'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 import {
+    STR_CMD_LUI_PAGETYPE,
+    STR_CMD_LUI_TIMEOUT,
+    STR_CMD_LUI_ACTIVATE_POPUP_NOTIFY,
+    STR_CMD_LUI_ACTIVATE_STARTUP_PAGE,
+    STR_CMD_LUI_ACTIVATE_SCREENSAVER,
+    STR_CMD_LUI_DATE,
+    STR_CMD_LUI_DIMMODE,
+    STR_CMD_LUI_TIME,
     STR_CMD_TASMOTA_BUZZER,
     STR_CMD_TASMOTA_DETACH_RELAYS,
     STR_CMD_TASMOTA_RELAY,
     STR_CMD_TASMOTA_TELEPERIOD,
+    STR_LUI_DELIMITER,
+    STR_PAGE_TYPE_CARD_THERMO,
 } from './nspanel-constants'
 
 const log = Logger('NSPanelController')
@@ -272,6 +282,16 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.notifyControllerNode(eventArgs)
         }
         this.notifyCurrentPageOfEvent('input', eventArgs)
+
+        // send sensor data to thermo page
+        var thermoPageNodes: IPageNode[] =
+            this.cache.getAllKnownPages()?.filter((pageNode) => pageNode.getPageType() == STR_PAGE_TYPE_CARD_THERMO) ??
+            []
+        if (thermoPageNodes.length >= 1) {
+            for (const thermoPageNode of thermoPageNodes) {
+                this.notifyPageNode(thermoPageNode, 'input', eventArgs)
+            }
+        }
     }
 
     private onPageUpdateRequest(page: IPageNode): void {
@@ -373,7 +393,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             case 'page':
                 if (pageNode != null) {
                     if (fullUpdate) {
-                        this.sendToPanel(`pageType~${pageNode.getPageType()}`)
+                        this.sendToPanel(STR_CMD_LUI_PAGETYPE + pageNode.getPageType())
                         this.sendTimeoutToPanel(pageNode.getTimeout())
                     }
 
@@ -460,12 +480,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private activateScreenSaver() {
         this.cache.resetHistory()
 
-        var screenSaverPageNodes: IPageNode[] = []
-        this.cache.getAllKnownPages()?.forEach((pageNode) => {
-            if (pageNode.isScreenSaver()) {
-                screenSaverPageNodes.push(pageNode)
-            }
-        })
+        var screenSaverPageNodes: IPageNode[] =
+            this.cache.getAllKnownPages()?.filter((pageNode) => pageNode.isScreenSaver()) ?? []
 
         if (screenSaverPageNodes.length >= 1) {
             const pageHistory: IPageHistory = {
@@ -481,12 +497,13 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         } else {
             this.emit('status', { type: 'warn', msg: 'common.status.noScreenSaverPage' })
             log.warn('No screensaver found.')
-            this.sendToPanel(`pageType~screensaver`)
+
+            this.sendToPanel(STR_CMD_LUI_ACTIVATE_SCREENSAVER)
         }
     }
 
     private activateStartupPage() {
-        this.sendToPanel('pageType~pageStartup')
+        this.sendToPanel(STR_CMD_LUI_ACTIVATE_STARTUP_PAGE)
     }
 
     private updatePage(page: IPageNode) {
@@ -507,7 +524,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const notifyPageData = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
 
         if (notifyPageData !== null) {
-            var pageData: string[] = ['pageType~popupNotify']
+            var pageData: string[] = [STR_CMD_LUI_ACTIVATE_POPUP_NOTIFY]
             pageData = pageData.concat(notifyPageData)
             this.sendToPanel(pageData)
 
@@ -537,7 +554,13 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         const timeStr = timeHours.toString().padStart(2, '0') + ':' + timeMinutes.toString().padStart(2, '0')
 
-        var cmds = ['pageType~screensaver', 'statusUpdate', 'time~' + offline, 'date~' + stopped, 'notify~~' + timeStr] //TODO: reattach relays?
+        var cmds = [
+            STR_CMD_LUI_ACTIVATE_SCREENSAVER,
+            'statusUpdate',
+            STR_CMD_LUI_TIME + offline,
+            STR_CMD_LUI_DATE + stopped,
+            'notify~~' + timeStr,
+        ] //TODO: reattach relays?
         this.sendToPanel(cmds)
     }
 
@@ -564,7 +587,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         const timeStr = timeHours.toString().padStart(2, '0') + ':' + timeMinutes.toString().padStart(2, '0')
 
-        this.sendToPanel('time~' + timeStr)
+        this.sendToPanel(STR_CMD_LUI_TIME + timeStr)
     }
 
     private sendDateToPanel() {
@@ -577,7 +600,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         const dateStr = date.toLocaleDateString(undefined, dateOptions)
-        this.sendToPanel('date~' + dateStr)
+        this.sendToPanel(STR_CMD_LUI_DATE + dateStr)
     }
 
     private sendDimModeToPanel() {
@@ -589,12 +612,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             ? this.panelConfig.panel.panelDimHighNight
             : this.panelConfig.panel.panelDimHigh
 
-        this.sendToPanel(`dimmode~${dimLow}~${dimHigh}`)
+        this.sendToPanel(STR_CMD_LUI_DIMMODE + dimLow + STR_LUI_DELIMITER + dimHigh)
     }
 
     private sendTimeoutToPanel(timeout: number | null = null) {
         var tempTimeout = timeout === null ? this.panelConfig.panel.panelTimeout : timeout
-        this.sendToPanel(`timeout~${tempTimeout}`)
+        this.sendToPanel(STR_CMD_LUI_TIMEOUT + tempTimeout)
     }
     // #endregion basic panel commands
 

@@ -8,7 +8,12 @@ import {
 } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
-import { DEFAULT_HMI_COLOR, STR_CMD_LUI_ENTITYUPDATE } from '../lib/nspanel-constants'
+import {
+    DEFAULT_HMI_COLOR,
+    STR_CMD_LUI_ENTITYUPDATE,
+    STR_PAGE_TYPE_CARD_THERMO,
+    STR_LUI_DELIMITER,
+} from '../lib/nspanel-constants'
 
 interface PageThermoConfig extends IEntityBasedPageConfig {
     /* options */
@@ -31,10 +36,9 @@ interface PageThermoData {
     status?: string | null
 }
 
-const PAGE_TYPE = 'cardThermo'
 const MAX_ENTITIES = 8
 const TEMPERATURE_RESOLUTION_FACTOR = 10
-const ACTION_EMPTY = '~~~'
+const ACTION_EMPTY = STR_LUI_DELIMITER.repeat(3)
 
 // TODO: second temperature in settings
 
@@ -71,7 +75,7 @@ module.exports = (RED) => {
         }
 
         constructor(config: PageThermoConfig) {
-            super(config, RED, { pageType: PAGE_TYPE, maxEntities: MAX_ENTITIES })
+            super(config, RED, { pageType: STR_PAGE_TYPE_CARD_THERMO, maxEntities: MAX_ENTITIES })
 
             this.init(config)
         }
@@ -123,9 +127,13 @@ module.exports = (RED) => {
 
             result.push(this.config?.showDetailsPopup ? '' : '1')
 
-            const pageData = result.join('~')
+            const pageData = result.join(STR_LUI_DELIMITER)
             this.setPageCache(pageData)
             return pageData
+        }
+
+        protected isUseOwnSensorData(): boolean {
+            return this.config?.useOwnTempSensor ?? false
         }
 
         protected generateActions(): string {
@@ -156,7 +164,7 @@ module.exports = (RED) => {
                 }
             }
 
-            return resultActions.join('~')
+            return resultActions.join(STR_LUI_DELIMITER)
         }
 
         private makeAction(
@@ -168,7 +176,9 @@ module.exports = (RED) => {
         ): string {
             if (type === 'delete') return ACTION_EMPTY
 
-            return `${icon ?? ''}~${iconColorActive ?? ''}~${state ?? ''}~${entityId ?? ''}`
+            return `${icon ?? ''}${STR_LUI_DELIMITER}${iconColorActive ?? ''}${STR_LUI_DELIMITER}${
+                state ?? ''
+            }${STR_LUI_DELIMITER}${entityId ?? ''}`
         }
 
         protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
@@ -177,7 +187,7 @@ module.exports = (RED) => {
 
             switch (msg.topic) {
                 case 'sensor':
-                    if (this.config?.useOwnTempSensor) {
+                    if (this.isUseOwnSensorData()) {
                         var sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
                         if (sensorEventArgs.temp) {
                             const tempMeasurement = NSPanelUtils.convertTemperature(

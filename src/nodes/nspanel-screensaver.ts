@@ -2,6 +2,7 @@ import { PageNode } from '../lib/page-node'
 import { EventArgs, EventMapping, IPageConfig, NodeRedSendCallback, PageInputMessage, StatusItemData } from '../types'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
+import { STR_LUI_DELIMITER } from '../lib/nspanel-constants'
 
 interface ScreenSaverConfig extends IPageConfig {
     doubleTapToExit: boolean
@@ -62,7 +63,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            var cmd = 'statusUpdate~'
+            var cmd = 'statusUpdate' + STR_LUI_DELIMITER
             var cmdParams: string[] = []
 
             for (var idx = 0; idx < 2; idx++) {
@@ -76,7 +77,7 @@ module.exports = (RED) => {
                         : NSPanelUtils.makeIcon(null, null)
                 cmdParams.push(tmp)
             }
-            cmd += cmdParams.join('~')
+            cmd += cmdParams.join(STR_LUI_DELIMITER)
             return cmd
         }
 
@@ -85,7 +86,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            var result = 'weatherUpdate~'
+            var result = 'weatherUpdate' + STR_LUI_DELIMITER
             var resultEntities: string[] = []
             const data = this.pageData.entities
 
@@ -102,7 +103,7 @@ module.exports = (RED) => {
                 resultEntities.push(entity)
             }
 
-            result += resultEntities.join('~')
+            result += resultEntities.join(STR_LUI_DELIMITER)
             return result
         }
 

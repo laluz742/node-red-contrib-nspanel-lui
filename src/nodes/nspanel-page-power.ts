@@ -1,11 +1,10 @@
 import { IEntityBasedPageConfig } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
-import { DEFAULT_HMI_COLOR, STR_LUI_DELIMITER } from '../lib/nspanel-constants'
+import { DEFAULT_HMI_COLOR, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_POWER } from '../lib/nspanel-constants'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 
 interface PageEntitiesConfig extends IEntityBasedPageConfig {}
 
-const PAGE_TYPE = 'cardPower'
 const MAX_ENTITIES = 8
 
 module.exports = (RED) => {
@@ -14,7 +13,7 @@ module.exports = (RED) => {
         private config: PageEntitiesConfig = undefined
 
         constructor(config: PageEntitiesConfig) {
-            super(config, RED, { pageType: PAGE_TYPE, maxEntities: MAX_ENTITIES })
+            super(config, RED, { pageType: STR_PAGE_TYPE_CARD_POWER, maxEntities: MAX_ENTITIES })
 
             this.init(config)
         }
@@ -41,7 +40,7 @@ module.exports = (RED) => {
                 resultEntities.push(entity)
             }
 
-            return resultEntities.join('~')
+            return resultEntities.join(STR_LUI_DELIMITER)
         }
     }
 

@@ -15,7 +15,7 @@ import {
     PageData,
     NodeAPI,
 } from '../types'
-import { DEFAULT_HMI_COLOR } from './nspanel-constants'
+import { DEFAULT_HMI_COLOR, STR_LUI_DELIMITER } from './nspanel-constants'
 import { NSPanelMessageUtils } from './nspanel-message-utils'
 import { NSPanelUtils } from './nspanel-utils'
 
@@ -105,7 +105,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
             }
         })
 
-        return navPrev + '~' + navNext
+        return navPrev + STR_LUI_DELIMITER + navNext
     }
 
     protected requestUpdate(): void {

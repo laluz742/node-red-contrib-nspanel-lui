@@ -1,6 +1,7 @@
 src/
 build/
 tests/
+docs/
 
 # node
 .npmignore
