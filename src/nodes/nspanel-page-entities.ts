@@ -1,9 +1,9 @@
 import { IEntityBasedPageConfig } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
+import { STR_PAGE_TYPE_CARD_ENTITIES } from '../lib/nspanel-constants'
 
 interface PageEntitiesConfig extends IEntityBasedPageConfig {}
 
-const PAGE_TYPE = 'cardEntities'
 const MAX_ENTITIES = 4
 
 module.exports = (RED) => {
@@ -12,7 +12,7 @@ module.exports = (RED) => {
         private config: PageEntitiesConfig = undefined
 
         constructor(config: PageEntitiesConfig) {
-            super(config, RED, { pageType: PAGE_TYPE, maxEntities: MAX_ENTITIES })
+            super(config, RED, { pageType: STR_PAGE_TYPE_CARD_ENTITIES, maxEntities: MAX_ENTITIES })
 
             this.init(config)
         }
