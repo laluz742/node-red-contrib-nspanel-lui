@@ -1,4 +1,4 @@
-# Basic Nodes Documentation
+# Main Nodes Documentation
 
 ## Contents
 
@@ -18,9 +18,7 @@ _to be added later_
 
 ### 1.2 Messages
 
-#### 1.2.1 Input Messages
-
-##### 1.2.1.1 Relay control
+#### 1.2.1 Relay control
 
 The relays can be switched on or off via messages using the _cmd_ topic.
 
@@ -41,7 +39,7 @@ var switchCmdMsg = {
 | `cmd`    | "switch" for relay control                                                                                                   |
 | `params` | `id` = [`0` \| `1`]; `on` = [ `false` \| `0` \| `'0'`] to switch relay off, and [`true` \| `1` \| `'1'`] for on respectively |
 
-#### 1.2.1.2 Notifications
+#### 1.2.2 Notifications
 
 To notify the user about special events, notifications can be displayed using the following command syntax using the _notify_ topic. Notifications will be stored in the page history, so after being closed, the last page is shown.
 
@@ -75,66 +73,6 @@ To notify the user about special events, notifications can be displayed using th
 | `timeout`      | the timeout in seconds after which the notification will disappear, 0 for no timeout                                       |
 | `icon`         | optional, icon to show                                                                                                     |
 | `iconColor`    | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-
-#### 1.2.2 Output Messages
-
-Any message received from the panel is forwarded to the output of the controller node. If a page node is active, it also forwards these messages.
-
-#### 1.2.2.1 Sensor Data
-
-Each temperature measurement reading sent from the panel is forwarded with the following message using the _sensor_ topic:
-
-```javascript
-// example message
-var sensorMsg = {
-    topic: 'sensor',
-    payload: {
-        type: 'sensor',
-        event: 'measurement',
-        source: 'temperature1',
-        temp: 23.2,
-        tempUnit: 'C',
-        date: '2023-10-12T20:00:00.000Z',
-    },
-}
-```
-
-| Key        | Type   | Description                                                |
-| ---------- | ------ | ---------------------------------------------------------- |
-| `type`     | string | `sensor`                                                   |
-| `event`    | string | `measurement`                                              |
-| `source`   | string | lower-case name used in tasmota                            |
-| `temp`     | number | temperature reading                                        |
-| `tempUnit` | string | temperature unit as configured in tasmota ([`'C'`\|`'F'`]) |
-| `date`     | string | date in ISO 8601 format                                    |
-
-#### 1.2.2.1 Relay Event
-
-When the state of a relay changes a message like the following is sent from the output of the node using the topic _hw_. If the relays are decoupled from the physical panel buttons (option _Decouple buttons from relays_ in _nspanel-panel_ configuration node), the topic _event_ is used instead.
-
-```javascript
-    // example relay state message
-    var relayStateMsg {
-        topic: 'hw',
-        payload: {
-            type: 'hw'
-            event: 'relay',
-            event2: 'state',
-            source: 'power1',
-            active: true,
-            date: '2023-10-12T20:00:00.000Z'
-        }
-    }
-```
-
-| Key      | Type    | Description                              |
-| -------- | ------- | ---------------------------------------- |
-| `type`   | string  | `hw`                                     |
-| `event`  | string  | `relay`                                  |
-| `event2` | string  | `state`                                  |
-| `source` | string  | name of relay a configured in tasmota    |
-| `active` | boolean | `true` if switched on, `false` otherwise |
-| `date`   | string  | date in ISO 8601 format                  |
 
 ### 2. ScreenSaver Node
 
