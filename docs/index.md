@@ -21,3 +21,5 @@ There are different types of nodes
 
 -   [main nodes](./nodes.md) to establish control, default behavior in stand-by mode and navigation flow
 -   [page nodes](./page-nodes.md) defining different type of cards, that the Lovelace UI incorporates
+
+The icon set, that can be used in node configuration or in messages is based on the Material Design Icons. All supported icons are listed in the [Lovelace UI Icon Cheatsheet](https://docs.nspanel.pky.eu/icon-cheatsheet.html).
