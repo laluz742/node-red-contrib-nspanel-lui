@@ -24,6 +24,8 @@ import {
     IPageHistory,
     IControllerCache,
     NotifyData,
+    TasmotaStatus2EventArgs,
+    NluiDriverVersionEventArgs,
 } from '../types'
 import { SimpleControllerCache } from './nspanel-controller-cache'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
@@ -150,11 +152,16 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         cmds.forEach((cmdData) => {
             switch (cmdData.cmd) {
-                case 'switch': {
+                case 'switch':
                     const switchParams = <SwitchCommandParams>cmdData.params
                     var switchRelayCmd: string = STR_CMD_TASMOTA_RELAY + (switchParams.id + 1)
                     this.sendCommandToPanel(switchRelayCmd, switchParams.active?.toString() ?? '')
-                }
+
+                    break
+
+                case 'checkForUpdates':
+                    this.panelUpdater?.checkForUpdates()
+                    break
             }
         })
     }
@@ -219,7 +226,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         mqttHandler.on('sensor', (msg) => this.onSensorData(msg))
 
         // initialize updater
-        const panelUpdater = new NSPanelUpdater()
+        const panelUpdater = new NSPanelUpdater(mqttHandler)
         this.panelUpdater = panelUpdater
 
         // notify controller node about state
@@ -235,7 +242,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private onEvent(eventArgs: EventArgs) {
         switch (eventArgs.event) {
             case 'startup':
-                const startupEventArgs: StartupEventArgs = <StartupEventArgs>eventArgs
+                const startupEventArgs: StartupEventArgs = eventArgs as StartupEventArgs
                 this.clearActiveStatusOfAllPages()
                 this.onPanelStartup(startupEventArgs)
                 this.notifyControllerNode(eventArgs)
@@ -266,15 +273,29 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 break
 
             default:
-                console.log('UNCATCHED onEvent default', eventArgs)
+                log.info('UNCATCHED onEvent default ' + JSON.stringify(eventArgs))
                 // dispatch to active page
                 this.notifyCurrentPageOfEvent('input', eventArgs)
         }
     }
 
-    private onMessage(msg: any) {
-        //FIXME: is not any
-        console.log('RX MSG', msg)
+    private onMessage(msg: EventArgs) {
+        if (msg.event == 'version') {
+            switch (msg.source) {
+                case 'tasmota':
+                    const status2EventArgs: TasmotaStatus2EventArgs = msg as TasmotaStatus2EventArgs
+                    this.panelUpdater?.setTasmotaVersion(status2EventArgs.version)
+                    break
+
+                case 'nlui':
+                    const nluiEventArgs: NluiDriverVersionEventArgs = msg as NluiDriverVersionEventArgs
+                    this.panelUpdater?.setBerryDriverVersion(nluiEventArgs.version)
+
+                    break
+            }
+        } else {
+            log.info('UNCATCHED msg ' + JSON.stringify(msg))
+        }
     }
 
     private onSensorData(eventArgs: EventArgs) {

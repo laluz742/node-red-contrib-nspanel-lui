@@ -9,7 +9,7 @@ interface PageQRConfig extends IEntityBasedPageConfig {
 const MAX_ENTITIES = 2
 const EMPTY_ENTITY: PanelEntity = {
     type: 'text',
-    entityId: 'text.'
+    entityId: 'text.',
 }
 
 module.exports = (RED) => {

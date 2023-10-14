@@ -3,6 +3,7 @@
 ## Installation and First Steps
 
 To install the packackage either use the [_Palette Manager_](https://nodered.org/docs/user-guide/editor/palette/manager) or the npm package manager:
+
 ```
     npm install node-red-contrib-nspanel-lui
 ```

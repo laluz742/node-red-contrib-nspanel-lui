@@ -1,6 +1,17 @@
 import { NSPanelMessageUtils } from './nspanel-message-utils'
-import { EventArgs, StartupEventArgs, HardwareEventArgs, SensorEventArgs, LightEventArgs } from '../types'
+import {
+    EventArgs,
+    StartupEventArgs,
+    HardwareEventArgs,
+    SensorEventArgs,
+    LightEventArgs,
+    TasmotaStatus2EventArgs,
+    NluiDriverVersionEventArgs,
+} from '../types'
 import { NSPanelUtils } from './nspanel-utils'
+import { Logger } from './logger'
+
+const log = Logger('NSPanelMessageParser')
 
 export class NSPanelMessageParser {
     public static parse(payloadStr: string): EventArgs {
@@ -16,6 +27,8 @@ export class NSPanelMessageParser {
 
             if ('CustomRecv' in temp) {
                 result = NSPanelMessageParser.parseCustomMessage(temp.CustomRecv.split(','))
+            } else if ('nlui_driver_version' in temp) {
+                result = NSPanelMessageParser.parseNluiDriverEvent(temp)
             } else {
                 result.data = temp
             }
@@ -100,6 +113,45 @@ export class NSPanelMessageParser {
                 data: input,
             }
             result.push(eventArgs)
+        }
+
+        return result
+    }
+
+    public static parseTasmotaStatus2Event(input: any): TasmotaStatus2EventArgs {
+        var result: TasmotaStatus2EventArgs | null = null
+
+        if (NSPanelMessageUtils.hasProperty(input, 'StatusFWR')) {
+            const statusFwr = input['StatusFWR']
+            const version = statusFwr['Version']
+
+            if (version != null) {
+                result = {
+                    type: 'fw',
+                    source: 'tasmota',
+                    event: 'version',
+                    version: version,
+                }
+            }
+        }
+
+        return result
+    }
+
+    public static parseNluiDriverEvent(input: any): NluiDriverVersionEventArgs {
+        var result: NluiDriverVersionEventArgs | null = null
+
+        if (NSPanelMessageUtils.hasProperty(input, 'nlui_driver_version')) {
+            const version = input['nlui_driver_version']
+
+            if (version != null) {
+                result = {
+                    type: 'fw',
+                    source: 'nlui',
+                    event: 'version',
+                    version: version,
+                }
+            }
         }
 
         return result
@@ -231,7 +283,7 @@ export class NSPanelMessageParser {
                 }
         }
 
-        console.log('parseEvent', eventArgs)
+        log.debug('parseEvent' + JSON.stringify(eventArgs))
         return eventArgs
     }
 
