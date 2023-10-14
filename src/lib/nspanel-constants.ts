@@ -23,6 +23,9 @@ export const STR_CMD_TASMOTA_DETACH_RELAYS = 'SetOption73'
 export const STR_CMD_TASMOTA_TELEPERIOD = 'TelePeriod'
 export const STR_CMD_TASMOTA_BUZZER = 'Buzzer'
 export const STR_CMD_TASMOTA_RELAY = 'Power'
+export const STR_CMD_TASMOTA_STATUS = 'Status'
+
+export const STR_CMD_BERRYDRIVER_VERSION = 'GetDriverVersion'
 
 export const STR_PAGE_TYPE_CARD_ENTITIES: string = 'cardEntities'
 export const STR_PAGE_TYPE_CARD_GRID: string = 'cardGrid'

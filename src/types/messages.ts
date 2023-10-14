@@ -3,7 +3,7 @@ import { EventArgs, PanelColor, NodeMessageInFlow, NodeMessageParts } from '.'
 export interface PanelMessage extends NodeMessageInFlow {}
 
 export type CommandTopic = 'cmd'
-export type Command = 'switch'
+export type Command = 'switch' | 'checkForUpdates'
 export type ActiveCharacteristic = boolean | 0 | 1 | '0' | '1'
 
 export interface CommandMessage extends PanelMessage {
@@ -14,7 +14,7 @@ export interface CommandMessage extends PanelMessage {
 
 export interface CommandData {
     cmd: Command
-    params: SwitchCommandParams
+    params?: SwitchCommandParams
 }
 
 export interface SwitchCommandParams {

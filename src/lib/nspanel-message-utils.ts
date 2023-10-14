@@ -66,6 +66,10 @@ export class NSPanelMessageUtils {
                         commandResult = { cmd: 'switch', params: switchCmdParams }
                     }
                     break
+
+                case 'checkForUpdates':
+                    commandResult = { cmd: 'checkForUpdates' }
+                    break
             }
         }
 
