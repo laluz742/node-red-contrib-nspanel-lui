@@ -39,9 +39,15 @@ export type LightEventArgs = EventArgs & {
 export type StartupEventArgs = EventArgs & {
     hmiVersion: HMIVersion
 }
-export type HMIVersion = {
-    version: number
-    model: string
+
+export type VersionData = {
+    version: string | null
+    url?: string
+}
+
+export type HMIVersion = VersionData & {
+    internalVersion: string
+    model?: string
 }
 
 export type HardwareEventArgs = EventArgs & {

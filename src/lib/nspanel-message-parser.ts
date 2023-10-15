@@ -194,7 +194,8 @@ export class NSPanelMessageParser {
                 const startupEventArgs = eventArgs as StartupEventArgs
                 startupEventArgs.source = 'hmi'
                 startupEventArgs.hmiVersion = {
-                    version: Number(parts[2]),
+                    version: null,
+                    internalVersion: parts[2],
                     model: parts[3],
                 }
                 eventArgs = startupEventArgs

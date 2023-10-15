@@ -52,12 +52,13 @@
         "node-red": "^3.0.2",
         "prettier": "^2.7.1",
         "ts-jest": "^29.0.5",
-        "typescript": "^5.2.2",
-        "ts-prune": "^0.10.3"
+        "ts-prune": "^0.10.3",
+        "typescript": "^5.2.2"
     },
     "dependencies": {
         "cronosjs": "^1.7.1",
         "mqtt": "^4.3.7",
-        "uuid": "^8.3.2"
+        "semver": "7.5.4",
+        "uuid": "8.3.2"
     }
 }
