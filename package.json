@@ -32,6 +32,9 @@
             "nspanel-screensaver": "nodes/nspanel-screensaver.js"
         }
     },
+    "engines": {
+        "node": ">=18.0.0"
+    },
     "scripts": {
         "clean": "rimraf build lib nodes resources coverage",
         "prebuild": "npm run clean",
