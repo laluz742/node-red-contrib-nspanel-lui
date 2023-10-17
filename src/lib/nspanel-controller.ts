@@ -30,18 +30,18 @@ import {
 import { SimpleControllerCache } from './nspanel-controller-cache'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 import {
-    STR_CMD_LUI_PAGETYPE,
-    STR_CMD_LUI_TIMEOUT,
-    STR_CMD_LUI_ACTIVATE_POPUP_NOTIFY,
-    STR_CMD_LUI_ACTIVATE_STARTUP_PAGE,
-    STR_CMD_LUI_ACTIVATE_SCREENSAVER,
-    STR_CMD_LUI_DATE,
-    STR_CMD_LUI_DIMMODE,
-    STR_CMD_LUI_TIME,
-    STR_CMD_TASMOTA_BUZZER,
-    STR_CMD_TASMOTA_DETACH_RELAYS,
-    STR_CMD_TASMOTA_RELAY,
-    STR_CMD_TASMOTA_TELEPERIOD,
+    STR_LUI_CMD_PAGETYPE,
+    STR_LUI_CMD_TIMEOUT,
+    STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY,
+    STR_LUI_CMD_ACTIVATE_STARTUP_PAGE,
+    STR_LUI_CMD_ACTIVATE_SCREENSAVER,
+    STR_LUI_CMD_DATE,
+    STR_LUI_CMD_DIMMODE,
+    STR_LUI_CMD_TIME,
+    STR_TASMOTA_CMD_BUZZER,
+    STR_TASMOTA_CMD_DETACH_RELAYS,
+    STR_TASMOTA_CMD_RELAY,
+    STR_TASMOTA_CMD_TELEPERIOD,
     STR_LUI_DELIMITER,
     STR_PAGE_TYPE_CARD_THERMO,
 } from './nspanel-constants'
@@ -62,8 +62,8 @@ declare type PanelDimModes = {
 }
 
 export class NSPanelController extends nEvents.EventEmitter implements IPanelController {
-    private panelMqttHandler: Nullable<IPanelMqttHandler> = null
-    private panelUpdater: Nullable<IPanelUpdater> = null
+    private panelMqttHandler: IPanelMqttHandler = null
+    private panelUpdater: IPanelUpdater = null
     private panelConfig: PanelConfig
     private i18n: NodeRedI18nResolver
     private cache: IControllerCache
@@ -154,7 +154,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             switch (cmdData.cmd) {
                 case 'switch':
                     const switchParams = <SwitchCommandParams>cmdData.params
-                    var switchRelayCmd: string = STR_CMD_TASMOTA_RELAY + (switchParams.id + 1)
+                    var switchRelayCmd: string = STR_TASMOTA_CMD_RELAY + (switchParams.id + 1)
                     this.sendCommandToPanel(switchRelayCmd, switchParams.active?.toString() ?? '')
 
                     break
@@ -187,7 +187,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (silenceDuration !== undefined) params.push(silenceDuration)
         if (tune !== undefined) params.push(tune)
 
-        this.sendCommandToPanel(STR_CMD_TASMOTA_BUZZER, params.join(','))
+        this.sendCommandToPanel(STR_TASMOTA_CMD_BUZZER, params.join(','))
     }
 
     dispose() {
@@ -226,7 +226,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         mqttHandler.on('sensor', (msg) => this.onSensorData(msg))
 
         // initialize updater
-        const panelUpdater = new NSPanelUpdater(mqttHandler)
+        const panelUpdater = new NSPanelUpdater(this, mqttHandler)
         this.panelUpdater = panelUpdater
 
         // notify controller node about state
@@ -414,7 +414,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             case 'page':
                 if (pageNode != null) {
                     if (fullUpdate) {
-                        this.sendToPanel(STR_CMD_LUI_PAGETYPE + pageNode.getPageType())
+                        this.sendToPanel(STR_LUI_CMD_PAGETYPE + pageNode.getPageType())
                         this.sendTimeoutToPanel(pageNode.getTimeout())
                     }
 
@@ -519,12 +519,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.emit('status', { type: 'warn', msg: 'common.status.noScreenSaverPage' })
             log.warn('No screensaver found.')
 
-            this.sendToPanel(STR_CMD_LUI_ACTIVATE_SCREENSAVER)
+            this.sendToPanel(STR_LUI_CMD_ACTIVATE_SCREENSAVER)
         }
     }
 
     private activateStartupPage() {
-        this.sendToPanel(STR_CMD_LUI_ACTIVATE_STARTUP_PAGE)
+        this.sendToPanel(STR_LUI_CMD_ACTIVATE_STARTUP_PAGE)
     }
 
     private updatePage(page: IPageNode) {
@@ -545,7 +545,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const notifyPageData = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
 
         if (notifyPageData !== null) {
-            var pageData: string[] = [STR_CMD_LUI_ACTIVATE_POPUP_NOTIFY]
+            var pageData: string[] = [STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY]
             pageData = pageData.concat(notifyPageData)
             this.sendToPanel(pageData)
 
@@ -576,10 +576,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const timeStr = timeHours.toString().padStart(2, '0') + ':' + timeMinutes.toString().padStart(2, '0')
 
         var cmds = [
-            STR_CMD_LUI_ACTIVATE_SCREENSAVER,
+            STR_LUI_CMD_ACTIVATE_SCREENSAVER,
             'statusUpdate',
-            STR_CMD_LUI_TIME + offline,
-            STR_CMD_LUI_DATE + stopped,
+            STR_LUI_CMD_TIME + offline,
+            STR_LUI_CMD_DATE + stopped,
             'notify~~' + timeStr,
         ] //TODO: reattach relays?
         this.sendToPanel(cmds)
@@ -593,12 +593,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private sendDetachRelays(detach: boolean = false) {
         const state = detach ? '1' : '0'
 
-        this.sendCommandToPanel(STR_CMD_TASMOTA_DETACH_RELAYS, state)
+        this.sendCommandToPanel(STR_TASMOTA_CMD_DETACH_RELAYS, state)
     }
 
     private sendTelePeriod(telePeriod: number = 1) {
         const telePeriodStr = '' + telePeriod
-        this.sendCommandToPanel(STR_CMD_TASMOTA_TELEPERIOD, telePeriodStr)
+        this.sendCommandToPanel(STR_TASMOTA_CMD_TELEPERIOD, telePeriodStr)
     }
 
     private sendTimeToPanel() {
@@ -608,7 +608,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         const timeStr = timeHours.toString().padStart(2, '0') + ':' + timeMinutes.toString().padStart(2, '0')
 
-        this.sendToPanel(STR_CMD_LUI_TIME + timeStr)
+        this.sendToPanel(STR_LUI_CMD_TIME + timeStr)
     }
 
     private sendDateToPanel() {
@@ -621,7 +621,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         const dateStr = date.toLocaleDateString(undefined, dateOptions)
-        this.sendToPanel(STR_CMD_LUI_DATE + dateStr)
+        this.sendToPanel(STR_LUI_CMD_DATE + dateStr)
     }
 
     private sendDimModeToPanel() {
@@ -633,12 +633,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             ? this.panelConfig.panel.panelDimHighNight
             : this.panelConfig.panel.panelDimHigh
 
-        this.sendToPanel(STR_CMD_LUI_DIMMODE + dimLow + STR_LUI_DELIMITER + dimHigh)
+        this.sendToPanel(STR_LUI_CMD_DIMMODE + dimLow + STR_LUI_DELIMITER + dimHigh)
     }
 
     private sendTimeoutToPanel(timeout: number | null = null) {
         var tempTimeout = timeout === null ? this.panelConfig.panel.panelTimeout : timeout
-        this.sendToPanel(STR_CMD_LUI_TIMEOUT + tempTimeout)
+        this.sendToPanel(STR_LUI_CMD_TIMEOUT + tempTimeout)
     }
     // #endregion basic panel commands
 

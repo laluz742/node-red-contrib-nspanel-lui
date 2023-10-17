@@ -8,7 +8,7 @@ import {
     NodeRedSendCallback,
     PageEntityData,
 } from '../types'
-import { DEFAULT_HMI_COLOR, STR_CMD_LUI_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
+import { DEFAULT_HMI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 import { NSPanelUtils } from './nspanel-utils'
 import { PageNode } from './page-node'
@@ -61,7 +61,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
     public generatePage(): string | string[] | null {
         if (this.hasPageCache()) return this.getPageCache()
 
-        var result: string[] = [STR_CMD_LUI_ENTITYUPDATE]
+        var result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
         result.push(this.entitiesPageNodeConfig.title ?? '')
         const titleNav = this.generateTitleNav()
         result.push(titleNav)

@@ -1,6 +1,6 @@
 import { IEntityBasedPageConfig, PageCacheData } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
-import { STR_CMD_LUI_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '../lib/nspanel-constants'
+import { STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '../lib/nspanel-constants'
 
 interface PageQRConfig extends IEntityBasedPageConfig {
     qrCode: string | undefined
@@ -36,7 +36,7 @@ module.exports = (RED) => {
         generatePage(): string | string[] {
             if (this.pageCache !== null) return this.pageCache
 
-            var result = [STR_CMD_LUI_ENTITYUPDATE]
+            var result = [STR_LUI_CMD_ENTITYUPDATE]
             result.push(this.config.title ?? '')
             const titleNav = this.generateTitleNav()
             result.push(titleNav)

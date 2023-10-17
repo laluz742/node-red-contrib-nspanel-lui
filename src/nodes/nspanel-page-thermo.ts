@@ -10,7 +10,7 @@ import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import {
     DEFAULT_HMI_COLOR,
-    STR_CMD_LUI_ENTITYUPDATE,
+    STR_LUI_CMD_ENTITYUPDATE,
     STR_PAGE_TYPE_CARD_THERMO,
     STR_LUI_DELIMITER,
 } from '../lib/nspanel-constants'
@@ -90,7 +90,7 @@ module.exports = (RED) => {
             if (this.hasPageCache()) return this.getPageCache()
 
             var result: string[] = []
-            result.push(STR_CMD_LUI_ENTITYUPDATE)
+            result.push(STR_LUI_CMD_ENTITYUPDATE)
 
             result.push(this.entitiesPageNodeConfig.title ?? '')
             const titleNav = this.generateTitleNav()

@@ -11,7 +11,7 @@ import { NodeBase } from './node-base'
 import {
     DEFAULT_FONTSIZE,
     DEFAULT_HMI_COLOR,
-    STR_CMD_LUI_ENTITYUPDATEDETAIL,
+    STR_LUI_CMD_ENTITYUPDATEDETAIL,
     STR_LUI_DELIMITER,
     STR_DISABLE,
     STR_EMPTY,
@@ -55,7 +55,7 @@ export class NSPanelPopupHelpers {
             return null
         }
 
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | Number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         result.push(notifyData.notifyId ?? STR_EMPTY)
         result.push(notifyData.heading ?? STR_EMPTY)
@@ -82,7 +82,7 @@ export class NSPanelPopupHelpers {
         if (entityData == null) return null
 
         const fanEntityData: FanEntityData = <FanEntityData>entityData
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | Number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? STR_EMPTY))
@@ -105,7 +105,7 @@ export class NSPanelPopupHelpers {
         if (entityData == null) return null
 
         const lightEntityData: LightEntityData = <LightEntityData>entityData
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | Number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? STR_EMPTY))
@@ -133,7 +133,7 @@ export class NSPanelPopupHelpers {
         if (entityData == null) return null
 
         const shutterEntityData: ShutterEntityData = <ShutterEntityData>entityData // TODO: type guard
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | Number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         const hasTilt: boolean = entity.hasTilt ?? false
         const posValue: number = Number(shutterEntityData?.value ?? 0)
