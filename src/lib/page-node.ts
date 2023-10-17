@@ -40,9 +40,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         this.__log = Logger(this.constructor.name)
 
         this.initPageNode(config, options)
-
-        const panelNode = <IPanelNode>(<unknown>RED.nodes.getNode(config.nsPanel))
-
+        const panelNode = (<unknown>RED.nodes.getNode(config.nsPanel)) as IPanelNode
         if (!panelNode || panelNode.type !== 'nspanel-panel') {
             this.warn('Panel configuration is wrong or missing, please review the node settings') //FIXME i18n panel missing
             this.status({
