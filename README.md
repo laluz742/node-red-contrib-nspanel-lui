@@ -15,7 +15,7 @@ Contributors are welcome.
 
 ## Requirements
 
-The NSPanels to be used with these package must be flashed with an alternative firmware (Tasmota and custom NextIon HMI). For further details see [NsPanel Lovelace UI Docs](https://docs.nspanel.pky.eu/).
+The NSPanels to be used with this package must be flashed with an alternative firmware (Tasmota and custom NextIon HMI). For further details see [NsPanel Lovelace UI Docs](https://docs.nspanel.pky.eu/).
 
 This package requires at least Node-RED version 3.0.0.
 
