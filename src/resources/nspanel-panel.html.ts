@@ -24,6 +24,7 @@
 
                 nsPanelConfig: { value: '', type: 'nspanel-config', required: true },
                 detachRelays: { value: false },
+                autoUpdate: { value: false },
                 telePeriod: {
                     value: 1,
                     required: false,

@@ -37,6 +37,7 @@ export interface PanelMqttConfig {
 export interface PanelParameters {
     topic: string
     fullTopic: string
+    autoUpdate: boolean
     detachRelays: boolean
     telePeriod: number
 
