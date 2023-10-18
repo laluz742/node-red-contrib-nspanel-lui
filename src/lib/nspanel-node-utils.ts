@@ -1,8 +1,8 @@
-import { NodeStatus, NodeStatusFill, StatusLevel } from '@types'
+import { NodeRedStatus, NodeStatusFill, StatusLevel } from '../types/types'
 
 export class NSPanelNodeUtils {
-    public static createNodeStatus(statusLevel: StatusLevel, msg: string): NodeStatus | null {
-        var statusFill: NodeStatusFill
+    public static createNodeStatus(statusLevel: StatusLevel, msg: string): NodeRedStatus | null {
+        let statusFill: NodeStatusFill
 
         switch (statusLevel) {
             case 'error':

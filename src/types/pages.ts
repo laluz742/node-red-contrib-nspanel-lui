@@ -1,7 +1,8 @@
-import { EventArgs } from './events'
+import { PanelEntity } from './entities'
+import { EventArgs, EventMapping } from './events'
 import { PageEntityData, PageInputMessage } from './messages'
-import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './node-red'
-import { IPanelNode } from './panel'
+import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './nodered'
+import { IPageNode } from './nodes'
 
 export type PageId = string
 export type ConfiguredEventsMap = Map<string, EventMapping>
@@ -32,24 +33,6 @@ export declare interface IPageOptions {
     pageType: string
     maxEntities: number
 }
-
-export interface IPageNode extends INodeConfig {
-    getPageType(): string
-    generatePage(): string | string[] | null
-    generatePopupDetails(type: string, entityId: string): string | string[] | null
-    isScreenSaver(): boolean
-    setActive(state: boolean): void
-    getPanel(): IPanelNode | null
-    getTimeout(): number | null
-
-    emit(event: string | symbol, ...args: any[]): boolean
-    on(event: 'page:update', callback: PageEventCallbackType): void
-    on(event: 'nav:pageId', listener: PageIdEventCallbackType): void
-    on(event: 'nav:page', listener: PageIdEventCallbackType): void
-    on(event: 'input', listener: PageOnInputCallback): void
-}
-
-export interface EntitiesPageNode extends IPageNode {}
 
 export declare interface PageData {
     entities: PageEntityData[]

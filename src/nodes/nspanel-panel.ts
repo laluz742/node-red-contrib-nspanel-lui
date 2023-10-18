@@ -1,5 +1,5 @@
-import { NodeBase } from '@lib/node-base'
-import { NSPanelUtils } from '@lib/nspanel-utils'
+import { NodeBase } from '../lib/node-base'
+import { NSPanelUtils } from '../lib/nspanel-utils'
 import {
     IPageNode,
     INodeConfig,
@@ -9,7 +9,7 @@ import {
     PanelConfig,
     PageMap,
     PageId,
-} from '@types'
+} from '../types/types'
 
 interface NSPanelConfig extends INodeConfig {
     nsPanelConfig: string
@@ -33,7 +33,9 @@ interface NSPanelConfig extends INodeConfig {
 module.exports = (RED) => {
     class NSPanelNode extends NodeBase<NSPanelConfig> implements IPanelNodeEx {
         private nsPanelConfigNode: IPanelConfigNode
+
         private config: NSPanelConfig
+
         private pages: PageMap = new Map()
 
         constructor(config: NSPanelConfig) {
@@ -55,7 +57,7 @@ module.exports = (RED) => {
         }
 
         navToPage(pageId: PageId) {
-            this.emit('nav:pageId', pageId) //TODO: move to controller, @see page-node-base #handlePageNavigationEvent
+            this.emit('nav:pageId', pageId) // TODO: move to controller, @see page-node-base #handlePageNavigationEvent
         }
 
         getPanelConfig(): PanelConfig {
@@ -86,7 +88,7 @@ module.exports = (RED) => {
         }
 
         private onClose(done: VoidCallback) {
-            //TODO: inform anyone?
+            // TODO: inform anyone?
             done()
         }
     }

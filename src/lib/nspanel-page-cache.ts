@@ -1,4 +1,4 @@
-import { IPageCache } from '@types'
+import { IPageCache } from '../types/types'
 
 export class SimplePageCache implements IPageCache {
     private _data: string | string[] | null

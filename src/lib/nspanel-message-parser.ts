@@ -1,7 +1,7 @@
-import { NSPanelMessageUtils } from '@lib/nspanel-message-utils'
-import { NSPanelUtils } from '@lib/nspanel-utils'
-import { Logger } from '@lib/logger'
-import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+import { NSPanelMessageUtils } from './nspanel-message-utils'
+import { NSPanelUtils } from './nspanel-utils'
+import { Logger } from './logger'
+import { NSPanelColorUtils } from './nspanel-colorutils'
 import {
     EventArgs,
     StartupEventArgs,
@@ -10,13 +10,13 @@ import {
     LightEventArgs,
     TasmotaStatus2EventArgs,
     NluiDriverVersionEventArgs,
-} from '@types'
+} from '../types/types'
 
 const log = Logger('NSPanelMessageParser')
 
 export class NSPanelMessageParser {
     public static parse(payloadStr: string): EventArgs {
-        var result: EventArgs = {
+        let result: EventArgs = {
             type: '',
             event: '',
             event2: '',
@@ -41,7 +41,7 @@ export class NSPanelMessageParser {
     }
 
     public static parseCustomMessage(parts: Array<string>): EventArgs {
-        var result: EventArgs = {
+        let result: EventArgs = {
             type: 'event',
             event: '',
             event2: '',
@@ -73,7 +73,7 @@ export class NSPanelMessageParser {
                     tempUnit: tempUnit ?? null,
                 }
                 if (NSPanelMessageUtils.hasProperty(input, 'Time')) {
-                    var date = NSPanelMessageUtils.toDate(input['Time'])
+                    const date = NSPanelMessageUtils.toDate(input['Time'])
                     if (date !== null) {
                         result.date = date
                     }
@@ -85,28 +85,29 @@ export class NSPanelMessageParser {
     }
 
     public static parseHardwareEvent(input: any): HardwareEventArgs[] {
-        var result: HardwareEventArgs[] = []
+        const result: HardwareEventArgs[] = []
+        let eventArgs: HardwareEventArgs
 
         if (NSPanelMessageUtils.hasProperty(input, 'POWER1')) {
-            var eventArgs: HardwareEventArgs = NSPanelMessageParser.convertToRelayEvent(input, 'POWER1')
+            eventArgs = NSPanelMessageParser.convertToRelayEvent(input, 'POWER1')
             result.push(eventArgs)
         }
         if (NSPanelMessageUtils.hasProperty(input, 'POWER2')) {
-            var eventArgs: HardwareEventArgs = NSPanelMessageParser.convertToRelayEvent(input, 'POWER2')
+            eventArgs = NSPanelMessageParser.convertToRelayEvent(input, 'POWER2')
             result.push(eventArgs)
         }
 
         if (NSPanelMessageUtils.hasProperty(input, 'Button1')) {
-            var eventArgs: HardwareEventArgs = NSPanelMessageParser.convertToButtonEvent(input, 'Button1')
+            eventArgs = NSPanelMessageParser.convertToButtonEvent(input, 'Button1')
             result.push(eventArgs)
         }
         if (NSPanelMessageUtils.hasProperty(input, 'Button2')) {
-            var eventArgs: HardwareEventArgs = NSPanelMessageParser.convertToButtonEvent(input, 'Button2')
+            eventArgs = NSPanelMessageParser.convertToButtonEvent(input, 'Button2')
             result.push(eventArgs)
         }
 
-        if (result.length == 0) {
-            var eventArgs: HardwareEventArgs = {
+        if (result.length === 0) {
+            eventArgs = {
                 type: 'hw',
                 date: new Date(),
                 event: '',
@@ -120,7 +121,7 @@ export class NSPanelMessageParser {
     }
 
     public static parseTasmotaStatus2Event(input: any): TasmotaStatus2EventArgs {
-        var result: TasmotaStatus2EventArgs | null = null
+        let result: TasmotaStatus2EventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'StatusFWR')) {
             const statusFwr = input['StatusFWR']
@@ -131,7 +132,7 @@ export class NSPanelMessageParser {
                     type: 'fw',
                     source: 'tasmota',
                     event: 'version',
-                    version: version,
+                    version,
                 }
             }
         }
@@ -140,7 +141,7 @@ export class NSPanelMessageParser {
     }
 
     public static parseNluiDriverEvent(input: any): NluiDriverVersionEventArgs {
-        var result: NluiDriverVersionEventArgs | null = null
+        let result: NluiDriverVersionEventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'nlui_driver_version')) {
             const version = input['nlui_driver_version']
@@ -150,7 +151,7 @@ export class NSPanelMessageParser {
                     type: 'fw',
                     source: 'nlui',
                     event: 'version',
-                    version: version,
+                    version,
                 }
             }
         }
@@ -159,19 +160,19 @@ export class NSPanelMessageParser {
     }
 
     private static convertToRelayEvent(input: any, property: string): HardwareEventArgs {
-        var eventArgs: HardwareEventArgs = {
+        const eventArgs: HardwareEventArgs = {
             type: 'hw',
             date: new Date(),
             event: 'relay',
             event2: 'state',
             source: property.toLowerCase(),
-            active: input[property] == 'ON' ? true : false,
+            active: input[property] === 'ON' ? true : false,
         }
         return eventArgs
     }
 
     private static convertToButtonEvent(input: any, property: string): HardwareEventArgs {
-        var eventArgs: HardwareEventArgs = {
+        const eventArgs: HardwareEventArgs = {
             type: 'hw',
             date: new Date(),
             event: 'button',
@@ -183,7 +184,7 @@ export class NSPanelMessageParser {
     }
 
     public static parseEvent(parts: Array<string>): EventArgs {
-        var eventArgs: EventArgs = {
+        let eventArgs: EventArgs = {
             type: 'event',
             date: new Date(),
             event: parts[1],
@@ -227,7 +228,7 @@ export class NSPanelMessageParser {
                         eventArgs.source = parts[2]
 
                         const n = Number(parts[4])
-                        if (isNaN(n)) {
+                        if (Number.isNaN(n)) {
                             eventArgs.data = parts[4]
                         } else {
                             eventArgs.value = n
@@ -242,7 +243,7 @@ export class NSPanelMessageParser {
                         const colorDataArr = NSPanelUtils.stringIsNullOrEmpty(colorDataStr)
                             ? []
                             : colorDataStr.split('|')
-                        if (colorDataArr.length == 3) {
+                        if (colorDataArr.length === 3) {
                             const colorData = colorDataArr.map((v) => Number(v))
                             const colorTuple = NSPanelColorUtils.hmiPosToColor(colorData[0], colorData[1])
                             lightEventArgs.rgb = colorTuple[0]
@@ -264,10 +265,10 @@ export class NSPanelMessageParser {
                         break
                 }
 
-                if (parts.length == 5) {
+                if (parts.length === 5) {
                     const n = Number(parts[4])
 
-                    if (isNaN(n)) {
+                    if (Number.isNaN(n)) {
                         eventArgs.data = parts[4]
                     } else {
                         eventArgs.value = n
@@ -290,7 +291,7 @@ export class NSPanelMessageParser {
     }
 
     public static actionStringToNumber(actionString: string): number | undefined {
-        var result: number | undefined = undefined
+        let result: number
         switch (actionString.toLowerCase()) {
             case 'single':
                 result = 1

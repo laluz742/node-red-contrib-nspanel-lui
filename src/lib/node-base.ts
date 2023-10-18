@@ -1,6 +1,6 @@
-import { INodeConfig, NodeAPI, StatusLevel } from '@types'
-import { AbstractRedNode } from '@lib/abstract-node'
-import { NSPanelNodeUtils } from '@lib/nspanel-node-utils'
+import { INodeConfig, NodeAPI, StatusLevel } from '../types/types'
+import { AbstractRedNode } from './abstract-node'
+import { NSPanelNodeUtils } from './nspanel-node-utils'
 
 export class NodeBase<TConfig extends INodeConfig, TCreds extends {} = {}> extends AbstractRedNode<TConfig, TCreds> {
     constructor(config: TConfig, RED: NodeAPI) {

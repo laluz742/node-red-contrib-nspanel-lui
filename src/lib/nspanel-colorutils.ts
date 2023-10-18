@@ -1,13 +1,13 @@
-import { HSVColor, RGBColor, RGBHSVTuple } from '@types'
-import { DEFAULT_LUI_COLOR } from '@lib/nspanel-constants'
+import { HSVColor, RGBColor, RGBHSVTuple } from '../types/types'
+import { DEFAULT_LUI_COLOR } from './nspanel-constants'
 
 const colorRegex =
     /#(?<hexColor>(?<hexAlpha>[a-f\d]{2})?(?<hexRed>[a-f\d]{2})(?<hexGreen>[a-f\d]{2})(?<hexBlue>[a-f\d]{2}))|rgb\((?<rgbColor>(?<rgbRed>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbGreen>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbBlue>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d))\)/
 
 export class NSPanelColorUtils {
     public static toHmiIconColor(color: string | number | number[], defaultColor: number = DEFAULT_LUI_COLOR): number {
-        var result = Number(color)
-        if (!isNaN(result)) return result
+        const result = Number(color)
+        if (!Number.isNaN(result)) return result
 
         if (typeof color === 'string' || Array.isArray(color)) {
             return NSPanelColorUtils.color2dec565(color, defaultColor)
@@ -30,7 +30,7 @@ export class NSPanelColorUtils {
         }
 
         const hue = NSPanelColorUtils.rad2deg(Math.atan2(y, x))
-        const hsv: HSVColor = { hue: hue, saturation: saturation, value: 1 } //FIXME: brightness input
+        const hsv: HSVColor = { hue: hue, saturation: saturation, value: 1 } // FIXME: brightness input
         const rgb: RGBColor = NSPanelColorUtils.hsv2Rgb(hsv)
 
         return [rgb, hsv]
@@ -46,7 +46,7 @@ export class NSPanelColorUtils {
             const match = colorStr.match(colorRegex)
             if (match == null || match.groups == null) return -1
 
-            //TODO: alpha
+            // TODO: alpha
             if (match.groups['hexColor'] !== undefined) {
                 r = Number('0x' + match.groups['hexRed'])
                 g = Number('0x' + match.groups['hexGreen'])
@@ -57,9 +57,9 @@ export class NSPanelColorUtils {
                 b = Number(match.groups['rgbBlue'])
             }
 
-            r = isNaN(r) ? -1 : r
-            g = isNaN(g) ? -1 : g
-            b = isNaN(b) ? -1 : b
+            r = Number.isNaN(r) ? -1 : r
+            g = Number.isNaN(g) ? -1 : g
+            b = Number.isNaN(b) ? -1 : b
         } else if (Array.isArray(color)) {
             r = color[0]
             g = color[0]

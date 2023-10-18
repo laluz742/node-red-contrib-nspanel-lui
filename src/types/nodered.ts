@@ -1,5 +1,5 @@
-import * as nodeRed from 'node-red'
-import { NodeAPI as NodeRedNodeAPI } from 'node-red'
+import * as nodeRed from 'node-red' // eslint-disable-line
+import { NodeAPI as NodeRedNodeAPI } from 'node-red' // eslint-disable-line
 
 export interface NodeAPI extends NodeRedNodeAPI {}
 export interface NodeMessage extends nodeRed.NodeMessage {}
@@ -22,4 +22,4 @@ export interface INodeConfig extends IRedNodeDef {}
 export interface IRedNode<TCreds extends {} = {}> extends nodeRed.Node<TCreds> {}
 
 export type NodeStatusFill = nodeRed.NodeStatusFill
-export type NodeStatus = nodeRed.NodeStatus
+export type NodeRedStatus = nodeRed.NodeStatus

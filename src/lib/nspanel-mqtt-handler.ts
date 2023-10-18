@@ -1,9 +1,9 @@
 import * as mqtt from 'mqtt'
 import * as nEvents from 'events'
 
-import { Logger } from '@lib/logger'
-import { MqttUtils } from '@lib/mqtt-utils'
-import { NSPanelMessageParser } from '@lib/nspanel-message-parser'
+import { Logger } from './logger'
+import { MqttUtils } from './mqtt-utils'
+import { NSPanelMessageParser } from './nspanel-message-parser'
 import {
     Nullable,
     PanelConfig,
@@ -12,20 +12,27 @@ import {
     IPanelMqttHandler,
     SensorEventArgs,
     TasmotaStatus2EventArgs,
-} from '@types'
+} from '../types/types'
 
 const log = Logger('NSPanelMqttHandler')
 
 export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMqttHandler {
     private panelMqttCustomCommandTopic: string = null
+
     private panelMqttCommandTopic: string = null
+
     private panelMqttTeleResultTopic: string = null
+
     private panelMqttStatResultTopic: string = null
+
     private panelMqttSensorTopic: string = null
+
     private panelMqttStatus2Topic: string = null
 
     private mqttOptions: mqtt.IClientOptions = {}
+
     private mqttClient: Nullable<mqtt.MqttClient> = null
+
     private connected: boolean = false
 
     constructor(panelConfig: PanelConfig) {
@@ -43,7 +50,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         if (cmd === undefined || cmd === null) return
 
         try {
-            this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data.payload) //TODO: data.payload might be empty
+            this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data.payload) // TODO: data.payload might be empty
         } catch (err: unknown) {
             if (err instanceof Error) {
                 log.error('Could not publish on command topic. Error: ' + err.message)
@@ -57,7 +64,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         const self = this
         try {
             if (Array.isArray(data)) {
-                data.forEach(function (temp) {
+                data.forEach((temp) => {
                     self.mqttClient?.publish(self.panelMqttCustomCommandTopic, temp.payload)
                 })
             } else {
@@ -122,7 +129,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
 
             this.mqttOptions = this.getMqttOptionsFromPanelConfig(panelConfig)
 
-            var mqttClient = mqtt.connect(brokerUrl, this.mqttOptions)
+            const mqttClient = mqtt.connect(brokerUrl, this.mqttOptions)
             this.mqttClient = mqttClient
 
             mqttClient.on('connect', () => this.onMqttConnect())
@@ -137,7 +144,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             mqttClient.subscribe(this.panelMqttStatus2Topic)
         } catch (err: unknown) {
             if (err instanceof Error) {
-                log.error('Could not connect to mqtt broker. Error: ' + err.message) //FIXME
+                log.error('Could not connect to mqtt broker. Error: ' + err.message) // FIXME
             }
         }
     }
@@ -186,7 +193,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             case this.panelMqttSensorTopic:
                 try {
                     const temp = JSON.parse(payloadStr)
-                    let sensorEvent: SensorEventArgs | null = NSPanelMessageParser.parseSensorEvent(temp)
+                    const sensorEvent: SensorEventArgs | null = NSPanelMessageParser.parseSensorEvent(temp)
                     if (sensorEvent != null) {
                         this.emit('sensor', sensorEvent)
                     }
@@ -202,13 +209,13 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             case this.panelMqttStatResultTopic:
                 try {
                     const temp = JSON.parse(payloadStr)
-                    //TODO: commands like SetOption73 ...
+                    // TODO: commands like SetOption73 ...
                     if ('CustomSend' in temp) {
-                        //TODO: drop for now... since no relevant data from HMI
+                        // TODO: drop for now... since no relevant data from HMI
                     } else {
-                        let parsedEvents: HardwareEventArgs[] = NSPanelMessageParser.parseHardwareEvent(temp)
-                        parsedEvents?.forEach((eventArgs) => {
-                            this.emit('event', eventArgs)
+                        const parsedEvents: HardwareEventArgs[] = NSPanelMessageParser.parseHardwareEvent(temp)
+                        parsedEvents?.forEach((hwEventArgs) => {
+                            this.emit('event', hwEventArgs)
                         })
                     }
                 } catch (err: unknown) {
@@ -224,7 +231,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                 try {
                     const temp = JSON.parse(payloadStr)
                     if ('StatusFWR' in temp) {
-                        let parsedEvent: TasmotaStatus2EventArgs = NSPanelMessageParser.parseTasmotaStatus2Event(temp)
+                        const parsedEvent: TasmotaStatus2EventArgs = NSPanelMessageParser.parseTasmotaStatus2Event(temp)
                         if (parsedEvent != null) {
                             this.emit('msg', parsedEvent)
                         }

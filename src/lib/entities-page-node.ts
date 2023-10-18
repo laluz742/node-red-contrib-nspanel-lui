@@ -1,8 +1,8 @@
-import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
-import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from '@lib/nspanel-constants'
-import { NSPanelPopupHelpers } from '@lib/nspanel-popup-helpers'
-import { NSPanelUtils } from '@lib/nspanel-utils'
-import { PageNode } from '@lib/page-node'
+import { NSPanelColorUtils } from './nspanel-colorutils'
+import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
+import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
+import { NSPanelUtils } from './nspanel-utils'
+import { PageNode } from './page-node'
 import {
     IPageOptions,
     IEntityBasedPageConfig,
@@ -11,7 +11,7 @@ import {
     PageInputMessage,
     NodeRedSendCallback,
     PageEntityData,
-} from '@types'
+} from '../types/types'
 
 export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends PageNode<TConfig> {
     protected entitiesPageNodeConfig: IEntityBasedPageConfig
@@ -58,7 +58,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
     }
 
     protected doGeneratePage(): string | string[] | null {
-        var result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
+        let result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
         result.push(this.entitiesPageNodeConfig.title ?? '')
         const titleNav = this.generateTitleNav()
         result.push(titleNav)
@@ -98,7 +98,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
     }
 
     protected generateEntities(): string {
-        var resultEntities: string[] = []
+        let resultEntities: string[] = []
 
         const entities = this.getEntities()
         const maxEntities = this.options?.maxEntities

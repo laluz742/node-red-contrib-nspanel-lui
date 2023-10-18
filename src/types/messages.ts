@@ -1,6 +1,6 @@
-import { NodeMessageInFlow, NodeMessageParts } from 'node-red'
 import { PanelColor } from './entities'
 import { EventArgs } from './events'
+import { NodeMessageInFlow, NodeMessageParts } from './types'
 
 export interface PanelMessage extends NodeMessageInFlow {}
 
@@ -44,7 +44,7 @@ export interface NotifyData {
     textColor?: PanelColor
     fontSize?: number
 
-    timeout?: Number
+    timeout?: number
 
     icon?: string
     iconColor?: PanelColor
@@ -65,7 +65,7 @@ export interface PageInputMessage extends PanelMessage {
 }
 
 export interface PageOutputMessage extends PanelMessage {
-    //FIXME:
+    // FIXME:
 }
 
 export interface PageEntityDataBase {
@@ -75,7 +75,7 @@ export interface PageEntityDataBase {
 }
 
 export interface PageEntityData extends PageEntityDataBase {
-    //FIXME data processing should be resolved in a way the  internals below are not used externally
+    // FIXME data processing should be resolved in a way the  internals below are not used externally
     entityId?: string
     value?: string | number
 }
@@ -103,7 +103,7 @@ export interface LightEntityData extends SwitchEntityData {
 }
 
 export interface StatusItemData extends PageEntityDataBase {
-    //used in screensaver
+    // used in screensaver
     prefix?: string
     iconFont?: string
     index?: 0 | 1

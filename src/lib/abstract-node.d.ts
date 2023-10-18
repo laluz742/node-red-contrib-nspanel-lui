@@ -1,5 +1,5 @@
 import * as nodeRed from 'node-red'
-import { INodeConfig, IRedNodeDef, IRedNode, VoidCallback, NodeRedOnInputCallback } from '@types'
+import { INodeConfig, IRedNodeDef, IRedNode, VoidCallback, NodeRedOnInputCallback } from '../types/types'
 
 export declare abstract class AbstractRedNode<TConfig extends INodeConfig, TCreds extends {} = {}>
     implements IRedNode<TCreds>
