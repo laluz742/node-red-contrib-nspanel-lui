@@ -5,7 +5,7 @@ import {
     NodeAPI,
     PageInputMessage,
     NodeRedSendCallback,
-    PageEntityData
+    PageEntityData,
 } from '../types'
 import { NSPanelColorUtils } from './nspanel-colorutils'
 import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
