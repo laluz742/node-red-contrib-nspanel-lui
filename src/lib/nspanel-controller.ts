@@ -112,9 +112,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         const allKnownPages: IPageNode[] = this._cache.getAllKnownPages()
-        let pageNodeId: string | null = null
-        for (let i = 0; i < allKnownPages.length; i++) {
-            if (allKnownPages[i].name === page) {
+        var pageNodeId: string | null = null
+        for (var i = 0; i < allKnownPages.length; i++) {
+            if (allKnownPages[i].name == page) {
                 pageNodeId = allKnownPages[i].id
                 break
             }
