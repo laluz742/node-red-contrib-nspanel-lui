@@ -1,4 +1,4 @@
-import { IControllerCache, IPageHistory, IPageNode, PageId } from '@types'
+import { IControllerCache, IPageHistory, IPageNode, PageId } from '../types/types'
 
 export class SimpleControllerCache implements IControllerCache {
     private history: IPageHistory[] = []
@@ -6,7 +6,7 @@ export class SimpleControllerCache implements IControllerCache {
 
     // #region history management
     public getCurrentPage(): IPageHistory | null {
-        return this.history.length == 0 ? null : this.history.slice(-1)[0] ?? null
+        return this.history.length === 0 ? null : this.history.slice(-1)[0] ?? null
     }
 
     public addToHistory(pageHistory: IPageHistory): void {
@@ -37,9 +37,9 @@ export class SimpleControllerCache implements IControllerCache {
         if (this.history.length > 0) {
             const currentHistory: IPageHistory[] = this.history.map((x) => x)
 
-            var lastHistoryOfTypePage: IPageHistory | null = null
+            let lastHistoryOfTypePage: IPageHistory | null = null
             for (var i = currentHistory.length - 1; i >= 0; i--) {
-                if (currentHistory[i].historyType == 'page') {
+                if (currentHistory[i].historyType === 'page') {
                     lastHistoryOfTypePage = currentHistory[i]
                     break
                 }

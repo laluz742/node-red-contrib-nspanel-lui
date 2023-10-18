@@ -1,4 +1,4 @@
-import { IRedNode } from '@types'
+import { IRedNode } from '../types/types'
 
 const dateOptions: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }
 const timeOptions: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric' }

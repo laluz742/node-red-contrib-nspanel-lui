@@ -3,8 +3,8 @@
     const ALLOWED_ENTITIES = ['delete', 'hvac_action']
     const ALL_VALID_EVENTS_BASE: ValidEventSpec[] = NSPanelLui.Events.allNavigationEvents
 
-    var editableEventList = null,
-        editableEntitiesList = null
+    let editableEventList = null
+    let editableEntitiesList = null
 
     const registerType = () =>
         RED.nodes.registerType('nspanel-page-thermo', {
@@ -31,17 +31,17 @@
                 targetTemperature: {
                     value: 25,
                     required: true,
-                    validate: function (v) {
-                        var vNum = Number(v)
-                        if (isNaN(vNum) === true) return false
+                    validate(v) {
+                        const vNum = Number(v)
+                        if (Number.isNaN(vNum) === true) return false
 
-                        var minLimit = Number($('#node-input-minHeatSetpointLimit').val())
-                        var maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
-                        if (isNaN(minLimit) && isNaN(maxLimit)) {
+                        const minLimit = Number($('#node-input-minHeatSetpointLimit').val())
+                        const maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
+                        if (Number.isNaN(minLimit) && Number.isNaN(maxLimit)) {
                             return true
-                        } else if (isNaN(minLimit) && !isNaN(maxLimit)) {
+                        } else if (Number.isNaN(minLimit) && !Number.isNaN(maxLimit)) {
                             return vNum <= maxLimit
-                        } else if (!isNaN(minLimit) && isNaN(maxLimit)) {
+                        } else if (!Number.isNaN(minLimit) && Number.isNaN(maxLimit)) {
                             return vNum >= minLimit
                         }
 
@@ -51,28 +51,28 @@
                 minHeatSetpointLimit: {
                     value: 7,
                     required: true,
-                    validate: function (v) {
-                        var vNum = Number(v)
-                        if (isNaN(vNum) === true) return false
+                    validate(v) {
+                        const vNum = Number(v)
+                        if (Number.isNaN(vNum) === true) return false
 
-                        var targetTemp = Number($('#node-input-targetTemperature').val())
-                        var maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
-                        return isNaN(targetTemp) === false
-                            ? vNum <= targetTemp && (isNaN(maxLimit) ? true : vNum < maxLimit)
+                        const targetTemp = Number($('#node-input-targetTemperature').val())
+                        const maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
+                        return Number.isNaN(targetTemp) === false
+                            ? vNum <= targetTemp && (Number.isNaN(maxLimit) ? true : vNum < maxLimit)
                             : true
                     },
                 },
                 maxHeatSetpointLimit: {
                     value: 30,
                     required: true,
-                    validate: function (v) {
-                        var vNum = Number(v)
-                        if (isNaN(vNum) === true) return false
+                    validate(v) {
+                        const vNum = Number(v)
+                        if (Number.isNaN(vNum) === true) return false
 
-                        var targetTemp = Number($('#node-input-targetTemperature').val())
-                        var minLimit = Number($('#node-input-minHeatSetpointLimit').val())
-                        return isNaN(targetTemp) === false
-                            ? vNum >= targetTemp && (isNaN(minLimit) ? true : vNum > minLimit)
+                        const targetTemp = Number($('#node-input-targetTemperature').val())
+                        const minLimit = Number($('#node-input-minHeatSetpointLimit').val())
+                        return Number.isNaN(targetTemp) === false
+                            ? vNum >= targetTemp && (Number.isNaN(minLimit) ? true : vNum > minLimit)
                             : true
                     },
                 },
@@ -80,27 +80,26 @@
                 temperatureUnit: { value: 'C', required: true },
             },
 
-            label: function () {
+            label() {
                 return NSPanelLui.Editor.util.getNodeLabel(this)
             },
 
-            oneditprepare: function () {
-                //@ts-ignore 6133
-                var self = this
-                var eventInputControl = $('#node-input-event-control')
-                var nsPanelInputField = $('#node-input-nsPanel')
-                var nsPanelInputField_lastVal = this.nsPanel
+            oneditprepare() {
+                const self = this
+                const eventInputControl = $('#node-input-event-control')
+                const nsPanelInputField = $('#node-input-nsPanel')
+                const nsPanelInputField_lastVal = this.nsPanel
 
-                //TODO: refactor since code same on any page node
-                nsPanelInputField.on('change', function () {
-                    if (nsPanelInputField.val() == '_ADD_') {
+                // TODO: refactor since code same on any page node
+                nsPanelInputField.on('change', () => {
+                    if (nsPanelInputField.val() === '_ADD_') {
                         eventInputControl.hide()
-                        //TODO remove all events? ... keep track of original nsPanelId
+                        // TODO remove all events? ... keep track of original nsPanelId
                     } else {
-                        if (nsPanelInputField.val() != nsPanelInputField_lastVal) eventInputControl.empty()
+                        if (nsPanelInputField.val() !== nsPanelInputField_lastVal) eventInputControl.empty()
 
-                        var nsPanelId = nsPanelInputField.val() as string
-                        var allValidEvents = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
+                        const nsPanelId = nsPanelInputField.val() as string
+                        const allValidEvents = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
                             nsPanelId,
                             ALL_VALID_EVENTS_BASE
                         )
@@ -117,10 +116,10 @@
                 nsPanelInputField.trigger('change')
 
                 editableEntitiesList = NSPanelLui.Editor.create.editableEntitiesList(
-                    this,
+                    self,
                     '#node-input-entities-control',
                     MAX_ENTITIES,
-                    this.entities,
+                    self.entities,
                     ALLOWED_ENTITIES
                 )
 
@@ -131,9 +130,9 @@
                     self.events
                 )
 
-                var tabs = RED.tabs.create({
+                const tabs = RED.tabs.create({
                     id: 'nspanel-page-tabs',
-                    onchange: function (tab) {
+                    onchange(tab) {
                         $('#nspanel-page-tabs-content').children().hide()
                         $('#' + tab.id).show()
                     },
@@ -155,7 +154,7 @@
                     label: NSPanelLui._('label.events', 'nspanel-panel', 'common'),
                 })
             },
-            oneditsave: function () {
+            oneditsave() {
                 this.events = editableEventList.getEvents() || []
                 this.entities = editableEntitiesList.getEntities() || []
 

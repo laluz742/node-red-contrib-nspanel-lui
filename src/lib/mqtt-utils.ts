@@ -30,7 +30,7 @@ export const MqttUtils = {
         return regex.test(topic)
     },
 
-    getBrokerUrl: function (address: string, port: string | number = '', useTls: boolean = false) {
+    getBrokerUrl(address: string, port: string | number = '', useTls: boolean = false) {
         let brokerUrl = ''
         let brokerPort = port ? port : 1883
 
@@ -39,7 +39,7 @@ export const MqttUtils = {
         } else {
             brokerUrl = useTls ? 'mqtts://' : 'mqtt://'
 
-            if (address != '') {
+            if (address !== '') {
                 brokerUrl += isIPv6(address) ? '[' + address + ']' : address
             } else {
                 brokerUrl += 'localhost'

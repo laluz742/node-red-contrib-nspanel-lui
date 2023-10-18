@@ -1,5 +1,5 @@
-import { NodeBase } from '@lib/node-base'
-import { INodeConfig, IPanelConfigNode, PanelMqttConfig, VoidCallback } from '@types'
+import { NodeBase } from '../lib/node-base'
+import { INodeConfig, IPanelConfigNode, PanelMqttConfig, VoidCallback } from '../types/types'
 
 module.exports = (RED) => {
     interface NSPanelConfig extends INodeConfig, PanelMqttConfig {}
@@ -38,7 +38,7 @@ module.exports = (RED) => {
         }
 
         private onClose(done: VoidCallback) {
-            //TODO: inform nodes?
+            // TODO: inform nodes?
             done()
         }
     }

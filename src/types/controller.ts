@@ -1,7 +1,8 @@
 import { IDisposable } from './base'
 import { CommandData, NotifyData } from './messages'
-import { VoidCallback } from './node-red'
-import { IPageNode, PageId } from './pages'
+import { VoidCallback } from './nodered'
+import { IPageNode } from './nodes'
+import { PageId } from './pages'
 
 export type PageMap = Map<string, IPageNode>
 

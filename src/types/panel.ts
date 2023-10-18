@@ -1,18 +1,13 @@
 import { SplitTime } from './base'
 import { PageMap } from './controller'
 import { HMIVersion } from './events'
-import { INodeConfig } from './node-red'
-import { IPageNode } from './pages'
+import { IPanelNode } from './nodes'
 
-export interface IPanelNode extends INodeConfig {
-    registerPage(pageNode: IPageNode): void
-    deregisterPage(pageNode: IPageNode): void
-}
 export interface IPanelNodeEx extends IPanelNode {
     getPanelConfig(): PanelConfig
     getAllPages(): PageMap
 
-    on(event: string, listener: Function): void
+    on(event: string, listener: Function): void // eslint-disable-line // FIXME
 }
 
 export interface PanelConfig {

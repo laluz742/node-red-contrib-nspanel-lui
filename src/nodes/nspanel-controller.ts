@@ -1,6 +1,6 @@
-import { NodeBase } from '@lib/node-base'
-import { NSPanelController } from '@lib/nspanel-controller'
-import { NSPanelMessageUtils } from '@lib/nspanel-message-utils'
+import { NodeBase } from '../lib/node-base'
+import { NSPanelController } from '../lib/nspanel-controller'
+import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import {
     CommandData,
     EventArgs,
@@ -9,10 +9,11 @@ import {
     NodeMessageInFlow,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
+    NodeStatus,
     NotifyData,
     PanelBasedConfig,
     PanelMessage,
-} from '@types'
+} from '../types/types'
 
 interface NSPanelControllerConfig extends PanelBasedConfig {
     screenSaverOnStartup: boolean
@@ -21,7 +22,9 @@ interface NSPanelControllerConfig extends PanelBasedConfig {
 module.exports = (RED) => {
     class NSPanelControllerNode extends NodeBase<NSPanelControllerConfig> {
         private nsPanelController: IPanelController | null = null
+
         private panelNode: IPanelNodeEx | null = null
+
         private config: NSPanelControllerConfig
 
         constructor(config: NSPanelControllerConfig) {
@@ -61,10 +64,10 @@ module.exports = (RED) => {
         private handleCommandInput(msg: PanelMessage): void {
             const cmdInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
 
-            var allCommands: CommandData[] = []
+            const allCommands: CommandData[] = []
 
             cmdInputData.forEach((item, _idx) => {
-                var cmdResult: CommandData | null = NSPanelMessageUtils.convertToCommandData(item)
+                const cmdResult: CommandData | null = NSPanelMessageUtils.convertToCommandData(item)
                 if (cmdResult !== null) {
                     allCommands.push(cmdResult)
                 }
@@ -72,7 +75,7 @@ module.exports = (RED) => {
 
             this.nsPanelController?.executeCommand(allCommands)
 
-            /*TODO: Beep command   switch (payload.cmd) {
+            /* TODO: Beep command   switch (payload.cmd) {
                    case 'beep':
                        const cmdParam = payload.params
                        this.nsPanelController.sendBuzzerCommand(
@@ -82,7 +85,7 @@ module.exports = (RED) => {
                            cmdParam.tune
                        )
                        break
-               }*/
+               } */
         }
 
         private init(config: NSPanelControllerConfig) {
@@ -110,7 +113,7 @@ module.exports = (RED) => {
 
                 // forward RED events
                 RED.events.on('flows:starting', () => this.nsPanelController?.onFlowsStarting())
-                RED.events.on('flows:started', () => this.nsPanelController?.onFlowsStarted()) //TODO: need done?
+                RED.events.on('flows:started', () => this.nsPanelController?.onFlowsStarted()) // TODO: need done?
             }
         }
 
@@ -122,8 +125,8 @@ module.exports = (RED) => {
             this.send(eventArgs)
         }
 
-        private onControllerStatusEvent(eventArgs) {
-            this.setNodeStatus(eventArgs.topic, eventArgs.msg)
+        private onControllerStatusEvent(nodeStatus: NodeStatus) {
+            this.setNodeStatus(nodeStatus.statusLevel, nodeStatus.msg)
         }
     }
 

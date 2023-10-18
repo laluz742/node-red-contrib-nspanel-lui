@@ -15,12 +15,12 @@
                 nsPanel: { type: 'nspanel-panel', required: true },
             },
 
-            label: function () {
+            label() {
                 return NSPanelLui.Editor.util.getNodeLabel(this)
             },
 
-            oneditprepare: function () {},
-            oneditsave: function () {},
+            oneditprepare() {},
+            oneditsave() {},
         })
 
     $.getScript('resources/node-red-contrib-nspanel-lui/nspanel-lui.js').done(registerType)

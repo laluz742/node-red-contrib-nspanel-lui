@@ -1,9 +1,9 @@
-// @ts-nocheck //FIXME
+// @ts-nocheck // FIXME
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'
 import * as semver from 'semver'
 
-import { Logger } from '@lib/logger'
+import { Logger } from './logger'
 import {
     HMIVersion,
     IPanelController,
@@ -13,7 +13,7 @@ import {
     NotifyData,
     VersionData,
     NodeRedI18nResolver,
-} from '@types'
+} from '../types/types'
 
 import {
     STR_BERRYDRIVER_CMD_FLASHNEXTION,
@@ -27,7 +27,7 @@ import {
     STR_LUI_LINEBREAK,
     STR_LUI_COLOR_GREEN,
     STR_LUI_COLOR_RED,
-} from '@lib/nspanel-constants'
+} from './nspanel-constants'
 
 type PanelVersionData = {
     tasmota: VersionData | null
@@ -73,7 +73,7 @@ type githubApiReleaseSchema = {
 
 const URL_TASMOTA_RELEASES_LATEST_META = 'https://api.github.com/repositories/80286288/releases/latest'
 const URL_BERRYDRIVER_LATEST = 'https://raw.githubusercontent.com/joBr99/nspanel-lovelace-ui/main/tasmota/autoexec.be'
-//const URL_NLUI_RELEASES_LATEST_META = 'https://api.github.com/repos/joBr99/nspanel-lovelace-ui/releases/latest'
+// const URL_NLUI_RELEASES_LATEST_META = 'https://api.github.com/repos/joBr99/nspanel-lovelace-ui/releases/latest'
 const URL_NLUI_LATEST =
     'https://raw.githubusercontent.com/joBr99/nspanel-lovelace-ui/main/apps/nspanel-lovelace-ui/nspanel-lovelace-ui.py'
 
@@ -91,8 +91,11 @@ const log = Logger('NSPanelUpdater')
 
 export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdater {
     private _panelController: IPanelController
+
     private _mqttHandler: IPanelMqttHandler | null = null
+
     private _i18n: NodeRedI18nResolver = null
+
     private _options: IPanelUpdaterOptions = null
 
     private _updateData: PanelUpdateData = {
@@ -126,19 +129,21 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     public checkForUpdates(): void {
         // TODO: promisify the wait for version data
-        var self = this
+        const self = this
         this._acquireVersions()
             .then(() => {
                 if (self._options.autoUpdate === false) {
                     // TODO: save state when multiple updates available
-                    var notifyTextMain: string, currentVersion: string, latestVersion: string
+                    let notifyTextMain: string
+                    let currentVersion: string
+                    let latestVersion: string
 
                     if (
-                        (this._updateData.versionAcquisitionStatus &
+                        (self._updateData.versionAcquisitionStatus &
                             VersionAcquisitionStatus.TasmotaUpdateAvailable) ===
                         VersionAcquisitionStatus.TasmotaUpdateAvailable
                     ) {
-                        notifyTextMain = this._i18n('nspanel-controller.panel.newFirmwareTasmotaTextMain')
+                        notifyTextMain = self._i18n('nspanel-controller.panel.newFirmwareTasmotaTextMain')
                         currentVersion = self._updateData.versions.current.tasmota.version
                         latestVersion = self._updateData.versions.latest.tasmota.version
 
@@ -151,11 +156,11 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                     }
 
                     if (
-                        (this._updateData.versionAcquisitionStatus &
+                        (self._updateData.versionAcquisitionStatus &
                             VersionAcquisitionStatus.BerryDriverUpdateAvailable) ===
                         VersionAcquisitionStatus.BerryDriverUpdateAvailable
                     ) {
-                        notifyTextMain = this._i18n('nspanel-controller.panel.newBerryDriverTextMain')
+                        notifyTextMain = self._i18n('nspanel-controller.panel.newBerryDriverTextMain')
                         currentVersion = self._updateData.versions.current.berryDriver.version
                         latestVersion = self._updateData.versions.latest.berryDriver.version
 
@@ -168,10 +173,10 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                     }
 
                     if (
-                        (this._updateData.versionAcquisitionStatus & VersionAcquisitionStatus.HmiUpdateAvailable) ===
+                        (self._updateData.versionAcquisitionStatus & VersionAcquisitionStatus.HmiUpdateAvailable) ===
                         VersionAcquisitionStatus.HmiUpdateAvailable
                     ) {
-                        notifyTextMain = this._i18n('nspanel-controller.panel.newHmiTextMain')
+                        notifyTextMain = self._i18n('nspanel-controller.panel.newHmiTextMain')
                         currentVersion = self._updateData.versions.current.hmi.internalVersion
                         latestVersion = `${self._updateData.versions.latest.hmi.version} (${self._updateData.versions.latest.hmi.internalVersion})`
 
@@ -192,23 +197,27 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
         currentVersion: string,
         latestVersion: string
     ) {
-        const instruction: string = notifyTextMain + STR_LUI_LINEBREAK + STR_LUI_LINEBREAK
-        this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') +
+        const instruction: string =
+            notifyTextMain +
+            STR_LUI_LINEBREAK +
+            this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') +
             currentVersion +
+            STR_LUI_LINEBREAK +
             STR_LUI_LINEBREAK +
             this._i18n('nspanel-controller.panel.newFirmwareVersionPrefix') +
             latestVersion +
             STR_LUI_LINEBREAK +
-            STR_LUI_LINEBREAK
-        this._i18n('nspanel-controller.panel.newFirmwarPerformUpdate')
+            STR_LUI_LINEBREAK +
+            this._i18n('nspanel-controller.panel.newFirmwarPerformUpdate')
 
         const notifyData: NotifyData = {
-            notifyId: notifyId,
-            icon: 'wrench-outline',
+            notifyId,
+            icon: 'reload-alert',
             text: instruction,
             heading: this._i18n('nspanel-controller.panel.newFirmwareTitle'),
             headingColor: STR_LUI_COLOR_RED,
             timeout: 0,
+            fontSize: 0,
             cancelColor: STR_LUI_COLOR_RED,
             cancelText: this._i18n('nspanel-controller.panel.btnTextNo'),
             okColor: STR_LUI_COLOR_GREEN,
@@ -224,9 +233,9 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
         this.getCurrentBerryDriverVersion()
         this.getCurrentHmiVersion()
         this.getLatestVersion()
-        var i = 10
+        let i = 10
 
-        var self = this
+        const self = this
         return new Promise((resolve, reject) => {
             ;(function waitForDataAcquisition() {
                 if (
@@ -260,7 +269,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
                 setTimeout(waitForDataAcquisition, 1000)
 
-                if (--i == 0) reject(self._updateData.versionAcquisitionStatus)
+                if (--i === 0) reject(self._updateData.versionAcquisitionStatus)
             })()
         })
     }
@@ -278,7 +287,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     public setBerryDriverVersion(version: string): void {
         if (version != null) {
-            this._updateData.versions.current.berryDriver = { version: version }
+            this._updateData.versions.current.berryDriver = { version }
             this._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.BerryDriverVersionCurrent
         }
     }
@@ -334,7 +343,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                 this.updateData.latest.hmi = { version: hmiVersionLatest }
                 // TODO: pick right asset
             }
-        })*/
+        }) */
 
         axios.get<string>(URL_NLUI_LATEST, axiosRequestOptions).then((response) => {
             if (response?.data != null) {

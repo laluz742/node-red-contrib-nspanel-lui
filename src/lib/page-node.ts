@@ -1,10 +1,10 @@
-import { ILogger, Logger } from '@lib/logger'
-import { NodeBase } from '@lib/node-base'
-import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER } from '@lib/nspanel-constants'
-import { NSPanelMessageUtils } from '@lib/nspanel-message-utils'
-import { NSPanelUtils } from '@lib/nspanel-utils'
-import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
-import { SimplePageCache } from '@lib/nspanel-page-cache'
+import { ILogger, Logger } from './logger'
+import { NodeBase } from './node-base'
+import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER } from './nspanel-constants'
+import { NSPanelMessageUtils } from './nspanel-message-utils'
+import { NSPanelUtils } from './nspanel-utils'
+import { NSPanelColorUtils } from './nspanel-colorutils'
+import { SimplePageCache } from './nspanel-page-cache'
 import {
     IPanelNode,
     IPageNode,
@@ -20,14 +20,19 @@ import {
     PageData,
     NodeAPI,
     IPageCache,
-} from '@types'
+} from '../types/types'
 
 export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> implements IPageNode {
     private panelNode: IPanelNode | null = null
+
     private pageNodeConfig: IPageConfig
+
     protected options: IPageOptions | null = null
+
     private __log: ILogger | null = null
+
     private _cache: IPageCache = null
+
     protected pageData: PageData = {
         entities: [],
     }
@@ -48,7 +53,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         this.initPageNode(config, options)
         const panelNode = (<unknown>RED.nodes.getNode(config.nsPanel)) as IPanelNode
         if (!panelNode || panelNode.type !== 'nspanel-panel') {
-            this.warn('Panel configuration is wrong or missing, please review the node settings') //FIXME i18n panel missing
+            this.warn('Panel configuration is wrong or missing, please review the node settings') // FIXME i18n panel missing
             this.status({
                 fill: 'red',
                 shape: 'dot',
@@ -64,14 +69,14 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     public getTimeout() {
-        if (this.pageNodeConfig.timeout == null || this.pageNodeConfig.timeout == '') return null
+        if (this.pageNodeConfig.timeout === null || this.pageNodeConfig.timeout === '') return null
 
         const num = Number(this.pageNodeConfig.timeout)
-        return isNaN(num) ? null : num
+        return Number.isNaN(num) ? null : num
     }
 
     public getPageType() {
-        if (this.options == null) throw 'Illegal state'
+        if (this.options == null) throw new Error('Illegal state')
         return this.options.pageType
     }
 
@@ -93,9 +98,9 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     protected generateTitleNav() {
-        //TODO: icons
-        var navPrev = NSPanelUtils.makeEntity('delete')
-        var navNext = NSPanelUtils.makeEntity('delete')
+        // TODO: icons
+        let navPrev = NSPanelUtils.makeEntity('delete')
+        let navNext = NSPanelUtils.makeEntity('delete')
 
         this.pageNodeConfig.events.forEach((item) => {
             switch (item.event) {
@@ -128,7 +133,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     protected sendToPanel(data): void {
-        this.emit('ctrl:send', { page: this, data: data })
+        this.emit('ctrl:send', { page: this, data })
     }
 
     public isScreenSaver() {
@@ -157,16 +162,16 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     private handlePageNavigationEvent(_eventArgs: EventArgs, eventConfig: EventMapping): void {
-        //FIXME: better naming
+        // FIXME: better naming
         this.emit('nav:pageId', eventConfig.value)
     }
 
     private handlePageMessageEvent(_eventArgs: EventArgs, eventConfig: EventMapping, send: NodeRedSendCallback): void {
         if (eventConfig.value == null) return
 
-        //FIXME: better naming
-        var outMsg = {}
-        var data: any
+        // FIXME: better naming
+        const outMsg = {}
+        let data: any
 
         switch (eventConfig.dataType) {
             case 'str':
@@ -177,13 +182,13 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
                 try {
                     data = eventConfig.data ? JSON.parse(eventConfig.data) : undefined
                 } catch (err: unknown) {
-                    this.warn('Data not JSON compliant, sending as string') //TODO i18n
+                    this.warn('Data not JSON compliant, sending as string') // TODO i18n
                     data = eventConfig.data
                 }
                 break
         }
 
-        //TODO: handle other data
+        // TODO: handle other data
         outMsg[eventConfig.value] = data
         send(outMsg)
     }
@@ -228,7 +233,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     private _handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-        var handled = false
+        let handled = false
 
         try {
             handled = this.handleInput(msg, send)
@@ -250,14 +255,14 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     private _handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
-        var result: PageEntityData[] = []
+        const result: PageEntityData[] = []
 
-        //TODO: take msg.parts or index into account to allow to set specific status
+        // TODO: take msg.parts or index into account to allow to set specific status
         const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
 
         if (Array.isArray(entityInputData)) {
             entityInputData.forEach((item, _idx) => {
-                var conversionResult = NSPanelMessageUtils.convertToEntityItemData(item)
+                const conversionResult = NSPanelMessageUtils.convertToEntityItemData(item)
                 result.push(conversionResult)
             })
         }
@@ -267,10 +272,10 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     private _handleUiEvent(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
-        var handled = false
+        let handled = false
 
         // translate possible hardware button press when hw buttons do not controll power outputs (@see
-        const event2 = eventArgs.type == 'hw' ? eventArgs.type + '.' + eventArgs.source : eventArgs.event2
+        const event2 = eventArgs.type === 'hw' ? eventArgs.type + '.' + eventArgs.source : eventArgs.event2
 
         // event mapped in config?
         if (event2 != null && this.configuredEvents.has(event2)) {
