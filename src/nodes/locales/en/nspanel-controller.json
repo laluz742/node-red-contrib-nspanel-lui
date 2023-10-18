@@ -29,12 +29,12 @@
         "panel": {
             "offline": "Offline",
             "serverStopped": "Server stopped",
-            "newFirmwareTitle": "New Firmware",
-            "currentFirmwareVersionPrefix": "Current version: ",
-            "newFirmwareVersionPrefix": "New version: ",
-            "newFirmwareTasmotaTextMain": "A new firmware update for Tasmota is available.",
-            "newBerryDriverTextMain": "A new BerryDriver is available.",
-            "newHmiTextMain": "A new Lovelace UI firmware is available for the display.",
+            "newFirmwareTitle": "Firmware Update Available",
+            "currentFirmwareVersionPrefix": "Installed version: ",
+            "newFirmwareVersionPrefix": "Available version: ",
+            "newFirmwareTasmotaTextMain": "A new Tasmota firmware update\r\nis available for your NSPanel.",
+            "newBerryDriverTextMain": "A new BerryDriver update is\r\navailable for your NSPanel.",
+            "newHmiTextMain": "A new Lovelace UI firmware\r\nupdate is available.",
             "newFirmwarPerformUpdate": "Do you want to update now?",
             "btnTextYes": "Yes",
             "btnTextNo": "No"

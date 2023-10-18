@@ -35,9 +35,9 @@
             "newFirmwareTitle": "Neue Firmware",
             "currentFirmwareVersionPrefix": "Aktuelle Version: ",
             "newFirmwareVersionPrefix": "Neue Version: ",
-            "newFirmwareTasmotaTextMain": "Eine neue Firmware für Tasmota ist verfügbar.",
-            "newBerryDriverTextMain": "Eine neue Version des BerryDriver ist verfügbar.",
-            "newHmiTextMain": "Ein Lovelace UI-Update für das Display ist verfügbar.",
+            "newFirmwareTasmotaTextMain": "Eine neues Firmware-Update für\r\nTasmota ist verfügbar.",
+            "newBerryDriverTextMain": "Ein Update für den BerryDriver\r\nist verfügbar.",
+            "newHmiTextMain": "Ein Update der Lovelace UI\r\nFirmware ist verfügbar.",
             "newFirmwarPerformUpdate": "Möchten Sie das Update installieren?",
             "btnTextYes": "Ja",
             "btnTextNo": "Nein"
