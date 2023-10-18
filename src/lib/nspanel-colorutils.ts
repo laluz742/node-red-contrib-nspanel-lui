@@ -1,11 +1,42 @@
-import { HSVColor, RGBColor } from '../types'
-import { DEFAULT_HMI_COLOR } from './nspanel-constants'
+import { HSVColor, RGBColor, RGBHSVTuple } from '../types'
+import { DEFAULT_LUI_COLOR } from './nspanel-constants'
 
 const colorRegex =
     /#(?<hexColor>(?<hexAlpha>[a-f\d]{2})?(?<hexRed>[a-f\d]{2})(?<hexGreen>[a-f\d]{2})(?<hexBlue>[a-f\d]{2}))|rgb\((?<rgbColor>(?<rgbRed>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbGreen>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbBlue>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d))\)/
 
 export class NSPanelColorUtils {
-    public static color2dec565(color: string | number[], defaultColor: number = DEFAULT_HMI_COLOR): number {
+    public static toHmiIconColor(color: string | number | number[], defaultColor: number = DEFAULT_LUI_COLOR): number {
+        var result = Number(color)
+        if (!isNaN(result)) return result
+
+        if (typeof color === 'string' || Array.isArray(color)) {
+            return NSPanelColorUtils.color2dec565(color, defaultColor)
+        }
+
+        return defaultColor
+    }
+
+    public static hmiPosToColor(x: number, y: number): RGBHSVTuple {
+        let r = 160 / 2
+        x = Math.round(((x - r) / r) * 100) / 100
+        y = Math.round(((r - y) / r) * 100) / 100
+
+        r = Math.sqrt(x * x + y * y)
+        var saturation = 0
+        if (r > 1) {
+            saturation = 0
+        } else {
+            saturation = r
+        }
+
+        const hue = NSPanelColorUtils.rad2deg(Math.atan2(y, x))
+        const hsv: HSVColor = { hue: hue, saturation: saturation, value: 1 } //FIXME: brightness input
+        const rgb: RGBColor = NSPanelColorUtils.hsv2Rgb(hsv)
+
+        return [rgb, hsv]
+    }
+
+    public static color2dec565(color: string | number[], defaultColor: number = DEFAULT_LUI_COLOR): number {
         var r = -1,
             g = -1,
             b = -1

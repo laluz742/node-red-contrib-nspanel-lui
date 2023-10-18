@@ -7,3 +7,7 @@ export interface IPanelUpdater extends IDisposable {
 
     checkForUpdates(): void
 }
+
+export type IPanelUpdaterOptions = {
+    autoUpdate: boolean
+}

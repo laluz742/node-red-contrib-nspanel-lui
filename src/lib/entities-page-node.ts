@@ -1,21 +1,20 @@
 import {
     IPageOptions,
     IEntityBasedPageConfig,
-    PageCacheData,
     PanelEntity,
     NodeAPI,
     PageInputMessage,
     NodeRedSendCallback,
-    PageEntityData,
+    PageEntityData
 } from '../types'
-import { DEFAULT_HMI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
+import { NSPanelColorUtils } from './nspanel-colorutils'
+import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 import { NSPanelUtils } from './nspanel-utils'
 import { PageNode } from './page-node'
 
 export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends PageNode<TConfig> {
     protected entitiesPageNodeConfig: IEntityBasedPageConfig
-    private entitiesPageNodePageCache: PageCacheData = null
     private entities: Map<string, PanelEntity> = new Map<string, PanelEntity>()
     private entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>()
 
@@ -50,7 +49,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
                 if (dirty) {
                     this.entityData = entityData
-                    this.clearPageCache()
+                    this.getCache().clear()
                 }
                 return true
         }
@@ -58,9 +57,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         return false
     }
 
-    public generatePage(): string | string[] | null {
-        if (this.hasPageCache()) return this.getPageCache()
-
+    protected doGeneratePage(): string | string[] | null {
         var result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
         result.push(this.entitiesPageNodeConfig.title ?? '')
         const titleNav = this.generateTitleNav()
@@ -70,8 +67,6 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         result.push(entitites)
 
         const pageData: string = result.join(STR_LUI_DELIMITER)
-        this.setPageCache(pageData)
-
         return pageData
     }
 
@@ -122,7 +117,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
                 entityConfig.type,
                 entityConfig.entityId,
                 NSPanelUtils.getIcon(icon ?? ''),
-                NSPanelUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_HMI_COLOR),
+                NSPanelColorUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
                 text ?? '',
                 optionalValue
             )
@@ -132,22 +127,4 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
         return resultEntities.join(STR_LUI_DELIMITER)
     }
-
-    // #region cache
-    protected hasPageCache(): boolean {
-        return this.entitiesPageNodePageCache !== null
-    }
-
-    protected getPageCache(): PageCacheData {
-        return this.entitiesPageNodePageCache
-    }
-
-    protected setPageCache(data: PageCacheData): void {
-        this.entitiesPageNodePageCache = data
-    }
-
-    protected clearPageCache(): void {
-        this.entitiesPageNodePageCache = null
-    }
-    // #endregion cache
 }

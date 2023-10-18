@@ -12,7 +12,13 @@ import {
 
 export type PageId = string
 export type ConfiguredEventsMap = Map<string, EventMapping>
-export type PageCacheData = string | string[] | null
+
+export interface IPageCache {
+    get(): string | string[] | null
+    put(data: string | string[] | null): void
+    containsData(): boolean
+    clear()
+}
 
 export type PanelBasedConfig = INodeConfig & {
     nsPanel: string

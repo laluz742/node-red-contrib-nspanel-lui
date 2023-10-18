@@ -1,9 +1,19 @@
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'
+import * as semver from 'semver'
 
 // @ts-ignore 6133
 import { Logger } from './logger'
-import { HMIVersion, IPanelController, IPanelMqttHandler, IPanelUpdater, VersionData } from '../types'
+import {
+    HMIVersion,
+    IPanelController,
+    IPanelMqttHandler,
+    IPanelUpdater,
+    IPanelUpdaterOptions,
+    NotifyData,
+    VersionData,
+} from '../types'
+import { NodeRedI18nResolver } from '../types/node-red'
 import {
     STR_BERRYDRIVER_CMD_FLASHNEXTION,
     STR_BERRYDRIVER_CMD_UPDATE,
@@ -13,7 +23,11 @@ import {
     STR_TASMOTA_CMD_STATUS,
     STR_TASMOTA_CMD_UPGRADE,
     STR_HTTP_USER_AGENT_VALUE,
+    STR_LUI_LINEBREAK,
+    STR_LUI_COLOR_GREEN,
+    STR_LUI_COLOR_RED,
 } from './nspanel-constants'
+import { title } from 'process'
 
 type PanelVersionData = {
     tasmota: VersionData | null
@@ -30,6 +44,10 @@ enum VersionAcquisitionStatus {
     HmiVersionCurrent = 16,
     HmiVersionLatest = 32,
     AllAcquired = ~(~0 << 6),
+
+    TasmotaUpdateAvailable = 64,
+    BerryDriverUpdateAvailable = 128,
+    HmiUpdateAvailable = 256,
 }
 
 type PanelUpdateData = {
@@ -74,8 +92,9 @@ const log = Logger('NSPanelUpdater')
 export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdater {
     private _panelController: IPanelController
     private _mqttHandler: IPanelMqttHandler | null = null
-
+    private _i18n: NodeRedI18nResolver = null
     private _updateInProgress: boolean = false
+    private _options: IPanelUpdaterOptions = null
 
     private _updateData: PanelUpdateData = {
         versions: {
@@ -93,58 +112,110 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
         versionAcquisitionStatus: VersionAcquisitionStatus.None,
     }
 
-    constructor(panelController: IPanelController, mqttHandler: IPanelMqttHandler) {
+    constructor(
+        panelController: IPanelController,
+        mqttHandler: IPanelMqttHandler,
+        i18n: NodeRedI18nResolver,
+        options: IPanelUpdaterOptions
+    ) {
         super()
         this._mqttHandler = mqttHandler
         this._panelController = panelController
+        this._i18n = i18n
+        this._options = options
     }
 
     public checkForUpdates(): void {
         // TODO: promisify the wait for version data
+        var self = this
         this._acquireVersions()
             .then(() => {
-                // TODO: initiate update process or show notification
+                if (self._options.autoUpdate === false) {
+                    // TODO: save state when multiple updates available
+                    var notifyTextMain: string, currentVersion: string, latestVersion: string
+
+                    if (
+                        (this._updateData.versionAcquisitionStatus &
+                            VersionAcquisitionStatus.TasmotaUpdateAvailable) ===
+                        VersionAcquisitionStatus.TasmotaUpdateAvailable
+                    ) {
+                        notifyTextMain = this._i18n('nspanel-controller.panel.newFirmwareTasmotaTextMain')
+                        currentVersion = self._updateData.versions.current.tasmota.version
+                        latestVersion = self._updateData.versions.latest.tasmota.version
+
+                        self.showUpdateNotification(
+                            'notify.updateTasmota',
+                            notifyTextMain,
+                            currentVersion,
+                            latestVersion
+                        )
+                    }
+
+                    if (
+                        (this._updateData.versionAcquisitionStatus &
+                            VersionAcquisitionStatus.BerryDriverUpdateAvailable) ===
+                        VersionAcquisitionStatus.BerryDriverUpdateAvailable
+                    ) {
+                        notifyTextMain = this._i18n('nspanel-controller.panel.newBerryDriverTextMain')
+                        currentVersion = self._updateData.versions.current.berryDriver.version
+                        latestVersion = self._updateData.versions.latest.berryDriver.version
+
+                        self.showUpdateNotification(
+                            'notify.updateBerryDriver',
+                            notifyTextMain,
+                            currentVersion,
+                            latestVersion
+                        )
+                    }
+
+                    if (
+                        (this._updateData.versionAcquisitionStatus & VersionAcquisitionStatus.HmiUpdateAvailable) ===
+                        VersionAcquisitionStatus.HmiUpdateAvailable
+                    ) {
+                        notifyTextMain = this._i18n('nspanel-controller.panel.newHmiTextMain')
+                        currentVersion = self._updateData.versions.current.hmi.internalVersion
+                        latestVersion = `${self._updateData.versions.latest.hmi.version} (${self._updateData.versions.latest.hmi.internalVersion})`
+
+                        self.showUpdateNotification('notify.updateHmi', notifyTextMain, currentVersion, latestVersion)
+                    }
+                } else {
+                    // TODO: initiate update process
+                }
             })
             .catch((versionAcquisitionStatus) => {
                 log.error('Could not acquire version data ' + versionAcquisitionStatus)
             })
     }
 
-    private _updateHmi(): void {
-        // TODO: build URL
-        log.info('Initiating flashing of the NSPanel HMI firmware')
-        const hmiFirmwareUrl = 'http://nspanel.pky.eu/lui-release.tft'
+    private showUpdateNotification(
+        notifyId: string,
+        notifyTextMain: string,
+        currentVersion: string,
+        latestVersion: string
+    ) {
+        const instruction: string = notifyTextMain + STR_LUI_LINEBREAK + STR_LUI_LINEBREAK
+        this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') +
+            currentVersion +
+            STR_LUI_LINEBREAK +
+            this._i18n('nspanel-controller.panel.newFirmwareVersionPrefix') +
+            latestVersion +
+            STR_LUI_LINEBREAK +
+            STR_LUI_LINEBREAK
+        this._i18n('nspanel-controller.panel.newFirmwarPerformUpdate')
 
-        this._updateInProgress = true
-        this._mqttHandler?.sendCommandToPanel(STR_BERRYDRIVER_CMD_FLASHNEXTION, { payload: hmiFirmwareUrl })
-        /*
-UNCATCHED onEvent default {"type":"hw","date":"2023-10-16T15:07:27.313Z","event":"","source":"","data":{"FlashNextion":"Done"}}
-UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{"complete":0,"time_elapsed":0}}}
-        */
-    }
-
-    private _updateBerryDriver(): void {
-        log.info('Updateing NSPanel BerryDriver ')
-        const berryDriverUrl = 'https://raw.githubusercontent.com/joBr99/nspanel-lovelace-ui/main/tasmota/autoexec.be'
-
-        const updCmd = `Backlog UpdateDriverVersion ${berryDriverUrl}; Restart 1`
-        this._mqttHandler?.sendCommandToPanel(STR_BERRYDRIVER_CMD_UPDATE, { payload: updCmd })
-
-        /*
-UNCATCHED onEvent default {"type":"hw","date":"2023-10-16T15:11:29.360Z","event":"","source":"","data":{"UpdateDriverVersion":"Done"}}
-UNCATCHED onEvent default {"type":"hw","date":"2023-10-16T15:11:30.637Z","event":"","source":"","data":{"Restart":"Restarting"}}        
-        */
-    }
-
-    private _updateTasmotaFirmware() {
-        /*
-onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","source":"","data":{"Upgrade":"Version 13.1.0 from http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin"}}        
-        */
-        const otaUrl = 'http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin' // FIXME
-
-        this._mqttHandler?.sendCommandToPanel(STR_TASMOTA_CMD_OTAURL, { payload: otaUrl })
-        // TODO: sleep
-        this._mqttHandler?.sendCommandToPanel(STR_TASMOTA_CMD_UPGRADE, { payload: '1' })
+        const notifyData: NotifyData = {
+            notifyId: notifyId,
+            icon: 'wrench-outline',
+            text: instruction,
+            heading: this._i18n('nspanel-controller.panel.newFirmwareTitle'),
+            headingColor: STR_LUI_COLOR_RED,
+            timeout: 0,
+            cancelColor: STR_LUI_COLOR_RED,
+            cancelText: this._i18n('nspanel-controller.panel.btnTextNo'),
+            okColor: STR_LUI_COLOR_GREEN,
+            okText: this._i18n('nspanel-controller.panel.btnTextYes'),
+        }
+        this._panelController?.showNotification(notifyData)
     }
 
     private _acquireVersions(): Promise<VersionAcquisitionStatus> {
@@ -162,8 +233,31 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
                 if (
                     (self._updateData.versionAcquisitionStatus & VersionAcquisitionStatus.AllAcquired) ===
                     VersionAcquisitionStatus.AllAcquired
-                )
+                ) {
+                    if (
+                        semver.gt(
+                            self._updateData.versions.latest.tasmota.version,
+                            self._updateData.versions.current.tasmota.version
+                        )
+                    ) {
+                        self._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.TasmotaUpdateAvailable
+                    }
+
+                    if (
+                        self._updateData.versions.latest.berryDriver.version >
+                        self._updateData.versions.current.berryDriver.version
+                    ) {
+                        self._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.BerryDriverUpdateAvailable
+                    }
+                    if (
+                        self._updateData.versions.latest.hmi.internalVersion >
+                        self._updateData.versions.current.hmi.internalVersion
+                    ) {
+                        self._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.HmiUpdateAvailable
+                    }
+
                     return resolve(self._updateData.versionAcquisitionStatus)
+                }
 
                 setTimeout(waitForDataAcquisition, 1000)
 
@@ -216,7 +310,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
             const { data } = response
             if (data?.tag_name != null) {
                 const tasmotaVersionLatest = String.prototype.substring.call(data.tag_name, 1)
-                this._updateData.versions.latest.tasmota = tasmotaVersionLatest
+                this._updateData.versions.latest.tasmota = { version: tasmotaVersionLatest }
                 this._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.TasmotaVersionLatest
                 // TODO: pick right asset
             }
@@ -227,7 +321,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
                 const match = response.data.match(BERRY_DRIVER_REGEX)
 
                 if (match?.groups != null && match.groups['version'] != null) {
-                    this._updateData.versions.latest.berryDriver = { version: match.groups['version'] }
+                    this._updateData.versions.latest.berryDriver = { version: `${match.groups['version']}` }
                     this._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.BerryDriverVersionLatest
                 }
             }
@@ -249,8 +343,8 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
                 if (match?.groups != null && match.groups['version'] != null && match.groups['internalVersion']) {
                     this._updateData.versions.latest.hmi = {
-                        internalVersion: match.groups['internalVersion'],
-                        version: match.groups['version'],
+                        internalVersion: `${match.groups['internalVersion']}`,
+                        version: `${match.groups['version']}`,
                     }
                     this._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.HmiVersionLatest
                 }

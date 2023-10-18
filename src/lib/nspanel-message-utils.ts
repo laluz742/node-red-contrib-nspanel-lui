@@ -1,9 +1,10 @@
 import { NSPanelUtils } from './nspanel-utils'
 import { CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '../types'
-import { DEFAULT_HMI_COLOR } from './nspanel-constants'
+import { DEFAULT_LUI_COLOR } from './nspanel-constants'
+import { NSPanelColorUtils } from './nspanel-colorutils'
 
-const DEFAULT_STATUS: StatusItemData = { icon: undefined, iconColor: DEFAULT_HMI_COLOR, text: undefined }
-const DEFAULT_DATA: PageEntityData = { icon: undefined, iconColor: DEFAULT_HMI_COLOR, text: undefined }
+const DEFAULT_STATUS: StatusItemData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }
+const DEFAULT_DATA: PageEntityData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }
 
 export class NSPanelMessageUtils {
     public static convertToStatusItemData(
@@ -18,8 +19,8 @@ export class NSPanelMessageUtils {
         result.text = NSPanelMessageUtils.hasProperty(input, 'text', true) ? input['text'] : null
         result.icon = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null
         result.iconColor = NSPanelMessageUtils.hasProperty(input, 'iconColor')
-            ? NSPanelUtils.toHmiIconColor(input['iconColor'])
-            : DEFAULT_HMI_COLOR
+            ? NSPanelColorUtils.toHmiIconColor(input['iconColor'])
+            : DEFAULT_LUI_COLOR
         result.prefix = NSPanelMessageUtils.hasProperty(input, 'prefix', true) ? input['prefix'] : null
         if (NSPanelMessageUtils.hasProperty(input, 'index')) {
             const n = Number(input['index'])
@@ -39,8 +40,8 @@ export class NSPanelMessageUtils {
         result.value = NSPanelMessageUtils.hasProperty(input, 'value', true) ? input['value'] : null //TODO: could be anything else but string
         result.icon = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null //TODO: could be anything else but string
         result.iconColor = NSPanelMessageUtils.hasProperty(input, 'iconColor')
-            ? NSPanelUtils.toHmiIconColor(input['iconColor'])
-            : DEFAULT_HMI_COLOR
+            ? NSPanelColorUtils.toHmiIconColor(input['iconColor'])
+            : DEFAULT_LUI_COLOR
 
         return result
     }

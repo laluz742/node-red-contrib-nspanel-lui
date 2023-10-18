@@ -14,16 +14,20 @@ import {
     IPageOptions,
     PageData,
     NodeAPI,
+    IPageCache,
 } from '../types'
-import { DEFAULT_HMI_COLOR, STR_LUI_DELIMITER } from './nspanel-constants'
+import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER } from './nspanel-constants'
 import { NSPanelMessageUtils } from './nspanel-message-utils'
 import { NSPanelUtils } from './nspanel-utils'
+import { NSPanelColorUtils } from './nspanel-colorutils'
+import { SimplePageCache } from './nspanel-page-cache'
 
 export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> implements IPageNode {
     private panelNode: IPanelNode | null = null
     private pageNodeConfig: IPageConfig
     protected options: IPageOptions | null = null
     private __log: ILogger | null = null
+    private _cache: IPageCache = null
     protected pageData: PageData = {
         entities: [],
     }
@@ -38,6 +42,8 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         this.options = options
 
         this.__log = Logger(this.constructor.name)
+
+        this._cache = new SimplePageCache()
 
         this.initPageNode(config, options)
         const panelNode = (<unknown>RED.nodes.getNode(config.nsPanel)) as IPanelNode
@@ -70,6 +76,15 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     public generatePage(): string | string[] | null {
+        if (this.getCache().containsData()) return this.getCache().get()
+
+        const pageData = this.doGeneratePage()
+        this.getCache().put(pageData)
+
+        return pageData
+    }
+
+    protected doGeneratePage(): string | string[] | null {
         return null
     }
 
@@ -89,7 +104,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
                         'button',
                         'nav.prev',
                         NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelUtils.toHmiIconColor(item.iconColor ?? DEFAULT_HMI_COLOR)
+                        NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
                     break
                 case 'nav.next':
@@ -97,7 +112,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
                         'button',
                         'nav.next',
                         NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelUtils.toHmiIconColor(item.iconColor ?? DEFAULT_HMI_COLOR)
+                        NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
                     break
             }
@@ -291,5 +306,9 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     private _onClose(done: () => void) {
         this.panelNode?.deregisterPage(this)
         done()
+    }
+
+    protected getCache(): IPageCache {
+        return this._cache
     }
 }

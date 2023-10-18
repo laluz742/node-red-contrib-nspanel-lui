@@ -1,17 +1,15 @@
 export const STR_EMPTY: string = ''
 export const STR_ENABLE: string = 'enable'
 export const STR_DISABLE: string = 'disable'
-export const STR_HTTP_USER_AGENT :string= 'User-Agent'
-export const STR_HTTP_USER_AGENT_VALUE:string = 'node-red-contrib-nspanel-lui'
-
-
-// defaults
-export const DEFAULT_HMI_COLOR: number = 65535
-export const DEFAULT_COLOR: string = '#ffffff'
-export const DEFAULT_FONTSIZE: number = 1
+export const STR_HTTP_USER_AGENT: string = 'User-Agent'
+export const STR_HTTP_USER_AGENT_VALUE: string = 'node-red-contrib-nspanel-lui'
 
 // nspanel lovelace ui commands
+export const STR_LUI_LINEBREAK: string = '\r\n'
 export const STR_LUI_DELIMITER: string = '~'
+export const STR_LUI_COLOR_RED: number = 63488
+export const STR_LUI_COLOR_GREEN: number = 2016
+export const STR_LUI_COLOR_WHITE: number = 65535
 export const STR_LUI_CMD_ENTITYUPDATE: string = 'entityUpd'
 export const STR_LUI_CMD_ENTITYUPDATEDETAIL: string = 'entityUpdateDetail'
 export const STR_LUI_CMD_PAGETYPE: string = 'pageType' + STR_LUI_DELIMITER
@@ -43,3 +41,8 @@ export const STR_PAGE_TYPE_CARD_GRID: string = 'cardGrid'
 export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
+
+// defaults
+export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE
+export const DEFAULT_COLOR: string = '#ffffff'
+export const DEFAULT_FONTSIZE: number = 1

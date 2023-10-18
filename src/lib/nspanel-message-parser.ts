@@ -10,6 +10,7 @@ import {
 } from '../types'
 import { NSPanelUtils } from './nspanel-utils'
 import { Logger } from './logger'
+import { NSPanelColorUtils } from './nspanel-colorutils'
 
 const log = Logger('NSPanelMessageParser')
 
@@ -243,7 +244,7 @@ export class NSPanelMessageParser {
                             : colorDataStr.split('|')
                         if (colorDataArr.length == 3) {
                             const colorData = colorDataArr.map((v) => Number(v))
-                            const colorTuple = NSPanelUtils.hmiPosToColor(colorData[0], colorData[1])
+                            const colorTuple = NSPanelColorUtils.hmiPosToColor(colorData[0], colorData[1])
                             lightEventArgs.rgb = colorTuple[0]
                             lightEventArgs.hsv = colorTuple[1]
                         }

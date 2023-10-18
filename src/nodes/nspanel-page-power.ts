@@ -1,7 +1,8 @@
 import { IEntityBasedPageConfig } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
-import { DEFAULT_HMI_COLOR, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_POWER } from '../lib/nspanel-constants'
+import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_POWER } from '../lib/nspanel-constants'
 import { NSPanelUtils } from '../lib/nspanel-utils'
+import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 
 interface PageEntitiesConfig extends IEntityBasedPageConfig {}
 
@@ -31,7 +32,7 @@ module.exports = (RED) => {
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(entityConfig.icon ?? ''),
-                    NSPanelUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_HMI_COLOR),
+                    NSPanelColorUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
                     entityConfig.text,
                     entityConfig.optionalValue
                 )

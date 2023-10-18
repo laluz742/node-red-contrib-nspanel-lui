@@ -22,3 +22,4 @@ export interface INodeConfig extends IRedNodeDef {}
 export interface IRedNode<TCreds extends {} = {}> extends nodeRed.Node<TCreds> {}
 
 export type NodeStatusFill = nodeRed.NodeStatusFill
+export type NodeStatus = nodeRed.NodeStatus

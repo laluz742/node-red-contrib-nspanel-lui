@@ -9,11 +9,12 @@ import {
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import {
-    DEFAULT_HMI_COLOR,
+    DEFAULT_LUI_COLOR,
     STR_LUI_CMD_ENTITYUPDATE,
     STR_PAGE_TYPE_CARD_THERMO,
     STR_LUI_DELIMITER,
 } from '../lib/nspanel-constants'
+import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 
 interface PageThermoConfig extends IEntityBasedPageConfig {
     /* options */
@@ -86,9 +87,7 @@ module.exports = (RED) => {
             this.data.targetTemperature = this.config.targetTemperature
         }
 
-        public override generatePage(): string | string[] | null {
-            if (this.hasPageCache()) return this.getPageCache()
-
+        protected override doGeneratePage(): string | string[] | null {
             var result: string[] = []
             result.push(STR_LUI_CMD_ENTITYUPDATE)
 
@@ -128,7 +127,6 @@ module.exports = (RED) => {
             result.push(this.config?.showDetailsPopup ? '' : '1')
 
             const pageData = result.join(STR_LUI_DELIMITER)
-            this.setPageCache(pageData)
             return pageData
         }
 
@@ -152,7 +150,7 @@ module.exports = (RED) => {
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(icon ?? ''),
-                    NSPanelUtils.toHmiIconColor(iconColor ?? DEFAULT_HMI_COLOR),
+                    NSPanelColorUtils.toHmiIconColor(iconColor ?? DEFAULT_LUI_COLOR),
                     value
                 )
 
@@ -227,7 +225,7 @@ module.exports = (RED) => {
                     }
             }
             if (dirty) {
-                this.clearPageCache()
+                this.getCache().clear()
                 this.requestUpdate()
             } else {
                 handled = super.handleInput(msg, send)

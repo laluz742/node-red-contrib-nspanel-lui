@@ -1,4 +1,4 @@
-import { IEntityBasedPageConfig, PageCacheData } from '../types'
+import { IEntityBasedPageConfig } from '../types'
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '../lib/nspanel-constants'
 
@@ -15,7 +15,6 @@ const EMPTY_ENTITY: PanelEntity = {
 module.exports = (RED) => {
     class QrPageNode extends EntitiesPageNode<PageQRConfig> {
         private config: PageQRConfig
-        private pageCache: PageCacheData = null
 
         constructor(config: PageQRConfig) {
             config.entities = config.entities || []
@@ -33,9 +32,7 @@ module.exports = (RED) => {
             this.config = Object.assign({}, config)
         }
 
-        generatePage(): string | string[] {
-            if (this.pageCache !== null) return this.pageCache
-
+        protected override doGeneratePage(): string | string[] | null {
             var result = [STR_LUI_CMD_ENTITYUPDATE]
             result.push(this.config.title ?? '')
             const titleNav = this.generateTitleNav()
@@ -47,8 +44,7 @@ module.exports = (RED) => {
             const entitites = this.generateEntities()
             result.push(entitites)
 
-            this.pageCache = result.join(STR_LUI_DELIMITER)
-            return this.pageCache
+            return result.join(STR_LUI_DELIMITER)
         }
     }
 

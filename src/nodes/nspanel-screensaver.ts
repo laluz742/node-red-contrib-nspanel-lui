@@ -3,6 +3,7 @@ import { EventArgs, EventMapping, IPageConfig, NodeRedSendCallback, PageInputMes
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import { STR_LUI_DELIMITER } from '../lib/nspanel-constants'
+import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 
 interface ScreenSaverConfig extends IPageConfig {
     doubleTapToExit: boolean
@@ -38,7 +39,7 @@ module.exports = (RED) => {
             return false
         }
 
-        public generatePage(): string | string[] {
+        protected override doGeneratePage(): string | string[] | null {
             var result: string[] = []
 
             const statusUpdate = this.generateStatusUpdate()
@@ -96,7 +97,7 @@ module.exports = (RED) => {
                     '',
                     '',
                     NSPanelUtils.getIcon(item.icon),
-                    NSPanelUtils.toHmiIconColor(item.iconColor ?? NaN),
+                    NSPanelColorUtils.toHmiIconColor(item.iconColor ?? NaN),
                     item.text,
                     item.value
                 )
