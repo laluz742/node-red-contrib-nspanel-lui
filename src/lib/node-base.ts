@@ -1,5 +1,6 @@
-import { INodeConfig, NodeAPI, NodeStatusFill, StatusLevel } from '../types'
+import { INodeConfig, NodeAPI, StatusLevel } from '../types'
 import { AbstractRedNode } from './abstract-node'
+import { NSPanelNodeUtils } from './nspanel-node-utils'
 
 export class NodeBase<TConfig extends INodeConfig, TCreds extends {} = {}> extends AbstractRedNode<TConfig, TCreds> {
     constructor(config: TConfig, RED: NodeAPI) {
@@ -7,26 +8,9 @@ export class NodeBase<TConfig extends INodeConfig, TCreds extends {} = {}> exten
     }
 
     protected setNodeStatus(statusLevel: StatusLevel, msg: string): void {
-        var statusFill: NodeStatusFill
+        const nodeRedStatus = NSPanelNodeUtils.createNodeStatus(statusLevel, msg)
 
-        switch (statusLevel) {
-            case 'error':
-                statusFill = 'red'
-                break
-            case 'warn':
-                statusFill = 'yellow'
-                break
-            case 'info':
-                statusFill = 'blue'
-                break
-            case 'success':
-                statusFill = 'green'
-                break
-            default:
-                statusFill = 'grey'
-        }
-
-        this.status({ fill: statusFill, shape: 'dot', text: msg })
+        this.status(nodeRedStatus)
     }
 
     protected clearNodeStatus() {
