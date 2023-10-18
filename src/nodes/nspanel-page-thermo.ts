@@ -1,3 +1,12 @@
+import { EntitiesPageNode } from '@lib/entities-page-node'
+import { NSPanelUtils } from '@lib/nspanel-utils'
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+import {
+    DEFAULT_LUI_COLOR,
+    STR_LUI_CMD_ENTITYUPDATE,
+    STR_PAGE_TYPE_CARD_THERMO,
+    STR_LUI_DELIMITER,
+} from '@lib/nspanel-constants'
 import {
     IEntityBasedPageConfig,
     PageInputMessage,
@@ -5,16 +14,7 @@ import {
     EventArgs,
     SensorEventArgs,
     PageEntityData,
-} from '../types'
-import { EntitiesPageNode } from '../lib/entities-page-node'
-import { NSPanelUtils } from '../lib/nspanel-utils'
-import {
-    DEFAULT_LUI_COLOR,
-    STR_LUI_CMD_ENTITYUPDATE,
-    STR_PAGE_TYPE_CARD_THERMO,
-    STR_LUI_DELIMITER,
-} from '../lib/nspanel-constants'
-import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
+} from '@types'
 
 interface PageThermoConfig extends IEntityBasedPageConfig {
     /* options */

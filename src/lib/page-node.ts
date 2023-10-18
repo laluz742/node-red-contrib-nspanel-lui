@@ -1,5 +1,10 @@
-import { ILogger, Logger } from './logger'
-import { NodeBase } from '../lib/node-base'
+import { ILogger, Logger } from '@lib/logger'
+import { NodeBase } from '@lib/node-base'
+import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER } from '@lib/nspanel-constants'
+import { NSPanelMessageUtils } from '@lib/nspanel-message-utils'
+import { NSPanelUtils } from '@lib/nspanel-utils'
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+import { SimplePageCache } from '@lib/nspanel-page-cache'
 import {
     IPanelNode,
     IPageNode,
@@ -15,12 +20,7 @@ import {
     PageData,
     NodeAPI,
     IPageCache,
-} from '../types'
-import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER } from './nspanel-constants'
-import { NSPanelMessageUtils } from './nspanel-message-utils'
-import { NSPanelUtils } from './nspanel-utils'
-import { NSPanelColorUtils } from './nspanel-colorutils'
-import { SimplePageCache } from './nspanel-page-cache'
+} from '@types'
 
 export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> implements IPageNode {
     private panelNode: IPanelNode | null = null

@@ -1,9 +1,9 @@
 //#region types
-type ValidEventSpec = import('../types').ValidEventSpec
-type EventMapping = import('../types').EventMapping
-type PanelEntity = import('../types').PanelEntity
-type IPageConfig = import('../types').IPageConfig
-type PanelBasedConfig = import('../types').PanelBasedConfig
+type ValidEventSpec = import('@types').ValidEventSpec
+type EventMapping = import('@types').EventMapping
+type PanelEntity = import('@types').PanelEntity
+type IPageConfig = import('@types').IPageConfig
+type PanelBasedConfig = import('@types').PanelBasedConfig
 
 type EventTypeAttrs = {
     hasId: boolean

@@ -1,7 +1,6 @@
-import { IconProvider } from './icon-provider'
-import { ActiveCharacteristic, HSVColor, PanelColor, RGBColor, RGBHSVTuple, SplitTime } from '../types'
-import { NSPanelColorUtils } from './nspanel-colorutils'
-import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER } from './nspanel-constants'
+import { IconProvider } from '@lib/icon-provider'
+import { STR_LUI_DELIMITER } from '@lib/nspanel-constants'
+import { ActiveCharacteristic, PanelColor, SplitTime } from '@types'
 
 export class NSPanelUtils {
     public static getIcon(name: string | undefined | null): string {

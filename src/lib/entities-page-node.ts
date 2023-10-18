@@ -1,3 +1,8 @@
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from '@lib/nspanel-constants'
+import { NSPanelPopupHelpers } from '@lib/nspanel-popup-helpers'
+import { NSPanelUtils } from '@lib/nspanel-utils'
+import { PageNode } from '@lib/page-node'
 import {
     IPageOptions,
     IEntityBasedPageConfig,
@@ -6,12 +11,7 @@ import {
     PageInputMessage,
     NodeRedSendCallback,
     PageEntityData,
-} from '../types'
-import { NSPanelColorUtils } from './nspanel-colorutils'
-import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
-import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
-import { NSPanelUtils } from './nspanel-utils'
-import { PageNode } from './page-node'
+} from '@types'
 
 export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends PageNode<TConfig> {
     protected entitiesPageNodeConfig: IEntityBasedPageConfig

@@ -2,9 +2,12 @@ import * as nEvents from 'events'
 import { v4 as uuidv4 } from 'uuid'
 import { scheduleTask, CronosTask } from 'cronosjs'
 
-import { Logger } from './logger'
-import { NSPanelMqttHandler } from './nspanel-mqtt-handler'
-import { NSPanelUpdater } from './nspanel-updater'
+import { Logger } from '@lib/logger'
+import { NSPanelMqttHandler } from '@lib/nspanel-mqtt-handler'
+import { NSPanelUpdater } from '@lib/nspanel-updater'
+import { SimpleControllerCache } from '@lib/nspanel-controller-cache'
+import { NSPanelNodeUtils } from '@lib/nspanel-node-utils'
+import { NSPanelPopupHelpers } from '@lib/nspanel-popup-helpers'
 
 import {
     Nullable,
@@ -27,8 +30,7 @@ import {
     TasmotaStatus2EventArgs,
     NluiDriverVersionEventArgs,
     StatusLevel,
-} from '../types'
-import { SimpleControllerCache } from './nspanel-controller-cache'
+} from '@types'
 import {
     STR_LUI_CMD_PAGETYPE,
     STR_LUI_CMD_TIMEOUT,
@@ -44,9 +46,7 @@ import {
     STR_TASMOTA_CMD_TELEPERIOD,
     STR_LUI_DELIMITER,
     STR_PAGE_TYPE_CARD_THERMO,
-} from './nspanel-constants'
-import { NSPanelNodeUtils } from './nspanel-node-utils'
-import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
+} from '@lib/nspanel-constants'
 
 const log = Logger('NSPanelController')
 

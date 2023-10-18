@@ -1,9 +1,9 @@
+// @ts-nocheck //FIXME
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'
 import * as semver from 'semver'
 
-// @ts-ignore 6133
-import { Logger } from './logger'
+import { Logger } from '@lib/logger'
 import {
     HMIVersion,
     IPanelController,
@@ -12,8 +12,9 @@ import {
     IPanelUpdaterOptions,
     NotifyData,
     VersionData,
-} from '../types'
-import { NodeRedI18nResolver } from '../types/node-red'
+    NodeRedI18nResolver,
+} from '@types'
+
 import {
     STR_BERRYDRIVER_CMD_FLASHNEXTION,
     STR_BERRYDRIVER_CMD_UPDATE,
@@ -26,8 +27,7 @@ import {
     STR_LUI_LINEBREAK,
     STR_LUI_COLOR_GREEN,
     STR_LUI_COLOR_RED,
-} from './nspanel-constants'
-import { title } from 'process'
+} from '@lib/nspanel-constants'
 
 type PanelVersionData = {
     tasmota: VersionData | null
@@ -93,7 +93,6 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     private _panelController: IPanelController
     private _mqttHandler: IPanelMqttHandler | null = null
     private _i18n: NodeRedI18nResolver = null
-    private _updateInProgress: boolean = false
     private _options: IPanelUpdaterOptions = null
 
     private _updateData: PanelUpdateData = {

@@ -1,4 +1,8 @@
-import { HMIVersion, INodeConfig, IPageNode, PageMap, SplitTime } from '.'
+import { SplitTime } from './base'
+import { PageMap } from './controller'
+import { HMIVersion } from './events'
+import { INodeConfig } from './node-red'
+import { IPageNode } from './pages'
 
 export interface IPanelNode extends INodeConfig {
     registerPage(pageNode: IPageNode): void

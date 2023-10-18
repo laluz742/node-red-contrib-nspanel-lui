@@ -1,4 +1,4 @@
-import { IControllerCache, IPageHistory, IPageNode, PageId } from '../types'
+import { IControllerCache, IPageHistory, IPageNode, PageId } from '@types'
 
 export class SimpleControllerCache implements IControllerCache {
     private history: IPageHistory[] = []

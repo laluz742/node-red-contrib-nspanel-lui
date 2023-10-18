@@ -1,7 +1,6 @@
-import { NSPanelUtils } from './nspanel-utils'
-import { CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '../types'
-import { DEFAULT_LUI_COLOR } from './nspanel-constants'
-import { NSPanelColorUtils } from './nspanel-colorutils'
+import { DEFAULT_LUI_COLOR } from '@lib/nspanel-constants'
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+import { CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '@types'
 
 const DEFAULT_STATUS: StatusItemData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }
 const DEFAULT_DATA: PageEntityData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }

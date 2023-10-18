@@ -1,4 +1,6 @@
-import { EventArgs, PanelColor, NodeMessageInFlow, NodeMessageParts } from '.'
+import { NodeMessageInFlow, NodeMessageParts } from 'node-red'
+import { PanelColor } from './entities'
+import { EventArgs } from './events'
 
 export interface PanelMessage extends NodeMessageInFlow {}
 

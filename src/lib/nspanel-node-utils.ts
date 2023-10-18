@@ -1,4 +1,4 @@
-import { NodeStatus, NodeStatusFill, StatusLevel } from '../types'
+import { NodeStatus, NodeStatusFill, StatusLevel } from '@types'
 
 export class NSPanelNodeUtils {
     public static createNodeStatus(statusLevel: StatusLevel, msg: string): NodeStatus | null {

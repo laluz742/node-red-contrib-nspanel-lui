@@ -1,3 +1,5 @@
+import { NodeBase } from '@lib/node-base'
+import { NSPanelUtils } from '@lib/nspanel-utils'
 import {
     IPageNode,
     INodeConfig,
@@ -7,9 +9,7 @@ import {
     PanelConfig,
     PageMap,
     PageId,
-} from '../types'
-import { NodeBase } from '../lib/node-base'
-import { NSPanelUtils } from '../lib/nspanel-utils'
+} from '@types'
 
 interface NSPanelConfig extends INodeConfig {
     nsPanelConfig: string

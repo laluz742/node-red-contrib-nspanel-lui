@@ -1,8 +1,8 @@
-import { IEntityBasedPageConfig } from '../types'
-import { EntitiesPageNode } from '../lib/entities-page-node'
-import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_POWER } from '../lib/nspanel-constants'
-import { NSPanelUtils } from '../lib/nspanel-utils'
-import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
+import { EntitiesPageNode } from '@lib/entities-page-node'
+import { NSPanelUtils } from '@lib/nspanel-utils'
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_POWER } from '@lib/nspanel-constants'
+import { IEntityBasedPageConfig } from '@types'
 
 interface PageEntitiesConfig extends IEntityBasedPageConfig {}
 

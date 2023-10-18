@@ -1,4 +1,6 @@
-import { NodeBase } from '../lib/node-base'
+import { NodeBase } from '@lib/node-base'
+import { NSPanelController } from '@lib/nspanel-controller'
+import { NSPanelMessageUtils } from '@lib/nspanel-message-utils'
 import {
     CommandData,
     EventArgs,
@@ -10,9 +12,7 @@ import {
     NotifyData,
     PanelBasedConfig,
     PanelMessage,
-} from '../types'
-import { NSPanelController } from '../lib/nspanel-controller'
-import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
+} from '@types'
 
 interface NSPanelControllerConfig extends PanelBasedConfig {
     screenSaverOnStartup: boolean

@@ -36,16 +36,16 @@
         "node": ">=18.0.0"
     },
     "scripts": {
-        "clean": "rimraf build lib nodes resources coverage",
-        "prebuild": "npm run clean",
-        "build": "tsc",
-        "copyNodes": "npx copyfiles --up 2 src/nodes/**/*.json src/nodes/**/*.html src/nodes/**/*.js build/nodes/",
-        "copyRes": "npx copyfiles --up 2 src/resources/nspanel*.js build/resources/",
-        "copyGlue": "npx copyfiles --up 2 src/lib/**/*.js build/lib/",
-        "postbuild": "npm run copyNodes && npm run copyGlue && npm run copyRes",
-        "test": "jest",
+        "clean": "rimraf build lib nodes resources",
         "format": "prettier --write \"**/*.{js,ts,json,html,md}\"",
-        "prepack": "rimraf lib nodes resources && npx copyfiles --exclude **/types.js --up 1 build/lib/**/* build/nodes/**/* build/resources/**/* .",
+        "prebuild": "npm run clean",
+        "build:ts": "rimraf build && tsc",
+        "build:js": "npx copyfiles --up 2 src/nodes/**/*.json src/nodes/**/*.html src/nodes/**/*.js build/nodes/ && npx copyfiles --up 2 src/lib/**/*.js build/lib/",
+        "build:res": "npx copyfiles --up 2 src/resources/nspanel*.js build/resources/",
+        "build": "npm run build:ts && npm run build:js && npm run build:res",
+        "test": "jest",
+        "prepare": "npm run build",
+        "prepack": "rimraf lib nodes resources && npx copyfiles --exclude **/types.js --up 1 build/lib/**/* build/nodes/**/* build/resources/**/* ./",
         "postpack": "rimraf lib nodes resources"
     },
     "devDependencies": {

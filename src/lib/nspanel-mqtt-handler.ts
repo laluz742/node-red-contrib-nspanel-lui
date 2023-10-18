@@ -1,8 +1,9 @@
 import * as mqtt from 'mqtt'
 import * as nEvents from 'events'
 
-import { Logger } from './logger'
-import { MqttUtils } from './mqtt-utils'
+import { Logger } from '@lib/logger'
+import { MqttUtils } from '@lib/mqtt-utils'
+import { NSPanelMessageParser } from '@lib/nspanel-message-parser'
 import {
     Nullable,
     PanelConfig,
@@ -11,8 +12,7 @@ import {
     IPanelMqttHandler,
     SensorEventArgs,
     TasmotaStatus2EventArgs,
-} from '../types'
-import { NSPanelMessageParser } from './nspanel-message-parser'
+} from '@types'
 
 const log = Logger('NSPanelMqttHandler')
 

@@ -14,6 +14,10 @@
         "removeComments": true,
         "rootDir": "src",
         "lib": ["es6", "dom"],
+        "paths": {
+            "@types": ["./src/types/types"],
+            "@lib/*": ["./src/lib/*"]
+        },
 
         // lint
         //"strict": true,

@@ -1,6 +1,6 @@
-import { IEntityBasedPageConfig } from '../types'
-import { EntitiesPageNode } from '../lib/entities-page-node'
-import { STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '../lib/nspanel-constants'
+import { EntitiesPageNode } from '@lib/entities-page-node'
+import { STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '@lib/nspanel-constants'
+import { IEntityBasedPageConfig } from '@types'
 
 interface PageQRConfig extends IEntityBasedPageConfig {
     qrCode: string | undefined

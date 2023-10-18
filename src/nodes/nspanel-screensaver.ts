@@ -1,9 +1,11 @@
-import { PageNode } from '../lib/page-node'
-import { EventArgs, EventMapping, IPageConfig, NodeRedSendCallback, PageInputMessage, StatusItemData } from '../types'
-import { NSPanelUtils } from '../lib/nspanel-utils'
-import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
-import { STR_LUI_DELIMITER } from '../lib/nspanel-constants'
-import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
+import { PageNode } from '@lib/page-node'
+
+import { NSPanelUtils } from '@lib/nspanel-utils'
+import { NSPanelMessageUtils } from '@lib/nspanel-message-utils'
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+
+import { STR_LUI_DELIMITER } from '@lib/nspanel-constants'
+import { EventArgs, EventMapping, IPageConfig, NodeRedSendCallback, PageInputMessage, StatusItemData } from '@types'
 
 interface ScreenSaverConfig extends IPageConfig {
     doubleTapToExit: boolean

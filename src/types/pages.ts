@@ -1,14 +1,7 @@
-import {
-    EventArgs,
-    EventMapping,
-    INodeConfig,
-    IPanelNode,
-    NodeRedOnErrorCallback,
-    NodeRedSendCallback,
-    PageEntityData,
-    PageInputMessage,
-    PanelEntity,
-} from '.'
+import { EventArgs } from './events'
+import { PageEntityData, PageInputMessage } from './messages'
+import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './node-red'
+import { IPanelNode } from './panel'
 
 export type PageId = string
 export type ConfiguredEventsMap = Map<string, EventMapping>

@@ -1,4 +1,7 @@
-import { NSPanelMessageUtils } from './nspanel-message-utils'
+import { NSPanelMessageUtils } from '@lib/nspanel-message-utils'
+import { NSPanelUtils } from '@lib/nspanel-utils'
+import { Logger } from '@lib/logger'
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
 import {
     EventArgs,
     StartupEventArgs,
@@ -7,10 +10,7 @@ import {
     LightEventArgs,
     TasmotaStatus2EventArgs,
     NluiDriverVersionEventArgs,
-} from '../types'
-import { NSPanelUtils } from './nspanel-utils'
-import { Logger } from './logger'
-import { NSPanelColorUtils } from './nspanel-colorutils'
+} from '@types'
 
 const log = Logger('NSPanelMessageParser')
 

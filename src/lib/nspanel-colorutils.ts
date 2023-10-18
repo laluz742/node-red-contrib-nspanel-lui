@@ -1,5 +1,5 @@
-import { HSVColor, RGBColor, RGBHSVTuple } from '../types'
-import { DEFAULT_LUI_COLOR } from './nspanel-constants'
+import { HSVColor, RGBColor, RGBHSVTuple } from '@types'
+import { DEFAULT_LUI_COLOR } from '@lib/nspanel-constants'
 
 const colorRegex =
     /#(?<hexColor>(?<hexAlpha>[a-f\d]{2})?(?<hexRed>[a-f\d]{2})(?<hexGreen>[a-f\d]{2})(?<hexBlue>[a-f\d]{2}))|rgb\((?<rgbColor>(?<rgbRed>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbGreen>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbBlue>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d))\)/

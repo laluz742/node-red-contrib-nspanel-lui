@@ -1,4 +1,4 @@
-import { NodeBase } from '../lib/node-base'
+import { NodeBase } from '@lib/node-base'
 
 import {
     IPageConfig,
@@ -7,7 +7,7 @@ import {
     NodeMessageInFlow,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
-} from '../types'
+} from '@types'
 
 interface NSPanelNavToConfig extends IPageConfig {}
 

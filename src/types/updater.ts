@@ -1,4 +1,5 @@
-import { HMIVersion, IDisposable } from '.'
+import { IDisposable } from './base'
+import { HMIVersion } from './events'
 
 export interface IPanelUpdater extends IDisposable {
     setTasmotaVersion(tasmotaVersion: string): void

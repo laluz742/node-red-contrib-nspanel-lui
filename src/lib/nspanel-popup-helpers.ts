@@ -1,14 +1,7 @@
-import {
-    FanEntityData,
-    INodeConfig,
-    LightEntityData,
-    NotifyData,
-    PageEntityData,
-    PanelEntity,
-    ShutterEntityData,
-} from '../types'
-import { NodeBase } from './node-base'
-import { NSPanelColorUtils } from './nspanel-colorutils'
+import { NodeBase } from '@lib/node-base'
+import { NSPanelColorUtils } from '@lib/nspanel-colorutils'
+
+import { NSPanelUtils } from '@lib/nspanel-utils'
 import {
     DEFAULT_FONTSIZE,
     DEFAULT_LUI_COLOR,
@@ -17,8 +10,16 @@ import {
     STR_DISABLE,
     STR_EMPTY,
     STR_ENABLE,
-} from './nspanel-constants'
-import { NSPanelUtils } from './nspanel-utils'
+} from '@lib/nspanel-constants'
+import {
+    FanEntityData,
+    INodeConfig,
+    LightEntityData,
+    NotifyData,
+    PageEntityData,
+    PanelEntity,
+    ShutterEntityData,
+} from '@types'
 
 export class NSPanelPopupHelpers {
     public static generatePopup(

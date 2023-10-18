@@ -1,6 +1,6 @@
-import { IEntityBasedPageConfig } from '../types'
-import { EntitiesPageNode } from '../lib/entities-page-node'
-import { STR_PAGE_TYPE_CARD_GRID } from '../lib/nspanel-constants'
+import { EntitiesPageNode } from '@lib/entities-page-node'
+import { STR_PAGE_TYPE_CARD_GRID } from '@lib/nspanel-constants'
+import { IEntityBasedPageConfig } from '@types'
 
 interface PageGridConfig extends IEntityBasedPageConfig {}
 
