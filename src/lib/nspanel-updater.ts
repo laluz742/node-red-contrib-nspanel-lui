@@ -354,7 +354,7 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
 
     private _updateBerryDriver(): void {
         if (this._updateInProgress) return // TODO: push to stack
-        log.info('Updateing NSPanel BerryDriver ')
+        log.info('Updating NSPanel BerryDriver ')
 
         this._updateInProgress = true
         const updCmd = `Backlog ${STR_BERRYDRIVER_CMD_UPDATEDRIVER} ${URL_BERRYDRIVER_LATEST}; Restart 1`
