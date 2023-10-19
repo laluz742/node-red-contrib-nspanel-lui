@@ -1,7 +1,7 @@
 import { SplitTime } from './base'
 import { PageMap } from './controller'
 import { HMIVersion } from './events'
-import { IPanelNode } from './nodes'
+import { IPanelNode } from './page-nodes'
 
 export interface IPanelNodeEx extends IPanelNode {
     getPanelConfig(): PanelConfig

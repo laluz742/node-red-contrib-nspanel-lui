@@ -1,12 +1,12 @@
-import { PanelColor } from './entities'
+import { ActiveCharacteristic } from './base'
+import { PanelColor } from './colors'
 import { EventArgs } from './events'
-import { NodeMessageInFlow, NodeMessageParts } from './types'
+import { NodeMessageInFlow, NodeMessageParts } from './nodered'
 
 export interface PanelMessage extends NodeMessageInFlow {}
 
 export type CommandTopic = 'cmd'
 export type Command = 'switch' | 'checkForUpdates'
-export type ActiveCharacteristic = boolean | 0 | 1 | '0' | '1'
 
 export interface CommandMessage extends PanelMessage {
     topic: CommandTopic

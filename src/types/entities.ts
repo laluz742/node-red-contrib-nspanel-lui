@@ -11,8 +11,6 @@ export const PANEL_ENTITY_TYPES = [
     'number',
 ] as const
 
-export type PanelColor = number | string | number[]
-
 export type PanelEntityType = typeof PANEL_ENTITY_TYPES
 
 export type PanelEntity = {

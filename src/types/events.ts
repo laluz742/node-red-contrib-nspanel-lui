@@ -1,5 +1,5 @@
 import { HSVColor, RGBColor } from './colors'
-import { ActiveCharacteristic } from './messages'
+import { ActiveCharacteristic } from './base'
 
 export type ValidEventSpec = {
     // FIXME: naming

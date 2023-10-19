@@ -1,11 +1,20 @@
-import { StatusLevel } from './base'
-import { INodeConfig } from './nodered'
-import { PageEventCallbackType, PageIdEventCallbackType, PageOnInputCallback } from './pages'
+import { PageId, StatusLevel } from './base'
+import { PageInputMessage } from './messages'
+import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './nodered'
 
 export interface IPanelNode extends INodeConfig {
     registerPage(pageNode: IPageNode): void
     deregisterPage(pageNode: IPageNode): void
 }
+
+export type PageOnInputCallback = (
+    msg: PageInputMessage,
+    send: NodeRedSendCallback,
+    done: NodeRedOnErrorCallback
+) => void
+
+export type PageEventCallbackType = (page: IPageNode) => void
+export type PageIdEventCallbackType = (pageId: PageId) => void
 
 export interface IPageNode extends INodeConfig {
     getPageType(): string

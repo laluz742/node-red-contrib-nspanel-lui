@@ -1,10 +1,8 @@
 import { PanelEntity } from './entities'
 import { EventArgs, EventMapping } from './events'
-import { PageEntityData, PageInputMessage } from './messages'
-import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './nodered'
-import { IPageNode } from './nodes'
+import { PageEntityData } from './messages'
+import { INodeConfig } from './nodered'
 
-export type PageId = string
 export type ConfiguredEventsMap = Map<string, EventMapping>
 
 export interface IPageCache {
@@ -40,14 +38,6 @@ export declare interface PageData {
 
 // #region callbacks
 
-export type PageOnInputCallback = (
-    msg: PageInputMessage,
-    send: NodeRedSendCallback,
-    done: NodeRedOnErrorCallback
-) => void
-
-export type PageEventCallbackType = (page: IPageNode) => void
-export type PageIdEventCallbackType = (pageId: PageId) => void
 export type OnEventCallback = (eventArgs: EventArgs) => void
 export type OnSensorDataCallback = (msg: any) => void
 

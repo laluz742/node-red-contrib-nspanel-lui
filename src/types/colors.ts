@@ -11,3 +11,5 @@ export type HSVColor = {
 }
 
 export type RGBHSVTuple = [RGBColor, HSVColor]
+
+export type PanelColor = number | string | number[]

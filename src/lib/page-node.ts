@@ -7,7 +7,6 @@ import { NSPanelColorUtils } from './nspanel-colorutils'
 import { SimplePageCache } from './nspanel-page-cache'
 import {
     IPanelNode,
-    IPageNode,
     IPageConfig,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
@@ -20,6 +19,7 @@ import {
     PageData,
     NodeAPI,
     IPageCache,
+    IPageNode,
 } from '../types/types'
 
 export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> implements IPageNode {
