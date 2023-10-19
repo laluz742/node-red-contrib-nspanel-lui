@@ -258,7 +258,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onEvent(eventArgs: EventArgs) {
-        console.log(eventArgs)
         switch (eventArgs.event) {
             case STR_LUI_EVENT_STARTUP: {
                 const startupEventArgs: StartupEventArgs = eventArgs as StartupEventArgs
