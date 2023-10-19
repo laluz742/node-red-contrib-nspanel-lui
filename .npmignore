@@ -10,6 +10,7 @@ package-lock.json
 # code & test
 .gitignore
 .prettier*
+.eslint*
 coverage/
 jest.config.js
 tsconfig.json
