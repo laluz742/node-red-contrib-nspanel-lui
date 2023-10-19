@@ -61,18 +61,11 @@ export type SensorEventArgs = EventArgs & {
     tempUnit?: ['C', 'F']
 }
 
-export type TasmotaStatus2EventArgs = EventArgs & {
+export type FirmwareEventArgs = EventArgs & {
     type: 'fw'
-    source: 'tasmota'
-    event: 'version'
+    source: 'tasmota' | 'nlui'
+    event: 'update' | 'version'
 
-    version: string
-}
-
-export type NluiDriverVersionEventArgs = EventArgs & {
-    type: 'fw'
-    source: 'nlui'
-    event: 'version'
-
-    version: string
+    version?: string
+    status?: 'success' | null
 }

@@ -10,6 +10,7 @@ export const STR_LUI_DELIMITER: string = '~'
 export const STR_LUI_COLOR_RED: number = 63488
 export const STR_LUI_COLOR_GREEN: number = 2016
 export const STR_LUI_COLOR_WHITE: number = 65535
+export const STR_LUI_CMD_SUCCESS: string = 'Done'
 export const STR_LUI_CMD_ENTITYUPDATE: string = 'entityUpd'
 export const STR_LUI_CMD_ENTITYUPDATEDETAIL: string = 'entityUpdateDetail'
 export const STR_LUI_CMD_PAGETYPE: string = `pageType${STR_LUI_DELIMITER}`
@@ -26,6 +27,8 @@ export const STR_LUI_EVENT_BUTTONPRESS2: string = 'buttonPress2'
 export const STR_LUI_EVENT_PAGEOPENDETAIL: string = 'pageOpenDetail'
 export const STR_LUI_EVENT_SLEEPREACHED: string = 'sleepReached'
 export const STR_LUI_EVENT_STARTUP: string = 'startup'
+export const STR_LUI_NOTIFY_ACTION_YES: string = 'yes'
+export const STR_LUI_NOTIFY_ACTION_NO: string = 'no'
 
 // tasmota commands
 export const STR_TASMOTA_CMD_DETACH_RELAYS = 'SetOption73'
@@ -50,6 +53,9 @@ export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
 
 // update process
 export const STR_UPDATE_NOTIFY_PREFIX: string = 'notifyUpdate.'
+export const STR_UPDATE_FIRMWARE_TASMOTA: string = 'tasmota'
+export const STR_UPDATE_FIRMWARE_BERRYDRIVER: string = 'berrydriver'
+export const STR_UPDATE_FIRMWARE_HMI: string = 'hmi'
 
 // defaults
 export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE

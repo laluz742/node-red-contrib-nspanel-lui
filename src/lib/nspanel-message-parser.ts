@@ -8,10 +8,10 @@ import {
     HardwareEventArgs,
     SensorEventArgs,
     LightEventArgs,
-    TasmotaStatus2EventArgs,
-    NluiDriverVersionEventArgs,
+    FirmwareEventArgs,
 } from '../types/types'
 import {
+    STR_LUI_CMD_SUCCESS,
     STR_LUI_EVENT_BUTTONPRESS2,
     STR_LUI_EVENT_PAGEOPENDETAIL,
     STR_LUI_EVENT_SLEEPREACHED,
@@ -126,8 +126,8 @@ export class NSPanelMessageParser {
         return result
     }
 
-    public static parseTasmotaStatus2Event(input: any): TasmotaStatus2EventArgs {
-        let result: TasmotaStatus2EventArgs | null = null
+    public static parseTasmotaStatus2Event(input: any): FirmwareEventArgs {
+        let result: FirmwareEventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'StatusFWR')) {
             const statusFwr = input['StatusFWR']
@@ -146,8 +146,25 @@ export class NSPanelMessageParser {
         return result
     }
 
-    public static parseNluiDriverEvent(input: any): NluiDriverVersionEventArgs {
-        let result: NluiDriverVersionEventArgs | null = null
+    public static parseBerryDriverUpdateEvent(input: any): FirmwareEventArgs {
+        let result: FirmwareEventArgs | null = null
+
+        if (NSPanelMessageUtils.hasProperty(input, 'UpdateDriverVersion')) {
+            const cmdResult: string = input['UpdateDriverVersion'] as string
+
+            result = {
+                type: 'fw',
+                source: 'nlui',
+                event: 'update',
+                status: STR_LUI_CMD_SUCCESS === cmdResult ? 'success' : null,
+            }
+        }
+
+        return result
+    }
+
+    public static parseNluiDriverEvent(input: any): FirmwareEventArgs {
+        let result: FirmwareEventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'nlui_driver_version')) {
             const version = input['nlui_driver_version']

@@ -1,10 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
+// TODO: update node status
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'
 import * as semver from 'semver'
 
 import { Logger } from './logger'
+import { NSPanelUtils } from './nspanel-utils'
 import {
     HMIVersion,
     IPanelController,
@@ -14,6 +14,7 @@ import {
     NotifyData,
     VersionData,
     NodeRedI18nResolver,
+    FirmwareEventArgs,
 } from '../types/types'
 
 import {
@@ -28,6 +29,11 @@ import {
     STR_LUI_LINEBREAK,
     STR_LUI_COLOR_GREEN,
     STR_LUI_COLOR_RED,
+    STR_UPDATE_NOTIFY_PREFIX,
+    STR_UPDATE_FIRMWARE_TASMOTA,
+    STR_UPDATE_FIRMWARE_BERRYDRIVER,
+    STR_UPDATE_FIRMWARE_HMI,
+    STR_LUI_NOTIFY_ACTION_YES,
 } from './nspanel-constants'
 
 type PanelVersionData = {
@@ -99,6 +105,8 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     private _options: IPanelUpdaterOptions = null
 
+    private _updateInProgress: boolean = false
+
     private _updateData: PanelUpdateData = {
         versions: {
             current: {
@@ -149,7 +157,12 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                         currentVersion = self._updateData.versions.current.tasmota.version
                         latestVersion = self._updateData.versions.latest.tasmota.version
 
-                        self.showUpdateNotification('Tasmota', notifyTextMain, currentVersion, latestVersion)
+                        self.showUpdateNotification(
+                            STR_UPDATE_FIRMWARE_TASMOTA,
+                            notifyTextMain,
+                            currentVersion,
+                            latestVersion
+                        )
                     }
 
                     if (
@@ -161,7 +174,12 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                         currentVersion = self._updateData.versions.current.berryDriver.version
                         latestVersion = self._updateData.versions.latest.berryDriver.version
 
-                        self.showUpdateNotification('BerryDriver', notifyTextMain, currentVersion, latestVersion)
+                        self.showUpdateNotification(
+                            STR_UPDATE_FIRMWARE_BERRYDRIVER,
+                            notifyTextMain,
+                            currentVersion,
+                            latestVersion
+                        )
                     }
 
                     if (
@@ -172,7 +190,12 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                         currentVersion = self._updateData.versions.current.hmi.internalVersion
                         latestVersion = `${self._updateData.versions.latest.hmi.version} (${self._updateData.versions.latest.hmi.internalVersion})`
 
-                        self.showUpdateNotification('Hmi', notifyTextMain, currentVersion, latestVersion)
+                        self.showUpdateNotification(
+                            STR_UPDATE_FIRMWARE_HMI,
+                            notifyTextMain,
+                            currentVersion,
+                            latestVersion
+                        )
                     }
                 } else {
                     // TODO: initiate update process
@@ -181,6 +204,52 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
             .catch((versionAcquisitionStatus) => {
                 log.error(`Could not acquire version data ${versionAcquisitionStatus}`)
             })
+    }
+
+    public onFirmwareEvent(fwEvent: FirmwareEventArgs): void {
+        switch (fwEvent?.event) {
+            case 'version': {
+                if (fwEvent.source === 'tasmota') {
+                    this.setTasmotaVersion(fwEvent.version)
+                } else if (fwEvent.source === 'nlui') {
+                    this.setBerryDriverVersion(fwEvent.version)
+                }
+                break
+            }
+
+            case 'update': {
+                if (fwEvent.status === 'success') {
+                    this._updateInProgress = false // FIXME: process update stack
+                }
+            }
+        }
+    }
+
+    public onUpdateNotificationResult(notifyId: string, action: string): void {
+        if (
+            !NSPanelUtils.stringIsNullOrEmpty(notifyId) &&
+            !NSPanelUtils.stringIsNullOrEmpty(action) &&
+            STR_LUI_NOTIFY_ACTION_YES === action
+        ) {
+            const confirmedFirmware =
+                notifyId.indexOf(STR_UPDATE_NOTIFY_PREFIX) === 0
+                    ? notifyId.substring(STR_UPDATE_NOTIFY_PREFIX.length)
+                    : null
+
+            switch (confirmedFirmware) {
+                case STR_UPDATE_FIRMWARE_TASMOTA:
+                    this._updateTasmotaFirmware()
+                    break
+
+                case STR_UPDATE_FIRMWARE_BERRYDRIVER:
+                    this._updateBerryDriver()
+                    break
+
+                case STR_UPDATE_FIRMWARE_HMI:
+                    this._updateHmi()
+                    break
+            }
+        }
     }
 
     private showUpdateNotification(
@@ -192,9 +261,9 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
         const instruction: string =
             notifyTextMain +
             STR_LUI_LINEBREAK +
+            STR_LUI_LINEBREAK +
             this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') +
             currentVersion +
-            STR_LUI_LINEBREAK +
             STR_LUI_LINEBREAK +
             this._i18n('nspanel-controller.panel.newFirmwareVersionPrefix') +
             latestVersion +
@@ -203,7 +272,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
             this._i18n('nspanel-controller.panel.newFirmwarPerformUpdate')
 
         const notifyData: NotifyData = {
-            notifyId: `${STR_UPDATE_NOTIFY_PREFIX}.${notifyId}`,
+            notifyId: `${STR_UPDATE_NOTIFY_PREFIX}${notifyId}`,
             icon: 'reload-alert',
             text: instruction,
             heading: this._i18n('nspanel-controller.panel.newFirmwareTitle'),
@@ -268,7 +337,43 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
         })
     }
 
-    public setTasmotaVersion(tasmotaVersion: string): void {
+    private _updateHmi(): void {
+        if (this._updateInProgress) return // TODO: push to stack
+        // TODO: build URL
+        log.info('Initiating flashing of the NSPanel HMI firmware')
+        const hmiFirmwareUrl = 'http://nspanel.pky.eu/lui-release.tft'
+
+        this._updateInProgress = true
+        this._mqttHandler?.sendCommandToPanel(STR_BERRYDRIVER_CMD_FLASHNEXTION, { payload: hmiFirmwareUrl })
+        /*
+UNCATCHED onEvent default {"type":"hw","date":"2023-10-16T15:07:27.313Z","event":"","source":"","data":{"FlashNextion":"Done"}}
+UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{"complete":0,"time_elapsed":0}}}
+        */
+    }
+
+    private _updateBerryDriver(): void {
+        if (this._updateInProgress) return // TODO: push to stack
+        log.info('Updateing NSPanel BerryDriver ')
+
+        this._updateInProgress = true
+        const updCmd = `Backlog UpdateDriverVersion ${URL_BERRYDRIVER_LATEST}; Restart 1`
+        this._mqttHandler?.sendCommandToPanel(STR_BERRYDRIVER_CMD_UPDATE, { payload: updCmd })
+    }
+
+    private _updateTasmotaFirmware() {
+        if (this._updateInProgress) return // TODO: push to stack
+        /*
+onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","source":"","data":{"Upgrade":"Version 13.1.0 from http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin"}}        
+        */
+        const otaUrl = 'http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin' // FIXME
+
+        this._updateInProgress = true
+        this._mqttHandler?.sendCommandToPanel(STR_TASMOTA_CMD_OTAURL, { payload: otaUrl })
+        // TODO: sleep
+        this._mqttHandler?.sendCommandToPanel(STR_TASMOTA_CMD_UPGRADE, { payload: '1' })
+    }
+
+    private setTasmotaVersion(tasmotaVersion: string): void {
         if (tasmotaVersion != null) {
             const tV =
                 tasmotaVersion.indexOf('(') > 0
@@ -279,7 +384,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
         }
     }
 
-    public setBerryDriverVersion(version: string): void {
+    private setBerryDriverVersion(version: string): void {
         if (version != null) {
             this._updateData.versions.current.berryDriver = { version }
             this._updateData.versionAcquisitionStatus |= VersionAcquisitionStatus.BerryDriverVersionCurrent

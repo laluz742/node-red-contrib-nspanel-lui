@@ -11,7 +11,7 @@ import {
     HardwareEventArgs,
     IPanelMqttHandler,
     SensorEventArgs,
-    TasmotaStatus2EventArgs,
+    FirmwareEventArgs,
 } from '../types/types'
 
 const log = Logger('NSPanelMqttHandler')
@@ -211,8 +211,13 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             case this.panelMqttStatResultTopic: {
                 try {
                     const temp = JSON.parse(payloadStr)
+                    if ('UpdateDriverVersion' in temp) {
+                        const parsedEvent: FirmwareEventArgs = NSPanelMessageParser.parseBerryDriverUpdateEvent(temp)
+                        this.emit('msg', parsedEvent)
+                    }
+
                     // TODO: commands like SetOption73 ...
-                    if ('CustomSend' in temp) {
+                    else if ('CustomSend' in temp) {
                         // TODO: drop for now... since no relevant data from HMI
                     } else {
                         const parsedEvents: HardwareEventArgs[] = NSPanelMessageParser.parseHardwareEvent(temp)
@@ -234,7 +239,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                 try {
                     const temp = JSON.parse(payloadStr)
                     if ('StatusFWR' in temp) {
-                        const parsedEvent: TasmotaStatus2EventArgs = NSPanelMessageParser.parseTasmotaStatus2Event(temp)
+                        const parsedEvent: FirmwareEventArgs = NSPanelMessageParser.parseTasmotaStatus2Event(temp)
                         if (parsedEvent != null) {
                             this.emit('msg', parsedEvent)
                         }
