@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function ($) {
     const registerType = () =>
         RED.nodes.registerType('nspanel-config', {
@@ -23,11 +24,11 @@
                 mqttPassword: { type: 'password' },
             },
 
-            label: function () {
+            label() {
                 return this.name || NSPanelLui._('defaults.name', 'nspanel-config')
             },
 
-            oneditprepare: function () {
+            oneditprepare() {
                 if (typeof this.keepAlive === 'undefined') {
                     this.keepAlive = 60
                     $('#node-config-input-keepAlive').val(this.keepAlive)

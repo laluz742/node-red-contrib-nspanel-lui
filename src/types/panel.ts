@@ -1,14 +1,14 @@
-import { HMIVersion, INodeConfig, IPageNode, PageMap, SplitTime } from '.'
+import { SplitTime } from './base'
+import { PageMap } from './controller'
+import { HMIVersion } from './events'
+import { IPanelNode } from './page-nodes'
 
-export interface IPanelNode extends INodeConfig {
-    registerPage(pageNode: IPageNode): void
-    deregisterPage(pageNode: IPageNode): void
-}
 export interface IPanelNodeEx extends IPanelNode {
     getPanelConfig(): PanelConfig
     getAllPages(): PageMap
 
-    on(event: string, listener: Function): void
+    // FIXME spec function
+    on(event: string, listener: Function): void // eslint-disable-line
 }
 
 export interface PanelConfig {
@@ -37,6 +37,7 @@ export interface PanelMqttConfig {
 export interface PanelParameters {
     topic: string
     fullTopic: string
+    autoUpdate: boolean
     detachRelays: boolean
     telePeriod: number
 

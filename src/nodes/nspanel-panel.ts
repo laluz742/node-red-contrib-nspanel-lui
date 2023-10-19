@@ -1,3 +1,6 @@
+/* eslint-disable import/no-import-module-exports */
+import { NodeBase } from '../lib/node-base'
+import { NSPanelUtils } from '../lib/nspanel-utils'
 import {
     IPageNode,
     INodeConfig,
@@ -7,17 +10,17 @@ import {
     PanelConfig,
     PageMap,
     PageId,
-} from '../types'
-import { NodeBase } from '../lib/node-base'
-import { NSPanelUtils } from '../lib/nspanel-utils'
+} from '../types/types'
 
 interface NSPanelConfig extends INodeConfig {
     nsPanelConfig: string
 
     topic: string
     fullTopic: string
-    detachRelays: boolean
+
     telePeriod: number
+    detachRelays: boolean
+    autoUpdate: boolean
 
     panelTimeout: number
     panelDimHigh: number
@@ -31,7 +34,9 @@ interface NSPanelConfig extends INodeConfig {
 module.exports = (RED) => {
     class NSPanelNode extends NodeBase<NSPanelConfig> implements IPanelNodeEx {
         private nsPanelConfigNode: IPanelConfigNode
+
         private config: NSPanelConfig
+
         private pages: PageMap = new Map()
 
         constructor(config: NSPanelConfig) {
@@ -53,7 +58,7 @@ module.exports = (RED) => {
         }
 
         navToPage(pageId: PageId) {
-            this.emit('nav:pageId', pageId) //TODO: move to controller, @see page-node-base #handlePageNavigationEvent
+            this.emit('nav:pageId', pageId) // TODO: move to controller, @see page-node-base #handlePageNavigationEvent
         }
 
         getPanelConfig(): PanelConfig {
@@ -62,6 +67,7 @@ module.exports = (RED) => {
                     topic: this.config.topic,
                     fullTopic: this.config.fullTopic,
                     detachRelays: this.config.detachRelays,
+                    autoUpdate: this.config.autoUpdate,
                     telePeriod: this.config.telePeriod,
                     panelTimeout: this.config.panelTimeout,
                     panelDimHigh: this.config.panelDimHigh,
@@ -83,7 +89,7 @@ module.exports = (RED) => {
         }
 
         private onClose(done: VoidCallback) {
-            //TODO: inform anyone?
+            // TODO: inform anyone?
             done()
         }
     }

@@ -1,10 +1,12 @@
-import { EventArgs, PanelColor, NodeMessageInFlow, NodeMessageParts } from '.'
+import { ActiveCharacteristic } from './base'
+import { PanelColor } from './colors'
+import { EventArgs } from './events'
+import { NodeMessageInFlow, NodeMessageParts } from './nodered'
 
 export interface PanelMessage extends NodeMessageInFlow {}
 
 export type CommandTopic = 'cmd'
-export type Command = 'switch'
-export type ActiveCharacteristic = boolean | 0 | 1 | '0' | '1'
+export type Command = 'switch' | 'checkForUpdates'
 
 export interface CommandMessage extends PanelMessage {
     topic: CommandTopic
@@ -14,7 +16,7 @@ export interface CommandMessage extends PanelMessage {
 
 export interface CommandData {
     cmd: Command
-    params: SwitchCommandParams
+    params?: SwitchCommandParams
 }
 
 export interface SwitchCommandParams {
@@ -42,7 +44,7 @@ export interface NotifyData {
     textColor?: PanelColor
     fontSize?: number
 
-    timeout?: Number
+    timeout?: number
 
     icon?: string
     iconColor?: PanelColor
@@ -63,7 +65,7 @@ export interface PageInputMessage extends PanelMessage {
 }
 
 export interface PageOutputMessage extends PanelMessage {
-    //FIXME:
+    // FIXME:
 }
 
 export interface PageEntityDataBase {
@@ -73,7 +75,7 @@ export interface PageEntityDataBase {
 }
 
 export interface PageEntityData extends PageEntityDataBase {
-    //FIXME data processing should be resolved in a way the  internals below are not used externally
+    // FIXME data processing should be resolved in a way the  internals below are not used externally
     entityId?: string
     value?: string | number
 }
@@ -101,7 +103,7 @@ export interface LightEntityData extends SwitchEntityData {
 }
 
 export interface StatusItemData extends PageEntityDataBase {
-    //used in screensaver
+    // used in screensaver
     prefix?: string
     iconFont?: string
     index?: 0 | 1

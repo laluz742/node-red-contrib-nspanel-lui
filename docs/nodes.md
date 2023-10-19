@@ -74,6 +74,19 @@ To notify the user about special events, notifications can be displayed using th
 | `icon`         | optional, icon to show                                                                                                     |
 | `iconColor`    | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
 
+#### 1.2.3 Check for Updates
+
+To initiate the check for firmware or driver updates, send a message under the topic _cmd_ use the command `checkForUpdates`.
+
+```javascript
+var checkForUpdatesMsg = {
+    topic: 'cmd',
+    payload: {
+        cmd: 'checkForUpdates',
+    },
+}
+```
+
 ### 2. ScreenSaver Node
 
 The screensaver node serves as a standby screen for your panel and is automatically activated after startup when the _Activate screensaver after startup_ option is checked in your controller node.
@@ -109,13 +122,13 @@ var statusMsg = {
 ```
 
 The message payload can be either a single object or an array of objects each providing the following data
-Key | Description
--- | --
-`icon` | The icon to be shown
-`iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`)
-`text` | the text to show
-`index` | position (0=left, 1=right)
-`prefix` | optional, `prefix` is displayed left to the icon
+| Key | Description |
+| ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| `icon` | The icon to be shown |
+| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `text` | the text to show |
+| `index` | position (0=left, 1=right) |
+| `prefix` | optional, `prefix` is displayed left to the icon |
 
 ##### 2.2.2 Weather Data
 
@@ -160,12 +173,12 @@ var weatherDataMsg = {
 ```
 
 The message payload can be an array of up to six object
-Key | Description
--- | --
-`text` | the text to show
-`value` | the value to be displays
-`icon` | optional, the icon to be shown
-`iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`).
+| Key | Description |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| `text` | the text to show |
+| `value` | the value to be displays |
+| `icon` | optional, the icon to be shown |
+| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
 
 ### 3. HMI Control Node
 

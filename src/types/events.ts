@@ -1,7 +1,8 @@
-import { ActiveCharacteristic, HSVColor, RGBColor } from '.'
+import { HSVColor, RGBColor } from './colors'
+import { ActiveCharacteristic } from './base'
 
 export type ValidEventSpec = {
-    //FIXME: naming
+    // FIXME: naming
     event: string
     label: string
 }
@@ -16,7 +17,7 @@ export declare type EventMapping = {
     iconColor?: string
 }
 
-export interface EventArgs {
+export type EventArgs = {
     type: string
     date?: Date
 
@@ -31,25 +32,47 @@ export interface EventArgs {
     data?: any
 }
 
-export interface LightEventArgs extends EventArgs {
+export type LightEventArgs = EventArgs & {
     rgb: RGBColor
     hsv: HSVColor
 }
 
-export interface StartupEventArgs extends EventArgs {
+export type StartupEventArgs = EventArgs & {
     hmiVersion: HMIVersion
 }
-export interface HMIVersion {
-    version: number
-    model: string
+
+export type VersionData = {
+    version: string | null
+    url?: string
 }
 
-export interface HardwareEventArgs extends EventArgs {
+export type HMIVersion = VersionData & {
+    internalVersion: string
+    model?: string
+}
+
+export type HardwareEventArgs = EventArgs & {
     type: 'hw'
 }
 
-export interface SensorEventArgs extends EventArgs {
+export type SensorEventArgs = EventArgs & {
     type: 'sensor'
     temp?: number
     tempUnit?: ['C', 'F']
+}
+
+export type TasmotaStatus2EventArgs = EventArgs & {
+    type: 'fw'
+    source: 'tasmota'
+    event: 'version'
+
+    version: string
+}
+
+export type NluiDriverVersionEventArgs = EventArgs & {
+    type: 'fw'
+    source: 'nlui'
+    event: 'version'
+
+    version: string
 }

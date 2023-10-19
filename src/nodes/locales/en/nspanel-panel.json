@@ -34,7 +34,8 @@
             "brightnessStandBy": "Stand by:",
             "brightnessActive": "Active:",
             "detachRelays": "Decouple buttons from relays",
-            "telePeriod": "Telemetry Period"
+            "telePeriod": "Telemetry Period",
+            "autoUpdate": "Install new firmware automatically"
         },
         "placeholder": {
             "name": "Name",

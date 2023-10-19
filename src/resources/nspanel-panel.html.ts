@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function ($) {
     const PANEL_DIMVALUE_MIN = 0
     const PANEL_DIMVALUE_MAX = 100
@@ -24,12 +25,13 @@
 
                 nsPanelConfig: { value: '', type: 'nspanel-config', required: true },
                 detachRelays: { value: false },
+                autoUpdate: { value: false },
                 telePeriod: {
                     value: 1,
                     required: false,
                     validate: (v) =>
-                        v == 0 || // disable
-                        v == 1 || // firmware default
+                        v === 0 || // disable
+                        v === 1 || // firmware default
                         NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TELEPERIOD_MIN, PANEL_TELEPERIOD_MAX),
                 },
 
@@ -71,11 +73,11 @@
                 },
             },
 
-            label: function () {
+            label() {
                 return this.name || NSPanelLui._('defaults.name', 'nspanel-panel')
             },
 
-            oneditprepare: function () {
+            oneditprepare() {
                 $('#node-config-input-panelDimLowStartTime').val(this.panelDimLowStartTime)
                 $('#node-config-input-panelDimLowNightStartTime').val(this.panelDimLowNightStartTime)
             },

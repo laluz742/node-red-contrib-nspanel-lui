@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function (_$) {
     const registerType = () =>
         RED.nodes.registerType('nspanel-controller', {
@@ -16,11 +17,11 @@
                 screenSaverOnStartup: { value: true },
             },
 
-            label: function () {
+            label() {
                 return NSPanelLui.Editor.util.getNodeLabel(this)
             },
 
-            oneditprepare: function () {},
+            oneditprepare() {},
         })
 
     $.getScript('resources/node-red-contrib-nspanel-lui/nspanel-lui.js').done(registerType)

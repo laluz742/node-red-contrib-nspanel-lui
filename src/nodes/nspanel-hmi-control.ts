@@ -1,3 +1,4 @@
+/* eslint-disable import/no-import-module-exports */
 import { NodeBase } from '../lib/node-base'
 
 import {
@@ -7,7 +8,7 @@ import {
     NodeMessageInFlow,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
-} from '../types'
+} from '../types/types'
 
 interface NSPanelNavToConfig extends IPageConfig {}
 
@@ -21,7 +22,7 @@ module.exports = (RED) => {
             const panelNode = <IPanelNode>(<unknown>RED.nodes.getNode(config.nsPanel))
 
             if (!panelNode || panelNode.type !== 'nspanel-panel') {
-                this.warn('Panel configuration is wrong or missing, please review the node settings') //FIXME i18n panel missing
+                this.warn('Panel configuration is wrong or missing, please review the node settings') // FIXME i18n panel missing
                 this.setNodeStatus('error', RED._('common.status.notAssignedToAPanel'))
             } else {
                 this.panelNode = panelNode

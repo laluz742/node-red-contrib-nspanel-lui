@@ -1,3 +1,13 @@
+/* eslint-disable import/no-import-module-exports */
+import { EntitiesPageNode } from '../lib/entities-page-node'
+import { NSPanelUtils } from '../lib/nspanel-utils'
+import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
+import {
+    DEFAULT_LUI_COLOR,
+    STR_LUI_CMD_ENTITYUPDATE,
+    STR_PAGE_TYPE_CARD_THERMO,
+    STR_LUI_DELIMITER,
+} from '../lib/nspanel-constants'
 import {
     IEntityBasedPageConfig,
     PageInputMessage,
@@ -5,15 +15,7 @@ import {
     EventArgs,
     SensorEventArgs,
     PageEntityData,
-} from '../types'
-import { EntitiesPageNode } from '../lib/entities-page-node'
-import { NSPanelUtils } from '../lib/nspanel-utils'
-import {
-    DEFAULT_HMI_COLOR,
-    STR_CMD_LUI_ENTITYUPDATE,
-    STR_PAGE_TYPE_CARD_THERMO,
-    STR_LUI_DELIMITER,
-} from '../lib/nspanel-constants'
+} from '../types/types'
 
 interface PageThermoConfig extends IEntityBasedPageConfig {
     /* options */
@@ -68,6 +70,7 @@ detailButton (1=hide)
 module.exports = (RED) => {
     class PageThermoNode extends EntitiesPageNode<PageThermoConfig> {
         private config: PageThermoConfig | null = null
+
         private data: PageThermoData = {
             targetTemperature: NaN,
             currentTemperature: null,
@@ -86,28 +89,26 @@ module.exports = (RED) => {
             this.data.targetTemperature = this.config.targetTemperature
         }
 
-        public override generatePage(): string | string[] | null {
-            if (this.hasPageCache()) return this.getPageCache()
-
-            var result: string[] = []
-            result.push(STR_CMD_LUI_ENTITYUPDATE)
+        protected override doGeneratePage(): string | string[] | null {
+            const result: string[] = []
+            result.push(STR_LUI_CMD_ENTITYUPDATE)
 
             result.push(this.entitiesPageNodeConfig.title ?? '')
             const titleNav = this.generateTitleNav()
             result.push(titleNav)
 
-            result.push(this.config?.name ?? '') //TODO: should be configurable entityId?
+            result.push(this.config?.name ?? '') // TODO: should be configurable entityId?
 
             const currTemp =
-                this.data.currentTemperature == null || isNaN(this.data.currentTemperature)
+                this.data.currentTemperature == null || Number.isNaN(this.data.currentTemperature)
                     ? ''
-                    : this.data.currentTemperature.toFixed(1) + ' °' + this.config?.temperatureUnit
+                    : `${this.data.currentTemperature.toFixed(1)} °${this.config?.temperatureUnit}`
 
             const targetTemp = this.data.targetTemperature * TEMPERATURE_RESOLUTION_FACTOR ?? 0
 
             const minHeatSetPoint: number = this.config?.minHeatSetpointLimit ?? 0 * TEMPERATURE_RESOLUTION_FACTOR
             const maxHeatSetPoint: number = this.config?.maxHeatSetpointLimit ?? 0 * TEMPERATURE_RESOLUTION_FACTOR
-            const tempStep = Number(this.config?.temperatureSteps) * TEMPERATURE_RESOLUTION_FACTOR //TODO: NaN check
+            const tempStep = Number(this.config?.temperatureSteps) * TEMPERATURE_RESOLUTION_FACTOR // TODO: NaN check
             result.push(currTemp)
             result.push(targetTemp.toString())
             result.push(this.data.status ?? '')
@@ -121,14 +122,13 @@ module.exports = (RED) => {
             result.push(this.config?.currentTemperatureLabel ?? '')
             result.push(this.config?.statusLabel ?? '')
             result.push('')
-            result.push('°' + this.config?.temperatureUnit)
+            result.push(`°${this.config?.temperatureUnit}`)
 
-            result.push('') //TODO: second target temperature
+            result.push('') // TODO: second target temperature
 
             result.push(this.config?.showDetailsPopup ? '' : '1')
 
             const pageData = result.join(STR_LUI_DELIMITER)
-            this.setPageCache(pageData)
             return pageData
         }
 
@@ -137,29 +137,30 @@ module.exports = (RED) => {
         }
 
         protected generateActions(): string {
-            var resultActions: string[] = []
+            const resultActions: string[] = []
             const entities = this.getEntities()
+            let i
 
-            for (var i = 0; (this.options ? i < this.options.maxEntities : true) && i < entities.length; i++) {
-                var entityConfig = entities[i]
+            for (i = 0; (this.options ? i < this.options.maxEntities : true) && i < entities.length; i += 1) {
+                const entityConfig = entities[i]
                 const entityData: PageEntityData | null = this.getEntityData(entityConfig.entityId)
 
                 const icon = entityData?.icon ?? entityConfig.icon
                 const iconColor = entityData?.iconColor ?? entityConfig.iconColor
                 const value = entityData?.value
 
-                var entity = this.makeAction(
+                const entity = this.makeAction(
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(icon ?? ''),
-                    NSPanelUtils.toHmiIconColor(iconColor ?? DEFAULT_HMI_COLOR),
+                    NSPanelColorUtils.toHmiIconColor(iconColor ?? DEFAULT_LUI_COLOR),
                     value
                 )
 
                 resultActions.push(entity)
             }
             if (this.options) {
-                for (; i < this.options.maxEntities; i++) {
+                for (; i < this.options.maxEntities; i += 1) {
                     resultActions.push(ACTION_EMPTY)
                 }
             }
@@ -182,52 +183,56 @@ module.exports = (RED) => {
         }
 
         protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-            var handled = false
-            var dirty = false
+            let handled = false
+            let dirty = false
 
             switch (msg.topic) {
-                case 'sensor':
+                case 'sensor': {
                     if (this.isUseOwnSensorData()) {
-                        var sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
+                        const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
                         if (sensorEventArgs.temp) {
                             const tempMeasurement = NSPanelUtils.convertTemperature(
                                 sensorEventArgs.temp,
                                 sensorEventArgs.tempUnit?.toString() ?? '',
                                 this.config.temperatureUnit
                             )
-                            if (tempMeasurement != this.data.currentTemperature) {
+                            if (tempMeasurement !== this.data.currentTemperature) {
                                 this.data.currentTemperature = tempMeasurement
                                 dirty = true
                             }
                         }
                     }
                     break
+                }
 
-                case 'data':
+                case 'data': {
                     if (!Array.isArray(msg.payload)) {
-                        for (var key in msg.payload) {
-                            if (this.data.hasOwnProperty(key)) {
+                        // eslint-disable-next-line prefer-const
+                        for (let key in msg.payload) {
+                            if (Object.prototype.hasOwnProperty.call(this.data, key)) {
                                 this.data[key] = msg.payload[key]
-                                handled = true //FIXME: there might be undhandled data
+                                handled = true // FIXME: there might be undhandled data
                                 dirty = true
                             }
                         }
                     }
                     break
+                }
 
-                case 'event':
-                    var eventArgs: EventArgs = msg.payload as EventArgs
+                case 'event': {
+                    const eventArgs: EventArgs = msg.payload as EventArgs
 
-                    if (eventArgs.event == 'buttonPress2' && eventArgs.event2 == 'tempUpd') {
-                        var tempNum = Number(eventArgs.value)
-                        if (!isNaN(tempNum)) {
+                    if (eventArgs.event === 'buttonPress2' && eventArgs.event2 === 'tempUpd') {
+                        const tempNum = Number(eventArgs.value)
+                        if (!Number.isNaN(tempNum)) {
                             this.data.targetTemperature = tempNum / TEMPERATURE_RESOLUTION_FACTOR
                             dirty = true
                         }
                     }
+                }
             }
             if (dirty) {
-                this.clearPageCache()
+                this.getCache().clear()
                 this.requestUpdate()
             } else {
                 handled = super.handleInput(msg, send)

@@ -1,11 +1,12 @@
-import { IDisposable, OnEventCallback, OnSensorDataCallback } from '.'
+import { IDisposable } from './base'
+import { OnEventCallback, OnSensorDataCallback } from './pages'
 
 export type OnMqttConnectCallback = () => void
 export type OnMqttCloseCallback = (error?: Error) => void
 export type OnMqttErrorCallback = (error: Error) => void
 
 export interface IPanelMqttHandler extends IDisposable {
-    //FIXME param types
+    // FIXME param types
     sendCommandToPanel(cmd: string, data: any): void
     sendToPanel(data: any): void
 

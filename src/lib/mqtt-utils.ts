@@ -1,7 +1,7 @@
 import { isIPv6 } from 'node:net'
 
 export const MqttUtils = {
-    buildFullTopic: function (fullTopic: string, topic: string, prefix: string, command?: string) {
+    buildFullTopic(fullTopic: string, topic: string, prefix: string, command?: string) {
         let result = fullTopic
 
         result = result.replace('%topic%', topic)
@@ -20,32 +20,31 @@ export const MqttUtils = {
             return true
         }
         const regex = new RegExp(
-            '^' +
-                subscribedTopic
-                    .replace(/([\[\]\?\(\)\\\\$\^\*\.|])/g, '\\$1')
-                    .replace(/\+/g, '[^/]+')
-                    .replace(/\/#$/, '(/.*)?') +
-                '$'
+            `^${subscribedTopic
+                // eslint-disable-next-line no-useless-escape
+                .replace(/([\[\]\?\(\)\\\\$\^\*\.|])/g, '\\$1')
+                .replace(/\+/g, '[^/]+')
+                .replace(/\/#$/, '(/.*)?')}$`
         )
         return regex.test(topic)
     },
 
-    getBrokerUrl: function (address: string, port: string | number = '', useTls: boolean = false) {
+    getBrokerUrl(address: string, port: string | number = '', useTls: boolean = false) {
         let brokerUrl = ''
-        let brokerPort = port ? port : 1883
+        const brokerPort = port || 1883
 
         if (address.indexOf('://') > -1) {
             brokerUrl = address
         } else {
             brokerUrl = useTls ? 'mqtts://' : 'mqtt://'
 
-            if (address != '') {
-                brokerUrl += isIPv6(address) ? '[' + address + ']' : address
+            if (address !== '') {
+                brokerUrl += isIPv6(address) ? `[${address}]` : address
             } else {
                 brokerUrl += 'localhost'
             }
 
-            brokerUrl += ':' + brokerPort
+            brokerUrl += `:${brokerPort}`
         }
 
         return brokerUrl

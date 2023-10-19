@@ -14,7 +14,6 @@
         "removeComments": true,
         "rootDir": "src",
         "lib": ["es6", "dom"],
-
         // lint
         //"strict": true,
         "noImplicitAny": false,

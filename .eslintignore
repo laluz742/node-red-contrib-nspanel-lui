@@ -1,0 +1,6 @@
+/examples/
+/doc/
+/build/
+/tests/
+
+*.js

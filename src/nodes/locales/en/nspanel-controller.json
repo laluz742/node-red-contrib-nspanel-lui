@@ -14,7 +14,8 @@
             "tooManyScreenSaver": "Too many screensaver nodes found",
             "noScreenSaverPage": "No screensaver found",
             "panelInit": "Initializing panel",
-            "panelStarted": "Panel started"
+            "panelStarted": "Panel started",
+            "newFirmwareAvailable": "New firmware available: "
         }
     },
     "nspanel-controller": {
@@ -27,7 +28,16 @@
         },
         "panel": {
             "offline": "Offline",
-            "serverStopped": "Server stopped"
+            "serverStopped": "Server stopped",
+            "newFirmwareTitle": "Firmware Update Available",
+            "currentFirmwareVersionPrefix": "Installed version: ",
+            "newFirmwareVersionPrefix": "Available version: ",
+            "newFirmwareTasmotaTextMain": "A new Tasmota firmware update\r\nis available for your NSPanel.",
+            "newBerryDriverTextMain": "A new BerryDriver update is\r\navailable for your NSPanel.",
+            "newHmiTextMain": "A new Lovelace UI firmware\r\nupdate is available.",
+            "newFirmwarPerformUpdate": "Do you want to update now?",
+            "btnTextYes": "Yes",
+            "btnTextNo": "No"
         }
     }
 }

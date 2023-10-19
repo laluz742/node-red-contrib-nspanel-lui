@@ -1,9 +1,9 @@
-//#region types
-type ValidEventSpec = import('../types').ValidEventSpec
-type EventMapping = import('../types').EventMapping
-type PanelEntity = import('../types').PanelEntity
-type IPageConfig = import('../types').IPageConfig
-type PanelBasedConfig = import('../types').PanelBasedConfig
+// #region types
+type ValidEventSpec = import('../types/types').ValidEventSpec
+type EventMapping = import('../types/types').EventMapping
+type PanelEntity = import('../types/types').PanelEntity
+type IPageConfig = import('../types/types').IPageConfig
+type PanelBasedConfig = import('../types/types').PanelBasedConfig
 
 type EventTypeAttrs = {
     hasId: boolean
@@ -21,12 +21,12 @@ type PanelEntityContainer = {
     element?: any
 }
 
-type typedInputParams = {
+type TypedInputParams = {
     default?: string
-    types: typedInputTypeParams[]
+    types: TypedInputTypeParams[]
 }
 
-type typedInputTypeParams = {
+type TypedInputTypeParams = {
     value: string
     icon?: string
     label: string
@@ -35,35 +35,38 @@ type typedInputTypeParams = {
     options?: any
 }
 
+// eslint-disable-next-line vars-on-top, no-var
 declare var RED
-//#endregion types
 
-var NSPanelLui = NSPanelLui || {}
+// #endregion types
 
+var NSPanelLui = NSPanelLui || {} // eslint-disable-line
+
+// eslint-disable-next-line func-names, @typescript-eslint/no-shadow
 ;(function (RED, $) {
-    //#region events
+    // #region events
 
     interface EventMappingContainer {
         entry: EventMapping
         element?: any
     }
 
-    const _allValidNavigationEvents = [
+    const ALL_VALID_NAVIGATION_EVENTS = [
         { event: 'nav.prev', label: 'nav.prev' },
         { event: 'nav.next', label: 'nav.next' },
     ]
-    const _allValidButtonEvents = [
+    const ALL_VALID_BUTTON_EVENTS = [
         { event: 'hw.button1', label: 'hw.button1' },
         { event: 'hw.button2', label: 'hw.button2' },
     ]
 
-    const _addHardwareButtonEventsIfApplicable = (
+    const addHardwareButtonEventsIfApplicable = (
         nsPanelId: string,
         validEventsBase: ValidEventSpec[]
     ): ValidEventSpec[] => {
-        var result = validEventsBase
+        let result = validEventsBase
+        const panelNode = RED.nodes.node(nsPanelId)
 
-        var panelNode = RED.nodes.node(nsPanelId)
         if (panelNode) {
             const detachedRelays = panelNode.detachRelays ?? false
             if (detachedRelays === true) {
@@ -74,7 +77,7 @@ var NSPanelLui = NSPanelLui || {}
         return result
     }
 
-    //#endregion events
+    // #endregion events
 
     const PANEL_ENTITY_TYPE_ATTRS: Map<string, EventTypeAttrs> = new Map<string, EventTypeAttrs>([
         ['delete', { hasId: false, hasLabel: false, hasIcon: false, hasOptionalValue: false }],
@@ -90,77 +93,82 @@ var NSPanelLui = NSPanelLui || {}
         ['hvac_action', { hasId: true, hasLabel: false, hasIcon: true, hasOptionalValue: false }],
     ])
 
-    const ALL_PANEL_ENTITY_TYPES = (function () {
-        var result: string[] = Array.from(PANEL_ENTITY_TYPE_ATTRS.keys())
+    const ALL_PANEL_ENTITY_TYPES = (() => {
+        const result: string[] = Array.from(PANEL_ENTITY_TYPE_ATTRS.keys())
         return result
     })()
 
     const DEFAULT_COLOR = '#ffffff'
 
-    //#region i18n and labels
-    const _i18n = (key: string, dict: string, group?: string) => {
-        return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
-    }
-    const _normalizeLabel = function (node: any) {
-        return _validate.stringIsNotNullOrEmpty(node.name) ? node.name : '[' + node.type + ':' + node.id + ']'
-    }
-    const _getNodeLabel = function (node: any) {
-        var panelNode = RED.nodes.node(node.nsPanel)
-
-        var label = '[' + (panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')) + '] '
-        label += node.name || NSPanelLui._('defaults.name', node.type)
-
-        return label
-    }
-    //#endregion i18n and labels
-
-    //#region validation helpers
-    const _validate = (function () {
-        const _numberInRange = (v: any, min: number, max: number): boolean => {
+    // #region validation helpers
+    // eslint-disable-next-line func-names
+    const validate = (function () {
+        const numberInRange = (v: any, min: number, max: number): boolean => {
             const n = Number(v)
-            return isNaN(n) === false && n >= min && n <= max
+            return Number.isNaN(n) === false && n >= min && n <= max
         }
 
-        const _limitNumberToRange = (v: any, min: number, max: number, defaultValue: number): number => {
+        const limitNumberToRange = (v: any, min: number, max: number, defaultValue: number): number => {
             const n = Number(v)
-            if (isNaN(n)) return defaultValue === undefined ? min : defaultValue
+            if (Number.isNaN(n)) return defaultValue === undefined ? min : defaultValue
 
             if (v < min) return min
             if (v > max) return max
 
             return v
         }
-        const _stringIsNotNullOrEmpty = (str: any): boolean => {
-            return str !== undefined && str !== null && typeof str == 'string' ? str.trim().length > 0 : false
+        const stringIsNotNullOrEmpty = (str: any): boolean => {
+            return str !== undefined && str !== null && typeof str === 'string' ? str.trim().length > 0 : false
         }
         return {
-            isNumberInRange: _numberInRange,
-            limitNumberToRange: _limitNumberToRange,
-            stringIsNotNullOrEmpty: _stringIsNotNullOrEmpty,
+            isNumberInRange: numberInRange,
+            limitNumberToRange,
+            stringIsNotNullOrEmpty,
         }
     })()
-    //#endregion validation helpers
+    // #endregion validation helpers
 
-    //#region ui generation
-    const _create = (function () {
-        function _createPageTypedInput(
+    // #region i18n and labels
+    const i18n = (key: string, dict: string, group?: string) => {
+        return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
+    }
+    const normalizeLabel = (node: any) => {
+        return validate.stringIsNotNullOrEmpty(node.name) ? node.name : `[${node.type}:${node.id}]`
+    }
+    const getNodeLabel = (node: any) => {
+        const panelNode = RED.nodes.node(node.nsPanel)
+
+        const label =
+            `[${panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')}] ${node.name}` ||
+            NSPanelLui._('defaults.name', node.type)
+
+        return label
+    }
+    // #endregion i18n and labels
+
+    // #region ui generation
+    // eslint-disable-next-line func-names
+    const create = (function () {
+        function createPageTypedInput(
             field: JQuery,
             defaultType: string,
             nodeConfig: PanelBasedConfig,
             panelAttr: string
         ) {
-            var currentPanel = field.val() || nodeConfig[panelAttr]
-            var typedInputParams: typedInputParams = {
+            const currentPanel = field.val() || nodeConfig[panelAttr]
+            const typedInputParams: TypedInputParams = {
                 default: defaultType || 'msg',
                 types: [{ value: 'msg', label: 'msg.', type: 'msg', types: ['str'] }],
             }
 
-            if (currentPanel != '_ADD_' && currentPanel != '' && currentPanel !== undefined) {
+            if (currentPanel !== '_ADD_' && currentPanel !== '' && currentPanel !== undefined) {
                 const myId = nodeConfig.id
-                var panelNode = RED.nodes.node(currentPanel)
-                // @ts-ignore 2339
-                var knownPages: nodeRed.Node<any>[] = panelNode?.users ?? []
-                var pageNodeType: typedInputTypeParams = {
+                const panelNode = RED.nodes.node(currentPanel)
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const knownPages: nodered.Node<any>[] = panelNode?.users ?? []
+                const pageNodeType: TypedInputTypeParams = {
                     value: 'page',
                     icon: 'fa fa-desktop',
                     type: 'page',
@@ -168,13 +176,15 @@ var NSPanelLui = NSPanelLui || {}
                     options: [],
                 }
 
-                //FIXME: update on panel changed
-                for (var i in knownPages) {
+                // FIXME: update on panel changed
+                // eslint-disable-next-line prefer-const
+                for (let i in knownPages) {
+                    // eslint-disable-line
                     const item = knownPages[i]
                     if (item.id !== myId && item.type.startsWith('nspanel-page')) {
                         pageNodeType.options.push({
                             value: item.id,
-                            label: _normalizeLabel(item),
+                            label: NSPanelLui.Editor.util.normalizeLabel(item),
                         })
                     }
                 }
@@ -186,17 +196,17 @@ var NSPanelLui = NSPanelLui || {}
             field.typedInput(typedInputParams)
         }
 
-        function _createPayloadTypedInput(field, defaultType = undefined) {
+        function createPayloadTypedInput(field, defaultType = undefined) {
             return field.typedInput({
                 default: defaultType || 'str',
-                //['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 'env'],
+                // ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 'env'],
                 types: ['str', 'json'],
             })
         }
 
-        function _createLabel(parent: JQuery, text: string, width: string = '50px') {
-            var label = $('<label/>', {
-                style: 'margin-left: 14px; vertical-align: middle; width: ' + width, // margin-top: 7px
+        function createLabel(parent: JQuery, text: string, width: string = '50px') {
+            const label = $('<label/>', {
+                style: `margin-left: 14px; vertical-align: middle; width: ${width}`, // margin-top: 7px
             }).appendTo(parent)
             $('<span/>').text(text).appendTo(label)
             return label
@@ -204,19 +214,19 @@ var NSPanelLui = NSPanelLui || {}
 
         // #region editable event list
 
-        const _createEditableEventList = function (
+        const createEditableEventList = (
             node: IPageConfig,
             controlDomSelector: string,
             allValidEvents: ValidEventSpec[],
             initialData: EventMapping[]
-        ) {
+        ) => {
             const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
                 node.nsPanel,
                 allValidEvents
             )
 
-            var updateLock = false
-            var pageEvents: {
+            let updateLock = false
+            const pageEvents: {
                 all: ValidEventSpec[]
                 available: string[]
                 used: string[]
@@ -227,18 +237,18 @@ var NSPanelLui = NSPanelLui || {}
             }
             pageEvents.all.forEach((item) => pageEvents.available.push(item.event))
 
-            const domControl = $(controlDomSelector) //TODO: if (domControl.length = 0) => not found
-            const domControlList = domControl.prop('tagName') == 'ol' ? domControl : domControl.find('ol')
+            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
+            const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
 
-            if (domControlList.length == 0) return {} //TODO: if (domControl.length = 0) => not found
+            if (domControlList.length === 0) return {} // TODO: if (domControl.length = 0) => not found
 
-            function _updateSelectEventFields(): void {
+            function updateSelectEventFields(): void {
                 if (updateLock) return
 
                 updateLock = true
-                var usedEvents: string[] = []
-                var avaiableEvents: string[] = []
-                var eventInputNode: any[] = []
+                const usedEvents: string[] = []
+                const avaiableEvents: string[] = []
+                const eventInputNode: any[] = []
 
                 domControl.find('.node-input-event').each((_i, ele) => {
                     const v = $(ele).val() as string
@@ -250,14 +260,14 @@ var NSPanelLui = NSPanelLui || {}
                     if (!usedEvents.includes(item.event)) avaiableEvents.push(item.event)
                 })
 
-                eventInputNode.forEach((node) => {
-                    const usedVal = node.val()
-                    node.empty()
+                eventInputNode.forEach((inputNode) => {
+                    const usedVal = inputNode.val()
+                    inputNode.empty()
                     pageEvents.all.forEach((item) => {
-                        if (!usedEvents.includes(item.event) || item.event == usedVal) {
-                            $('<option/>').val(item.event).text(item.label).appendTo(node)
+                        if (!usedEvents.includes(item.event) || item.event === usedVal) {
+                            $('<option/>').val(item.event).text(item.label).appendTo(inputNode)
                         }
-                        node.val(usedVal != null ? usedVal : node.children().first().val())
+                        inputNode.val(usedVal != null ? usedVal : inputNode.children().first().val())
                     })
                 })
 
@@ -267,28 +277,28 @@ var NSPanelLui = NSPanelLui || {}
                 updateLock = false
             }
 
-            function _setAvailableEvents(allValidEvents: ValidEventSpec[]): void {
-                pageEvents.all = allValidEvents.slice()
-                _updateSelectEventFields()
+            function setAvailableEvents(allValidEventSpecs: ValidEventSpec[]): void {
+                pageEvents.all = allValidEventSpecs.slice()
+                updateSelectEventFields()
             }
 
-            function _makeControl() {
-                var editableListAddButton
-                function _updateEditableListAddButton() {
-                    const disableAdd = pageEvents.available.length == 1
+            function makeControl() {
+                let editableListAddButton
+                function updateEditableListAddButton() {
+                    const disableAdd = pageEvents.available.length === 1
                     editableListAddButton.prop('disabled', disableAdd)
                 }
 
                 domControlList.editableList({
-                    addItem: function (container, _i, data: EventMappingContainer) {
-                        _updateEditableListAddButton()
+                    addItem(container, _i, data: EventMappingContainer) {
+                        updateEditableListAddButton()
                         data.element = container
 
-                        if (!data.hasOwnProperty('entry')) {
+                        if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
                             data.entry = { event: pageEvents.available[0], t: null, value: null }
                         }
-                        var entry = data.entry
-                        if (!entry.hasOwnProperty('event')) {
+                        const entry = data.entry
+                        if (!Object.hasOwnProperty.call(entry, 'event')) {
                             entry.event = pageEvents.available[0]
                         }
                         container.css({
@@ -297,58 +307,58 @@ var NSPanelLui = NSPanelLui || {}
                         })
 
                         // #region create fragment
-                        var fragment = document.createDocumentFragment()
-                        var row1 = $('<div/>', { style: 'display: flex' }).appendTo(fragment)
-                        var row2 = $('<div/>', { style: 'display:flex; margin-top:8px;' }).appendTo(fragment).hide()
+                        const fragment = document.createDocumentFragment()
+                        const ROW1 = $('<div/>', { style: 'display: flex' }).appendTo(fragment)
+                        const ROW2 = $('<div/>', { style: 'display:flex; margin-top:8px;' }).appendTo(fragment).hide()
 
-                        var row1_1 = $('<div/>', { style: 'display: flex;' }).appendTo(row1)
-                        var selectEventField = $('<select/>', {
+                        const ROW1_1 = $('<div/>', { style: 'display: flex;' }).appendTo(ROW1)
+                        const selectEventField = $('<select/>', {
                             class: 'node-input-event',
                             style: 'width: 120px; margin-right: 10px',
-                        }).appendTo(row1_1)
+                        }).appendTo(ROW1_1)
 
-                        var row1_2 = $('<div/>', { style: 'display: flex; padding-right: 10px;' }).appendTo(row1)
-                        _createLabel(row1_2, 'Icon:') //TODO: i18n
-                        var iconField = $('<input/>', {
+                        const ROW1_2 = $('<div/>', { style: 'display: flex; padding-right: 10px;' }).appendTo(ROW1)
+                        createLabel(ROW1_2, 'Icon:') // TODO: i18n
+                        const iconField = $('<input/>', {
                             class: 'node-input-event-icon',
                             style: 'width: 10em',
                             type: 'text',
-                        }).appendTo(row1_2)
+                        }).appendTo(ROW1_2)
 
-                        var row1_3 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(row1)
-                        var valueField = $('<input/>', {
+                        const ROW1_3 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(ROW1)
+                        const valueField = $('<input/>', {
                             class: 'node-input-event-value',
                             style: 'width: 100%',
                             type: 'text',
-                        }).appendTo(row1_3)
+                        }).appendTo(ROW1_3)
 
-                        var row2_1 = $('<div/>', { style: 'display: flex;' }).appendTo(row2)
+                        const ROW2_1 = $('<div/>', { style: 'display: flex;' }).appendTo(ROW2)
                         $('<div/>', { style: 'width: 130px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            row2_1
+                            ROW2_1
                         )
 
-                        var row2_2 = $('<div/>', { style: 'flex-grow: 1; margin-top: 8px' }).appendTo(row2)
+                        const ROW2_2 = $('<div/>', { style: 'flex-grow: 1; margin-top: 8px' }).appendTo(ROW2)
 
-                        var valueDataField = $('<input/>', {
+                        const valueDataField = $('<input/>', {
                             class: 'node-input-event-data',
                             style: 'width: 100%',
-                        }).appendTo(row2_2)
+                        }).appendTo(ROW2_2)
 
-                        _createPageTypedInput(valueField, entry.t, node, 'nsPanel')
-                        _createPayloadTypedInput(valueDataField)
+                        createPageTypedInput(valueField, entry.t, node, 'nsPanel')
+                        createPayloadTypedInput(valueDataField)
                         // #endregion create fragment
 
                         // placeholder for following call to update event select fields
                         selectEventField.append($('<option />').val(entry.event ?? pageEvents.available[0]))
 
                         selectEventField.on('change', () => {
-                            _updateSelectEventFields()
+                            updateSelectEventFields()
                         })
                         valueField.on('change', (_event, type, _value) => {
-                            if (type == 'msg') {
-                                row2.show()
+                            if (type === 'msg') {
+                                ROW2.show()
                             } else {
-                                row2.hide()
+                                ROW2.hide()
                             }
                         })
 
@@ -365,53 +375,51 @@ var NSPanelLui = NSPanelLui || {}
 
                         container[0].append(fragment)
 
-                        _updateSelectEventFields()
+                        updateSelectEventFields()
                     },
 
-                    removeItem: function (_listItem) {
-                        _updateSelectEventFields()
-                        _updateEditableListAddButton()
+                    removeItem(_listItem) {
+                        updateSelectEventFields()
+                        updateEditableListAddButton()
                     },
 
-                    sortItems: function (_events) {},
+                    sortItems(_events) {},
 
                     sortable: true,
                     removable: true,
                 })
                 editableListAddButton = (
-                    domControl.prop('tagName') == 'ol' ? domControl.closest('.red-ui-editableList') : domControl
+                    domControl.prop('tagName') === 'ol' ? domControl.closest('.red-ui-editableList') : domControl
                 ).find('.red-ui-editableList-addButton')
             }
 
-            function _addItems(items) {
+            function addItems(items) {
                 if (items !== undefined && Array.isArray(items)) {
                     items.forEach((item) => {
                         domControlList.editableList('addItem', { entry: item })
                     })
                 }
-                _updateSelectEventFields()
+                updateSelectEventFields()
             }
 
-            function _empty() {
+            function empty() {
                 domControlList.editableList('empty')
             }
 
-            function _getEvents() {
-                var events: EventMapping[] = []
-                var eventItems = domControlList.editableList('items')
+            function getEvents() {
+                const events: EventMapping[] = []
+                const eventItems = domControlList.editableList('items')
 
                 eventItems.each((_i, ele) => {
                     const listItem = $(ele)
-
-                    var entry: EventMapping
                     const eventName = listItem?.find('select')?.val()?.toString() ?? ''
                     const icon = listItem?.find('.node-input-event-icon')?.val()?.toString() ?? ''
                     const entryT = listItem.find('.node-input-event-value').typedInput('type').toString()
                     const entryValue = listItem.find('.node-input-event-value').typedInput('value').toString()
 
-                    entry = { event: eventName, t: entryT, value: entryValue, icon: icon }
+                    const entry: EventMapping = { event: eventName, t: entryT, value: entryValue, icon }
 
-                    if (entry.t == 'msg') {
+                    if (entry.t === 'msg') {
                         entry.data = listItem.find('.node-input-event-data').typedInput('value')
                         entry.dataType = listItem.find('.node-input-event-data').typedInput('type')
                     }
@@ -421,56 +429,53 @@ var NSPanelLui = NSPanelLui || {}
                 return events
             }
 
-            _makeControl()
-            _addItems(initialData)
+            makeControl()
+            addItems(initialData)
 
             return {
-                setPanel: (_panel) => {}, //FIXME: update on panel changed
-                addItems: (items) => _addItems(items),
-                empty: () => _empty(),
-                getEvents: () => _getEvents(),
-                setAvailableEvents: (allValidEvents: ValidEventSpec[]) => _setAvailableEvents(allValidEvents),
+                setPanel: (_panel) => {}, // FIXME: update on panel changed
+                addItems: (items) => addItems(items),
+                empty: () => empty(),
+                getEvents: () => getEvents(),
+                setAvailableEvents: (allValidEventSpecs: ValidEventSpec[]) => setAvailableEvents(allValidEventSpecs),
             }
         }
         // #endregion editable event list
 
         // #region editable entity list
-        const _createEditableEntitiesList = function (
+        const createEditableEntitiesList = (
             _node: IPageConfig,
             controlDomSelector: string,
             maxEntities: number,
             initialData: PanelEntity[],
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
-        ) {
-            const _api = {
-                addItems: (items) => _addItems(items),
-                empty: () => _empty(),
-                getEntities: () => _getEntities(),
-            }
+        ) => {
+            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
+            const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
 
-            const domControl = $(controlDomSelector) //TODO: if (domControl.length = 0) => not found
-            const domControlList = domControl.prop('tagName') == 'ol' ? domControl : domControl.find('ol')
+            if (domControlList.length === 0) return null
 
-            if (domControlList.length == 0) return _api //TODO: if (domControl.length = 0) => not found
+            function makeControl() {
+                let editableListAddButton
+                let count: number = 0
 
-            function _makeControl() {
-                var editableListAddButton
-                var count: number = 0
+                const updateListAddButton = () => {
+                    editableListAddButton.prop('disabled', count >= maxEntities)
+                }
+
                 domControlList.editableList({
-                    addItem: function (container, _i, data: PanelEntityContainer) {
-                        count++
-                        if (count >= maxEntities) {
-                            editableListAddButton.prop('disabled', true)
-                        }
+                    addItem(container, _i, data: PanelEntityContainer) {
+                        count += 1
+                        updateListAddButton()
 
                         data.element = container
 
-                        if (!data.hasOwnProperty('entry')) {
+                        if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
                             data.entry = { type: 'delete', entityId: '', iconColor: DEFAULT_COLOR }
                         }
-                        var entry = data.entry
-                        if (!entry.hasOwnProperty('type')) {
-                            entry.type = 'delete' //FIXME
+                        const entry = data.entry
+                        if (!Object.prototype.hasOwnProperty.call(entry, 'type')) {
+                            entry.type = 'delete' // FIXME
                         }
                         container.css({
                             overflow: 'hidden',
@@ -478,255 +483,257 @@ var NSPanelLui = NSPanelLui || {}
                         })
 
                         // #region create fragment
-                        //FIXME
-                        var fragment = document.createDocumentFragment()
-                        var row1 = $('<div/>', { style: 'display: flex' }).appendTo(fragment)
-                        var rowOptionalValue = $('<div/>', { style: 'display: flex; margin-top:8px;' }).appendTo(
+                        // FIXME
+                        const fragment = document.createDocumentFragment()
+                        const ROW1 = $('<div/>', { style: 'display: flex' }).appendTo(fragment)
+                        const rowOptionalValue = $('<div/>', { style: 'display: flex; margin-top:8px;' }).appendTo(
                             fragment
                         )
-                        var rowIcon = $('<div/>', { style: 'display: flex; margin-top:8px;' }).appendTo(fragment).hide()
-                        var rowShutter = $('<div/>', { style: 'display: flex; margin-top:8px;' })
+                        const rowIcon = $('<div/>', { style: 'display: flex; margin-top:8px;' })
                             .appendTo(fragment)
                             .hide()
-                        var rowShutterTiltIcons = $('<div/>', { style: 'display: flex; margin-top:8px;' })
+                        const rowShutter = $('<div/>', { style: 'display: flex; margin-top:8px;' })
                             .appendTo(fragment)
                             .hide()
-                        var rowNumber = $('<div/>', { style: 'display: flex; margin-top:8px;' })
+                        const rowShutterTiltIcons = $('<div/>', { style: 'display: flex; margin-top:8px;' })
                             .appendTo(fragment)
                             .hide()
-                        var rowFanModes = $('<div/>', { style: 'display: flex; margin-top:8px;' })
+                        const rowNumber = $('<div/>', { style: 'display: flex; margin-top:8px;' })
                             .appendTo(fragment)
                             .hide()
-                        var rowLight = $('<div/>', { style: 'display: flex; margin-top:8px;' })
+                        const rowFanModes = $('<div/>', { style: 'display: flex; margin-top:8px;' })
+                            .appendTo(fragment)
+                            .hide()
+                        const rowLight = $('<div/>', { style: 'display: flex; margin-top:8px;' })
                             .appendTo(fragment)
                             .hide()
 
                         // #region row1
-                        var row1_1 = $('<div/>').appendTo(row1)
-                        var selectTypeField = $('<select/>', {
+                        const ROW1_1 = $('<div/>').appendTo(ROW1)
+                        const selectTypeField = $('<select/>', {
                             class: 'node-input-entity-type',
                             style: 'min-width: 120px; width:120px; margin-right: 10px',
-                        }).appendTo(row1_1)
+                        }).appendTo(ROW1_1)
                         validEntities.forEach((item) => {
-                            var i18n = _i18n('label.' + item, 'nspanel-panel', 'common')
-                            $('<option/>').val(item).text(i18n).appendTo(selectTypeField)
+                            const label = i18n(`label.${item}`, 'nspanel-panel', 'common')
+                            $('<option/>').val(item).text(label).appendTo(selectTypeField)
                         })
 
-                        var row1_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(row1)
-                        _createLabel(row1_2, 'Id:') //TODO: i18n
-                        var entityIdField = $('<input/>', {
+                        const ROW1_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(ROW1)
+                        createLabel(ROW1_2, 'Id:') // TODO: i18n
+                        const entityIdField = $('<input/>', {
                             class: 'node-input-entity-id',
                             style: 'width: 10em',
                             type: 'text',
-                        }).appendTo(row1_2)
+                        }).appendTo(ROW1_2)
 
-                        var row1_3 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(row1)
-                        _createLabel(row1_3, 'Label:') //TODO: i18n
-                        var entityTextField = $('<input/>', {
+                        const ROW1_3 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(ROW1)
+                        createLabel(ROW1_3, 'Label:') // TODO: i18n
+                        const entityTextField = $('<input/>', {
                             class: 'node-input-entity-text',
                             style: 'width: 10em',
                             type: 'text',
-                        }).appendTo(row1_3)
+                        }).appendTo(ROW1_3)
 
                         // #endregion row1
 
                         // #region rowOptionalValue
-                        var rowOptionalValue_1 = $('<div/>').appendTo(rowOptionalValue)
+                        const rowOptionalValue1 = $('<div/>').appendTo(rowOptionalValue)
                         $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowOptionalValue_1
+                            rowOptionalValue1
                         )
-                        var rowOptionalValue_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowOptionalValue)
-                        _createLabel(rowOptionalValue_2, 'Text:') //TODO: i18n
-                        var optionalValueField = $('<input/>', {
+                        const rowOptionalValue2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowOptionalValue)
+                        createLabel(rowOptionalValue2, 'Text:') // TODO: i18n
+                        const optionalValueField = $('<input/>', {
                             class: 'node-input-entity-optionalvalue',
                             style: 'width: 10em',
                             type: 'text',
-                        }).appendTo(rowOptionalValue_2)
+                        }).appendTo(rowOptionalValue2)
                         // #endregion row2
 
                         // #region rowIcon
-                        var rowIcon_1 = $('<div/>').appendTo(rowIcon)
+                        const rowIcon1 = $('<div/>').appendTo(rowIcon)
                         $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowIcon_1
+                            rowIcon1
                         )
 
-                        var rowIcon_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowIcon)
+                        const rowIcon2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowIcon)
 
-                        _createLabel(rowIcon_2, 'Icon:') //TODO: i18n
-                        var entityIconField = $('<input/>', {
+                        createLabel(rowIcon2, 'Icon:') // TODO: i18n
+                        const entityIconField = $('<input/>', {
                             class: 'node-input-entity-icon',
                             style: 'width: 10em',
                             type: 'text',
-                        }).appendTo(rowIcon_2)
+                        }).appendTo(rowIcon2)
 
-                        _createLabel(rowIcon_2, 'Farbe:') //TODO: i18n
-                        var entityIconColorField = $('<input/>', {
+                        createLabel(rowIcon2, 'Farbe:') // TODO: i18n
+                        const entityIconColorField = $('<input/>', {
                             class: 'node-input-entity-iconcolor',
                             style: 'width: 42px',
                             type: 'color',
-                        }).appendTo(rowIcon_2)
+                        }).appendTo(rowIcon2)
                         // #endregion rowIcon
 
                         // #region rowShutter
-                        var rowShutter_1 = $('<div/>').appendTo(rowShutter)
+                        const rowShutter1 = $('<div/>').appendTo(rowShutter)
                         $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowShutter_1
+                            rowShutter1
                         )
 
-                        var rowShutter_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowShutter)
+                        const rowShutter2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowShutter)
 
                         // TODO: Label "Icons:"
-                        _createLabel(rowShutter_2, 'Ab') //TODO: i18n
-                        var iconDownField = $('<input/>', {
+                        createLabel(rowShutter2, 'Ab') // TODO: i18n
+                        const iconDownField = $('<input/>', {
                             class: 'node-input-entity-shutter-icondown',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowShutter_2)
+                        }).appendTo(rowShutter2)
 
-                        _createLabel(rowShutter_2, 'Stop') //TODO: i18n
-                        var iconStopField = $('<input/>', {
+                        createLabel(rowShutter2, 'Stop') // TODO: i18n
+                        const iconStopField = $('<input/>', {
                             class: 'node-input-entity-shutter-iconstop',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowShutter_2)
+                        }).appendTo(rowShutter2)
 
-                        _createLabel(rowShutter_2, 'Auf') //TODO: i18n
-                        var iconUpField = $('<input/>', {
+                        createLabel(rowShutter2, 'Auf') // TODO: i18n
+                        const iconUpField = $('<input/>', {
                             class: 'node-input-entity-shutter-iconup',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowShutter_2)
+                        }).appendTo(rowShutter2)
                         // #endregion rowShutter
 
                         // #region rowShutterTiltIcons
-                        var rowShutterTiltIcons_1 = $('<div/>').appendTo(rowShutterTiltIcons)
+                        const rowShutterTiltIcons1 = $('<div/>').appendTo(rowShutterTiltIcons)
                         $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowShutterTiltIcons_1
+                            rowShutterTiltIcons1
                         )
                         // TODO: input has tilt
-                        var rowShutterTiltIcons_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(
+                        const rowShutterTiltIcons2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(
                             rowShutterTiltIcons
                         )
 
                         // TODO: Label "TILT"
-                        _createLabel(rowShutterTiltIcons_2, 'Tilt') //TODO: i18n
-                        var hasTiltField = $('<input/>', {
+                        createLabel(rowShutterTiltIcons2, 'Tilt') // TODO: i18n
+                        const hasTiltField = $('<input/>', {
                             class: 'node-input-entity-shutter-hastilt',
                             style: 'width: 1em',
                             type: 'checkbox',
-                        }).appendTo(rowShutterTiltIcons_2)
+                        }).appendTo(rowShutterTiltIcons2)
 
-                        _createLabel(rowShutterTiltIcons_2, 'Links') //TODO: i18n
-                        var iconTiltLeftField = $('<input/>', {
+                        createLabel(rowShutterTiltIcons2, 'Links') // TODO: i18n
+                        const iconTiltLeftField = $('<input/>', {
                             class: 'node-input-entity-shutter-icontiltleft',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowShutterTiltIcons_2)
+                        }).appendTo(rowShutterTiltIcons2)
 
-                        _createLabel(rowShutterTiltIcons_2, 'Stopp') //TODO: i18n
-                        var iconTiltStopField = $('<input/>', {
+                        createLabel(rowShutterTiltIcons2, 'Stopp') // TODO: i18n
+                        const iconTiltStopField = $('<input/>', {
                             class: 'node-input-entity-shutter-icontiltstop',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowShutterTiltIcons_2)
+                        }).appendTo(rowShutterTiltIcons2)
 
-                        _createLabel(rowShutterTiltIcons_2, 'Rechts') //TODO: i18n
-                        var iconTiltRightField = $('<input/>', {
+                        createLabel(rowShutterTiltIcons2, 'Rechts') // TODO: i18n
+                        const iconTiltRightField = $('<input/>', {
                             class: 'node-input-entity-shutter-icontiltright',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowShutterTiltIcons_2)
+                        }).appendTo(rowShutterTiltIcons2)
                         // #endregion rowShutterTiltIcons
 
                         // #region rowNumber
-                        var rowNumber_1 = $('<div/>').appendTo(rowNumber)
+                        const rowNumber1 = $('<div/>').appendTo(rowNumber)
                         $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowNumber_1
+                            rowNumber1
                         )
-                        var rowNumber_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowNumber)
-                        _createLabel(rowNumber_2, 'Min:') //TODO: i18n
-                        var numberMinField = $('<input/>', {
+                        const rowNumber2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowNumber)
+                        createLabel(rowNumber2, 'Min:') // TODO: i18n
+                        const numberMinField = $('<input/>', {
                             class: 'node-input-entity-num-min',
                             style: 'width: 10em',
                             type: 'number',
-                        }).appendTo(rowNumber_2)
+                        }).appendTo(rowNumber2)
 
-                        _createLabel(rowNumber_2, 'Max:') //TODO: i18n
-                        var numberMaxField = $('<input />', {
+                        createLabel(rowNumber2, 'Max:') // TODO: i18n
+                        const numberMaxField = $('<input />', {
                             class: 'node-input-entity-num-max',
                             style: 'width: 10em',
                             type: 'number',
-                        }).appendTo(rowNumber_2)
+                        }).appendTo(rowNumber2)
                         // #endregion rowNumber
 
                         // #region rowFanModes
-                        var rowFan_1 = $('<div/>').appendTo(rowFanModes)
+                        const rowFan1 = $('<div/>').appendTo(rowFanModes)
                         $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowFan_1
+                            rowFan1
                         )
 
-                        var rowFan_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowFanModes)
+                        const rowFan2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowFanModes)
 
                         // TODO: Label "Icons:"
-                        _createLabel(rowFan_2, 'Modus 1:') //TODO: i18n
-                        var fanMode1Field = $('<input/>', {
+                        createLabel(rowFan2, 'Modus 1:') // TODO: i18n
+                        const fanMode1Field = $('<input/>', {
                             class: 'node-input-entity-fan-mode1',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowFan_2)
+                        }).appendTo(rowFan2)
 
-                        _createLabel(rowFan_2, 'Modus 2:') //TODO: i18n
-                        var fanMode2Field = $('<input/>', {
+                        createLabel(rowFan2, 'Modus 2:') // TODO: i18n
+                        const fanMode2Field = $('<input/>', {
                             class: 'node-input-entity-fan-mode2',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowFan_2)
+                        }).appendTo(rowFan2)
 
-                        _createLabel(rowFan_2, 'Modus 3:') //TODO: i18n
-                        var fanMode3Field = $('<input/>', {
+                        createLabel(rowFan2, 'Modus 3:') // TODO: i18n
+                        const fanMode3Field = $('<input/>', {
                             class: 'node-input-entity-fan-mode3',
                             style: 'width: 6em',
                             type: 'text',
-                        }).appendTo(rowFan_2)
+                        }).appendTo(rowFan2)
                         // #endregion rowFanModes
 
                         // #region rowLight
-                        var rowLight_1 = $('<div/>').appendTo(rowLight)
+                        const rowLight1 = $('<div/>').appendTo(rowLight)
                         $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowLight_1
+                            rowLight1
                         )
-                        var rowLight_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowLight)
+                        const rowLight2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowLight)
 
-                        _createLabel(rowLight_2, 'dimmbar:') //TODO: i18n
-                        var lightDimmableField = $('<input/>', {
+                        createLabel(rowLight2, 'dimmbar:') // TODO: i18n
+                        const lightDimmableField = $('<input/>', {
                             class: 'node-input-entity-light-dimmable',
                             style: 'width: 6em',
                             type: 'checkbox',
-                        }).appendTo(rowLight_2)
+                        }).appendTo(rowLight2)
 
-                        _createLabel(rowLight_2, 'Temperatur:') //TODO: i18n
-                        var lightColorTemperatureField = $('<input/>', {
+                        createLabel(rowLight2, 'Temperatur:') // TODO: i18n
+                        const lightColorTemperatureField = $('<input/>', {
                             class: 'node-input-entity-light-colorTemperature',
                             style: 'width: 6em',
                             type: 'checkbox',
-                        }).appendTo(rowLight_2)
+                        }).appendTo(rowLight2)
 
-                        _createLabel(rowLight_2, 'Farbe:') //TODO: i18n
-                        var lightColorField = $('<input/>', {
+                        createLabel(rowLight2, 'Farbe:') // TODO: i18n
+                        const lightColorField = $('<input/>', {
                             class: 'node-input-entity-light-color',
                             style: 'width: 6em',
                             type: 'checkbox',
-                        }).appendTo(rowLight_2)
+                        }).appendTo(rowLight2)
 
                         // #endregion rowLight
                         // #endregion create fragment
 
                         selectTypeField.on('change', () => {
-                            const val = '' + selectTypeField.val()
+                            const val = `${selectTypeField.val()}`
                             const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
                             if (entityTypeAttrs !== undefined) {
-                                row1_2.toggle(entityTypeAttrs.hasId)
-                                row1_3.toggle(entityTypeAttrs.hasLabel)
+                                ROW1_2.toggle(entityTypeAttrs.hasId)
+                                ROW1_3.toggle(entityTypeAttrs.hasLabel)
                                 rowOptionalValue.toggle(entityTypeAttrs.hasOptionalValue ?? false)
                                 rowIcon.toggle(entityTypeAttrs.hasIcon ?? false)
                                 rowShutter.toggle(entityTypeAttrs.isShutter ?? false)
@@ -784,21 +791,22 @@ var NSPanelLui = NSPanelLui || {}
                         container[0].append(fragment)
                     },
 
-                    removeItem: function (_listItem) {
-                        count--
+                    removeItem(_listItem) {
+                        count -= 1
+                        updateListAddButton()
                     },
 
-                    sortItems: function (_events) {},
+                    sortItems(_events) {},
 
                     sortable: true,
                     removable: true,
                 })
                 editableListAddButton = (
-                    domControl.prop('tagName') == 'ol' ? domControl.closest('.red-ui-editableList') : domControl
+                    domControl.prop('tagName') === 'ol' ? domControl.closest('.red-ui-editableList') : domControl
                 ).find('.red-ui-editableList-addButton')
             }
 
-            function _addItems(items) {
+            function addItems(items) {
                 if (items !== undefined && Array.isArray(items)) {
                     items.forEach((item) => {
                         domControlList.editableList('addItem', { entry: item })
@@ -806,16 +814,17 @@ var NSPanelLui = NSPanelLui || {}
                 }
             }
 
-            function _empty() {
+            function empty() {
                 domControlList.editableList('empty')
             }
 
-            function _getEntities() {
-                var entities: PanelEntity[] = []
-                var entityItems = domControlList.editableList('items')
+            function getEntities() {
+                const entities: PanelEntity[] = []
+                const entityItems = domControlList.editableList('items')
 
                 entityItems.each((_i, ele) => {
-                    var entity: PanelEntity
+                    let maxStr: string
+                    let minStr: string
                     const listItem = $(ele)
 
                     const type = listItem.find('.node-input-entity-type').val().toString()
@@ -824,14 +833,20 @@ var NSPanelLui = NSPanelLui || {}
                     const optionalValue = listItem.find('.node-input-entity-optionalvalue').val().toString()
                     const icon = listItem.find('.node-input-entity-icon').val().toString()
                     const iconColor = listItem.find('.node-input-entity-iconcolor').val().toString()
-                    entity = { type: type, entityId: id, text: text, icon: icon, iconColor: iconColor }
+                    const entity: PanelEntity = {
+                        type,
+                        entityId: id,
+                        text,
+                        icon,
+                        iconColor,
+                    }
 
-                    if (_validate.stringIsNotNullOrEmpty(optionalValue)) {
+                    if (validate.stringIsNotNullOrEmpty(optionalValue)) {
                         entity.optionalValue = optionalValue
                     }
 
                     switch (type) {
-                        case 'shutter':
+                        case 'shutter': {
                             const iconDown = listItem.find('.node-input-entity-shutter-icondown').val().toString()
                             const iconUp = listItem.find('.node-input-entity-shutter-iconup').val().toString()
                             const iconStop = listItem.find('.node-input-entity-shutter-iconstop').val().toString()
@@ -850,53 +865,55 @@ var NSPanelLui = NSPanelLui || {}
                                 .val()
                                 .toString()
 
-                            if (_validate.stringIsNotNullOrEmpty(iconDown)) {
+                            if (validate.stringIsNotNullOrEmpty(iconDown)) {
                                 entity.iconDown = iconDown
                             }
-                            if (_validate.stringIsNotNullOrEmpty(iconUp)) {
+                            if (validate.stringIsNotNullOrEmpty(iconUp)) {
                                 entity.iconUp = iconUp
                             }
-                            if (_validate.stringIsNotNullOrEmpty(iconStop)) {
+                            if (validate.stringIsNotNullOrEmpty(iconStop)) {
                                 entity.iconStop = iconStop
                             }
 
                             entity.hasTilt = hasTilt
-                            if (_validate.stringIsNotNullOrEmpty(iconTiltLeft)) {
+                            if (validate.stringIsNotNullOrEmpty(iconTiltLeft)) {
                                 entity.iconTiltLeft = iconTiltLeft
                             }
 
-                            if (_validate.stringIsNotNullOrEmpty(iconTiltStop)) {
+                            if (validate.stringIsNotNullOrEmpty(iconTiltStop)) {
                                 entity.iconTiltStop = iconTiltStop
                             }
 
-                            if (_validate.stringIsNotNullOrEmpty(iconTiltRight)) {
+                            if (validate.stringIsNotNullOrEmpty(iconTiltRight)) {
                                 entity.iconTiltRight = iconTiltRight
                             }
 
                             break
+                        }
 
-                        case 'number':
-                            var minStr = listItem.find('.node-input-entity-num-min').val().toString()
-                            var maxStr = listItem.find('.node-input-entity-num-max').val().toString()
-                            var min = Number(minStr)
-                            var max = Number(maxStr)
+                        case 'number': {
+                            minStr = listItem.find('.node-input-entity-num-min').val().toString()
+                            maxStr = listItem.find('.node-input-entity-num-max').val().toString()
+                            const numberMin = Number(minStr)
+                            const numberMax = Number(maxStr)
 
-                            if (!isNaN(min)) {
-                                entity.min = min
+                            if (!Number.isNaN(numberMin)) {
+                                entity.min = numberMin
                             }
-                            if (!isNaN(max)) {
-                                entity.max = max
+                            if (!Number.isNaN(numberMax)) {
+                                entity.max = numberMax
                             }
                             break
+                        }
 
-                        case 'fan':
+                        case 'fan': {
                             const fanMode1 = listItem.find('.node-input-entity-fan-mode1').val().toString()
                             const fanMode2 = listItem.find('.node-input-entity-fan-mode2').val().toString()
                             const fanMode3 = listItem.find('.node-input-entity-fan-mode3').val().toString()
-                            var maxStr = listItem.find('.node-input-entity-num-max').val().toString()
-                            var max = Number(maxStr)
+                            maxStr = listItem.find('.node-input-entity-num-max').val().toString()
+                            const max = Number(maxStr)
 
-                            if (!isNaN(max)) {
+                            if (!Number.isNaN(max)) {
                                 entity.max = max
                             }
 
@@ -905,8 +922,8 @@ var NSPanelLui = NSPanelLui || {}
                             entity.fanMode3 = fanMode3
                             entity.min = 0
                             break
-
-                        case 'light':
+                        }
+                        case 'light': {
                             const dimmable: boolean = listItem.find('.node-input-entity-light-dimmable').is(':checked')
                             const hasColorTemperature = listItem
                                 .find('.node-input-entity-light-colorTemperature')
@@ -917,6 +934,7 @@ var NSPanelLui = NSPanelLui || {}
                             entity.hasColorTemperature = hasColorTemperature
                             entity.hasColor = hasColor
                             break
+                        }
                     }
 
                     entities.push(entity)
@@ -924,38 +942,42 @@ var NSPanelLui = NSPanelLui || {}
                 return entities
             }
 
-            _makeControl()
-            _addItems(initialData)
+            makeControl()
+            addItems(initialData)
 
-            return _api
+            return {
+                addItems: (items) => addItems(items),
+                empty: () => empty(),
+                getEntities: () => getEntities(),
+            }
         }
         // #endregion editable entity list
 
         return {
-            editableEntitiesList: _createEditableEntitiesList,
-            editableEventList: _createEditableEventList,
-            pageTypedInput: _createPageTypedInput,
-            payloadTypedInput: _createPayloadTypedInput,
+            editableEntitiesList: createEditableEntitiesList,
+            editableEventList: createEditableEventList,
+            pageTypedInput: createPageTypedInput,
+            payloadTypedInput: createPayloadTypedInput,
         }
     })()
-    //#endregion ui generation
+    // #endregion ui generation
 
-    //#region API generation
-    NSPanelLui['_'] = _i18n
+    // #region API generation
+    NSPanelLui['_'] = i18n
 
     NSPanelLui.Editor = NSPanelLui.Editor || {
-        _: _i18n,
-        validate: _validate,
-        create: _create,
+        _: i18n,
+        validate,
+        create,
         util: {
-            _normalizeLabel: _normalizeLabel,
-            getNodeLabel: _getNodeLabel,
+            normalizeLabel,
+            getNodeLabel,
         },
     }
     NSPanelLui.Events = NSPanelLui.Events || {
-        allNavigationEvents: _allValidNavigationEvents,
-        allButtonEvents: _allValidButtonEvents,
-        addHardwareButtonEventsIfApplicable: _addHardwareButtonEventsIfApplicable,
+        allNavigationEvents: ALL_VALID_NAVIGATION_EVENTS,
+        allButtonEvents: ALL_VALID_BUTTON_EVENTS,
+        addHardwareButtonEventsIfApplicable,
     }
-    //#endregion API generation
+    // #endregion API generation
 })(RED, $)

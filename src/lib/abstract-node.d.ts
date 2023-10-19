@@ -1,5 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import * as nodeRed from 'node-red'
-import { INodeConfig, IRedNodeDef, IRedNode, VoidCallback, NodeRedOnInputCallback } from './types'
+import { INodeConfig, IRedNode } from '../types/types'
 
 export declare abstract class AbstractRedNode<TConfig extends INodeConfig, TCreds extends {} = {}>
     implements IRedNode<TCreds>
@@ -7,12 +8,17 @@ export declare abstract class AbstractRedNode<TConfig extends INodeConfig, TCred
     RED: nodeRed.NodeAPI
 
     id: string
+
     type: string
+
     z: string
+
     name: string
+
     credentials: TCreds
 
     emit(event: string | symbol, ...args: any[]): boolean
+    // eslint-disable-next-line @typescript-eslint/ban-types
     on(event: string, listener: Function): void
     on(event: 'close', listener: (done: () => void) => void)
 

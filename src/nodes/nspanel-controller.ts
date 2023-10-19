@@ -1,4 +1,7 @@
+/* eslint-disable import/no-import-module-exports */
 import { NodeBase } from '../lib/node-base'
+import { NSPanelController } from '../lib/nspanel-controller'
+import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import {
     CommandData,
     EventArgs,
@@ -7,12 +10,11 @@ import {
     NodeMessageInFlow,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
+    NodeStatus,
     NotifyData,
     PanelBasedConfig,
     PanelMessage,
-} from '../types'
-import { NSPanelController } from '../lib/nspanel-controller'
-import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
+} from '../types/types'
 
 interface NSPanelControllerConfig extends PanelBasedConfig {
     screenSaverOnStartup: boolean
@@ -21,13 +23,15 @@ interface NSPanelControllerConfig extends PanelBasedConfig {
 module.exports = (RED) => {
     class NSPanelControllerNode extends NodeBase<NSPanelControllerConfig> {
         private nsPanelController: IPanelController | null = null
+
         private panelNode: IPanelNodeEx | null = null
+
         private config: NSPanelControllerConfig
 
         constructor(config: NSPanelControllerConfig) {
             super(config, RED)
 
-            this.config = Object.assign({}, config)
+            this.config = { ...config }
             this.panelNode = <IPanelNodeEx>(<unknown>RED.nodes.getNode(this.config.nsPanel))
 
             this.on('input', (msg: NodeMessageInFlow, send: NodeRedSendCallback) => this.onInput(msg, send))
@@ -45,14 +49,16 @@ module.exports = (RED) => {
             if (!NSPanelMessageUtils.hasProperty(msg, 'payload')) return
 
             switch (msg.topic) {
-                case 'cmd':
+                case 'cmd': {
                     this.handleCommandInput(msg)
                     break
+                }
 
-                case 'notify':
+                case 'notify': {
                     const notifyData: NotifyData = <NotifyData>msg.payload
                     this.nsPanelController?.showNotification(notifyData)
                     break
+                }
             }
 
             send(msg) // TODO: really forward or just consume
@@ -61,10 +67,10 @@ module.exports = (RED) => {
         private handleCommandInput(msg: PanelMessage): void {
             const cmdInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
 
-            var allCommands: CommandData[] = []
+            const allCommands: CommandData[] = []
 
             cmdInputData.forEach((item, _idx) => {
-                var cmdResult: CommandData | null = NSPanelMessageUtils.convertToCommandData(item)
+                const cmdResult: CommandData | null = NSPanelMessageUtils.convertToCommandData(item)
                 if (cmdResult !== null) {
                     allCommands.push(cmdResult)
                 }
@@ -72,7 +78,7 @@ module.exports = (RED) => {
 
             this.nsPanelController?.executeCommand(allCommands)
 
-            /*TODO: Beep command   switch (payload.cmd) {
+            /* TODO: Beep command   switch (payload.cmd) {
                    case 'beep':
                        const cmdParam = payload.params
                        this.nsPanelController.sendBuzzerCommand(
@@ -82,7 +88,7 @@ module.exports = (RED) => {
                            cmdParam.tune
                        )
                        break
-               }*/
+               } */
         }
 
         private init(config: NSPanelControllerConfig) {
@@ -110,7 +116,7 @@ module.exports = (RED) => {
 
                 // forward RED events
                 RED.events.on('flows:starting', () => this.nsPanelController?.onFlowsStarting())
-                RED.events.on('flows:started', () => this.nsPanelController?.onFlowsStarted()) //TODO: need done?
+                RED.events.on('flows:started', () => this.nsPanelController?.onFlowsStarted()) // TODO: need done?
             }
         }
 
@@ -122,8 +128,8 @@ module.exports = (RED) => {
             this.send(eventArgs)
         }
 
-        private onControllerStatusEvent(eventArgs) {
-            this.setNodeStatus(eventArgs.topic, eventArgs.msg)
+        private onControllerStatusEvent(nodeStatus: NodeStatus) {
+            this.setNodeStatus(nodeStatus.statusLevel, nodeStatus.msg)
         }
     }
 

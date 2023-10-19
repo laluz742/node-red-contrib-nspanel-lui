@@ -1,22 +1,23 @@
+import { NSPanelColorUtils } from './nspanel-colorutils'
+import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
+import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
+import { NSPanelUtils } from './nspanel-utils'
+import { PageNode } from './page-node'
 import {
     IPageOptions,
     IEntityBasedPageConfig,
-    PageCacheData,
     PanelEntity,
     NodeAPI,
     PageInputMessage,
     NodeRedSendCallback,
     PageEntityData,
-} from '../types'
-import { DEFAULT_HMI_COLOR, STR_CMD_LUI_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
-import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
-import { NSPanelUtils } from './nspanel-utils'
-import { PageNode } from './page-node'
+} from '../types/types'
 
 export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends PageNode<TConfig> {
     protected entitiesPageNodeConfig: IEntityBasedPageConfig
-    private entitiesPageNodePageCache: PageCacheData = null
+
     private entities: Map<string, PanelEntity> = new Map<string, PanelEntity>()
+
     private entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>()
 
     constructor(config: TConfig, RED: NodeAPI, options: IPageOptions) {
@@ -31,11 +32,11 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
     protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback) {
         switch (msg.topic) {
-            case 'data':
-                //copy cached data
-                var entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>(this.entityData)
+            case 'data': {
+                // copy cached data
+                const entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>(this.entityData)
                 const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
-                var dirty = false
+                let dirty = false
 
                 // TODO: dirty management
                 entityInputData.forEach((item) => {
@@ -50,18 +51,17 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
                 if (dirty) {
                     this.entityData = entityData
-                    this.clearPageCache()
+                    this.getCache().clear()
                 }
                 return true
+            }
         }
 
         return false
     }
 
-    public generatePage(): string | string[] | null {
-        if (this.hasPageCache()) return this.getPageCache()
-
-        var result: string[] = [STR_CMD_LUI_ENTITYUPDATE]
+    protected doGeneratePage(): string | string[] | null {
+        const result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
         result.push(this.entitiesPageNodeConfig.title ?? '')
         const titleNav = this.generateTitleNav()
         result.push(titleNav)
@@ -70,15 +70,13 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         result.push(entitites)
 
         const pageData: string = result.join(STR_LUI_DELIMITER)
-        this.setPageCache(pageData)
-
         return pageData
     }
 
     public generatePopupDetails(_type: string, entityId: string): string | string[] | null {
         const entities = this.entitiesPageNodeConfig.entities ?? []
 
-        var entity: PanelEntity = entities.filter((entity) => entity.entityId == entityId)[0] ?? null
+        const entity: PanelEntity = entities.filter((e) => e.entityId === entityId)[0] ?? null
 
         if (entity != null) {
             const entityData = this.entityData.get(entity.entityId)
@@ -103,26 +101,26 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
     }
 
     protected generateEntities(): string {
-        var resultEntities: string[] = []
+        const resultEntities: string[] = []
 
         const entities = this.getEntities()
         const maxEntities = this.options?.maxEntities
             ? Math.min(this.options.maxEntities, entities.length)
             : entities.length
 
-        for (var i = 0; i < maxEntities; i++) {
-            var entityConfig = entities[i]
+        for (let i = 0; i < maxEntities; i += 1) {
+            const entityConfig = entities[i]
             const entityData = this.getEntityData(entityConfig.entityId)
             const optionalValue = entityData?.value ?? entityConfig.optionalValue
 
             const icon = entityData?.icon ?? entityConfig.icon
             const text = entityData?.text ?? entityConfig.text
 
-            var entity = NSPanelUtils.makeEntity(
+            const entity = NSPanelUtils.makeEntity(
                 entityConfig.type,
                 entityConfig.entityId,
                 NSPanelUtils.getIcon(icon ?? ''),
-                NSPanelUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_HMI_COLOR),
+                NSPanelColorUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
                 text ?? '',
                 optionalValue
             )
@@ -132,22 +130,4 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
         return resultEntities.join(STR_LUI_DELIMITER)
     }
-
-    // #region cache
-    protected hasPageCache(): boolean {
-        return this.entitiesPageNodePageCache !== null
-    }
-
-    protected getPageCache(): PageCacheData {
-        return this.entitiesPageNodePageCache
-    }
-
-    protected setPageCache(data: PageCacheData): void {
-        this.entitiesPageNodePageCache = data
-    }
-
-    protected clearPageCache(): void {
-        this.entitiesPageNodePageCache = null
-    }
-    // #endregion cache
 }

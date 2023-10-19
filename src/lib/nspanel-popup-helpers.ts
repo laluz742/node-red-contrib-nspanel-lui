@@ -1,3 +1,16 @@
+import { NodeBase } from './node-base'
+import { NSPanelColorUtils } from './nspanel-colorutils'
+
+import { NSPanelUtils } from './nspanel-utils'
+import {
+    DEFAULT_FONTSIZE,
+    DEFAULT_LUI_COLOR,
+    STR_LUI_CMD_ENTITYUPDATEDETAIL,
+    STR_LUI_DELIMITER,
+    STR_DISABLE,
+    STR_EMPTY,
+    STR_ENABLE,
+} from './nspanel-constants'
 import {
     FanEntityData,
     INodeConfig,
@@ -6,18 +19,7 @@ import {
     PageEntityData,
     PanelEntity,
     ShutterEntityData,
-} from '../types'
-import { NodeBase } from './node-base'
-import {
-    DEFAULT_FONTSIZE,
-    DEFAULT_HMI_COLOR,
-    STR_CMD_LUI_ENTITYUPDATEDETAIL,
-    STR_LUI_DELIMITER,
-    STR_DISABLE,
-    STR_EMPTY,
-    STR_ENABLE,
-} from './nspanel-constants'
-import { NSPanelUtils } from './nspanel-utils'
+} from '../types/types'
 
 export class NSPanelPopupHelpers {
     public static generatePopup(
@@ -25,7 +27,7 @@ export class NSPanelPopupHelpers {
         entity: PanelEntity,
         entityData: PageEntityData | null
     ): string | string[] | null {
-        var result: string | string[] | null = null
+        let result: string | string[] | null = null
 
         switch (entity.type) {
             case 'fan':
@@ -43,7 +45,7 @@ export class NSPanelPopupHelpers {
             case 'thermo':
             case 'input_sel':
             case 'timer':
-                //TODO
+                // TODO
                 break
         }
 
@@ -55,21 +57,21 @@ export class NSPanelPopupHelpers {
             return null
         }
 
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         result.push(notifyData.notifyId ?? STR_EMPTY)
         result.push(notifyData.heading ?? STR_EMPTY)
-        result.push(NSPanelUtils.toHmiIconColor(notifyData.headingColor ?? DEFAULT_HMI_COLOR))
+        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.headingColor ?? DEFAULT_LUI_COLOR))
         result.push(notifyData.cancelText ?? STR_EMPTY)
-        result.push(NSPanelUtils.toHmiIconColor(notifyData.cancelColor ?? DEFAULT_HMI_COLOR))
+        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.cancelColor ?? DEFAULT_LUI_COLOR))
         result.push(notifyData.okText ?? STR_EMPTY)
-        result.push(NSPanelUtils.toHmiIconColor(notifyData.okColor ?? DEFAULT_HMI_COLOR))
+        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.okColor ?? DEFAULT_LUI_COLOR))
         result.push(notifyData.text ?? STR_EMPTY)
-        result.push(NSPanelUtils.toHmiIconColor(notifyData.textColor ?? DEFAULT_HMI_COLOR))
+        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.textColor ?? DEFAULT_LUI_COLOR))
         result.push(notifyData.timeout ?? STR_EMPTY)
         result.push(notifyData.fontSize ?? DEFAULT_FONTSIZE)
         result.push(NSPanelUtils.getIcon(notifyData.icon ?? STR_EMPTY))
-        result.push(NSPanelUtils.toHmiIconColor(notifyData.iconColor ?? DEFAULT_HMI_COLOR))
+        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.iconColor ?? DEFAULT_LUI_COLOR))
 
         return result.join(STR_LUI_DELIMITER)
     }
@@ -82,11 +84,11 @@ export class NSPanelPopupHelpers {
         if (entityData == null) return null
 
         const fanEntityData: FanEntityData = <FanEntityData>entityData
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? STR_EMPTY))
-        result.push(NSPanelUtils.toHmiIconColor(entity.iconColor ?? DEFAULT_HMI_COLOR))
+        result.push(NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? DEFAULT_LUI_COLOR))
         result.push(NSPanelUtils.toHmiState(fanEntityData?.active ?? 0))
         result.push(fanEntityData?.speed ?? STR_EMPTY)
         result.push(entity.max ?? STR_EMPTY)
@@ -105,11 +107,11 @@ export class NSPanelPopupHelpers {
         if (entityData == null) return null
 
         const lightEntityData: LightEntityData = <LightEntityData>entityData
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? STR_EMPTY))
-        result.push('' + NSPanelUtils.toHmiIconColor(entity.iconColor ?? DEFAULT_HMI_COLOR))
+        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? DEFAULT_LUI_COLOR)}`)
 
         const brightness = entity.dimmable ? lightEntityData?.brightness : STR_DISABLE
         const colorTemp = entity.hasColorTemperature ? lightEntityData?.colorTemperature : STR_DISABLE
@@ -118,9 +120,9 @@ export class NSPanelPopupHelpers {
         result.push(brightness ?? '')
         result.push(colorTemp ?? '')
         result.push(colorMode)
-        result.push(entity.hasColor ? 'Farbe' : STR_EMPTY) //FIXME: i18n
-        result.push(entity.hasColorTemperature ? 'Lichttemperatur' : STR_EMPTY) //FIXME: i18n
-        result.push(entity.dimmable ? 'Helligkeit' : STR_EMPTY) //FIXME: i18n
+        result.push(entity.hasColor ? 'Farbe' : STR_EMPTY) // FIXME: i18n
+        result.push(entity.hasColorTemperature ? 'Lichttemperatur' : STR_EMPTY) // FIXME: i18n
+        result.push(entity.dimmable ? 'Helligkeit' : STR_EMPTY) // FIXME: i18n
 
         return result.join(STR_LUI_DELIMITER)
     }
@@ -133,7 +135,7 @@ export class NSPanelPopupHelpers {
         if (entityData == null) return null
 
         const shutterEntityData: ShutterEntityData = <ShutterEntityData>entityData // TODO: type guard
-        const result: (string | Number)[] = [STR_CMD_LUI_ENTITYUPDATEDETAIL]
+        const result: (string | number)[] = [STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         const hasTilt: boolean = entity.hasTilt ?? false
         const posValue: number = Number(shutterEntityData?.value ?? 0)
@@ -148,7 +150,7 @@ export class NSPanelPopupHelpers {
         result.push(NSPanelUtils.getIcon(entity.iconStop ?? STR_EMPTY))
         result.push(NSPanelUtils.getIcon(entity.iconDown ?? STR_EMPTY))
         result.push(posValue < 100 ? STR_ENABLE : STR_DISABLE)
-        result.push(STR_ENABLE) //icon_stop_status
+        result.push(STR_ENABLE) // icon_stop_status
         result.push(posValue > 0 ? STR_ENABLE : STR_DISABLE)
 
         if (hasTilt) {
@@ -156,9 +158,9 @@ export class NSPanelPopupHelpers {
             result.push(NSPanelUtils.getIcon(entity.iconTiltLeft ?? STR_EMPTY))
             result.push(NSPanelUtils.getIcon(entity.iconTiltStop ?? STR_EMPTY))
             result.push(NSPanelUtils.getIcon(entity.iconTiltRight ?? STR_EMPTY))
-            result.push(tiltValue < 100 ? STR_ENABLE : STR_DISABLE) //iconTiltLeftStatus
-            result.push(STR_ENABLE) //iconTiltStopStatus
-            result.push(tiltValue > 0 ? STR_ENABLE : STR_DISABLE) //iconTiltRightStatus
+            result.push(tiltValue < 100 ? STR_ENABLE : STR_DISABLE) // iconTiltLeftStatus
+            result.push(STR_ENABLE) // iconTiltStopStatus
+            result.push(tiltValue > 0 ? STR_ENABLE : STR_DISABLE) // iconTiltRightStatus
             result.push(shutterEntityData?.tilt ?? 0)
         } else {
             result.push(STR_LUI_DELIMITER.repeat(7) + STR_DISABLE)

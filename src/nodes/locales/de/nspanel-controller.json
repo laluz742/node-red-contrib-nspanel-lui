@@ -14,7 +14,8 @@
             "panelStarted": "Panel gestartet",
             "waitForPages": "Warte auf Seiten",
             "tooManyScreenSaver": "Mehr als ein Bildschirmschoner",
-            "noScreenSaverPage": "Kein Bildschirmschoner"
+            "noScreenSaverPage": "Kein Bildschirmschoner",
+            "newFirmwareAvailable": "Neue Firmware verfügbar: "
         }
     },
     "nspanel-controller": {
@@ -30,7 +31,16 @@
         },
         "panel": {
             "offline": "Offline",
-            "serverStopped": "Server angehalten"
+            "serverStopped": "Server angehalten",
+            "newFirmwareTitle": "Neue Firmware",
+            "currentFirmwareVersionPrefix": "Aktuelle Version: ",
+            "newFirmwareVersionPrefix": "Neue Version: ",
+            "newFirmwareTasmotaTextMain": "Eine neues Firmware-Update für\r\nTasmota ist verfügbar.",
+            "newBerryDriverTextMain": "Ein Update für den BerryDriver\r\nist verfügbar.",
+            "newHmiTextMain": "Ein Update der Lovelace UI\r\nFirmware ist verfügbar.",
+            "newFirmwarPerformUpdate": "Möchten Sie das Update installieren?",
+            "btnTextYes": "Ja",
+            "btnTextNo": "Nein"
         }
     }
 }

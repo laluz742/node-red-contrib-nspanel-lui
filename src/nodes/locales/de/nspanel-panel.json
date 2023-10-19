@@ -34,7 +34,8 @@
             "brightnessStandBy": "Stand by:",
             "brightnessActive": "Aktiv:",
             "detachRelays": "Tasten von Relais entkoppeln",
-            "telePeriod": "Telemtrie-Intervall"
+            "telePeriod": "Telemtrie-Intervall",
+            "autoUpdate": "Neue Firmware automatisch installieren"
         },
         "placeholder": {
             "name": "Name",
