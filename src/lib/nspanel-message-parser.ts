@@ -11,6 +11,12 @@ import {
     TasmotaStatus2EventArgs,
     NluiDriverVersionEventArgs,
 } from '../types/types'
+import {
+    STR_LUI_EVENT_BUTTONPRESS2,
+    STR_LUI_EVENT_PAGEOPENDETAIL,
+    STR_LUI_EVENT_SLEEPREACHED,
+    STR_LUI_EVENT_STARTUP,
+} from './nspanel-constants'
 
 const log = Logger('NSPanelMessageParser')
 
@@ -192,7 +198,7 @@ export class NSPanelMessageParser {
         }
 
         switch (parts[1]) {
-            case 'startup': {
+            case STR_LUI_EVENT_STARTUP: {
                 const startupEventArgs = eventArgs as StartupEventArgs
                 startupEventArgs.source = 'hmi'
                 startupEventArgs.hmiVersion = {
@@ -204,11 +210,11 @@ export class NSPanelMessageParser {
                 break
             }
 
-            case 'sleepReached': {
+            case STR_LUI_EVENT_SLEEPREACHED: {
                 break
             }
 
-            case 'buttonPress2': {
+            case STR_LUI_EVENT_BUTTONPRESS2: {
                 eventArgs.event2 = parts[3]
                 // normalize eventArgs
                 switch (parts[3]) {
@@ -284,7 +290,7 @@ export class NSPanelMessageParser {
                 break
             }
 
-            case 'pageOpenDetail': {
+            case STR_LUI_EVENT_PAGEOPENDETAIL: {
                 eventArgs.entityId = parts[3]
                 break
             }
@@ -295,7 +301,7 @@ export class NSPanelMessageParser {
             }
         }
 
-        log.debug(`parseEvent${JSON.stringify(eventArgs)}`)
+        log.debug(`parseEvent ${JSON.stringify(eventArgs)}`)
         return eventArgs
     }
 

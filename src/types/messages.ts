@@ -75,7 +75,6 @@ export interface PageEntityDataBase {
 }
 
 export interface PageEntityData extends PageEntityDataBase {
-    // FIXME data processing should be resolved in a way the  internals below are not used externally
     entityId?: string
     value?: string | number
 }

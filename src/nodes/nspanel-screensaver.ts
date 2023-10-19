@@ -5,7 +5,7 @@ import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 
-import { STR_LUI_DELIMITER } from '../lib/nspanel-constants'
+import { STR_LUI_DELIMITER, STR_LUI_EVENT_BEXIT } from '../lib/nspanel-constants'
 import {
     EventArgs,
     EventMapping,
@@ -63,7 +63,7 @@ module.exports = (RED) => {
         }
 
         public prePageNavigationEvent(eventArgs: EventArgs, _eventConfig: EventMapping) {
-            if (eventArgs.event2 === 'bExit' && this.config.doubleTapToExit) {
+            if (eventArgs.event2 === STR_LUI_EVENT_BEXIT && this.config.doubleTapToExit) {
                 return eventArgs.value ? eventArgs.value >= 2 : false
             }
 

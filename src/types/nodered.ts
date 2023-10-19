@@ -17,8 +17,8 @@ export type NodeRedOnInputCallback = (
 
 export type NodeRedI18nResolver = (key: string) => string
 
-export interface IRedNodeDef extends nodeRed.NodeDef {}
-export interface INodeConfig extends IRedNodeDef {}
+export interface INodeRedNodeDef extends nodeRed.NodeDef {}
+export interface INodeConfig extends INodeRedNodeDef {}
 export interface IRedNode<TCreds extends {} = {}> extends nodeRed.Node<TCreds> {}
 
 export type NodeStatusFill = nodeRed.NodeStatusFill

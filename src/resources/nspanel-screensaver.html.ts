@@ -1,6 +1,7 @@
 // eslint-disable-next-line func-names
 ;(function ($) {
     const ALL_VALID_EVENTS_BASE: ValidEventSpec[] = [
+        // TODO: i18n
         { event: 'bExit', label: 'bExit' },
         { event: 'swipeRight', label: 'swipeRight' },
         { event: 'swipeLeft', label: 'swipeLeft' },

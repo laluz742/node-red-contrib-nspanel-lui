@@ -38,7 +38,6 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
                 const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
                 let dirty = false
 
-                // TODO: dirty management
                 entityInputData.forEach((item) => {
                     if (item && 'entityId' in item) {
                         const entityId = item.entityId ?? null

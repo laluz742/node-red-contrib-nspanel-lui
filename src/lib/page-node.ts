@@ -98,7 +98,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     protected generateTitleNav() {
-        // TODO: icons
+        // TODO: feature-request: retrieve icons from nav target
         let navPrev = NSPanelUtils.makeEntity('delete')
         let navNext = NSPanelUtils.makeEntity('delete')
 
@@ -162,14 +162,12 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
     }
 
     private handlePageNavigationEvent(_eventArgs: EventArgs, eventConfig: EventMapping): void {
-        // FIXME: better naming
         this.emit('nav:pageId', eventConfig.value)
     }
 
     private handlePageMessageEvent(_eventArgs: EventArgs, eventConfig: EventMapping, send: NodeRedSendCallback): void {
         if (eventConfig.value == null) return
 
-        // FIXME: better naming
         const outMsg = {}
         let data: any
 

@@ -46,9 +46,10 @@
                             result = vNum <= maxLimit
                         } else if (!Number.isNaN(minLimit) && Number.isNaN(maxLimit)) {
                             result = vNum >= minLimit
+                        } else {
+                            result = NSPanelLui.Editor.validate.isNumberInRange(v, minLimit, maxLimit)
                         }
 
-                        result = NSPanelLui.Editor.validate.isNumberInRange(v, minLimit, maxLimit)
                         return result
                     },
                 },
@@ -61,9 +62,12 @@
 
                         const targetTemp = Number($('#node-input-targetTemperature').val())
                         const maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
-                        return Number.isNaN(targetTemp) === false
-                            ? vNum <= targetTemp && (Number.isNaN(maxLimit) ? true : vNum < maxLimit)
-                            : true
+                        const result =
+                            Number.isNaN(targetTemp) === false
+                                ? vNum <= targetTemp && (Number.isNaN(maxLimit) ? true : vNum < maxLimit)
+                                : true
+
+                        return result
                     },
                 },
                 maxHeatSetpointLimit: {
@@ -75,9 +79,12 @@
 
                         const targetTemp = Number($('#node-input-targetTemperature').val())
                         const minLimit = Number($('#node-input-minHeatSetpointLimit').val())
-                        return Number.isNaN(targetTemp) === false
-                            ? vNum >= targetTemp && (Number.isNaN(minLimit) ? true : vNum > minLimit)
-                            : true
+                        const result =
+                            Number.isNaN(targetTemp) === false
+                                ? vNum >= targetTemp && (Number.isNaN(minLimit) ? true : vNum > minLimit)
+                                : true
+
+                        return result
                     },
                 },
                 temperatureSteps: { value: '0.1', required: true, validate: RED.validators.number() },

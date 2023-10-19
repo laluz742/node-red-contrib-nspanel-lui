@@ -46,8 +46,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
     }
 
     sendCommandToPanel(cmd: string, data: any) {
-        // FIXME
-        if (cmd === undefined || cmd === null) return
+        if (cmd == null) return
 
         try {
             this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data.payload) // TODO: data.payload might be empty
