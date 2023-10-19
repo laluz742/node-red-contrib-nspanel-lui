@@ -1,3 +1,4 @@
+/* eslint-disable import/no-import-module-exports */
 import { NodeBase } from '../lib/node-base'
 import { INodeConfig, IPanelConfigNode, PanelMqttConfig, VoidCallback } from '../types/types'
 

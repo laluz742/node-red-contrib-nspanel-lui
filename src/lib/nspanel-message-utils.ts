@@ -13,7 +13,7 @@ export class NSPanelMessageUtils {
         if (input == null) return null
 
         // TODO: iconFont!
-        const result: StatusItemData = Object.assign({}, defaultStatus)
+        const result: StatusItemData = { ...defaultStatus }
 
         result.text = NSPanelMessageUtils.hasProperty(input, 'text', true) ? input['text'] : null
         result.icon = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null
@@ -32,7 +32,7 @@ export class NSPanelMessageUtils {
     }
 
     public static convertToEntityItemData(input: any, defaultData: PageEntityData = DEFAULT_DATA): PageEntityData {
-        const result: PageEntityData = Object.assign({}, defaultData)
+        const result: PageEntityData = { ...defaultData }
 
         // TODO: intNameEntity
         result.text = NSPanelMessageUtils.hasProperty(input, 'text', true) ? input['text'] : null // TODO: could be anything else but string

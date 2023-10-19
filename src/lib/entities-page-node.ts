@@ -34,9 +34,9 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         switch (msg.topic) {
             case 'data':
                 // copy cached data
-                var entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>(this.entityData)
+                const entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>(this.entityData)
                 const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
-                var dirty = false
+                let dirty = false
 
                 // TODO: dirty management
                 entityInputData.forEach((item) => {
@@ -60,7 +60,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
     }
 
     protected doGeneratePage(): string | string[] | null {
-        let result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
+        const result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
         result.push(this.entitiesPageNodeConfig.title ?? '')
         const titleNav = this.generateTitleNav()
         result.push(titleNav)
@@ -75,7 +75,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
     public generatePopupDetails(_type: string, entityId: string): string | string[] | null {
         const entities = this.entitiesPageNodeConfig.entities ?? []
 
-        var entity: PanelEntity = entities.filter((entity) => entity.entityId == entityId)[0] ?? null
+        const entity: PanelEntity = entities.filter((e) => e.entityId === entityId)[0] ?? null
 
         if (entity != null) {
             const entityData = this.entityData.get(entity.entityId)
@@ -100,22 +100,22 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
     }
 
     protected generateEntities(): string {
-        let resultEntities: string[] = []
+        const resultEntities: string[] = []
 
         const entities = this.getEntities()
         const maxEntities = this.options?.maxEntities
             ? Math.min(this.options.maxEntities, entities.length)
             : entities.length
 
-        for (var i = 0; i < maxEntities; i++) {
-            var entityConfig = entities[i]
+        for (let i = 0; i < maxEntities; i++) {
+            const entityConfig = entities[i]
             const entityData = this.getEntityData(entityConfig.entityId)
             const optionalValue = entityData?.value ?? entityConfig.optionalValue
 
             const icon = entityData?.icon ?? entityConfig.icon
             const text = entityData?.text ?? entityConfig.text
 
-            var entity = NSPanelUtils.makeEntity(
+            const entity = NSPanelUtils.makeEntity(
                 entityConfig.type,
                 entityConfig.entityId,
                 NSPanelUtils.getIcon(icon ?? ''),

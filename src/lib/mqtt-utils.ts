@@ -1,7 +1,7 @@
 import { isIPv6 } from 'node:net'
 
 export const MqttUtils = {
-    buildFullTopic: function (fullTopic: string, topic: string, prefix: string, command?: string) {
+    buildFullTopic(fullTopic: string, topic: string, prefix: string, command?: string) {
         let result = fullTopic
 
         result = result.replace('%topic%', topic)
@@ -22,6 +22,7 @@ export const MqttUtils = {
         const regex = new RegExp(
             '^' +
                 subscribedTopic
+                    // eslint-disable-next-line no-useless-escape
                     .replace(/([\[\]\?\(\)\\\\$\^\*\.|])/g, '\\$1')
                     .replace(/\+/g, '[^/]+')
                     .replace(/\/#$/, '(/.*)?') +
@@ -32,7 +33,7 @@ export const MqttUtils = {
 
     getBrokerUrl(address: string, port: string | number = '', useTls: boolean = false) {
         let brokerUrl = ''
-        let brokerPort = port ? port : 1883
+        const brokerPort = port || 1883
 
         if (address.indexOf('://') > -1) {
             brokerUrl = address

@@ -13,7 +13,9 @@ export interface ILogger {
     debug: LogFunction
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const logMessage = (callback: Function, facility: LogFacility, prefix: string, node?: IRedNode<any>) => {
+    // TODO: spec Function
     return (message: string) => {
         const date = new Date()
         const timestamp =
@@ -32,7 +34,8 @@ export const Logger = (prefix: string): ILogger => {
     const logToConsole = (facility: LogFacility, message: string | undefined, node?: IRedNode<any>): void => {
         if (message == null) return
 
-        var facilityCb: Function
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        let facilityCb: Function
         switch (facility) {
             case 'error':
                 facilityCb = console.error
@@ -61,7 +64,8 @@ export const Logger = (prefix: string): ILogger => {
     const logToNode = (facility: LogFacility, message: string | undefined, node?: IRedNode<any>): void => {
         if (message == null || node == null) return
 
-        var nodeLogCb: Function
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        let nodeLogCb: Function
         switch (facility) {
             case 'error':
                 nodeLogCb = node.error
@@ -86,7 +90,7 @@ export const Logger = (prefix: string): ILogger => {
         nodeLogCb(message)
     }
 
-    var logger: ILogger = {
+    const logger: ILogger = {
         error: (message: string | undefined, node?: IRedNode<any>) => {
             logToNode('error', message)
             logToConsole('error', message, node)

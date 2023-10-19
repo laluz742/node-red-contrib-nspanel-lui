@@ -41,6 +41,7 @@ module.exports = {
         'prefer-template': 'off',
         'no-else-return': 'off',
         'no-case-declarations': 'off',
+        'import/prefer-default-export': 'off',
         // Typescript rules
         '@typescript-eslint/interface-name-prefix': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',

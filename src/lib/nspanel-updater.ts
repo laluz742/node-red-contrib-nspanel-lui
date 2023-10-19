@@ -1,4 +1,5 @@
-// @ts-nocheck // FIXME
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'
 import * as semver from 'semver'
@@ -129,6 +130,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     public checkForUpdates(): void {
         // TODO: promisify the wait for version data
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
         this._acquireVersions()
             .then(() => {
@@ -235,6 +237,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
         this.getLatestVersion()
         let i = 10
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
         return new Promise((resolve, reject) => {
             ;(function waitForDataAcquisition() {

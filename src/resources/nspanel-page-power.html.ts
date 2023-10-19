@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function ($) {
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
 
@@ -31,6 +32,7 @@
             },
 
             oneditprepare() {
+                // eslint-disable-next-line @typescript-eslint/no-this-alias
                 const self = this
 
                 const eventInputControl = $('#node-input-event-control')

@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function (_$) {
     const registerType = () =>
         RED.nodes.registerType('nspanel-hmi-control', {

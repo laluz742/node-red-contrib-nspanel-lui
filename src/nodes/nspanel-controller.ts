@@ -1,3 +1,4 @@
+/* eslint-disable import/no-import-module-exports */
 import { NodeBase } from '../lib/node-base'
 import { NSPanelController } from '../lib/nspanel-controller'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
@@ -30,7 +31,7 @@ module.exports = (RED) => {
         constructor(config: NSPanelControllerConfig) {
             super(config, RED)
 
-            this.config = Object.assign({}, config)
+            this.config = { ...config }
             this.panelNode = <IPanelNodeEx>(<unknown>RED.nodes.getNode(this.config.nsPanel))
 
             this.on('input', (msg: NodeMessageInFlow, send: NodeRedSendCallback) => this.onInput(msg, send))

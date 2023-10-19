@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function ($) {
     const registerType = () =>
         RED.nodes.registerType('nspanel-config', {

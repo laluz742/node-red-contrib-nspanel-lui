@@ -7,7 +7,8 @@ export interface IPanelNodeEx extends IPanelNode {
     getPanelConfig(): PanelConfig
     getAllPages(): PageMap
 
-    on(event: string, listener: Function): void // eslint-disable-line // FIXME
+    // FIXME spec function
+    on(event: string, listener: Function): void // eslint-disable-line
 }
 
 export interface PanelConfig {

@@ -61,6 +61,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
     sendToPanel(data: any) {
         // FIXME: check data (payload == null | undefined...??...)
         if (data === undefined || data === null) return
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
         try {
             if (Array.isArray(data)) {

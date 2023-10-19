@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function ($) {
     const PANEL_DIMVALUE_MIN = 0
     const PANEL_DIMVALUE_MAX = 100

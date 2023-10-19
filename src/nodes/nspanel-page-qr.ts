@@ -1,3 +1,4 @@
+/* eslint-disable import/no-import-module-exports */
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '../lib/nspanel-constants'
 import { IEntityBasedPageConfig, PanelEntity } from '../types/types'
@@ -21,7 +22,7 @@ module.exports = (RED) => {
 
             if (config.entities.length < MAX_ENTITIES) {
                 for (let i = 0; i < MAX_ENTITIES - config.entities.length; i++) {
-                    const entityFill = Object.assign({}, EMPTY_ENTITY)
+                    const entityFill = { ...EMPTY_ENTITY }
                     entityFill.entityId += +i
                     config.entities.push(entityFill)
                 }
@@ -29,7 +30,7 @@ module.exports = (RED) => {
 
             super(config, RED, { pageType: STR_PAGE_TYPE_CARD_QR, maxEntities: MAX_ENTITIES })
 
-            this.config = Object.assign({}, config)
+            this.config = { ...config }
         }
 
         protected override doGeneratePage(): string | string[] | null {

@@ -166,7 +166,7 @@ export class NSPanelMessageParser {
             event: 'relay',
             event2: 'state',
             source: property.toLowerCase(),
-            active: input[property] === 'ON' ? true : false,
+            active: input[property] === 'ON',
         }
         return eventArgs
     }

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-import-module-exports */
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
@@ -101,7 +102,7 @@ module.exports = (RED) => {
             const currTemp =
                 this.data.currentTemperature == null || Number.isNaN(this.data.currentTemperature)
                     ? ''
-                    : this.data.currentTemperature.toFixed(1) + ' °' + this.config?.temperatureUnit
+                    : `${this.data.currentTemperature.toFixed(1)} °${this.config?.temperatureUnit}`
 
             const targetTemp = this.data.targetTemperature * TEMPERATURE_RESOLUTION_FACTOR ?? 0
 
@@ -121,7 +122,7 @@ module.exports = (RED) => {
             result.push(this.config?.currentTemperatureLabel ?? '')
             result.push(this.config?.statusLabel ?? '')
             result.push('')
-            result.push('°' + this.config?.temperatureUnit)
+            result.push(`°${this.config?.temperatureUnit}`)
 
             result.push('') // TODO: second target temperature
 
@@ -205,6 +206,7 @@ module.exports = (RED) => {
 
                 case 'data':
                     if (!Array.isArray(msg.payload)) {
+                        // eslint-disable-next-line prefer-const
                         for (let key in msg.payload) {
                             if (Object.prototype.hasOwnProperty.call(this.data, key)) {
                                 this.data[key] = msg.payload[key]

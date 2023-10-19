@@ -2,6 +2,7 @@ import { IControllerCache, IPageHistory, IPageNode, PageId } from '../types/type
 
 export class SimpleControllerCache implements IControllerCache {
     private history: IPageHistory[] = []
+
     private allKnownPages: Map<string, IPageNode> = new Map<string, IPageNode>()
 
     // #region history management
@@ -38,7 +39,7 @@ export class SimpleControllerCache implements IControllerCache {
             const currentHistory: IPageHistory[] = this.history.map((x) => x)
 
             let lastHistoryOfTypePage: IPageHistory | null = null
-            for (var i = currentHistory.length - 1; i >= 0; i--) {
+            for (let i = currentHistory.length - 1; i >= 0; i--) {
                 if (currentHistory[i].historyType === 'page') {
                     lastHistoryOfTypePage = currentHistory[i]
                     break

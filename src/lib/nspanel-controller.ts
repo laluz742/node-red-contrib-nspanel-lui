@@ -93,7 +93,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         // TODO: if empty nav to last page
 
         if (this._cache.isPageKnown(pageId)) {
-            var pageNode: IPageNode | null = this._cache.getPage(pageId)
+            const pageNode: IPageNode | null = this._cache.getPage(pageId)
             if (pageNode !== null) {
                 const pageHistory: IPageHistory = {
                     historyType: 'page',
@@ -112,8 +112,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         const allKnownPages: IPageNode[] = this._cache.getAllKnownPages()
-        var pageNodeId: string | null = null
-        for (var i = 0; i < allKnownPages.length; i++) {
+        let pageNodeId: string | null = null
+        for (let i = 0; i < allKnownPages.length; i++) {
+            // eslint-disable-next-line eqeqeq
             if (allKnownPages[i].name == page) {
                 pageNodeId = allKnownPages[i].id
                 break
@@ -126,6 +127,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     registerPages(pages: PageMap) {
+        // eslint-disable-next-line prefer-const
         for (let i in pages) {
             this.registerPage(pages[i])
         }
@@ -135,9 +137,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         // TODO: ignore navTo Node
         this._cache.addPage(page.id, page)
 
-        page.on('page:update', (page: IPageNode) => this.onPageUpdateRequest(page))
-        page.on('nav:pageId', (pageId: PageId) => this.onPageIdNavigationRequest(pageId))
-        page.on('nav:page', (page: string) => this.onPageNavigationRequest(page))
+        page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
+        page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
+        page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
     }
 
     deregisterPage(page: IPageNode) {
@@ -193,7 +195,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     sendBuzzerCommand(count: number, beepDuration?: number, silenceDuration?: number, tune?: number) {
         // TODO: message
-        var params = [count]
+        const params = [count]
         if (beepDuration !== undefined) params.push(beepDuration)
         if (silenceDuration !== undefined) params.push(silenceDuration)
         if (tune !== undefined) params.push(tune)
@@ -214,7 +216,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         log.info(`Starting panel controller for panel ${panelConfig.panel.topic}`)
 
         // preparing dim modes
-        var tempStartTime = panelConfig.panel.panelDimLowStartTime
+        let tempStartTime = panelConfig.panel.panelDimLowStartTime
         if (panelConfig.panel.panelDimLowStartTime !== undefined) {
             this._panelDimModes.day.dimLow = panelConfig.panel.panelDimLow
             this._panelDimModes.day.dimHigh = panelConfig.panel.panelDimHigh
@@ -337,9 +339,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private delayPanelStartupFlag = true
+
     public onFlowsStarting(): void {
         this.delayPanelStartupFlag = true
     }
+
     public onFlowsStarted(): void {
         this.delayPanelStartupFlag = false
     }
@@ -352,8 +356,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.setNodeStatus('info', this._i18n('common.status.panelInit'))
 
         // prepare dim mode
-        var now: Date = new Date()
-        var dimModeNightStart = new Date()
+        const now: Date = new Date()
+        const dimModeNightStart = new Date()
         dimModeNightStart.setHours(this._panelDimModes.night.start.hours, this._panelDimModes.night.start.minutes, 0, 0)
         if (now >= dimModeNightStart) {
             this._panelDimModes.isNight = true
@@ -477,7 +481,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private notifyCurrentPageOfEvent(event: string, eventArgs: EventArgs) {
-        var currentPage: IPageHistory | null = this.getCurrentPage()
+        const currentPage: IPageHistory | null = this.getCurrentPage()
 
         this.notifyPageNode(currentPage?.pageNode, event, eventArgs)
     }
@@ -486,7 +490,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (page != null) {
             const nodeMsg = {
                 topic: eventArgs.type,
-                payload: Object.assign({}, eventArgs),
+                payload: { ...eventArgs },
             }
             // when hw buttons do not control power outputs translate to event
             if (
@@ -505,7 +509,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private notifyControllerNode(eventArgs: EventArgs) {
         const nodeMsg = {
             topic: eventArgs.type,
-            payload: Object.assign({}, eventArgs),
+            payload: { ...eventArgs },
         }
 
         this.emit('event', nodeMsg)
@@ -570,6 +574,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (data == null || this._panelMqttHandler === null) return
 
         if (typeof data === 'object') {
+            // eslint-disable-next-line prefer-const
             for (let d in data) {
                 this._panelMqttHandler.sendToPanel({ payload: data[d] })
             }

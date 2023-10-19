@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function ($) {
     const MAX_ENTITIES = 8
     const ALLOWED_ENTITIES = ['delete', 'hvac_action']
@@ -85,6 +86,7 @@
             },
 
             oneditprepare() {
+                // eslint-disable-next-line @typescript-eslint/no-this-alias
                 const self = this
                 const eventInputControl = $('#node-input-event-control')
                 const nsPanelInputField = $('#node-input-nsPanel')

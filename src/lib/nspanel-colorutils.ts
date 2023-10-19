@@ -30,16 +30,16 @@ export class NSPanelColorUtils {
         }
 
         const hue = NSPanelColorUtils.rad2deg(Math.atan2(y, x))
-        const hsv: HSVColor = { hue: hue, saturation: saturation, value: 1 } // FIXME: brightness input
+        const hsv: HSVColor = { hue, saturation, value: 1 } // FIXME: brightness input
         const rgb: RGBColor = NSPanelColorUtils.hsv2Rgb(hsv)
 
         return [rgb, hsv]
     }
 
     public static color2dec565(color: string | number[], defaultColor: number = DEFAULT_LUI_COLOR): number {
-        var r = -1,
-            g = -1,
-            b = -1
+        let r = -1
+        let g = -1
+        let b = -1
 
         if (typeof color === 'string') {
             const colorStr = color.toLowerCase()
@@ -77,18 +77,20 @@ export class NSPanelColorUtils {
         const chroma = hsv.value * hsv.saturation
 
         const x = chroma * (1 - Math.abs((tmpHue % 2) - 1))
-        var rgb =
-            tmpHue <= 1
-                ? [chroma, x, 0]
-                : tmpHue <= 2
-                ? [x, chroma, 0]
-                : tmpHue <= 3
-                ? [0, chroma, x]
-                : tmpHue <= 4
-                ? [0, x, chroma]
-                : tmpHue <= 5
-                ? [x, 0, chroma]
-                : [chroma, 0, x]
+        let rgb: number[]
+        if (tmpHue <= 1) {
+            rgb = [chroma, x, 0]
+        } else if (tmpHue <= 2) {
+            rgb = [x, chroma, 0]
+        } else if (tmpHue <= 3) {
+            rgb = [0, chroma, x]
+        } else if (tmpHue <= 4) {
+            rgb = [0, x, chroma]
+        } else if (tmpHue <= 5) {
+            rgb = [x, 0, chroma]
+        } else {
+            rgb = [chroma, 0, x]
+        }
 
         const m = hsv.value - chroma
         rgb = rgb.map((v) => Math.round((v + m) * 255))

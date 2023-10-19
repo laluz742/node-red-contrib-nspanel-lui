@@ -1,3 +1,4 @@
+/* eslint-disable import/no-import-module-exports */
 import { PageNode } from '../lib/page-node'
 
 import { NSPanelUtils } from '../lib/nspanel-utils'
@@ -101,6 +102,7 @@ module.exports = (RED) => {
             const resultEntities: string[] = []
             const data = this.pageData.entities
 
+            // eslint-disable-next-line prefer-const
             for (let i in data) {
                 const item = data[i]
                 const entity = NSPanelUtils.makeEntity(
@@ -126,7 +128,7 @@ module.exports = (RED) => {
             const statusItems: StatusItemData[] = this.statusData.map((item) => item)
 
             if (Array.isArray(statusInputData)) {
-                for (var i = 0; i < 2; i++) {
+                for (let i = 0; i < 2; i++) {
                     if (statusInputData[i] !== undefined) {
                         const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
                             statusInputData[i]
@@ -135,12 +137,10 @@ module.exports = (RED) => {
                         statusItems[idx] = item
                     }
                 }
-            } else {
-                if (statusInputData !== undefined) {
-                    const item = NSPanelMessageUtils.convertToStatusItemData(statusInputData) as StatusItemData
-                    const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', 0)
-                    statusItems[idx] = item
-                }
+            } else if (statusInputData !== undefined) {
+                const item = NSPanelMessageUtils.convertToStatusItemData(statusInputData) as StatusItemData
+                const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', 0)
+                statusItems[idx] = item
             }
 
             this.statusData = statusItems

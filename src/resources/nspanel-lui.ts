@@ -35,12 +35,14 @@ type typedInputTypeParams = {
     options?: any
 }
 
+// eslint-disable-next-line vars-on-top, no-var
 declare var RED
 
 // #endregion types
 
-var NSPanelLui = NSPanelLui || {}
+var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
+// eslint-disable-next-line func-names, @typescript-eslint/no-shadow
 ;(function (RED, $) {
     // #region events
 
@@ -91,7 +93,7 @@ var NSPanelLui = NSPanelLui || {}
         ['hvac_action', { hasId: true, hasLabel: false, hasIcon: true, hasOptionalValue: false }],
     ])
 
-    const ALL_PANEL_ENTITY_TYPES = (function () {
+    const ALL_PANEL_ENTITY_TYPES = (() => {
         const result: string[] = Array.from(PANEL_ENTITY_TYPE_ATTRS.keys())
         return result
     })()
@@ -102,10 +104,10 @@ var NSPanelLui = NSPanelLui || {}
     const _i18n = (key: string, dict: string, group?: string) => {
         return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
     }
-    const _normalizeLabel = function (node: any) {
+    const _normalizeLabel = (node: any) => {
         return _validate.stringIsNotNullOrEmpty(node.name) ? node.name : '[' + node.type + ':' + node.id + ']'
     }
-    const _getNodeLabel = function (node: any) {
+    const _getNodeLabel = (node: any) => {
         const panelNode = RED.nodes.node(node.nsPanel)
 
         const label =
@@ -117,6 +119,7 @@ var NSPanelLui = NSPanelLui || {}
     // #endregion i18n and labels
 
     // #region validation helpers
+    // eslint-disable-next-line func-names
     const _validate = (function () {
         const _numberInRange = (v: any, min: number, max: number): boolean => {
             const n = Number(v)
@@ -144,6 +147,7 @@ var NSPanelLui = NSPanelLui || {}
     // #endregion validation helpers
 
     // #region ui generation
+    // eslint-disable-next-line func-names
     const _create = (function () {
         function _createPageTypedInput(
             field: JQuery,
@@ -161,6 +165,7 @@ var NSPanelLui = NSPanelLui || {}
                 const myId = nodeConfig.id
                 const panelNode = RED.nodes.node(currentPanel)
 
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 const knownPages: nodered.Node<any>[] = panelNode?.users ?? []
                 const pageNodeType: typedInputTypeParams = {
@@ -172,7 +177,9 @@ var NSPanelLui = NSPanelLui || {}
                 }
 
                 // FIXME: update on panel changed
+                // eslint-disable-next-line prefer-const
                 for (let i in knownPages) {
+                    // eslint-disable-line
                     const item = knownPages[i]
                     if (item.id !== myId && item.type.startsWith('nspanel-page')) {
                         pageNodeType.options.push({
@@ -207,12 +214,12 @@ var NSPanelLui = NSPanelLui || {}
 
         // #region editable event list
 
-        const _createEditableEventList = function (
+        const _createEditableEventList = (
             node: IPageConfig,
             controlDomSelector: string,
             allValidEvents: ValidEventSpec[],
             initialData: EventMapping[]
-        ) {
+        ) => {
             const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
                 node.nsPanel,
                 allValidEvents
@@ -436,13 +443,13 @@ var NSPanelLui = NSPanelLui || {}
         // #endregion editable event list
 
         // #region editable entity list
-        const _createEditableEntitiesList = function (
+        const _createEditableEntitiesList = (
             _node: IPageConfig,
             controlDomSelector: string,
             maxEntities: number,
             initialData: PanelEntity[],
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
-        ) {
+        ) => {
             const _api = {
                 addItems: (items) => _addItems(items),
                 empty: () => _empty(),

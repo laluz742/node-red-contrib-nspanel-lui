@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 ;(function ($) {
     const ALL_VALID_EVENTS_BASE: ValidEventSpec[] = NSPanelLui.Events.allNavigationEvents
 
@@ -31,6 +32,7 @@
             },
 
             oneditprepare() {
+                // eslint-disable-next-line @typescript-eslint/no-this-alias
                 const self = this
 
                 const eventInputControl = $('#node-input-event-control')
@@ -38,7 +40,7 @@
                 const nsPanelInputField_lastVal = this.nsPanel
 
                 // TODO: refactor since code same on any page node
-                nsPanelInputField.on('change', function () {
+                nsPanelInputField.on('change', () => {
                     if (nsPanelInputField.val() === '_ADD_') {
                         eventInputControl.hide()
                         // TODO remove all events? ... keep track of original nsPanelId
