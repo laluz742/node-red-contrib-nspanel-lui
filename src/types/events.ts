@@ -61,11 +61,11 @@ export type SensorEventArgs = EventArgs & {
     tempUnit?: ['C', 'F']
 }
 
-export type FirmwareEventSource = 'tasmota' | 'nlui' | 'hmi'
+export type FirmwareType = 'tasmota' | 'nlui' | 'hmi'
 
 export type FirmwareEventArgs = EventArgs & {
     type: 'fw'
-    source: FirmwareEventSource
+    source: FirmwareType
     event: 'update' | 'version'
 
     version?: string

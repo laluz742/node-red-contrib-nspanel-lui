@@ -1,3 +1,5 @@
+import { FirmwareType } from '../types/events'
+
 export const STR_EMPTY: string = ''
 export const STR_ENABLE: string = 'enable'
 export const STR_DISABLE: string = 'disable'
@@ -53,10 +55,13 @@ export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
 
 // update process
+export const FIRMWARE_TASMOTA: FirmwareType = 'tasmota'
+export const FIRMWARE_BERRYDRIVER: FirmwareType = 'nlui'
+export const FIRMWARE_HMI: FirmwareType = 'hmi'
 export const STR_UPDATE_NOTIFY_PREFIX: string = 'notifyUpdate.'
-export const STR_UPDATE_FIRMWARE_TASMOTA: string = 'tasmota'
-export const STR_UPDATE_FIRMWARE_BERRYDRIVER: string = 'berrydriver'
-export const STR_UPDATE_FIRMWARE_HMI: string = 'hmi'
+export const STR_UPDATE_FIRMWARE_TASMOTA: string = FIRMWARE_TASMOTA as string
+export const STR_UPDATE_FIRMWARE_BERRYDRIVER: string = FIRMWARE_BERRYDRIVER as string
+export const STR_UPDATE_FIRMWARE_HMI: string = FIRMWARE_HMI as string
 
 // defaults
 export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE
