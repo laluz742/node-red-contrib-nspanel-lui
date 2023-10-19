@@ -26,8 +26,7 @@ import {
     IPageHistory,
     IControllerCache,
     NotifyData,
-    TasmotaStatus2EventArgs,
-    NluiDriverVersionEventArgs,
+    FirmwareEventArgs,
     StatusLevel,
     NodeStatus,
 } from '../types/types'
@@ -289,12 +288,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
             case STR_LUI_EVENT_BUTTONPRESS2: // close pageOpenDetail
                 if (eventArgs.source.startsWith(STR_UPDATE_NOTIFY_PREFIX)) {
+                    this.onPopupClose()
                     switch (eventArgs.event2) {
                         case STR_LUI_EVENT_NOTIFY_ACTION:
-                            // TODO: forwar to updater
+                            this._panelUpdater.onUpdateNotificationResult(eventArgs.source, eventArgs.data)
                             break
                         case STR_LUI_EVENT_BEXIT:
-                            this.onPopupClose()
                             break
                     }
                 } else if (eventArgs.source.startsWith('popup') && eventArgs.event2 === STR_LUI_EVENT_BEXIT) {
@@ -311,21 +310,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onMessage(msg: EventArgs) {
-        if (msg.event === 'version') {
-            switch (msg.source) {
-                case 'tasmota': {
-                    const status2EventArgs: TasmotaStatus2EventArgs = msg as TasmotaStatus2EventArgs
-                    this._panelUpdater?.setTasmotaVersion(status2EventArgs.version)
-                    break
-                }
-
-                case 'nlui': {
-                    const nluiEventArgs: NluiDriverVersionEventArgs = msg as NluiDriverVersionEventArgs
-                    this._panelUpdater?.setBerryDriverVersion(nluiEventArgs.version)
-
-                    break
-                }
-            }
+        if (msg.type === 'fw') {
+            const fwEventArgs: FirmwareEventArgs = msg as FirmwareEventArgs
+            this._panelUpdater?.onFirmwareEvent(fwEventArgs)
         } else {
             log.info(`UNCATCHED msg ${JSON.stringify(msg)}`)
         }
