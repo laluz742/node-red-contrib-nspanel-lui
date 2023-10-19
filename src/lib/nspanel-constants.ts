@@ -20,6 +20,12 @@ export const STR_LUI_CMD_TIMEOUT: string = `timeout${STR_LUI_DELIMITER}`
 export const STR_LUI_CMD_ACTIVATE_STARTUP_PAGE: string = `${STR_LUI_CMD_PAGETYPE}pageStartup`
 export const STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY: string = `${STR_LUI_CMD_PAGETYPE}popupNotify`
 export const STR_LUI_CMD_ACTIVATE_SCREENSAVER: string = `${STR_LUI_CMD_PAGETYPE}screensaver`
+export const STR_LUI_EVENT_BEXIT: string = 'bExit'
+export const STR_LUI_EVENT_NOTIFY_ACTION: string = 'notifyAction'
+export const STR_LUI_EVENT_BUTTONPRESS2: string = 'buttonPress2'
+export const STR_LUI_EVENT_PAGEOPENDETAIL: string = 'pageOpenDetail'
+export const STR_LUI_EVENT_SLEEPREACHED: string = 'sleepReached'
+export const STR_LUI_EVENT_STARTUP: string = 'startup'
 
 // tasmota commands
 export const STR_TASMOTA_CMD_DETACH_RELAYS = 'SetOption73'
@@ -41,6 +47,9 @@ export const STR_PAGE_TYPE_CARD_GRID: string = 'cardGrid'
 export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
+
+// update process
+export const STR_UPDATE_NOTIFY_PREFIX: string = 'notifyUpdate.'
 
 // defaults
 export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE

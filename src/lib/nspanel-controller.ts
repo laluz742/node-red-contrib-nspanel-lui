@@ -46,6 +46,13 @@ import {
     STR_TASMOTA_CMD_TELEPERIOD,
     STR_LUI_DELIMITER,
     STR_PAGE_TYPE_CARD_THERMO,
+    STR_UPDATE_NOTIFY_PREFIX,
+    STR_LUI_EVENT_BEXIT,
+    STR_LUI_EVENT_NOTIFY_ACTION,
+    STR_LUI_EVENT_BUTTONPRESS2,
+    STR_LUI_EVENT_PAGEOPENDETAIL,
+    STR_LUI_EVENT_SLEEPREACHED,
+    STR_LUI_EVENT_STARTUP,
 } from './nspanel-constants'
 
 const log = Logger('NSPanelController')
@@ -248,16 +255,13 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         // notify controller node about state
         this.setNodeStatus('info', this._i18n('common.status.waitForPages'))
-        /* setTimeout(() => {
-    this.#delayPanelStartupFlag = false
-}, 3000) // FIXME */
-
         this.activateStartupPage()
     }
 
     private onEvent(eventArgs: EventArgs) {
+        console.log(eventArgs)
         switch (eventArgs.event) {
-            case 'startup': {
+            case STR_LUI_EVENT_STARTUP: {
                 const startupEventArgs: StartupEventArgs = eventArgs as StartupEventArgs
                 this.clearActiveStatusOfAllPages()
                 this.onPanelStartup(startupEventArgs)
@@ -265,7 +269,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 break
             }
 
-            case 'sleepReached':
+            case STR_LUI_EVENT_SLEEPREACHED:
                 this.activateScreenSaver()
                 this.notifyControllerNode(eventArgs) // FIXME: set source to currentPage ?
                 break
@@ -278,13 +282,22 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 this.notifyCurrentPageOfEvent('input', eventArgs)
                 break
 
-            case 'pageOpenDetail':
+            case STR_LUI_EVENT_PAGEOPENDETAIL:
                 this.onPopupOpen(eventArgs)
                 this.notifyCurrentPageOfEvent('input', eventArgs)
                 break
 
-            case 'buttonPress2': // close pageOpenDetail
-                if (eventArgs.source.startsWith('popup') && eventArgs.event2 === 'bExit') {
+            case STR_LUI_EVENT_BUTTONPRESS2: // close pageOpenDetail
+                if (eventArgs.source.startsWith(STR_UPDATE_NOTIFY_PREFIX)) {
+                    switch (eventArgs.event2) {
+                        case STR_LUI_EVENT_NOTIFY_ACTION:
+                            // TODO: forwar to updater
+                            break
+                        case STR_LUI_EVENT_BEXIT:
+                            this.onPopupClose()
+                            break
+                    }
+                } else if (eventArgs.source.startsWith('popup') && eventArgs.event2 === STR_LUI_EVENT_BEXIT) {
                     this.onPopupClose()
                 }
                 this.notifyCurrentPageOfEvent('input', eventArgs)
@@ -572,7 +585,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             pageData = pageData.concat(notifyPageData)
             this.sendToPanel(pageData)
 
-            // FIXME: beep
+            // TODO: beep
         }
     }
 

@@ -7,6 +7,7 @@ import {
     STR_LUI_CMD_ENTITYUPDATE,
     STR_PAGE_TYPE_CARD_THERMO,
     STR_LUI_DELIMITER,
+    STR_LUI_EVENT_BUTTONPRESS2,
 } from '../lib/nspanel-constants'
 import {
     IEntityBasedPageConfig,
@@ -222,7 +223,7 @@ module.exports = (RED) => {
                 case 'event': {
                     const eventArgs: EventArgs = msg.payload as EventArgs
 
-                    if (eventArgs.event === 'buttonPress2' && eventArgs.event2 === 'tempUpd') {
+                    if (eventArgs.event === STR_LUI_EVENT_BUTTONPRESS2 && eventArgs.event2 === 'tempUpd') {
                         const tempNum = Number(eventArgs.value)
                         if (!Number.isNaN(tempNum)) {
                             this.data.targetTemperature = tempNum / TEMPERATURE_RESOLUTION_FACTOR

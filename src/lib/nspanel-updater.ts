@@ -149,12 +149,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                         currentVersion = self._updateData.versions.current.tasmota.version
                         latestVersion = self._updateData.versions.latest.tasmota.version
 
-                        self.showUpdateNotification(
-                            'notify.updateTasmota',
-                            notifyTextMain,
-                            currentVersion,
-                            latestVersion
-                        )
+                        self.showUpdateNotification('Tasmota', notifyTextMain, currentVersion, latestVersion)
                     }
 
                     if (
@@ -166,12 +161,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                         currentVersion = self._updateData.versions.current.berryDriver.version
                         latestVersion = self._updateData.versions.latest.berryDriver.version
 
-                        self.showUpdateNotification(
-                            'notify.updateBerryDriver',
-                            notifyTextMain,
-                            currentVersion,
-                            latestVersion
-                        )
+                        self.showUpdateNotification('BerryDriver', notifyTextMain, currentVersion, latestVersion)
                     }
 
                     if (
@@ -182,7 +172,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                         currentVersion = self._updateData.versions.current.hmi.internalVersion
                         latestVersion = `${self._updateData.versions.latest.hmi.version} (${self._updateData.versions.latest.hmi.internalVersion})`
 
-                        self.showUpdateNotification('notify.updateHmi', notifyTextMain, currentVersion, latestVersion)
+                        self.showUpdateNotification('Hmi', notifyTextMain, currentVersion, latestVersion)
                     }
                 } else {
                     // TODO: initiate update process
@@ -213,7 +203,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
             this._i18n('nspanel-controller.panel.newFirmwarPerformUpdate')
 
         const notifyData: NotifyData = {
-            notifyId,
+            notifyId: `${STR_UPDATE_NOTIFY_PREFIX}.${notifyId}`,
             icon: 'reload-alert',
             text: instruction,
             heading: this._i18n('nspanel-controller.panel.newFirmwareTitle'),
