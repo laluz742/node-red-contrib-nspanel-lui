@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 export const IconProvider = {
     GetIcon: (key: string): string => {
-        if (_ICONS.has(key)) {
-            return _ICONS.get(key) ?? ''
+        if (ICONS.has(key)) {
+            return ICONS.get(key) ?? ''
         }
 
         return key
     },
 }
 
-const _ICONS = new Map<string, string>([
+const ICONS = new Map<string, string>([
     ['ab-testing', ''],
     ['abacus', ''],
     ['abjad-arabic', ''],

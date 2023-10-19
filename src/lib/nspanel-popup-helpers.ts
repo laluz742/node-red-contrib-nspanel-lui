@@ -111,7 +111,7 @@ export class NSPanelPopupHelpers {
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? STR_EMPTY))
-        result.push('' + NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? DEFAULT_LUI_COLOR))
+        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? DEFAULT_LUI_COLOR)}`)
 
         const brightness = entity.dimmable ? lightEntityData?.brightness : STR_DISABLE
         const colorTemp = entity.hasColorTemperature ? lightEntityData?.colorTemperature : STR_DISABLE

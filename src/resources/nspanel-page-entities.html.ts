@@ -52,7 +52,7 @@ declare var NSPanelLui // eslint-disable-line
 
                 // keep track of assigned NSPanel
                 const nsPanelInputField = $('#node-input-nsPanel')
-                const nsPanelInputField_lastVal = this.nsPanel
+                const nsPanelInputFieldLastVal = this.nsPanel
 
                 // TODO: refactor since code same on any page node
                 nsPanelInputField.on('change', () => {
@@ -60,7 +60,7 @@ declare var NSPanelLui // eslint-disable-line
                         eventInputControl.hide()
                         // TODO remove all events? ... keep track of original nsPanelId
                     } else {
-                        if (nsPanelInputField.val() !== nsPanelInputField_lastVal) eventInputControl.empty()
+                        if (nsPanelInputField.val() !== nsPanelInputFieldLastVal) eventInputControl.empty()
 
                         const nsPanelId = nsPanelInputField.val() as string
                         const allValidEvents = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
@@ -99,7 +99,7 @@ declare var NSPanelLui // eslint-disable-line
                     id: 'nspanel-page-tabs',
                     onchange(tab) {
                         $('#nspanel-page-tabs-content').children().hide()
-                        $('#' + tab.id).show()
+                        $(`#${tab.id}`).show()
                     },
                 })
                 tabs.addTab({

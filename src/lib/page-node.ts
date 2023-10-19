@@ -212,20 +212,22 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
 
         if (NSPanelMessageUtils.hasProperty(msg, 'topic', true)) {
             switch (msg.topic) {
-                case 'event':
+                case 'event': {
                     const eventArgs = <EventArgs>msg.payload
                     const uiEventHandled = this._handleUiEvent(eventArgs, send)
                     if (!uiEventHandled) {
                         this._handleInput(msg, send)
                     }
                     break
+                }
 
-                default:
+                default: {
                     const handled = this._handleInput(msg, send)
                     if (handled) {
                         this.requestUpdate()
                     }
                     break
+                }
             }
         }
 
@@ -239,7 +241,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
             handled = this.handleInput(msg, send)
         } catch (err: unknown) {
             if (err instanceof Error) {
-                this.__log?.error('Error handling input: ' + err.message)
+                this.__log?.error(`Error handling input: ${err.message}`)
             }
         }
 
@@ -275,7 +277,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         let handled = false
 
         // translate possible hardware button press when hw buttons do not controll power outputs (@see
-        const event2 = eventArgs.type === 'hw' ? eventArgs.type + '.' + eventArgs.source : eventArgs.event2
+        const event2 = eventArgs.type === 'hw' ? `${eventArgs.type}.${eventArgs.source}` : eventArgs.event2
 
         // event mapped in config?
         if (event2 != null && this.configuredEvents.has(event2)) {
@@ -284,19 +286,21 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
             if (cfgEvent) {
                 switch (cfgEvent.t) {
                     // mapped to navigation action
-                    case 'page':
+                    case 'page': {
                         const preHandleResult = this.prePageNavigationEvent(eventArgs, cfgEvent)
                         if (preHandleResult !== false) {
                             this.handlePageNavigationEvent(eventArgs, cfgEvent)
                         }
                         handled = true
                         break
+                    }
 
                     // mapped to out msg
-                    case 'msg':
+                    case 'msg': {
                         this.handlePageMessageEvent(eventArgs, cfgEvent, send)
                         handled = true
                         break
+                    }
                 }
             }
         }

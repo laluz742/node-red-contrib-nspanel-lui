@@ -21,7 +21,7 @@ module.exports = (RED) => {
             config.entities = config.entities || []
 
             if (config.entities.length < MAX_ENTITIES) {
-                for (let i = 0; i < MAX_ENTITIES - config.entities.length; i++) {
+                for (let i = 0; i < MAX_ENTITIES - config.entities.length; i += 1) {
                     const entityFill = { ...EMPTY_ENTITY }
                     entityFill.entityId += +i
                     config.entities.push(entityFill)

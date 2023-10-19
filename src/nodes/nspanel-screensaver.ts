@@ -33,7 +33,7 @@ module.exports = (RED) => {
             this.config = config
         }
 
-        public isScreenSaver() {
+        public isScreenSaver(): boolean {
             return true
         }
 
@@ -75,10 +75,10 @@ module.exports = (RED) => {
                 return null
             }
 
-            let cmd = 'statusUpdate' + STR_LUI_DELIMITER
+            let cmd = `statusUpdate${STR_LUI_DELIMITER}`
             const cmdParams: string[] = []
 
-            for (let idx = 0; idx < 2; idx++) {
+            for (let idx = 0; idx < 2; idx += 1) {
                 const item = this.statusData[idx]
                 const tmp: string =
                     item !== undefined
@@ -98,7 +98,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            let result = 'weatherUpdate' + STR_LUI_DELIMITER
+            let result = `weatherUpdate${STR_LUI_DELIMITER}`
             const resultEntities: string[] = []
             const data = this.pageData.entities
 
@@ -128,7 +128,7 @@ module.exports = (RED) => {
             const statusItems: StatusItemData[] = this.statusData.map((item) => item)
 
             if (Array.isArray(statusInputData)) {
-                for (let i = 0; i < 2; i++) {
+                for (let i = 0; i < 2; i += 1) {
                     if (statusInputData[i] !== undefined) {
                         const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
                             statusInputData[i]

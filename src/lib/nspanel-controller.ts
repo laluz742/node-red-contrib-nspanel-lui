@@ -113,7 +113,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         const allKnownPages: IPageNode[] = this._cache.getAllKnownPages()
         let pageNodeId: string | null = null
-        for (let i = 0; i < allKnownPages.length; i++) {
+        for (let i = 0; i < allKnownPages.length; i += 1) {
             // eslint-disable-next-line eqeqeq
             if (allKnownPages[i].name == page) {
                 pageNodeId = allKnownPages[i].id
@@ -160,16 +160,18 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         cmds.forEach((cmdData) => {
             switch (cmdData.cmd) {
-                case 'switch':
+                case 'switch': {
                     const switchParams = <SwitchCommandParams>cmdData.params
                     const switchRelayCmd: string = STR_TASMOTA_CMD_RELAY + (switchParams.id + 1)
                     this.sendCommandToPanel(switchRelayCmd, switchParams.active?.toString() ?? '')
 
                     break
+                }
 
-                case 'checkForUpdates':
+                case 'checkForUpdates': {
                     this._panelUpdater?.checkForUpdates()
                     break
+                }
             }
         })
     }
@@ -186,7 +188,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         const notifyHistory: IPageHistory = {
             historyType: 'notify',
-            entityId: notifyData.notifyId ?? 'notify.' + uuidv4(),
+            entityId: notifyData.notifyId ?? `notify.${uuidv4()}`,
             notifyData,
         }
 
@@ -255,12 +257,13 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     private onEvent(eventArgs: EventArgs) {
         switch (eventArgs.event) {
-            case 'startup':
+            case 'startup': {
                 const startupEventArgs: StartupEventArgs = eventArgs as StartupEventArgs
                 this.clearActiveStatusOfAllPages()
                 this.onPanelStartup(startupEventArgs)
                 this.notifyControllerNode(eventArgs)
                 break
+            }
 
             case 'sleepReached':
                 this.activateScreenSaver()
@@ -279,6 +282,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 this.onPopupOpen(eventArgs)
                 this.notifyCurrentPageOfEvent('input', eventArgs)
                 break
+
             case 'buttonPress2': // close pageOpenDetail
                 if (eventArgs.source.startsWith('popup') && eventArgs.event2 === 'bExit') {
                     this.onPopupClose()
@@ -287,7 +291,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 break
 
             default:
-                log.info('UNCATCHED onEvent default ' + JSON.stringify(eventArgs))
+                log.info(`UNCATCHED onEvent default ${JSON.stringify(eventArgs)}`)
                 // dispatch to active page
                 this.notifyCurrentPageOfEvent('input', eventArgs)
         }
@@ -296,19 +300,21 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private onMessage(msg: EventArgs) {
         if (msg.event === 'version') {
             switch (msg.source) {
-                case 'tasmota':
+                case 'tasmota': {
                     const status2EventArgs: TasmotaStatus2EventArgs = msg as TasmotaStatus2EventArgs
                     this._panelUpdater?.setTasmotaVersion(status2EventArgs.version)
                     break
+                }
 
-                case 'nlui':
+                case 'nlui': {
                     const nluiEventArgs: NluiDriverVersionEventArgs = msg as NluiDriverVersionEventArgs
                     this._panelUpdater?.setBerryDriverVersion(nluiEventArgs.version)
 
                     break
+                }
             }
         } else {
-            log.info('UNCATCHED msg ' + JSON.stringify(msg))
+            log.info(`UNCATCHED msg ${JSON.stringify(msg)}`)
         }
     }
 
@@ -530,7 +536,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
             if (screenSaverPageNodes.length >= 2) {
                 this.setNodeStatus('warn', this._i18n('common.status.tooManyScreenSaver'))
-                log.warn('More than one screensaver attached. Found ' + screenSaverPageNodes.length)
+                log.warn(`More than one screensaver attached. Found ${screenSaverPageNodes.length}`)
             }
         } else {
             this.setNodeStatus('warn', this._i18n('common.status.noScreenSaverPage'))
@@ -591,14 +597,14 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const timeHours = date.getHours()
         const timeMinutes = date.getMinutes()
 
-        const timeStr = timeHours.toString().padStart(2, '0') + ':' + timeMinutes.toString().padStart(2, '0')
+        const timeStr = `${timeHours.toString().padStart(2, '0')}:${timeMinutes.toString().padStart(2, '0')}`
 
         const cmds = [
             STR_LUI_CMD_ACTIVATE_SCREENSAVER,
             'statusUpdate',
             STR_LUI_CMD_TIME + offline,
             STR_LUI_CMD_DATE + stopped,
-            'notify~~' + timeStr,
+            `notify~~${timeStr}`,
         ] // TODO: reattach relays?
         this.sendToPanel(cmds)
     }
@@ -615,7 +621,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private sendTelePeriod(telePeriod: number = 1) {
-        const telePeriodStr = '' + telePeriod
+        const telePeriodStr = `${telePeriod}`
         this.sendCommandToPanel(STR_TASMOTA_CMD_TELEPERIOD, telePeriodStr)
     }
 
@@ -624,7 +630,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const timeHours = date.getHours()
         const timeMinutes = date.getMinutes()
 
-        const timeStr = timeHours.toString().padStart(2, '0') + ':' + timeMinutes.toString().padStart(2, '0')
+        const timeStr = `${timeHours.toString().padStart(2, '0')}:${timeMinutes.toString().padStart(2, '0')}`
 
         this.sendToPanel(STR_LUI_CMD_TIME + timeStr)
     }
@@ -674,7 +680,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.sendTimeToPanel()
         } catch (err: unknown) {
             if (err instanceof Error) {
-                log.error('Error executing minutely cron: ' + err.message)
+                log.error(`Error executing minutely cron: ${err.message}`)
             }
         }
     }
@@ -685,7 +691,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.emit('cron:hourly')
         } catch (err: unknown) {
             if (err instanceof Error) {
-                log.error('Error executing hourly cron: ' + err.message)
+                log.error(`Error executing hourly cron: ${err.message}`)
             }
         }
     }

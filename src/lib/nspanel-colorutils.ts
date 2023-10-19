@@ -48,9 +48,9 @@ export class NSPanelColorUtils {
 
             // TODO: alpha
             if (match.groups['hexColor'] !== undefined) {
-                r = Number('0x' + match.groups['hexRed'])
-                g = Number('0x' + match.groups['hexGreen'])
-                b = Number('0x' + match.groups['hexBlue'])
+                r = Number(`0x${match.groups['hexRed']}`)
+                g = Number(`0x${match.groups['hexGreen']}`)
+                b = Number(`0x${match.groups['hexBlue']}`)
             } else if (match.groups['rgbColor'] !== undefined) {
                 r = Number(match.groups['rgbRed'])
                 g = Number(match.groups['rgbGreen'])

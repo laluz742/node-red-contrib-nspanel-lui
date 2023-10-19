@@ -38,15 +38,18 @@
 
                         const minLimit = Number($('#node-input-minHeatSetpointLimit').val())
                         const maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
+
+                        let result: boolean
                         if (Number.isNaN(minLimit) && Number.isNaN(maxLimit)) {
-                            return true
+                            result = true
                         } else if (Number.isNaN(minLimit) && !Number.isNaN(maxLimit)) {
-                            return vNum <= maxLimit
+                            result = vNum <= maxLimit
                         } else if (!Number.isNaN(minLimit) && Number.isNaN(maxLimit)) {
-                            return vNum >= minLimit
+                            result = vNum >= minLimit
                         }
 
-                        return NSPanelLui.Editor.validate.isNumberInRange(v, minLimit, maxLimit)
+                        result = NSPanelLui.Editor.validate.isNumberInRange(v, minLimit, maxLimit)
+                        return result
                     },
                 },
                 minHeatSetpointLimit: {
@@ -90,7 +93,7 @@
                 const self = this
                 const eventInputControl = $('#node-input-event-control')
                 const nsPanelInputField = $('#node-input-nsPanel')
-                const nsPanelInputField_lastVal = this.nsPanel
+                const nsPanelInputFieldLastVal = this.nsPanel
 
                 // TODO: refactor since code same on any page node
                 nsPanelInputField.on('change', () => {
@@ -98,7 +101,7 @@
                         eventInputControl.hide()
                         // TODO remove all events? ... keep track of original nsPanelId
                     } else {
-                        if (nsPanelInputField.val() !== nsPanelInputField_lastVal) eventInputControl.empty()
+                        if (nsPanelInputField.val() !== nsPanelInputFieldLastVal) eventInputControl.empty()
 
                         const nsPanelId = nsPanelInputField.val() as string
                         const allValidEvents = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
@@ -136,7 +139,7 @@
                     id: 'nspanel-page-tabs',
                     onchange(tab) {
                         $('#nspanel-page-tabs-content').children().hide()
-                        $('#' + tab.id).show()
+                        $(`#${tab.id}`).show()
                     },
                 })
                 tabs.addTab({

@@ -192,7 +192,7 @@ export class NSPanelMessageParser {
         }
 
         switch (parts[1]) {
-            case 'startup':
+            case 'startup': {
                 const startupEventArgs = eventArgs as StartupEventArgs
                 startupEventArgs.source = 'hmi'
                 startupEventArgs.hmiVersion = {
@@ -202,27 +202,31 @@ export class NSPanelMessageParser {
                 }
                 eventArgs = startupEventArgs
                 break
+            }
 
-            case 'sleepReached':
+            case 'sleepReached': {
                 break
+            }
 
-            case 'buttonPress2':
+            case 'buttonPress2': {
                 eventArgs.event2 = parts[3]
                 // normalize eventArgs
                 switch (parts[3]) {
-                    case 'button':
+                    case 'button': {
                         eventArgs.source = parts[3]
                         eventArgs.event2 = parts[2]
                         eventArgs.entityId = parts[2]
                         break
+                    }
 
-                    case 'OnOff':
+                    case 'OnOff': {
                         eventArgs.source = parts[2]
                         eventArgs.entityId = parts[2]
                         eventArgs.active = NSPanelMessageUtils.toBoolean(parts[4]) || undefined
                         break
+                    }
 
-                    case 'number-set':
+                    case 'number-set': {
                         // "event,buttonPress2,fan.0,number-set,3"
                         eventArgs.entityId = parts[2]
                         eventArgs.source = parts[2]
@@ -234,8 +238,9 @@ export class NSPanelMessageParser {
                             eventArgs.value = n
                         }
                         break
+                    }
 
-                    case 'colorWheel':
+                    case 'colorWheel': {
                         const lightEventArgs = eventArgs as LightEventArgs
                         lightEventArgs.event2 = 'color'
 
@@ -252,14 +257,16 @@ export class NSPanelMessageParser {
 
                         eventArgs = lightEventArgs
                         break
-
-                    case 'positionSlider':
+                    }
+                    case 'positionSlider': {
                         eventArgs.event2 = 'position'
                         break
+                    }
 
-                    case 'tiltSlider':
+                    case 'tiltSlider': {
                         eventArgs.event2 = 'tilt'
                         break
+                    }
 
                     default:
                         break
@@ -275,18 +282,20 @@ export class NSPanelMessageParser {
                     }
                 }
                 break
+            }
 
-            case 'pageOpenDetail':
+            case 'pageOpenDetail': {
                 eventArgs.entityId = parts[3]
                 break
-
-            default:
+            }
+            default: {
                 eventArgs.data = {
                     raw: parts.slice(2),
                 }
+            }
         }
 
-        log.debug('parseEvent' + JSON.stringify(eventArgs))
+        log.debug(`parseEvent${JSON.stringify(eventArgs)}`)
         return eventArgs
     }
 

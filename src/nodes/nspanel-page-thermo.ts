@@ -141,7 +141,7 @@ module.exports = (RED) => {
             const entities = this.getEntities()
             let i
 
-            for (i = 0; (this.options ? i < this.options.maxEntities : true) && i < entities.length; i++) {
+            for (i = 0; (this.options ? i < this.options.maxEntities : true) && i < entities.length; i += 1) {
                 const entityConfig = entities[i]
                 const entityData: PageEntityData | null = this.getEntityData(entityConfig.entityId)
 
@@ -160,7 +160,7 @@ module.exports = (RED) => {
                 resultActions.push(entity)
             }
             if (this.options) {
-                for (; i < this.options.maxEntities; i++) {
+                for (; i < this.options.maxEntities; i += 1) {
                     resultActions.push(ACTION_EMPTY)
                 }
             }
@@ -187,7 +187,7 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
-                case 'sensor':
+                case 'sensor': {
                     if (this.isUseOwnSensorData()) {
                         const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
                         if (sensorEventArgs.temp) {
@@ -203,8 +203,9 @@ module.exports = (RED) => {
                         }
                     }
                     break
+                }
 
-                case 'data':
+                case 'data': {
                     if (!Array.isArray(msg.payload)) {
                         // eslint-disable-next-line prefer-const
                         for (let key in msg.payload) {
@@ -216,8 +217,9 @@ module.exports = (RED) => {
                         }
                     }
                     break
+                }
 
-                case 'event':
+                case 'event': {
                     const eventArgs: EventArgs = msg.payload as EventArgs
 
                     if (eventArgs.event === 'buttonPress2' && eventArgs.event2 === 'tempUpd') {
@@ -227,6 +229,7 @@ module.exports = (RED) => {
                             dirty = true
                         }
                     }
+                }
             }
             if (dirty) {
                 this.getCache().clear()

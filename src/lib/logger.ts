@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { IRedNode } from '../types/types'
 
 const dateOptions: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }
@@ -18,15 +19,15 @@ const logMessage = (callback: Function, facility: LogFacility, prefix: string, n
     // TODO: spec Function
     return (message: string) => {
         const date = new Date()
-        const timestamp =
-            date.toLocaleDateString('en-GB', dateOptions) + ' ' + date.toLocaleTimeString('en-GB', timeOptions)
+        const timestamp = `${date.toLocaleDateString('en-GB', dateOptions)} ${date.toLocaleTimeString(
+            'en-GB',
+            timeOptions
+        )}`
         const prefixStr = node !== undefined ? `${node.name}:${node.id}` : prefix
 
-        if (prefixStr) {
-            return callback(`${timestamp} - [${facility}] [${prefixStr}] ${message}`)
-        } else {
-            return callback(`${timestamp} - [${facility}] ${message}`)
-        }
+        return prefixStr
+            ? callback(`${timestamp} - [${facility}] [${prefixStr}] ${message}`)
+            : callback(`${timestamp} - [${facility}] ${message}`)
     }
 }
 

@@ -32,7 +32,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
     protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback) {
         switch (msg.topic) {
-            case 'data':
+            case 'data': {
                 // copy cached data
                 const entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>(this.entityData)
                 const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
@@ -54,6 +54,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
                     this.getCache().clear()
                 }
                 return true
+            }
         }
 
         return false
@@ -107,7 +108,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
             ? Math.min(this.options.maxEntities, entities.length)
             : entities.length
 
-        for (let i = 0; i < maxEntities; i++) {
+        for (let i = 0; i < maxEntities; i += 1) {
             const entityConfig = entities[i]
             const entityData = this.getEntityData(entityConfig.entityId)
             const optionalValue = entityData?.value ?? entityConfig.optionalValue

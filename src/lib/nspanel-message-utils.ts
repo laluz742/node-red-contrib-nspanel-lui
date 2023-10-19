@@ -52,7 +52,7 @@ export class NSPanelMessageUtils {
             const inputParams = NSPanelMessageUtils.getPropertyOrNull(input, 'params')
 
             switch (input['cmd']) {
-                case 'switch':
+                case 'switch': {
                     const switchId = Number(NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'id', -1))
                     const targetState = NSPanelMessageUtils.toBoolean(
                         NSPanelMessageUtils.getPropertyOrNull(inputParams, 'on')
@@ -66,10 +66,12 @@ export class NSPanelMessageUtils {
                         commandResult = { cmd: 'switch', params: switchCmdParams }
                     }
                     break
+                }
 
-                case 'checkForUpdates':
+                case 'checkForUpdates': {
                     commandResult = { cmd: 'checkForUpdates' }
                     break
+                }
             }
         }
 

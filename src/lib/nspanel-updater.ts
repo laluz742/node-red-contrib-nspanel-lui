@@ -59,17 +59,17 @@ type PanelUpdateData = {
     versionAcquisitionStatus: VersionAcquisitionStatus
 }
 
-type githubApiReleaseAssetsSchema = {
+type GithubApiReleaseAssetsSchema = {
     name: string
     url: string
     browser_download_url: string
 }
 
-type githubApiReleaseSchema = {
+type GithubApiReleaseSchema = {
     name: string
     tag_name: string
     published_at: Date
-    assets: githubApiReleaseAssetsSchema[]
+    assets: GithubApiReleaseAssetsSchema[]
 }
 
 const URL_TASMOTA_RELEASES_LATEST_META = 'https://api.github.com/repositories/80286288/releases/latest'
@@ -189,7 +189,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                 }
             })
             .catch((versionAcquisitionStatus) => {
-                log.error('Could not acquire version data ' + versionAcquisitionStatus)
+                log.error(`Could not acquire version data ${versionAcquisitionStatus}`)
             })
     }
 
@@ -272,7 +272,8 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
                 setTimeout(waitForDataAcquisition, 1000)
 
-                if (--i === 0) reject(self._updateData.versionAcquisitionStatus)
+                i -= 1
+                if (i === 0) reject(self._updateData.versionAcquisitionStatus)
             })()
         })
     }
@@ -317,7 +318,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     }
 
     private getLatestVersion(): void {
-        axios.get<githubApiReleaseSchema>(URL_TASMOTA_RELEASES_LATEST_META, axiosRequestOptions).then((response) => {
+        axios.get<GithubApiReleaseSchema>(URL_TASMOTA_RELEASES_LATEST_META, axiosRequestOptions).then((response) => {
             const { data } = response
             if (data?.tag_name != null) {
                 const tasmotaVersionLatest = String.prototype.substring.call(data.tag_name, 1)

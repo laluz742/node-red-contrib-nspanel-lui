@@ -39,7 +39,7 @@ export class SimpleControllerCache implements IControllerCache {
             const currentHistory: IPageHistory[] = this.history.map((x) => x)
 
             let lastHistoryOfTypePage: IPageHistory | null = null
-            for (let i = currentHistory.length - 1; i >= 0; i--) {
+            for (let i = currentHistory.length - 1; i >= 0; i -= 1) {
                 if (currentHistory[i].historyType === 'page') {
                     lastHistoryOfTypePage = currentHistory[i]
                     break

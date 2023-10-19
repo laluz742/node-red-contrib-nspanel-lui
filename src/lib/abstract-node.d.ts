@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as nodeRed from 'node-red'
-import { INodeConfig, IRedNodeDef, IRedNode, VoidCallback, NodeRedOnInputCallback } from '../types/types'
+import { INodeConfig, IRedNode } from '../types/types'
 
 export declare abstract class AbstractRedNode<TConfig extends INodeConfig, TCreds extends {} = {}>
     implements IRedNode<TCreds>

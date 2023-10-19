@@ -49,14 +49,16 @@ module.exports = (RED) => {
             if (!NSPanelMessageUtils.hasProperty(msg, 'payload')) return
 
             switch (msg.topic) {
-                case 'cmd':
+                case 'cmd': {
                     this.handleCommandInput(msg)
                     break
+                }
 
-                case 'notify':
+                case 'notify': {
                     const notifyData: NotifyData = <NotifyData>msg.payload
                     this.nsPanelController?.showNotification(notifyData)
                     break
+                }
             }
 
             send(msg) // TODO: really forward or just consume

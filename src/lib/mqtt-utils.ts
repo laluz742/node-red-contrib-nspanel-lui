@@ -20,13 +20,11 @@ export const MqttUtils = {
             return true
         }
         const regex = new RegExp(
-            '^' +
-                subscribedTopic
-                    // eslint-disable-next-line no-useless-escape
-                    .replace(/([\[\]\?\(\)\\\\$\^\*\.|])/g, '\\$1')
-                    .replace(/\+/g, '[^/]+')
-                    .replace(/\/#$/, '(/.*)?') +
-                '$'
+            `^${subscribedTopic
+                // eslint-disable-next-line no-useless-escape
+                .replace(/([\[\]\?\(\)\\\\$\^\*\.|])/g, '\\$1')
+                .replace(/\+/g, '[^/]+')
+                .replace(/\/#$/, '(/.*)?')}$`
         )
         return regex.test(topic)
     },
@@ -41,12 +39,12 @@ export const MqttUtils = {
             brokerUrl = useTls ? 'mqtts://' : 'mqtt://'
 
             if (address !== '') {
-                brokerUrl += isIPv6(address) ? '[' + address + ']' : address
+                brokerUrl += isIPv6(address) ? `[${address}]` : address
             } else {
                 brokerUrl += 'localhost'
             }
 
-            brokerUrl += ':' + brokerPort
+            brokerUrl += `:${brokerPort}`
         }
 
         return brokerUrl

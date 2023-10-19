@@ -12,14 +12,14 @@ export const STR_LUI_COLOR_GREEN: number = 2016
 export const STR_LUI_COLOR_WHITE: number = 65535
 export const STR_LUI_CMD_ENTITYUPDATE: string = 'entityUpd'
 export const STR_LUI_CMD_ENTITYUPDATEDETAIL: string = 'entityUpdateDetail'
-export const STR_LUI_CMD_PAGETYPE: string = 'pageType' + STR_LUI_DELIMITER
-export const STR_LUI_CMD_TIME: string = 'time' + STR_LUI_DELIMITER
-export const STR_LUI_CMD_DATE: string = 'date' + STR_LUI_DELIMITER
-export const STR_LUI_CMD_DIMMODE: string = 'dimmode' + STR_LUI_DELIMITER
-export const STR_LUI_CMD_TIMEOUT: string = 'timeout' + STR_LUI_DELIMITER
-export const STR_LUI_CMD_ACTIVATE_STARTUP_PAGE: string = STR_LUI_CMD_PAGETYPE + 'pageStartup'
-export const STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY: string = STR_LUI_CMD_PAGETYPE + 'popupNotify'
-export const STR_LUI_CMD_ACTIVATE_SCREENSAVER: string = STR_LUI_CMD_PAGETYPE + 'screensaver'
+export const STR_LUI_CMD_PAGETYPE: string = `pageType${STR_LUI_DELIMITER}`
+export const STR_LUI_CMD_TIME: string = `time${STR_LUI_DELIMITER}`
+export const STR_LUI_CMD_DATE: string = `date${STR_LUI_DELIMITER}`
+export const STR_LUI_CMD_DIMMODE: string = `dimmode${STR_LUI_DELIMITER}`
+export const STR_LUI_CMD_TIMEOUT: string = `timeout${STR_LUI_DELIMITER}`
+export const STR_LUI_CMD_ACTIVATE_STARTUP_PAGE: string = `${STR_LUI_CMD_PAGETYPE}pageStartup`
+export const STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY: string = `${STR_LUI_CMD_PAGETYPE}popupNotify`
+export const STR_LUI_CMD_ACTIVATE_SCREENSAVER: string = `${STR_LUI_CMD_PAGETYPE}screensaver`
 
 // tasmota commands
 export const STR_TASMOTA_CMD_DETACH_RELAYS = 'SetOption73'
