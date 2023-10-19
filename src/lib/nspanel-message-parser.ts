@@ -9,9 +9,14 @@ import {
     SensorEventArgs,
     LightEventArgs,
     FirmwareEventArgs,
-    FirmwareEventSource,
+    FirmwareType,
 } from '../types/types'
 import {
+    FIRMWARE_BERRYDRIVER,
+    FIRMWARE_HMI,
+    FIRMWARE_TASMOTA,
+    STR_BERRYDRIVER_CMD_FLASHNEXTION,
+    STR_BERRYDRIVER_CMD_UPDATEDRIVER,
     STR_LUI_CMD_SUCCESS,
     STR_LUI_EVENT_BUTTONPRESS2,
     STR_LUI_EVENT_PAGEOPENDETAIL,
@@ -137,7 +142,7 @@ export class NSPanelMessageParser {
             if (version != null) {
                 result = {
                     type: 'fw',
-                    source: 'tasmota',
+                    source: FIRMWARE_TASMOTA,
                     event: 'version',
                     version,
                 }
@@ -150,14 +155,14 @@ export class NSPanelMessageParser {
     public static parseBerryDriverUpdateEvent(input: any): FirmwareEventArgs {
         let result: FirmwareEventArgs | null = null
         let key: string = null
-        let source: FirmwareEventSource | null = null
+        let source: FirmwareType | null = null
 
-        if (NSPanelMessageUtils.hasProperty(input, 'UpdateDriverVersion')) {
-            key = 'UpdateDriverVersion'
-            source = 'nlui'
-        } else if (NSPanelMessageUtils.hasProperty(input, 'FlashNextion')) {
-            key = 'FlashNextion'
-            source = 'hmi'
+        if (NSPanelMessageUtils.hasProperty(input, STR_BERRYDRIVER_CMD_UPDATEDRIVER)) {
+            key = STR_BERRYDRIVER_CMD_UPDATEDRIVER
+            source = FIRMWARE_BERRYDRIVER
+        } else if (NSPanelMessageUtils.hasProperty(input, STR_BERRYDRIVER_CMD_FLASHNEXTION)) {
+            key = STR_BERRYDRIVER_CMD_FLASHNEXTION
+            source = FIRMWARE_HMI
         }
 
         if (key != null && source != null) {
@@ -182,7 +187,7 @@ export class NSPanelMessageParser {
             if (version != null) {
                 result = {
                     type: 'fw',
-                    source: 'nlui',
+                    source: FIRMWARE_BERRYDRIVER,
                     event: 'version',
                     version,
                 }
