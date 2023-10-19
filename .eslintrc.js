@@ -29,7 +29,6 @@ module.exports = {
         'no-bitwise': 'off',
         'class-methods-use-this': 'off',
         'prefer-destructuring': 'off',
-        //'prefer-template': 'off',
         'import/prefer-default-export': 'off',
         // Typescript rules
         '@typescript-eslint/interface-name-prefix': 'off',
