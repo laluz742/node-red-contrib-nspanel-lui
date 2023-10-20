@@ -184,10 +184,12 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         switch (topic) {
             case this.panelMqttTeleResultTopic: {
                 const eventArgs: EventArgs = NSPanelMessageParser.parse(payloadStr)
-                if (eventArgs.type === 'event') {
-                    this.emit('event', eventArgs)
-                } else {
-                    this.emit('msg', eventArgs)
+                if (eventArgs != null) {
+                    if (eventArgs.type === 'event') {
+                        this.emit('event', eventArgs)
+                    } else {
+                        this.emit('msg', eventArgs)
+                    }
                 }
                 break
             }

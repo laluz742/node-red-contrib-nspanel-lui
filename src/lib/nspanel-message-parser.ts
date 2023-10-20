@@ -11,29 +11,14 @@ import {
     FirmwareEventArgs,
     FirmwareType,
 } from '../types/types'
-import {
-    FIRMWARE_BERRYDRIVER,
-    FIRMWARE_HMI,
-    FIRMWARE_TASMOTA,
-    STR_BERRYDRIVER_CMD_FLASHNEXTION,
-    STR_BERRYDRIVER_CMD_UPDATEDRIVER,
-    STR_LUI_CMD_SUCCESS,
-    STR_LUI_EVENT_BUTTONPRESS2,
-    STR_LUI_EVENT_PAGEOPENDETAIL,
-    STR_LUI_EVENT_SLEEPREACHED,
-    STR_LUI_EVENT_STARTUP,
-} from './nspanel-constants'
+import * as NSPanelConstants from './nspanel-constants'
 
 const log = Logger('NSPanelMessageParser')
 
 export class NSPanelMessageParser {
+    // TODO: combine parsing into parse()
     public static parse(payloadStr: string): EventArgs {
-        let result: EventArgs = {
-            type: '',
-            event: '',
-            event2: '',
-            source: '',
-        }
+        let result: EventArgs = null
 
         try {
             const temp = JSON.parse(payloadStr)
@@ -142,7 +127,7 @@ export class NSPanelMessageParser {
             if (version != null) {
                 result = {
                     type: 'fw',
-                    source: FIRMWARE_TASMOTA,
+                    source: NSPanelConstants.FIRMWARE_TASMOTA,
                     event: 'version',
                     version,
                 }
@@ -157,12 +142,12 @@ export class NSPanelMessageParser {
         let key: string = null
         let source: FirmwareType | null = null
 
-        if (NSPanelMessageUtils.hasProperty(input, STR_BERRYDRIVER_CMD_UPDATEDRIVER)) {
-            key = STR_BERRYDRIVER_CMD_UPDATEDRIVER
-            source = FIRMWARE_BERRYDRIVER
-        } else if (NSPanelMessageUtils.hasProperty(input, STR_BERRYDRIVER_CMD_FLASHNEXTION)) {
-            key = STR_BERRYDRIVER_CMD_FLASHNEXTION
-            source = FIRMWARE_HMI
+        if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_BERRYDRIVER_CMD_UPDATEDRIVER)) {
+            key = NSPanelConstants.STR_BERRYDRIVER_CMD_UPDATEDRIVER
+            source = NSPanelConstants.FIRMWARE_BERRYDRIVER
+        } else if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION)) {
+            key = NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION
+            source = NSPanelConstants.FIRMWARE_HMI
         }
 
         if (key != null && source != null) {
@@ -171,7 +156,7 @@ export class NSPanelMessageParser {
                 type: 'fw',
                 source,
                 event: 'update',
-                status: STR_LUI_CMD_SUCCESS === cmdResult ? 'success' : null,
+                status: NSPanelConstants.STR_LUI_CMD_SUCCESS === cmdResult ? 'success' : null,
             }
         }
 
@@ -187,7 +172,7 @@ export class NSPanelMessageParser {
             if (version != null) {
                 result = {
                     type: 'fw',
-                    source: FIRMWARE_BERRYDRIVER,
+                    source: NSPanelConstants.FIRMWARE_BERRYDRIVER,
                     event: 'version',
                     version,
                 }
@@ -230,7 +215,7 @@ export class NSPanelMessageParser {
         }
 
         switch (parts[1]) {
-            case STR_LUI_EVENT_STARTUP: {
+            case NSPanelConstants.STR_LUI_EVENT_STARTUP: {
                 const startupEventArgs = eventArgs as StartupEventArgs
                 startupEventArgs.source = 'hmi'
                 startupEventArgs.hmiVersion = {
@@ -242,11 +227,11 @@ export class NSPanelMessageParser {
                 break
             }
 
-            case STR_LUI_EVENT_SLEEPREACHED: {
+            case NSPanelConstants.STR_LUI_EVENT_SLEEPREACHED: {
                 break
             }
 
-            case STR_LUI_EVENT_BUTTONPRESS2: {
+            case NSPanelConstants.STR_LUI_EVENT_BUTTONPRESS2: {
                 eventArgs.event2 = parts[3]
                 // normalize eventArgs
                 switch (parts[3]) {
@@ -322,7 +307,7 @@ export class NSPanelMessageParser {
                 break
             }
 
-            case STR_LUI_EVENT_PAGEOPENDETAIL: {
+            case NSPanelConstants.STR_LUI_EVENT_PAGEOPENDETAIL: {
                 eventArgs.entityId = parts[3]
                 break
             }

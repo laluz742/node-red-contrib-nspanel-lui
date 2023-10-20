@@ -40,12 +40,14 @@ export const STR_TASMOTA_CMD_RELAY: string = 'Power'
 export const STR_TASMOTA_CMD_STATUS: string = 'Status'
 export const STR_TASMOTA_CMD_OTAURL: string = 'OtaUrl'
 export const STR_TASMOTA_CMD_UPGRADE: string = 'Upgrade'
+export const STR_TASMOTA_CMD_BACKLOG: string = 'Backlog'
+export const STR_TASMOTA_CMD_RESTART: string = 'Restart'
+export const STR_TASMOTA_PARAM_RESTART_SAVE_TO_FLASH: string = '1'
 
 // berry driver commands
 export const STR_BERRYDRIVER_CMD_GETVERSION: string = 'GetDriverVersion'
 export const STR_BERRYDRIVER_CMD_UPDATEDRIVER: string = 'UpdateDriverVersion'
 export const STR_BERRYDRIVER_CMD_FLASHNEXTION: string = 'FlashNextion'
-export const STR_BERRYDRIVER_CMD_UPDATE: string = 'Backlog' // FIXME: tasmota
 
 // page/card types
 export const STR_PAGE_TYPE_CARD_ENTITIES: string = 'cardEntities'
@@ -62,6 +64,7 @@ export const STR_UPDATE_NOTIFY_PREFIX: string = 'notifyUpdate.'
 export const STR_UPDATE_FIRMWARE_TASMOTA: string = FIRMWARE_TASMOTA as string
 export const STR_UPDATE_FIRMWARE_BERRYDRIVER: string = FIRMWARE_BERRYDRIVER as string
 export const STR_UPDATE_FIRMWARE_HMI: string = FIRMWARE_HMI as string
+export const STR_UPDATE_NOTIFY_ICON: string = 'reload-alert'
 
 // defaults
 export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE

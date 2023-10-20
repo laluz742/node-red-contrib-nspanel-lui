@@ -43,6 +43,8 @@ export type StartupEventArgs = EventArgs & {
 
 export type VersionData = {
     version: string | null
+    internalVersion?: string
+    model?: string
     url?: string
 }
 
@@ -69,5 +71,6 @@ export type FirmwareEventArgs = EventArgs & {
     event: 'update' | 'version'
 
     version?: string
+    model?: string
     status?: 'success' | null
 }
