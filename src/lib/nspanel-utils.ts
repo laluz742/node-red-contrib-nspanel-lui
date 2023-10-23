@@ -43,6 +43,10 @@ export class NSPanelUtils {
         return { hours: h, minutes: m }
     }
 
+    public static isString(e: any): boolean {
+        return typeof e === 'string'
+    }
+
     public static stringIsNullOrEmpty(str: string): boolean {
         return str === undefined || str === null ? true : str.trim().length === 0
     }

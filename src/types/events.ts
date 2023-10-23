@@ -43,6 +43,8 @@ export type StartupEventArgs = EventArgs & {
 
 export type VersionData = {
     version: string | null
+    internalVersion?: string
+    model?: string
     url?: string
 }
 
@@ -66,8 +68,10 @@ export type FirmwareType = 'tasmota' | 'nlui' | 'hmi'
 export type FirmwareEventArgs = EventArgs & {
     type: 'fw'
     source: FirmwareType
-    event: 'update' | 'version'
+    event: 'update' | 'version' | 'updateAvailable' | 'install'
 
     version?: string
-    status?: 'success' | null
+    model?: string
+    status?: 'success' | 'failed'
+    statusMsg?: string
 }

@@ -24,6 +24,7 @@ The relays can be switched on or off via messages using the _cmd_ topic.
 
 ```javascript
 var switchCmdMsg = {
+    topic: 'cmd'
     payload: {
         cmd: 'switch',
         params: {

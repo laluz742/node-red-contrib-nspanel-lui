@@ -8,8 +8,11 @@ export interface IPanelUpdater extends IDisposable {
 
     onFirmwareEvent(fwEvent: FirmwareEventArgs): void
     onUpdateNotificationResult(notifyId: string, action: string): void
+
+    on(event: 'update', listener: (fwEvent: FirmwareEventArgs) => void): void
 }
 
 export type IPanelUpdaterOptions = {
     autoUpdate: boolean
+    tasmotaOtaUrl: string
 }

@@ -15,7 +15,10 @@
             "waitForPages": "Warte auf Seiten",
             "tooManyScreenSaver": "Mehr als ein Bildschirmschoner",
             "noScreenSaverPage": "Kein Bildschirmschoner",
-            "newFirmwareAvailable": "Neue Firmware verfügbar: "
+            "newFirmwareAvailable": "Neue Firmware verfügbar",
+            "updateInstalling": "Installiere Firmware-Update",
+            "updateInstalled": "Firmware aktualisiert",
+            "updateFailed": "Firmware-Update fehlgeschlagen. Weitere Installationen deaktiviert."
         }
     },
     "nspanel-controller": {
@@ -38,7 +41,11 @@
             "newFirmwareTasmotaTextMain": "Eine neues Firmware-Update für\r\nTasmota ist verfügbar.",
             "newBerryDriverTextMain": "Ein Update für den BerryDriver\r\nist verfügbar.",
             "newHmiTextMain": "Ein Update der Lovelace UI\r\nFirmware ist verfügbar.",
-            "newFirmwarPerformUpdate": "Möchten Sie das Update installieren?",
+            "newFirmwarePerformUpdate": "Möchten Sie das Update installieren?",
+            "failedFirmwareUpdateTitle": "Update fehlgeschlagen",
+            "failedFirmwareUpdateTextMain": "Die Installation des Firmware-\r\nUpdates ist fehlgeschlagen.",
+            "failedFirmwarePrefix:": "Firmware: ",
+            "updatesBlocked": "Die weitere Installation von\r\nFirmware-Updates wird\r\ndeaktiviert.",
             "btnTextYes": "Ja",
             "btnTextNo": "Nein"
         }
