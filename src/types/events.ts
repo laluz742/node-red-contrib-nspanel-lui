@@ -72,5 +72,6 @@ export type FirmwareEventArgs = EventArgs & {
 
     version?: string
     model?: string
-    status?: 'success' | null
+    status?: 'success' | 'failed'
+    statusMsg?: string
 }

@@ -265,7 +265,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 break
 
             case NSPanelConstants.STR_LUI_EVENT_BUTTONPRESS2: // close pageOpenDetail
-                if (eventArgs.source.startsWith(NSPanelConstants.STR_UPDATE_NOTIFY_PREFIX)) {
+                if (eventArgs.source.startsWith(NSPanelConstants.STR_UPDATE_NOTIFY_ID_PREFIX)) {
                     this.onPopupClose()
                     switch (eventArgs.event2) {
                         case NSPanelConstants.STR_LUI_EVENT_NOTIFY_ACTION:

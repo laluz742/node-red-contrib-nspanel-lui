@@ -1,4 +1,5 @@
 // TODO: update node status
+// TODO: NLUI/HMI preferred version handling
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'
 import * as semver from 'semver'
@@ -68,6 +69,8 @@ const URL_BERRYDRIVER_LATEST = 'https://raw.githubusercontent.com/joBr99/nspanel
 const URL_NLUI_LATEST =
     'https://raw.githubusercontent.com/joBr99/nspanel-lovelace-ui/main/apps/nspanel-lovelace-ui/nspanel-lovelace-ui.py'
 
+const URL_HMI_BASE = 'http://nspanel.pky.eu/lovelace-ui/github/'
+
 const axiosRequestOptions: AxiosRequestConfig = {
     headers: {
         STR_HTTP_USER_AGENT: NSPanelConstants.STR_HTTP_USER_AGENT_VALUE,
@@ -90,6 +93,8 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     private _options: IPanelUpdaterOptions = null
 
     private _updateInProgress: boolean = false
+
+    private _updatesBlocked: boolean = false
 
     private _updateTaskStack: FirmwareType[] = []
 
@@ -123,50 +128,67 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     }
 
     public checkForUpdates(): void {
-        // TODO: promisify the wait for version data
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const self = this
         this._acquireVersions()
             .then(() => {
-                if (self._options.autoUpdate === false) {
+                if (this._options.autoUpdate === false) {
                     let notifyId: string
                     let notifyTextMain: string
                     let currentVersion: string
                     let latestVersion: string
                     if (
-                        self._updateVersionData.versionAcquisitionStatus & VersionAcquisitionStatus.HmiUpdateAvailable
+                        this._updateVersionData.versionAcquisitionStatus & VersionAcquisitionStatus.HmiUpdateAvailable
                     ) {
                         notifyId = NSPanelConstants.STR_UPDATE_FIRMWARE_HMI
-                        notifyTextMain = self._i18n('nspanel-controller.panel.newHmiTextMain')
-                        currentVersion = self._updateVersionData.versions.current.hmi.internalVersion
-                        latestVersion = `${self._updateVersionData.versions.latest.hmi.version} (${self._updateVersionData.versions.latest.hmi.internalVersion})`
+                        notifyTextMain = this._i18n('nspanel-controller.panel.newHmiTextMain')
+                        currentVersion = this._updateVersionData.versions.current.hmi.internalVersion
+                        latestVersion = `${this._updateVersionData.versions.latest.hmi.version} (${this._updateVersionData.versions.latest.hmi.internalVersion})`
                     }
 
                     if (
-                        self._updateVersionData.versionAcquisitionStatus &
+                        this._updateVersionData.versionAcquisitionStatus &
                         VersionAcquisitionStatus.BerryDriverUpdateAvailable
                     ) {
                         notifyId = NSPanelConstants.STR_UPDATE_FIRMWARE_BERRYDRIVER
-                        notifyTextMain = self._i18n('nspanel-controller.panel.newBerryDriverTextMain')
-                        currentVersion = self._updateVersionData.versions.current.berryDriver.version
-                        latestVersion = self._updateVersionData.versions.latest.berryDriver.version
+                        notifyTextMain = this._i18n('nspanel-controller.panel.newBerryDriverTextMain')
+                        currentVersion = this._updateVersionData.versions.current.berryDriver.version
+                        latestVersion = this._updateVersionData.versions.latest.berryDriver.version
                     }
 
                     if (
-                        self._updateVersionData.versionAcquisitionStatus &
+                        this._updateVersionData.versionAcquisitionStatus &
                         VersionAcquisitionStatus.TasmotaUpdateAvailable
                     ) {
                         notifyId = NSPanelConstants.STR_UPDATE_FIRMWARE_TASMOTA
-                        notifyTextMain = self._i18n('nspanel-controller.panel.newFirmwareTasmotaTextMain')
-                        currentVersion = self._updateVersionData.versions.current.tasmota.version
-                        latestVersion = self._updateVersionData.versions.latest.tasmota.version
+                        notifyTextMain = this._i18n('nspanel-controller.panel.newFirmwareTasmotaTextMain')
+                        currentVersion = this._updateVersionData.versions.current.tasmota.version
+                        latestVersion = this._updateVersionData.versions.latest.tasmota.version
                     }
 
                     if (notifyId != null) {
-                        self.showUpdateNotification(notifyId, notifyTextMain, currentVersion, latestVersion)
+                        this.showUpdateAvailableNotification(notifyId, notifyTextMain, currentVersion, latestVersion)
                     }
                 } else {
-                    // TODO: initiate update process
+                    if (
+                        this._updateVersionData.versionAcquisitionStatus & VersionAcquisitionStatus.HmiUpdateAvailable
+                    ) {
+                        this._updateTaskStack.push(NSPanelConstants.FIRMWARE_HMI)
+                    }
+
+                    if (
+                        this._updateVersionData.versionAcquisitionStatus &
+                        VersionAcquisitionStatus.BerryDriverUpdateAvailable
+                    ) {
+                        this._updateTaskStack.push(NSPanelConstants.FIRMWARE_BERRYDRIVER)
+                    }
+
+                    if (
+                        this._updateVersionData.versionAcquisitionStatus &
+                        VersionAcquisitionStatus.TasmotaUpdateAvailable
+                    ) {
+                        this._updateTaskStack.push(NSPanelConstants.FIRMWARE_TASMOTA)
+                    }
+
+                    this.processUpdateTasks()
                 }
             })
             .catch((versionAcquisitionStatus) => {
@@ -189,6 +211,25 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                 if (fwEvent.status === 'success') {
                     this._updateInProgress = false
                     this.processUpdateTasks()
+                } else if (fwEvent.status === 'failed') {
+                    // as manual intervention may be neccessary, block further updates
+                    this._updateInProgress = false
+                    this._updatesBlocked = true
+                    let fwLabel: string
+                    switch (fwEvent.source) {
+                        case 'tasmota':
+                            fwLabel = NSPanelConstants.STR_FIRMWARE_LABEL_TASMOTA
+                            break
+                        case 'nlui':
+                            fwLabel = NSPanelConstants.STR_FIRMWARE_LABEL_BERRYDRIVER
+                            break
+                        case 'hmi':
+                            fwLabel = NSPanelConstants.STR_FIRMWARE_LABEL_HMI
+                            break
+                    }
+
+                    const notifyId = fwEvent.source
+                    this.showUpdateFailedNotification(notifyId, fwLabel)
                 }
                 break
             }
@@ -202,8 +243,8 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
             NSPanelConstants.STR_LUI_NOTIFY_ACTION_YES === action
         ) {
             const confirmedFirmware =
-                notifyId.indexOf(NSPanelConstants.STR_UPDATE_NOTIFY_PREFIX) === 0
-                    ? notifyId.substring(NSPanelConstants.STR_UPDATE_NOTIFY_PREFIX.length)
+                notifyId.indexOf(NSPanelConstants.STR_UPDATE_NOTIFY_ID_PREFIX) === 0
+                    ? notifyId.substring(NSPanelConstants.STR_UPDATE_NOTIFY_ID_PREFIX.length)
                     : null
 
             switch (confirmedFirmware) {
@@ -293,14 +334,25 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     }
 
     private _updateHmi(): void {
-        if (this._updateInProgress) {
+        // sanity checks
+        if (NSPanelUtils.stringIsNullOrEmpty(this._updateVersionData.versions.current.hmi.model)) {
+            // TODO: show error message
+            return
+        }
+
+        if (this._isUpdateInProgressOrBlocked()) {
             this._updateTaskStack.push(NSPanelConstants.FIRMWARE_HMI)
             return
         }
 
-        // TODO: build URL
         log.info('Initiating flashing NSPanel HMI firmware')
-        const hmiFirmwareUrl = 'http://nspanel.pky.eu/lui-release.tft'
+        const hmiVersion = this._updateVersionData.versions.latest.hmi.version
+        const hmiModel =
+            this._updateVersionData.versions.current.hmi.model === 'eu'
+                ? ''
+                : `${this._updateVersionData.versions.current.hmi.model}-`
+
+        const hmiFirmwareUrl = `${URL_HMI_BASE}nspanel${hmiModel}-v${hmiVersion}.tft`
 
         this._updateInProgress = true
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION, {
@@ -311,8 +363,12 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
         */
     }
 
+    private _isUpdateInProgressOrBlocked(): boolean {
+        return this._updateInProgress || this._updatesBlocked
+    }
+
     private _updateBerryDriver(): void {
-        if (this._updateInProgress) {
+        if (this._isUpdateInProgressOrBlocked()) {
             this._updateTaskStack.push(NSPanelConstants.FIRMWARE_BERRYDRIVER)
             return
         }
@@ -324,27 +380,27 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
     }
 
     private _updateTasmotaFirmware() {
-        if (this._updateInProgress) {
+        if (this._isUpdateInProgressOrBlocked()) {
             this._updateTaskStack.push(NSPanelConstants.FIRMWARE_TASMOTA)
             return
         }
-        // FIXME: keep care of update stepping
+        // FIXME: keep care of tasmota upgrade path
 
         /*
 onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","source":"","data":{"Upgrade":"Version 13.1.0 from http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin"}}        
         */
-        const otaUrl = 'http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin' // FIXME
+
+        if (NSPanelUtils.stringIsNullOrEmpty(this._options.tasmotaOtaUrl)) {
+            // TODO: show error message
+            return
+        }
+
+        const otaUrl = this._options.tasmotaOtaUrl
 
         this._updateInProgress = true
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_OTAURL, { payload: otaUrl })
         // TODO: sleep
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_UPGRADE, { payload: '1' })
-        /*
-        mqtt topic /stat/UPGRADE
-        {
-            "Upgrade": "Successful. Restarting"
-        }
-        */
     }
 
     private setTasmotaVersion(tasmotaVersion: string): void {
@@ -368,41 +424,6 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
     public setHmiVersion(hmiVersion: HMIVersion): void {
         this._updateVersionData.versions.current.hmi = hmiVersion
         this._updateVersionData.versionAcquisitionStatus |= VersionAcquisitionStatus.HmiVersionCurrent
-    }
-
-    private showUpdateNotification(
-        notifyId: string,
-        notifyTextMain: string,
-        currentVersion: string,
-        latestVersion: string
-    ) {
-        const instruction: string =
-            notifyTextMain +
-            NSPanelConstants.STR_LUI_LINEBREAK +
-            NSPanelConstants.STR_LUI_LINEBREAK +
-            this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') +
-            currentVersion +
-            NSPanelConstants.STR_LUI_LINEBREAK +
-            this._i18n('nspanel-controller.panel.newFirmwareVersionPrefix') +
-            latestVersion +
-            NSPanelConstants.STR_LUI_LINEBREAK +
-            NSPanelConstants.STR_LUI_LINEBREAK +
-            this._i18n('nspanel-controller.panel.newFirmwarPerformUpdate')
-
-        const notifyData: NotifyData = {
-            notifyId: `${NSPanelConstants.STR_UPDATE_NOTIFY_PREFIX}${notifyId}`,
-            icon: NSPanelConstants.STR_UPDATE_NOTIFY_ICON,
-            text: instruction,
-            heading: this._i18n('nspanel-controller.panel.newFirmwareTitle'),
-            headingColor: NSPanelConstants.STR_LUI_COLOR_RED,
-            timeout: 0,
-            fontSize: 0,
-            cancelColor: NSPanelConstants.STR_LUI_COLOR_RED,
-            cancelText: this._i18n('nspanel-controller.panel.btnTextNo'),
-            okColor: NSPanelConstants.STR_LUI_COLOR_GREEN,
-            okText: this._i18n('nspanel-controller.panel.btnTextYes'),
-        }
-        this._panelController?.showNotification(notifyData)
     }
 
     // #region version information retrieval
@@ -444,16 +465,6 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
             }
         })
 
-        /* TODOGithub data needed?
-        axios.get<githubApiReleaseSchema>(URL_NLUI_RELEASES_LATEST_META, axiosRequestOptions).then((response) => {
-            const { data } = response
-            if (data?.tag_name != null) {
-                const hmiVersionLatest = String.prototype.substring.call(data.tag_name, 1)
-                this.updateData.latest.hmi = { version: hmiVersionLatest }
-                // TODO: pick right asset
-            }
-        }) */
-
         axios.get<string>(URL_NLUI_LATEST, axiosRequestOptions).then((response) => {
             if (response?.data != null) {
                 const match = response.data.match(NLUI_HMI_VERSION_REGEX)
@@ -471,4 +482,61 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
     // #endregion version information retrieval
 
     public dispose(): void {}
+
+    private showUpdateAvailableNotification(
+        notifyId: string,
+        notifyTextMain: string,
+        currentVersion: string,
+        latestVersion: string
+    ) {
+        const instruction: string =
+            notifyTextMain +
+            NSPanelConstants.STR_LUI_LINEBREAK +
+            NSPanelConstants.STR_LUI_LINEBREAK +
+            this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') +
+            currentVersion +
+            NSPanelConstants.STR_LUI_LINEBREAK +
+            this._i18n('nspanel-controller.panel.newFirmwareVersionPrefix') +
+            latestVersion +
+            NSPanelConstants.STR_LUI_LINEBREAK +
+            NSPanelConstants.STR_LUI_LINEBREAK +
+            this._i18n('nspanel-controller.panel.newFirmwarePerformUpdate')
+
+        const notifyData: NotifyData = {
+            notifyId: `${NSPanelConstants.STR_UPDATE_NOTIFY_ID_PREFIX}${notifyId}`,
+            icon: NSPanelConstants.STR_UPDATE_NOTIFY_ICON,
+            text: instruction,
+            heading: this._i18n('nspanel-controller.panel.newFirmwareTitle'),
+            headingColor: NSPanelConstants.STR_LUI_COLOR_RED,
+            timeout: 0,
+            fontSize: 0,
+            cancelColor: NSPanelConstants.STR_LUI_COLOR_RED,
+            cancelText: this._i18n('nspanel-controller.panel.btnTextNo'),
+            okColor: NSPanelConstants.STR_LUI_COLOR_GREEN,
+            okText: this._i18n('nspanel-controller.panel.btnTextYes'),
+        }
+        this._panelController?.showNotification(notifyData)
+    }
+
+    private showUpdateFailedNotification(notifyId: string, firmwareName: string) {
+        const instruction: string =
+            this._i18n('nspanel-controller.panel.failedFirmwareUpdateTextMain') +
+            NSPanelConstants.STR_LUI_LINEBREAK +
+            NSPanelConstants.STR_LUI_LINEBREAK +
+            this._i18n('nspanel-controller.panel.failedFirmwarePrefix') +
+            firmwareName
+
+        this._i18n('nspanel-controller.panel.newFirmwarePerformUpdate')
+
+        const notifyData: NotifyData = {
+            notifyId: `${NSPanelConstants.STR_UPDATE_NOTIFY_ID_ERROR_PREFIX}${notifyId}`,
+            icon: NSPanelConstants.STR_UPDATE_ERROR_ICON,
+            text: instruction,
+            heading: this._i18n('nspanel-controller.panel.failedFirmwareUpdateTitle'),
+            headingColor: NSPanelConstants.STR_LUI_COLOR_RED,
+            timeout: 0,
+            fontSize: 0,
+        }
+        this._panelController?.showNotification(notifyData)
+    }
 }

@@ -5,7 +5,6 @@ import { Logger } from './logger'
 import { MqttUtils } from './mqtt-utils'
 import { NSPanelMessageParser } from './nspanel-message-parser'
 import {
-    Nullable,
     PanelConfig,
     EventArgs,
     HardwareEventArgs,
@@ -13,7 +12,7 @@ import {
     SensorEventArgs,
     FirmwareEventArgs,
 } from '../types/types'
-import { STR_BERRYDRIVER_CMD_FLASHNEXTION, STR_BERRYDRIVER_CMD_UPDATEDRIVER } from './nspanel-constants'
+import * as NSPanelConstants from './nspanel-constants'
 
 const log = Logger('NSPanelMqttHandler')
 
@@ -26,13 +25,15 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
 
     private panelMqttStatResultTopic: string = null
 
+    private panelMqttStatUpgradeTopic: string = null
+
     private panelMqttSensorTopic: string = null
 
     private panelMqttStatus2Topic: string = null
 
     private mqttOptions: mqtt.IClientOptions = {}
 
-    private mqttClient: Nullable<mqtt.MqttClient> = null
+    private mqttClient: mqtt.MqttClient | null = null
 
     private connected: boolean = false
 
@@ -120,6 +121,12 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             'stat',
             'STATUS2'
         )
+        this.panelMqttStatUpgradeTopic = MqttUtils.buildFullTopic(
+            panelConfig.panel.fullTopic,
+            panelConfig.panel.topic,
+            'stat',
+            'UPGRADE'
+        )
 
         try {
             const brokerUrl = MqttUtils.getBrokerUrl(
@@ -143,6 +150,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             mqttClient.subscribe(this.panelMqttStatResultTopic)
             mqttClient.subscribe(this.panelMqttSensorTopic)
             mqttClient.subscribe(this.panelMqttStatus2Topic)
+            mqttClient.subscribe(this.panelMqttStatUpgradeTopic)
         } catch (err: unknown) {
             if (err instanceof Error) {
                 log.error(`Could not connect to mqtt broker. Error: ${err.message}`) // FIXME
@@ -214,10 +222,10 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             case this.panelMqttStatResultTopic: {
                 try {
                     const temp = JSON.parse(payloadStr)
-                    if (STR_BERRYDRIVER_CMD_UPDATEDRIVER in temp) {
+                    if (NSPanelConstants.STR_BERRYDRIVER_CMD_UPDATEDRIVER in temp) {
                         const parsedEvent: FirmwareEventArgs = NSPanelMessageParser.parseBerryDriverUpdateEvent(temp)
                         this.emit('msg', parsedEvent)
-                    } else if (STR_BERRYDRIVER_CMD_FLASHNEXTION in temp) {
+                    } else if (NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION in temp) {
                         const parsedEvent: FirmwareEventArgs = NSPanelMessageParser.parseBerryDriverUpdateEvent(temp)
                         this.emit('msg', parsedEvent)
                     }
@@ -253,6 +261,25 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                 } catch (err: unknown) {
                     if (err instanceof Error) {
                         log.error(`Error processing status2 data (data=${payloadStr}): ${err.message}`)
+                        log.error('Stack:')
+                        log.error(err.stack)
+                    }
+                }
+                break
+            }
+
+            case this.panelMqttStatUpgradeTopic: {
+                try {
+                    const temp = JSON.parse(payloadStr)
+                    if (NSPanelConstants.STR_TASMOTA_MSG_UPGRADE in temp) {
+                        const parsedEvent: FirmwareEventArgs = NSPanelMessageParser.parseTasmotaUpgradeEvent(temp)
+                        if (parsedEvent != null) {
+                            this.emit('msg', parsedEvent)
+                        }
+                    }
+                } catch (err: unknown) {
+                    if (err instanceof Error) {
+                        log.error(`Error processing upgrade message (data=${payloadStr}): ${err.message}`)
                         log.error('Stack:')
                         log.error(err.stack)
                     }

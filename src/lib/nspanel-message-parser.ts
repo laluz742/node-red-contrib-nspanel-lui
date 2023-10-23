@@ -16,7 +16,6 @@ import * as NSPanelConstants from './nspanel-constants'
 const log = Logger('NSPanelMessageParser')
 
 export class NSPanelMessageParser {
-    // TODO: combine parsing into parse()
     public static parse(payloadStr: string): EventArgs {
         let result: EventArgs = null
 
@@ -28,7 +27,12 @@ export class NSPanelMessageParser {
             } else if ('nlui_driver_version' in temp) {
                 result = NSPanelMessageParser.parseNluiDriverEvent(temp)
             } else {
-                result.data = temp
+                result = {
+                    type: 'unknown',
+                    source: '',
+                    event: '',
+                    data: temp,
+                }
             }
         } catch (err: unknown) {
             result.data = payloadStr
@@ -118,6 +122,7 @@ export class NSPanelMessageParser {
     }
 
     public static parseTasmotaStatus2Event(input: any): FirmwareEventArgs {
+        // TODO: consolidate parsing into parse()
         let result: FirmwareEventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'StatusFWR')) {
@@ -137,7 +142,41 @@ export class NSPanelMessageParser {
         return result
     }
 
+    public static parseTasmotaUpgradeEvent(input: any): FirmwareEventArgs {
+        // TODO: consolidate parsing into parse()
+        let result: FirmwareEventArgs | null = null
+
+        if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_TASMOTA_MSG_UPGRADE)) {
+            const statusValue = input[NSPanelConstants.STR_TASMOTA_MSG_UPGRADE]
+            if (NSPanelUtils.isString(statusValue) && !NSPanelUtils.stringIsNullOrEmpty(statusValue)) {
+                const statusResult = String.prototype.startsWith.call(
+                    statusValue,
+                    NSPanelConstants.STR_TASMOTA_UPGRADE_SUCCESSFUL
+                )
+                    ? 'success'
+                    : 'failed'
+
+                result = {
+                    type: 'fw',
+                    source: NSPanelConstants.FIRMWARE_TASMOTA,
+                    event: 'update',
+                    status: statusResult,
+                }
+                if (statusResult === 'failed') {
+                    result.statusMsg = statusValue.substring(
+                        statusValue.indexOf(NSPanelConstants.STR_TASMOTA_UPGRADE_FAILED) +
+                            NSPanelConstants.STR_TASMOTA_UPGRADE_FAILED.length +
+                            1
+                    )
+                }
+            }
+        }
+
+        return result
+    }
+
     public static parseBerryDriverUpdateEvent(input: any): FirmwareEventArgs {
+        // TODO: consolidate parsing into parse()
         let result: FirmwareEventArgs | null = null
         let key: string = null
         let source: FirmwareType | null = null
@@ -164,6 +203,7 @@ export class NSPanelMessageParser {
     }
 
     public static parseNluiDriverEvent(input: any): FirmwareEventArgs {
+        // TODO: consolidate parsing into parse()
         let result: FirmwareEventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, 'nlui_driver_version')) {

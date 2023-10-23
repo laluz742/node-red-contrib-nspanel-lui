@@ -35,7 +35,11 @@
             "newFirmwareTasmotaTextMain": "A new Tasmota firmware update\r\nis available for your NSPanel.",
             "newBerryDriverTextMain": "A new BerryDriver update is\r\navailable for your NSPanel.",
             "newHmiTextMain": "A new Lovelace UI firmware\r\nupdate is available.",
-            "newFirmwarPerformUpdate": "Do you want to update now?",
+            "newFirmwarePerformUpdate": "Do you want to update now?",
+            "failedFirmwareUpdateTitle": "Update failed",
+            "failedFirmwareUpdateTextMain": "The installation of the firmware\r\nupdate failed.",
+            "failedFirmwarePrefix:": "Firmware: ",
+            "updatesBlocked": "The further installation of\r\nfirmware updates is deactivated.",
             "btnTextYes": "Yes",
             "btnTextNo": "No"
         }
