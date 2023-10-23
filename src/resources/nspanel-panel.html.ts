@@ -26,6 +26,7 @@
                 nsPanelConfig: { value: '', type: 'nspanel-config', required: true },
                 detachRelays: { value: false },
                 autoUpdate: { value: false },
+                tasmotaOtaUrl: { value: 'http://ota.tasmota.com/tasmota32/release/tasmota32.bin' },
                 telePeriod: {
                     value: 1,
                     required: false,
@@ -80,6 +81,24 @@
             oneditprepare() {
                 $('#node-config-input-panelDimLowStartTime').val(this.panelDimLowStartTime)
                 $('#node-config-input-panelDimLowNightStartTime').val(this.panelDimLowNightStartTime)
+
+                const tabs = RED.tabs.create({
+                    id: 'nspanel-page-tabs',
+                    onchange(tab) {
+                        $('#nspanel-page-tabs-content').children().hide()
+                        $(`#${tab.id}`).show()
+                    },
+                })
+                tabs.addTab({
+                    id: 'nspanel-page-tab-general',
+                    iconClass: 'fa fa-cog',
+                    label: NSPanelLui._('label.general', 'nspanel-panel', 'common'),
+                })
+                tabs.addTab({
+                    id: 'nspanel-page-tab-update',
+                    iconClass: 'fa fa-refresh',
+                    label: NSPanelLui._('label.update', 'nspanel-panel', 'common'),
+                })
             },
         })
 

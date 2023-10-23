@@ -2,6 +2,7 @@
     "common": {
         "label": {
             "general": "General",
+            "update": "Updates",
             "events": "Events",
             "entities": "Entities",
             "delete": "blank",
@@ -35,12 +36,15 @@
             "brightnessActive": "Active:",
             "detachRelays": "Decouple buttons from relays",
             "telePeriod": "Telemetry Period",
-            "autoUpdate": "Install new firmware automatically"
+            "telePeriodDescription": "(0=disabled, 1=firmware default)",
+            "autoUpdate": "Install new firmware automatically",
+            "tasmotaOtaUrl": "Tasmota OTA Url"
         },
         "placeholder": {
             "name": "Name",
             "device-topic": "Device Topic",
-            "full-topic": "e.g. panels/%topic%/%prefix%/"
+            "full-topic": "e.g. panels/%topic%/%prefix%/",
+            "tasmotaOtaUrl": "http://ota.tasmota.com/tasmota32/release/tasmota32.bin"
         },
         "defaults": {
             "name": "NSPanel"

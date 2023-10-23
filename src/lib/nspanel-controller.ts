@@ -227,6 +227,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         // initialize updater
         const panelUpdater = new NSPanelUpdater(this, mqttHandler, this._i18n, {
             autoUpdate: this._panelConfig.panel.autoUpdate,
+            tasmotaOtaUrl: this._panelConfig.panel.tasmotaOtaUrl,
         })
         this._panelUpdater = panelUpdater
 

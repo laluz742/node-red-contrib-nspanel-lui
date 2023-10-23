@@ -12,4 +12,5 @@ export interface IPanelUpdater extends IDisposable {
 
 export type IPanelUpdaterOptions = {
     autoUpdate: boolean
+    tasmotaOtaUrl: string
 }
