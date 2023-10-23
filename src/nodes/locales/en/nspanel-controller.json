@@ -15,7 +15,10 @@
             "noScreenSaverPage": "No screensaver found",
             "panelInit": "Initializing panel",
             "panelStarted": "Panel started",
-            "newFirmwareAvailable": "New firmware available: "
+            "newFirmwareAvailable": "New firmware available",
+            "updateInstalling": "Updating firmware",
+            "updateInstalled": "Firmware updated",
+            "updateFailed": "Firmware update failed. Disabling further installation"
         }
     },
     "nspanel-controller": {

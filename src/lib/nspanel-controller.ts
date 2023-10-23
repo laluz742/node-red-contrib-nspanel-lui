@@ -229,6 +229,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             autoUpdate: this._panelConfig.panel.autoUpdate,
             tasmotaOtaUrl: this._panelConfig.panel.tasmotaOtaUrl,
         })
+        panelUpdater.on('update', (fwEventArgs: FirmwareEventArgs) => this.onUpdateEvent(fwEventArgs))
         this._panelUpdater = panelUpdater
 
         // notify controller node about state
@@ -296,6 +297,15 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this._panelUpdater?.onFirmwareEvent(fwEventArgs)
         } else {
             log.info(`UNCATCHED msg ${JSON.stringify(msg)}`)
+        }
+    }
+
+    private onUpdateEvent(fwEventArgs: FirmwareEventArgs): void {
+        switch (fwEventArgs.event) {
+            case 'update':
+            case 'updateAvailable':
+                this.notifyControllerNode(fwEventArgs)
+                break
         }
     }
 

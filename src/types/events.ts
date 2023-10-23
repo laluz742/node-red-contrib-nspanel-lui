@@ -68,7 +68,7 @@ export type FirmwareType = 'tasmota' | 'nlui' | 'hmi'
 export type FirmwareEventArgs = EventArgs & {
     type: 'fw'
     source: FirmwareType
-    event: 'update' | 'version'
+    event: 'update' | 'version' | 'updateAvailable' | 'install'
 
     version?: string
     model?: string

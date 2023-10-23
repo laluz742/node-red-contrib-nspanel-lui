@@ -5,6 +5,7 @@ import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import {
     CommandData,
     EventArgs,
+    FirmwareEventArgs,
     IPanelController,
     IPanelNodeEx,
     NodeMessageInFlow,
@@ -14,6 +15,7 @@ import {
     NotifyData,
     PanelBasedConfig,
     PanelMessage,
+    StatusLevel,
 } from '../types/types'
 
 interface NSPanelControllerConfig extends PanelBasedConfig {
@@ -104,7 +106,7 @@ module.exports = (RED) => {
                 this.nsPanelController = controller
                 controller.on('status', (eventArgs) => this.onControllerStatusEvent(eventArgs))
                 controller.on('sensor', (sensorData) => this.onControllerSensorEvent(sensorData))
-                controller.on('event', (eventArgs) => this.onControllerEvent(eventArgs))
+                controller.on('event', (msg) => this.onControllerEvent(msg))
 
                 controller.registerPages(this.panelNode.getAllPages())
                 this.panelNode.on('page:register', (pageNode) => {
@@ -120,8 +122,41 @@ module.exports = (RED) => {
             }
         }
 
-        private onControllerEvent(eventArgs: EventArgs) {
-            this.send(eventArgs)
+        private onControllerEvent(msg: NodeMessageInFlow) {
+            // forward to output
+            this.send(msg)
+
+            if (msg.topic === 'fw') {
+                const fwEventArgs: FirmwareEventArgs = msg?.payload as FirmwareEventArgs
+                let statusLevel: StatusLevel = 'info'
+                let statusText: string
+
+                switch (fwEventArgs.event) {
+                    case 'install': {
+                        statusText = RED._('common.status.updateInstalling')
+                        break
+                    }
+
+                    case 'update': {
+                        statusLevel = fwEventArgs.status === 'success' ? 'success' : 'error'
+                        statusText =
+                            fwEventArgs.status === 'success'
+                                ? RED._('common.status.updateInstalled')
+                                : RED._('common.status.updateFailed')
+                        break
+                    }
+
+                    case 'updateAvailable': {
+                        statusText = RED._('common.status.newFirmwareAvailable')
+                        break
+                    }
+                }
+
+                if (statusText != null) {
+                    statusText += ` (${fwEventArgs.source})`
+                    this.setNodeStatus(statusLevel, statusText)
+                }
+            }
         }
 
         private onControllerSensorEvent(eventArgs: EventArgs) {

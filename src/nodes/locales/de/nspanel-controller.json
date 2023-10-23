@@ -15,7 +15,10 @@
             "waitForPages": "Warte auf Seiten",
             "tooManyScreenSaver": "Mehr als ein Bildschirmschoner",
             "noScreenSaverPage": "Kein Bildschirmschoner",
-            "newFirmwareAvailable": "Neue Firmware verfügbar: "
+            "newFirmwareAvailable": "Neue Firmware verfügbar",
+            "updateInstalling": "Installiere Firmware-Update",
+            "updateInstalled": "Firmware aktualisiert",
+            "updateFailed": "Firmware-Update fehlgeschlagen. Weitere Installationen deaktiviert."
         }
     },
     "nspanel-controller": {
