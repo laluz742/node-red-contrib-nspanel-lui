@@ -137,10 +137,12 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
     }
     const getNodeLabel = (node: any) => {
         const panelNode = RED.nodes.node(node.nsPanel)
+        const nodeName = validate.stringIsNotNullOrEmpty(node.name)
+            ? node.name
+            : NSPanelLui._('defaults.name', node.type)
 
         const label =
-            `[${panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')}] ${node.name}` ||
-            NSPanelLui._('defaults.name', node.type)
+            `[${panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')}] ${nodeName}` || nodeName
 
         return label
     }
