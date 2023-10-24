@@ -38,6 +38,8 @@ export interface PanelParameters {
     topic: string
     fullTopic: string
 
+    enableUpdates: boolean
+    timeToCheckForUpdates: SplitTime
     autoUpdate: boolean
     tasmotaOtaUrl: string
 

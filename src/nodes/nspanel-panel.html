@@ -162,23 +162,46 @@
             <div class="form-row">
                 <input
                     type="checkbox"
-                    id="node-config-input-autoUpdate"
+                    id="node-config-input-enableUpdates"
                     style="display:inline-block; width:auto; vertical-align:top;"
                 />
-                <label for="node-config-input-autoUpdate" style="width:70%;">
-                    <span data-i18n="nspanel-panel.label.autoUpdate"></span>
+                <label for="node-config-input-enableUpdates" style="width:70% !important">
+                    <span data-i18n="nspanel-panel.label.enableUpdates"></span>
                 </label>
             </div>
-            <div class="form-row">
-                <label for="node-config-input-autoUpdate">
-                    <i class="fa fa-globe"></i>
-                    <span data-i18n="nspanel-panel.label.tasmotaOtaUrl"></span>
-                </label>
-                <input
-                    type="text"
-                    id="node-config-input-tasmotaOtaUrl"
-                    data-i18n="[placeholder]nspanel-panel.placeholder.tasmotaOtaUrl"
-                />
+            <div id="updateSettings">
+                <div class="form-row">
+                    <input
+                        type="checkbox"
+                        id="node-config-input-autoUpdate"
+                        style="display:inline-block; width:auto; vertical-align:top;"
+                    />
+                    <label for="node-config-input-autoUpdate" style="width:70% !important">
+                        <span data-i18n="nspanel-panel.label.autoUpdate"></span>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label for="node-config-input-timeToCheckForUpdates">
+                        <i class="fa fa-clock-o"></i>
+                        <span data-i18n="nspanel-panel.label.timeToCheckForUpdates"></span>
+                    </label>
+                    <input
+                        type="time"
+                        id="node-config-input-timeToCheckForUpdates"
+                        style="margin-right: 14px; width: 5em;"
+                    />
+                </div>
+                <div class="form-row">
+                    <label for="node-config-input-autoUpdate">
+                        <i class="fa fa-globe"></i>
+                        <span data-i18n="nspanel-panel.label.tasmotaOtaUrl"></span>
+                    </label>
+                    <input
+                        type="text"
+                        id="node-config-input-tasmotaOtaUrl"
+                        data-i18n="[placeholder]nspanel-panel.placeholder.tasmotaOtaUrl"
+                    />
+                </div>
             </div>
         </div>
     </div>
