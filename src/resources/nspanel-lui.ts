@@ -1,5 +1,5 @@
 // #region types
-type ValidEventSpec = import('../types/types').ValidEventSpec
+type ValidEventDescriptor = import('../types/types').ValidEventDescriptor
 type EventMapping = import('../types/types').EventMapping
 type PanelEntity = import('../types/types').PanelEntity
 type IPageConfig = import('../types/types').IPageConfig
@@ -62,8 +62,8 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
     const addHardwareButtonEventsIfApplicable = (
         nsPanelId: string,
-        validEventsBase: ValidEventSpec[]
-    ): ValidEventSpec[] => {
+        validEventsBase: ValidEventDescriptor[]
+    ): ValidEventDescriptor[] => {
         let result = validEventsBase
         const panelNode = RED.nodes.node(nsPanelId)
 
@@ -178,7 +178,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                     options: [],
                 }
 
-                // FIXME: update on panel changed
+                // TODO: update on panel changed
                 // eslint-disable-next-line prefer-const
                 for (let i in knownPages) {
                     // eslint-disable-line
@@ -219,7 +219,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
         const createEditableEventList = (
             node: IPageConfig,
             controlDomSelector: string,
-            allValidEvents: ValidEventSpec[],
+            allValidEvents: ValidEventDescriptor[],
             initialData: EventMapping[]
         ) => {
             const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
@@ -229,7 +229,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
             let updateLock = false
             const pageEvents: {
-                all: ValidEventSpec[]
+                all: ValidEventDescriptor[]
                 available: string[]
                 used: string[]
             } = {
@@ -279,7 +279,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                 updateLock = false
             }
 
-            function setAvailableEvents(allValidEventSpecs: ValidEventSpec[]): void {
+            function setAvailableEvents(allValidEventSpecs: ValidEventDescriptor[]): void {
                 pageEvents.all = allValidEventSpecs.slice()
                 updateSelectEventFields()
             }
@@ -435,11 +435,12 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
             addItems(initialData)
 
             return {
-                setPanel: (_panel) => {}, // FIXME: update on panel changed
+                setPanel: (_panel) => {}, // TODO: update on panel changed
                 addItems: (items) => addItems(items),
                 empty: () => empty(),
                 getEvents: () => getEvents(),
-                setAvailableEvents: (allValidEventSpecs: ValidEventSpec[]) => setAvailableEvents(allValidEventSpecs),
+                setAvailableEvents: (allValidEventSpecs: ValidEventDescriptor[]) =>
+                    setAvailableEvents(allValidEventSpecs),
             }
         }
         // #endregion editable event list
@@ -477,7 +478,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                         }
                         const entry = data.entry
                         if (!Object.prototype.hasOwnProperty.call(entry, 'type')) {
-                            entry.type = 'delete' // FIXME
+                            entry.type = 'delete' // TODO: 'delete' might not be a valid entity type
                         }
                         container.css({
                             overflow: 'hidden',
@@ -485,7 +486,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                         })
 
                         // #region create fragment
-                        // FIXME
+                        // TODO use template instead of code
                         const fragment = document.createDocumentFragment()
                         const ROW1 = $('<div/>', { style: 'display: flex' }).appendTo(fragment)
                         const rowOptionalValue = $('<div/>', { style: 'display: flex; margin-top:8px;' }).appendTo(

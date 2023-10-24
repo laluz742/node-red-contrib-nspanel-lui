@@ -60,16 +60,17 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
     }
 
     sendToPanel(data: any) {
-        // FIXME: check data (payload == null | undefined...??...)
-        if (data === undefined || data === null) return
+        if (data == null) return
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
         try {
             if (Array.isArray(data)) {
-                data.forEach((temp) => {
-                    self.mqttClient?.publish(self.panelMqttCustomCommandTopic, temp.payload)
+                data.forEach((item) => {
+                    if (item != null && item.payload != null) {
+                        self.mqttClient?.publish(self.panelMqttCustomCommandTopic, item.payload)
+                    }
                 })
-            } else {
+            } else if (data != null && data.payload != null) {
                 self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data.payload)
             }
         } catch (err: unknown) {
@@ -153,7 +154,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
             mqttClient.subscribe(this.panelMqttStatUpgradeTopic)
         } catch (err: unknown) {
             if (err instanceof Error) {
-                log.error(`Could not connect to mqtt broker. Error: ${err.message}`) // FIXME
+                log.error(`Could not connect to mqtt broker. Error: ${err.message}`) // TODO: better logging format
             }
         }
     }

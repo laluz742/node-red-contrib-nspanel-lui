@@ -30,7 +30,7 @@ export class NSPanelColorUtils {
         }
 
         const hue = NSPanelColorUtils.rad2deg(Math.atan2(y, x))
-        const hsv: HSVColor = { hue, saturation, value: 1 } // FIXME: brightness input
+        const hsv: HSVColor = { hue, saturation, value: 1 } // TODO: brightness input
         const rgb: RGBColor = NSPanelColorUtils.hsv2Rgb(hsv)
 
         return [rgb, hsv]
