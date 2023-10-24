@@ -37,7 +37,9 @@
             "detachRelays": "Tasten von Relais entkoppeln",
             "telePeriod": "Telemtrie-Intervall",
             "telePeriodDescription": "(0=deaktiviert, 1=Firmware-Vorgabe)",
+            "enableUpdates": "Prüfung auf Updates aktivieren",
             "autoUpdate": "Neue Firmware automatisch installieren",
+            "timeToCheckForUpdates": "Time to check for updates",
             "tasmotaOtaUrl": "Tasmota OTA Url"
         },
         "placeholder": {

@@ -37,7 +37,9 @@
             "detachRelays": "Decouple buttons from relays",
             "telePeriod": "Telemetry Period",
             "telePeriodDescription": "(0=disabled, 1=firmware default)",
+            "enableUpdates": "Enable check for updates",
             "autoUpdate": "Install new firmware automatically",
+            "timeToCheckForUpdates": "Time to check for updates",
             "tasmotaOtaUrl": "Tasmota OTA Url"
         },
         "placeholder": {

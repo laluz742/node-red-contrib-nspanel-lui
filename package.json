@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-nspanel-lui",
-    "version": "0.0.1-alpha.28",
+    "version": "0.0.1-alpha.29",
     "description": "Node-RED based backend for NSPanel Lovelace UI custom firmware.",
     "license": "Apache-2.0",
     "keywords": [
@@ -33,7 +33,7 @@
         }
     },
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=18"
     },
     "scripts": {
         "lint": "eslint --ext .ts .",

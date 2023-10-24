@@ -21,6 +21,8 @@ interface NSPanelConfig extends INodeConfig {
     telePeriod: number
     detachRelays: boolean
 
+    enableUpdates: boolean
+    timeToCheckForUpdates: string
     autoUpdate: boolean
     tasmotaOtaUrl: string
 
@@ -69,9 +71,13 @@ module.exports = (RED) => {
                     topic: this.config.topic,
                     fullTopic: this.config.fullTopic,
                     detachRelays: this.config.detachRelays,
+                    telePeriod: this.config.telePeriod,
+
+                    enableUpdates: this.config.enableUpdates,
+                    timeToCheckForUpdates: NSPanelUtils.splitTime(this.config.timeToCheckForUpdates),
                     autoUpdate: this.config.autoUpdate,
                     tasmotaOtaUrl: this.config.tasmotaOtaUrl,
-                    telePeriod: this.config.telePeriod,
+
                     panelTimeout: this.config.panelTimeout,
                     panelDimHigh: this.config.panelDimHigh,
                     panelDimLow: this.config.panelDimLow,

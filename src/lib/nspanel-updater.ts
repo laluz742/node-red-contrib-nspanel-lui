@@ -128,6 +128,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     }
 
     public checkForUpdates(): void {
+        log.info('Checking for updates')
         this._acquireVersions()
             .then(() => {
                 if (this._options.autoUpdate === false) {
@@ -210,10 +211,12 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
             case 'update': {
                 if (fwEvent.status === 'success') {
+                    log.info(`Update successfully installed (${fwEvent.source})`)
                     this._updateInProgress = false
                     this.notifyUpdateSuccess(fwEvent)
                     this.processUpdateTasks()
                 } else if (fwEvent.status === 'failed') {
+                    log.info(`Update failed (${fwEvent.source})`)
                     // as manual intervention may be neccessary, block further updates
                     this._updateInProgress = false
                     this._updatesBlocked = true

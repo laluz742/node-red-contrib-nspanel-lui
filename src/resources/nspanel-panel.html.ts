@@ -25,7 +25,9 @@
 
                 nsPanelConfig: { value: '', type: 'nspanel-config', required: true },
                 detachRelays: { value: false },
+                enableUpdates: { value: true },
                 autoUpdate: { value: false },
+                timeToCheckForUpdates: { value: '04:00' },
                 tasmotaOtaUrl: { value: 'http://ota.tasmota.com/tasmota32/release/tasmota32.bin' },
                 telePeriod: {
                     value: 1,
@@ -81,6 +83,13 @@
             oneditprepare() {
                 $('#node-config-input-panelDimLowStartTime').val(this.panelDimLowStartTime)
                 $('#node-config-input-panelDimLowNightStartTime').val(this.panelDimLowNightStartTime)
+                $('#node-config-input-timeToCheckForUpdates').val(this.timeToCheckForUpdates)
+
+                const enableUpdatesField = $('#node-config-input-enableUpdates')
+                enableUpdatesField.on('change', () => {
+                    const disable = enableUpdatesField.is(':checked') === false
+                    $('#updateSettings input').prop('disabled', disable)
+                })
 
                 const tabs = RED.tabs.create({
                     id: 'nspanel-page-tabs',

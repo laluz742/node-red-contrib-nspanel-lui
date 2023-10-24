@@ -195,6 +195,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.cronTaskHourly?.stop()
         this.cronTaskDimModeDay?.stop()
         this.cronTaskDimModeNight?.stop()
+        this.cronTaskCheckForUpdates?.stop()
         this._panelMqttHandler?.dispose()
     }
 
@@ -372,6 +373,14 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
         if (this.cronTaskEveryMinute === null) {
             this.cronTaskEveryMinute = scheduleTask('0 */1 * * * *', () => this.onCronEveryMinute(), {})
+        }
+
+        if (this._panelConfig.panel.enableUpdates && this.cronTaskCheckForUpdates == null) {
+            this.cronTaskCheckForUpdates = scheduleTask(
+                `0 ${this._panelConfig.panel.timeToCheckForUpdates.minutes} ${this._panelConfig.panel.timeToCheckForUpdates.hours} * * *`,
+                () => this.onCronCheckForUpdates(),
+                {}
+            )
         }
 
         if (this.cronTaskDimModeDay === null && this._panelDimModes.day.isConfigured) {
@@ -666,6 +675,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     private cronTaskDimModeNight: Nullable<CronosTask> = null
 
+    private cronTaskCheckForUpdates: Nullable<CronosTask> = null
+
     private onCronEveryMinute() {
         try {
             this.sendTimeToPanel()
@@ -683,6 +694,16 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         } catch (err: unknown) {
             if (err instanceof Error) {
                 log.error(`Error executing hourly cron: ${err.message}`)
+            }
+        }
+    }
+
+    private onCronCheckForUpdates() {
+        try {
+            this._panelUpdater.checkForUpdates()
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                log.error(`Error executing check for updates: ${err.message}`)
             }
         }
     }
