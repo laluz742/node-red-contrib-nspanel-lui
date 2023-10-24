@@ -216,7 +216,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                     this.notifyUpdateSuccess(fwEvent)
                     this.processUpdateTasks()
                 } else if (fwEvent.status === 'failed') {
-                    log.info(`Update failed (${fwEvent.source})`)
+                    log.error(`Update failed (${fwEvent.source})`)
                     // as manual intervention may be neccessary, block further updates
                     this._updateInProgress = false
                     this._updatesBlocked = true
