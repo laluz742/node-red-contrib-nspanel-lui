@@ -180,9 +180,9 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
     }
 
     private onMqttError(error: Error): void {
-        log.info(`mqtt broker error${error.message}`)
-        log.info('mqtt broker error stack:')
-        log.info(error.stack)
+        log.error(`mqtt broker error${error.message}`)
+        log.error('mqtt broker error stack:')
+        log.error(error.stack)
         this.emit('mqtt:error', error)
     }
 
