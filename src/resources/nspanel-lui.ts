@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-var
-declare var RED
+declare var RED // eslint-disable-line
+var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
 // #region types
 type ValidEventDescriptor = import('../types/nspanel-lui-editor').ValidEventDescriptor
@@ -14,8 +14,6 @@ type TypedInputParams = import('../types/nspanel-lui-editor').TypedInputParams
 type TypedInputTypeParams = import('../types/nspanel-lui-editor').TypedInputTypeParams
 type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingContainer
 // #endregion types
-
-var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
 // eslint-disable-next-line func-names, @typescript-eslint/no-shadow
 ;(function (RED, $) {
@@ -112,15 +110,353 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
     }
     // #endregion i18n and labels
 
-    // #region ui generation
-    // eslint-disable-next-line func-names
-    const create = (function () {
-        function createPageTypedInput(
-            field: JQuery,
-            defaultType: string,
-            nodeConfig: PanelBasedConfig,
-            panelAttr: string
+    // #region widget wrapper
+    class EditableEntitiesListWrapper {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore TS6133
+        private _node: IPageConfig
+
+        private _domControl: JQuery<HTMLElement>
+
+        private _domControlList: JQuery<HTMLElement>
+
+        private _maxEntities: number
+
+        private _validEntities: string[]
+
+        private _editableListAddButton
+
+        private _count: number = 0
+
+        constructor(
+            node: IPageConfig,
+            domControl: JQuery<HTMLElement>,
+            domControlList: JQuery<HTMLElement>,
+            maxEntities: number,
+            validEntities: string[] = ALL_PANEL_ENTITY_TYPES
         ) {
+            this._node = node
+            this._domControl = domControl
+            this._domControlList = domControlList
+            this._maxEntities = maxEntities
+            this._validEntities = validEntities
+        }
+
+        public makeControl() {
+            const self = this // eslint-disable-line
+            this._domControlList?.editableList({
+                addItem(container, _i, data: PanelEntityContainer) {
+                    self._count += 1
+                    self._updateListAddButton()
+
+                    data.element = container
+
+                    if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
+                        data.entry = { type: 'delete', entityId: '', iconColor: DEFAULT_COLOR }
+                    }
+                    const entry = data.entry
+                    if (!Object.prototype.hasOwnProperty.call(entry, 'type')) {
+                        entry.type = 'delete' // TODO: 'delete' might not be a valid entity type
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                    })
+
+                    // #region create DOM
+                    const template = $('#nspanel-lui-tpl-entitieslist').contents().clone()
+                    const tpl = $(container[0]).append($(template))
+
+                    const ROW1_2 = tpl.find('.nlui-row-1-2')
+                    const ROW1_3 = tpl.find('.nlui-row-1-3')
+                    const rowOptionalValue = tpl.find('.nlui-row-optional-value')
+                    const rowIcon = tpl.find('.nlui-row-icon')
+                    const rowShutter = tpl.find('.nlui-row-shutter')
+                    const rowShutterTiltIcons = tpl.find('.nlui-row-shutter-tilt-icons')
+                    const rowNumber = tpl.find('.nlui-row-number')
+                    const rowFanModes = tpl.find('.nlui-row-fan-modes')
+                    const rowLight = tpl.find('.nlui-row-light')
+                    rowIcon.hide()
+                    rowShutter.hide()
+                    rowShutterTiltIcons.hide()
+                    rowNumber.hide()
+                    rowFanModes.hide()
+                    rowLight.hide()
+
+                    // #region row1
+                    const selectTypeField = tpl.find('.node-input-entity-type')
+
+                    self._validEntities.forEach((item) => {
+                        const label = i18n(`label.${item}`, 'nspanel-panel', 'common')
+                        $('<option/>').val(item).text(label).appendTo(selectTypeField)
+                    })
+                    const entityIdField = tpl.find('.node-input-entity-id')
+                    const entityTextField = tpl.find('.node-input-entity-text')
+                    // #endregion row1
+
+                    // #region rowOptionalValue
+                    const optionalValueField = tpl.find('.node-input-entity-optionalvalue')
+                    // #endregion row2
+
+                    // #region rowIcon
+                    const entityIconField = tpl.find('.node-input-entity-icon')
+                    const entityIconColorField = tpl.find('.node-input-entity-iconcolor')
+                    // #endregion rowIcon
+
+                    // #region rowShutter
+                    const iconDownField = tpl.find('.node-input-entity-shutter-icondown')
+                    const iconStopField = tpl.find('.node-input-entity-shutter-iconstop')
+                    const iconUpField = tpl.find('.node-input-entity-shutter-iconup')
+                    // #endregion rowShutter
+
+                    // #region rowShutterTiltIcons
+                    const hasTiltField = tpl.find('.node-input-entity-shutter-hastilt')
+                    const iconTiltLeftField = tpl.find('.node-input-entity-shutter-icontiltleft')
+                    const iconTiltStopField = tpl.find('.node-input-entity-shutter-icontiltstop')
+                    const iconTiltRightField = tpl.find('.node-input-entity-shutter-icontiltright')
+                    // #endregion rowShutterTiltIcons
+
+                    // #region rowNumber
+                    const numberMinField = tpl.find('.node-input-entity-num-min')
+                    const numberMaxField = tpl.find('.node-input-entity-num-max')
+                    // #endregion rowNumber
+
+                    // #region rowFanModes
+                    const fanMode1Field = tpl.find('.node-input-entity-fan-mode1')
+                    const fanMode2Field = tpl.find('.node-input-entity-fan-mode2')
+                    const fanMode3Field = tpl.find('node-input-entity-fan-mode3')
+                    // #endregion rowFanModes
+
+                    // #region rowLight
+                    const lightDimmableField = tpl.find('.node-input-entity-light-dimmable')
+                    const lightColorTemperatureField = tpl.find('.node-input-entity-light-colorTemperature')
+                    const lightColorField = tpl.find('.node-input-entity-light-color')
+                    // #endregion rowLight
+                    // #endregion create DOM
+
+                    selectTypeField.on('change', () => {
+                        const val = `${selectTypeField.val()}`
+                        const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
+
+                        if (entityTypeAttrs !== undefined) {
+                            ROW1_2.toggle(entityTypeAttrs.hasId)
+                            ROW1_3.toggle(entityTypeAttrs.hasLabel)
+                            rowOptionalValue.toggle(entityTypeAttrs.hasOptionalValue ?? false)
+                            rowIcon.toggle(entityTypeAttrs.hasIcon ?? false)
+                            rowShutter.toggle(entityTypeAttrs.isShutter ?? false)
+                            rowShutterTiltIcons.toggle(entityTypeAttrs.isShutter ?? false)
+                            rowNumber.toggle((entityTypeAttrs.isNumber || entityTypeAttrs.isFan) ?? false)
+                            rowFanModes.toggle(entityTypeAttrs.isFan ?? false)
+                            rowLight.toggle(entityTypeAttrs.isLight ?? false)
+
+                            // fan min/max number handling
+                            if (entityTypeAttrs.isFan) {
+                                numberMinField.val(0)
+                            }
+                            numberMinField.prop('disabled', entityTypeAttrs.isFan)
+                        }
+                    })
+
+                    entityIdField.val(entry.entityId)
+                    entityIconField.val(entry.icon ?? '')
+                    entityIconColorField.val(entry.iconColor ?? '')
+                    entityTextField.val(entry.text ?? '')
+                    optionalValueField.val(entry.optionalValue ?? '')
+
+                    // shutter
+                    iconDownField.val(entry.iconDown ?? '')
+                    iconUpField.val(entry.iconUp ?? '')
+                    iconStopField.val(entry.iconStop ?? '')
+                    iconTiltLeftField.val(entry.iconTiltLeft ?? '')
+                    iconTiltStopField.val(entry.iconTiltStop ?? '')
+                    iconTiltRightField.val(entry.iconTiltRight ?? '')
+
+                    hasTiltField.on('change', () => {
+                        iconTiltLeftField.prop('disabled', entry.hasTilt ?? false)
+                        iconTiltStopField.prop('disabled', entry.hasTilt ?? false)
+                        iconTiltRightField.prop('disabled', entry.hasTilt ?? false)
+                    })
+                    hasTiltField.prop('checked', entry.hasTilt ?? false)
+
+                    // number
+                    numberMinField.val(entry.min ?? '')
+                    numberMaxField.val(entry.max ?? '')
+
+                    // fan
+                    fanMode1Field.val(entry.fanMode1 ?? '')
+                    fanMode2Field.val(entry.fanMode2 ?? '')
+                    fanMode3Field.val(entry.fanMode3 ?? '')
+
+                    // light
+                    lightDimmableField.prop('checked', entry.dimmable ?? false)
+                    lightColorTemperatureField.prop('checked', entry.hasColorTemperature ?? false)
+                    lightColorField.prop('checked', entry.hasColor ?? false)
+
+                    selectTypeField.val(entry.type)
+                    selectTypeField.trigger('change')
+                },
+
+                removeItem(_listItem) {
+                    self._count -= 1
+                    self._updateListAddButton()
+                },
+
+                sortItems(_events) {
+                    // TODO
+                },
+
+                sortable: true,
+                removable: true,
+            })
+            self._editableListAddButton = (
+                self._domControl.prop('tagName') === 'ol'
+                    ? self._domControl.closest('.red-ui-editableList')
+                    : self._domControl
+            ).find('.red-ui-editableList-addButton')
+        }
+
+        public addItems(items): void {
+            if (items != null && Array.isArray(items)) {
+                items.forEach((item) => {
+                    this._domControlList?.editableList('addItem', { entry: item })
+                })
+            }
+        }
+
+        getEntities(): PanelEntity[] {
+            const entities: PanelEntity[] = []
+            const entityItems = this._domControlList?.editableList('items')
+
+            entityItems.each((_i, ele) => {
+                let maxStr: string
+                let minStr: string
+                const listItem = $(ele)
+
+                const type = listItem.find('.node-input-entity-type').val().toString()
+                const id = listItem.find('.node-input-entity-id').val().toString()
+                const text = listItem.find('.node-input-entity-text').val().toString()
+                const optionalValue = listItem.find('.node-input-entity-optionalvalue').val().toString()
+                const icon = listItem.find('.node-input-entity-icon').val().toString()
+                const iconColor = listItem.find('.node-input-entity-iconcolor').val().toString()
+                const entity: PanelEntity = {
+                    type,
+                    entityId: id,
+                    text,
+                    icon,
+                    iconColor,
+                }
+
+                if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(optionalValue)) {
+                    entity.optionalValue = optionalValue
+                }
+
+                switch (type) {
+                    case 'shutter': {
+                        const iconDown = listItem.find('.node-input-entity-shutter-icondown').val().toString()
+                        const iconUp = listItem.find('.node-input-entity-shutter-iconup').val().toString()
+                        const iconStop = listItem.find('.node-input-entity-shutter-iconstop').val().toString()
+                        const hasTilt = listItem.find('.node-input-entity-shutter-hastilt').is(':checked')
+
+                        const iconTiltLeft = listItem.find('.node-input-entity-shutter-icontiltleft').val().toString()
+                        const iconTiltStop = listItem.find('.node-input-entity-shutter-icontiltstop').val().toString()
+                        const iconTiltRight = listItem.find('.node-input-entity-shutter-icontiltright').val().toString()
+
+                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconDown)) {
+                            entity.iconDown = iconDown
+                        }
+                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconUp)) {
+                            entity.iconUp = iconUp
+                        }
+                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconStop)) {
+                            entity.iconStop = iconStop
+                        }
+
+                        entity.hasTilt = hasTilt
+                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltLeft)) {
+                            entity.iconTiltLeft = iconTiltLeft
+                        }
+
+                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltStop)) {
+                            entity.iconTiltStop = iconTiltStop
+                        }
+
+                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltRight)) {
+                            entity.iconTiltRight = iconTiltRight
+                        }
+
+                        break
+                    }
+
+                    case 'number': {
+                        minStr = listItem.find('.node-input-entity-num-min').val().toString()
+                        maxStr = listItem.find('.node-input-entity-num-max').val().toString()
+                        const numberMin = Number(minStr)
+                        const numberMax = Number(maxStr)
+
+                        if (!Number.isNaN(numberMin)) {
+                            entity.min = numberMin
+                        }
+                        if (!Number.isNaN(numberMax)) {
+                            entity.max = numberMax
+                        }
+                        break
+                    }
+
+                    case 'fan': {
+                        const fanMode1 = listItem.find('.node-input-entity-fan-mode1').val().toString()
+                        const fanMode2 = listItem.find('.node-input-entity-fan-mode2').val().toString()
+                        const fanMode3 = listItem.find('.node-input-entity-fan-mode3').val().toString()
+                        maxStr = listItem.find('.node-input-entity-num-max').val().toString()
+                        const max = Number(maxStr)
+
+                        if (!Number.isNaN(max)) {
+                            entity.max = max
+                        }
+
+                        entity.fanMode1 = fanMode1
+                        entity.fanMode2 = fanMode2
+                        entity.fanMode3 = fanMode3
+                        entity.min = 0
+                        break
+                    }
+                    case 'light': {
+                        const dimmable: boolean = listItem.find('.node-input-entity-light-dimmable').is(':checked')
+                        const hasColorTemperature = listItem
+                            .find('.node-input-entity-light-colorTemperature')
+                            .is(':checked')
+                        const hasColor = listItem.find('.node-input-entity-light-color').is(':checked')
+
+                        entity.dimmable = dimmable
+                        entity.hasColorTemperature = hasColorTemperature
+                        entity.hasColor = hasColor
+                        break
+                    }
+                }
+
+                entities.push(entity)
+            })
+            return entities
+        }
+
+        public empty(): void {
+            this._domControlList?.editableList('empty')
+        }
+
+        private _updateListAddButton = () => {
+            this._editableListAddButton.prop('disabled', this._count >= this._maxEntities)
+        }
+    }
+
+    const NSPanelWidgetFactory = {
+        createPayloadTypedInput(field, defaultType = undefined) {
+            return field.typedInput({
+                default: defaultType || 'str',
+                // ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 'env'],
+                types: ['str', 'json'],
+            })
+        },
+
+        createPageTypedInput(field: JQuery, defaultType: string, nodeConfig: PanelBasedConfig, panelAttr: string) {
             const currentPanel = field.val() || nodeConfig[panelAttr]
             const typedInputParams: TypedInputParams = {
                 default: defaultType || 'msg',
@@ -160,23 +496,32 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
             }
 
             field.typedInput(typedInputParams)
-        }
+        },
 
-        function createPayloadTypedInput(field, defaultType = undefined) {
-            return field.typedInput({
-                default: defaultType || 'str',
-                // ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 'env'],
-                types: ['str', 'json'],
-            })
-        }
+        editableEntitiesList(
+            node: IPageConfig,
+            controlDomSelector: string,
+            maxEntities: number,
+            initialData: PanelEntity[],
+            validEntities: string[] = ALL_PANEL_ENTITY_TYPES
+        ): EditableEntitiesListWrapper {
+            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
+            const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
+            if (domControlList.length === 0) return null
+
+            const el = new EditableEntitiesListWrapper(node, domControl, domControlList, maxEntities, validEntities)
+            el.makeControl()
+            el.addItems(initialData)
+            return el
+        },
 
         // #region editable event list
-        const createEditableEventList = (
+        editableEventList(
             node: IPageConfig,
             controlDomSelector: string,
             allValidEvents: ValidEventDescriptor[],
             initialData: EventMapping[]
-        ) => {
+        ) {
             const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
                 node.nsPanel,
                 allValidEvents
@@ -274,8 +619,8 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                         const valueField = tpl.find('.node-input-event-value')
                         const valueDataField = tpl.find('.node-input-event-data')
 
-                        createPageTypedInput(valueField, entry.t, node, 'nsPanel')
-                        createPayloadTypedInput(valueDataField)
+                        NSPanelWidgetFactory.createPageTypedInput(valueField, entry.t, node, 'nsPanel')
+                        NSPanelWidgetFactory.createPayloadTypedInput(valueDataField)
                         // #endregion create DOM
 
                         // placeholder for following call to update event select fields
@@ -368,360 +713,19 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                 setAvailableEvents: (allValidEventSpecs: ValidEventDescriptor[]) =>
                     setAvailableEvents(allValidEventSpecs),
             }
-        }
+        },
         // #endregion editable event list
+    }
 
-        // #region editable entity list
-        const createEditableEntitiesList = (
-            _node: IPageConfig,
-            controlDomSelector: string,
-            maxEntities: number,
-            initialData: PanelEntity[],
-            validEntities: string[] = ALL_PANEL_ENTITY_TYPES
-        ) => {
-            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
-            const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
-
-            if (domControlList.length === 0) return null
-
-            function makeControl() {
-                let editableListAddButton
-                let count: number = 0
-
-                const updateListAddButton = () => {
-                    editableListAddButton.prop('disabled', count >= maxEntities)
-                }
-
-                domControlList.editableList({
-                    addItem(container, _i, data: PanelEntityContainer) {
-                        count += 1
-                        updateListAddButton()
-
-                        data.element = container
-
-                        if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
-                            data.entry = { type: 'delete', entityId: '', iconColor: DEFAULT_COLOR }
-                        }
-                        const entry = data.entry
-                        if (!Object.prototype.hasOwnProperty.call(entry, 'type')) {
-                            entry.type = 'delete' // TODO: 'delete' might not be a valid entity type
-                        }
-                        container.css({
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                        })
-
-                        // #region create DOM
-                        const template = $('#nspanel-lui-tpl-entitieslist').contents().clone()
-                        const tpl = $(container[0]).append($(template))
-
-                        const ROW1_2 = tpl.find('.nlui-row-1-2')
-                        const ROW1_3 = tpl.find('.nlui-row-1-3')
-                        const rowOptionalValue = tpl.find('.nlui-row-optional-value')
-                        const rowIcon = tpl.find('.nlui-row-icon')
-                        const rowShutter = tpl.find('.nlui-row-shutter')
-                        const rowShutterTiltIcons = tpl.find('.nlui-row-shutter-tilt-icons')
-                        const rowNumber = tpl.find('.nlui-row-number')
-                        const rowFanModes = tpl.find('.nlui-row-fan-modes')
-                        const rowLight = tpl.find('.nlui-row-light')
-                        rowIcon.hide()
-                        rowShutter.hide()
-                        rowShutterTiltIcons.hide()
-                        rowNumber.hide()
-                        rowFanModes.hide()
-                        rowLight.hide()
-
-                        // #region row1
-                        const selectTypeField = tpl.find('.node-input-entity-type')
-
-                        validEntities.forEach((item) => {
-                            const label = i18n(`label.${item}`, 'nspanel-panel', 'common')
-                            $('<option/>').val(item).text(label).appendTo(selectTypeField)
-                        })
-                        const entityIdField = tpl.find('.node-input-entity-id')
-                        const entityTextField = tpl.find('.node-input-entity-text')
-                        // #endregion row1
-
-                        // #region rowOptionalValue
-                        const optionalValueField = tpl.find('.node-input-entity-optionalvalue')
-                        // #endregion row2
-
-                        // #region rowIcon
-                        const entityIconField = tpl.find('.node-input-entity-icon')
-                        const entityIconColorField = tpl.find('.node-input-entity-iconcolor')
-                        // #endregion rowIcon
-
-                        // #region rowShutter
-                        const iconDownField = tpl.find('.node-input-entity-shutter-icondown')
-                        const iconStopField = tpl.find('.node-input-entity-shutter-iconstop')
-                        const iconUpField = tpl.find('.node-input-entity-shutter-iconup')
-                        // #endregion rowShutter
-
-                        // #region rowShutterTiltIcons
-                        const hasTiltField = tpl.find('.node-input-entity-shutter-hastilt')
-                        const iconTiltLeftField = tpl.find('.node-input-entity-shutter-icontiltleft')
-                        const iconTiltStopField = tpl.find('.node-input-entity-shutter-icontiltstop')
-                        const iconTiltRightField = tpl.find('.node-input-entity-shutter-icontiltright')
-                        // #endregion rowShutterTiltIcons
-
-                        // #region rowNumber
-                        const numberMinField = tpl.find('.node-input-entity-num-min')
-                        const numberMaxField = tpl.find('.node-input-entity-num-max')
-                        // #endregion rowNumber
-
-                        // #region rowFanModes
-                        const fanMode1Field = tpl.find('.node-input-entity-fan-mode1')
-                        const fanMode2Field = tpl.find('.node-input-entity-fan-mode2')
-                        const fanMode3Field = tpl.find('node-input-entity-fan-mode3')
-                        // #endregion rowFanModes
-
-                        // #region rowLight
-                        const lightDimmableField = tpl.find('.node-input-entity-light-dimmable')
-                        const lightColorTemperatureField = tpl.find('.node-input-entity-light-colorTemperature')
-                        const lightColorField = tpl.find('.node-input-entity-light-color')
-                        // #endregion rowLight
-                        // #endregion create DOM
-
-                        selectTypeField.on('change', () => {
-                            const val = `${selectTypeField.val()}`
-                            const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
-
-                            if (entityTypeAttrs !== undefined) {
-                                ROW1_2.toggle(entityTypeAttrs.hasId)
-                                ROW1_3.toggle(entityTypeAttrs.hasLabel)
-                                rowOptionalValue.toggle(entityTypeAttrs.hasOptionalValue ?? false)
-                                rowIcon.toggle(entityTypeAttrs.hasIcon ?? false)
-                                rowShutter.toggle(entityTypeAttrs.isShutter ?? false)
-                                rowShutterTiltIcons.toggle(entityTypeAttrs.isShutter ?? false)
-                                rowNumber.toggle((entityTypeAttrs.isNumber || entityTypeAttrs.isFan) ?? false)
-                                rowFanModes.toggle(entityTypeAttrs.isFan ?? false)
-                                rowLight.toggle(entityTypeAttrs.isLight ?? false)
-
-                                // fan min/max number handling
-                                if (entityTypeAttrs.isFan) {
-                                    numberMinField.val(0)
-                                }
-                                numberMinField.prop('disabled', entityTypeAttrs.isFan)
-                            }
-                        })
-
-                        entityIdField.val(entry.entityId)
-                        entityIconField.val(entry.icon ?? '')
-                        entityIconColorField.val(entry.iconColor ?? '')
-                        entityTextField.val(entry.text)
-                        optionalValueField.val(entry.optionalValue ?? '')
-
-                        // shutter
-                        iconDownField.val(entry.iconDown ?? '')
-                        iconUpField.val(entry.iconUp ?? '')
-                        iconStopField.val(entry.iconStop ?? '')
-                        iconTiltLeftField.val(entry.iconTiltLeft ?? '')
-                        iconTiltStopField.val(entry.iconTiltStop ?? '')
-                        iconTiltRightField.val(entry.iconTiltRight ?? '')
-
-                        hasTiltField.on('change', () => {
-                            iconTiltLeftField.prop('disabled', entry.hasTilt ?? false)
-                            iconTiltStopField.prop('disabled', entry.hasTilt ?? false)
-                            iconTiltRightField.prop('disabled', entry.hasTilt ?? false)
-                        })
-                        hasTiltField.prop('checked', entry.hasTilt ?? false)
-
-                        // number
-                        numberMinField.val(entry.min ?? '')
-                        numberMaxField.val(entry.max ?? '')
-
-                        // fan
-                        fanMode1Field.val(entry.fanMode1 ?? '')
-                        fanMode2Field.val(entry.fanMode2 ?? '')
-                        fanMode3Field.val(entry.fanMode3 ?? '')
-
-                        // light
-                        lightDimmableField.prop('checked', entry.dimmable ?? false)
-                        lightColorTemperatureField.prop('checked', entry.hasColorTemperature ?? false)
-                        lightColorField.prop('checked', entry.hasColor ?? false)
-
-                        selectTypeField.val(entry.type)
-                        selectTypeField.trigger('change')
-                    },
-
-                    removeItem(_listItem) {
-                        count -= 1
-                        updateListAddButton()
-                    },
-
-                    sortItems(_events) {},
-
-                    sortable: true,
-                    removable: true,
-                })
-                editableListAddButton = (
-                    domControl.prop('tagName') === 'ol' ? domControl.closest('.red-ui-editableList') : domControl
-                ).find('.red-ui-editableList-addButton')
-            }
-
-            function addItems(items) {
-                if (items !== undefined && Array.isArray(items)) {
-                    items.forEach((item) => {
-                        domControlList.editableList('addItem', { entry: item })
-                    })
-                }
-            }
-
-            function empty() {
-                domControlList.editableList('empty')
-            }
-
-            function getEntities() {
-                const entities: PanelEntity[] = []
-                const entityItems = domControlList.editableList('items')
-
-                entityItems.each((_i, ele) => {
-                    let maxStr: string
-                    let minStr: string
-                    const listItem = $(ele)
-
-                    const type = listItem.find('.node-input-entity-type').val().toString()
-                    const id = listItem.find('.node-input-entity-id').val().toString()
-                    const text = listItem.find('.node-input-entity-text').val().toString()
-                    const optionalValue = listItem.find('.node-input-entity-optionalvalue').val().toString()
-                    const icon = listItem.find('.node-input-entity-icon').val().toString()
-                    const iconColor = listItem.find('.node-input-entity-iconcolor').val().toString()
-                    const entity: PanelEntity = {
-                        type,
-                        entityId: id,
-                        text,
-                        icon,
-                        iconColor,
-                    }
-
-                    if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(optionalValue)) {
-                        entity.optionalValue = optionalValue
-                    }
-
-                    switch (type) {
-                        case 'shutter': {
-                            const iconDown = listItem.find('.node-input-entity-shutter-icondown').val().toString()
-                            const iconUp = listItem.find('.node-input-entity-shutter-iconup').val().toString()
-                            const iconStop = listItem.find('.node-input-entity-shutter-iconstop').val().toString()
-                            const hasTilt = listItem.find('.node-input-entity-shutter-hastilt').is(':checked')
-
-                            const iconTiltLeft = listItem
-                                .find('.node-input-entity-shutter-icontiltleft')
-                                .val()
-                                .toString()
-                            const iconTiltStop = listItem
-                                .find('.node-input-entity-shutter-icontiltstop')
-                                .val()
-                                .toString()
-                            const iconTiltRight = listItem
-                                .find('.node-input-entity-shutter-icontiltright')
-                                .val()
-                                .toString()
-
-                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconDown)) {
-                                entity.iconDown = iconDown
-                            }
-                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconUp)) {
-                                entity.iconUp = iconUp
-                            }
-                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconStop)) {
-                                entity.iconStop = iconStop
-                            }
-
-                            entity.hasTilt = hasTilt
-                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltLeft)) {
-                                entity.iconTiltLeft = iconTiltLeft
-                            }
-
-                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltStop)) {
-                                entity.iconTiltStop = iconTiltStop
-                            }
-
-                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltRight)) {
-                                entity.iconTiltRight = iconTiltRight
-                            }
-
-                            break
-                        }
-
-                        case 'number': {
-                            minStr = listItem.find('.node-input-entity-num-min').val().toString()
-                            maxStr = listItem.find('.node-input-entity-num-max').val().toString()
-                            const numberMin = Number(minStr)
-                            const numberMax = Number(maxStr)
-
-                            if (!Number.isNaN(numberMin)) {
-                                entity.min = numberMin
-                            }
-                            if (!Number.isNaN(numberMax)) {
-                                entity.max = numberMax
-                            }
-                            break
-                        }
-
-                        case 'fan': {
-                            const fanMode1 = listItem.find('.node-input-entity-fan-mode1').val().toString()
-                            const fanMode2 = listItem.find('.node-input-entity-fan-mode2').val().toString()
-                            const fanMode3 = listItem.find('.node-input-entity-fan-mode3').val().toString()
-                            maxStr = listItem.find('.node-input-entity-num-max').val().toString()
-                            const max = Number(maxStr)
-
-                            if (!Number.isNaN(max)) {
-                                entity.max = max
-                            }
-
-                            entity.fanMode1 = fanMode1
-                            entity.fanMode2 = fanMode2
-                            entity.fanMode3 = fanMode3
-                            entity.min = 0
-                            break
-                        }
-                        case 'light': {
-                            const dimmable: boolean = listItem.find('.node-input-entity-light-dimmable').is(':checked')
-                            const hasColorTemperature = listItem
-                                .find('.node-input-entity-light-colorTemperature')
-                                .is(':checked')
-                            const hasColor = listItem.find('.node-input-entity-light-color').is(':checked')
-
-                            entity.dimmable = dimmable
-                            entity.hasColorTemperature = hasColorTemperature
-                            entity.hasColor = hasColor
-                            break
-                        }
-                    }
-
-                    entities.push(entity)
-                })
-                return entities
-            }
-
-            makeControl()
-            addItems(initialData)
-
-            return {
-                addItems: (items) => addItems(items),
-                empty: () => empty(),
-                getEntities: () => getEntities(),
-            }
-        }
-        // #endregion editable entity list
-
-        return {
-            editableEntitiesList: createEditableEntitiesList,
-            editableEventList: createEditableEventList,
-            pageTypedInput: createPageTypedInput,
-            payloadTypedInput: createPayloadTypedInput,
-        }
-    })()
-    // #endregion ui generation
+    // #endregion widget wrapper
 
     // load templates
 
     $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-entitieslist.html').done((tpl) => {
-        $('body').append($(tpl))
+        $('body').append($(tpl)) // TODO: i18n in template
     })
     $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-eventslist.html').done((tpl) => {
-        $('body').append($(tpl))
+        $('body').append($(tpl)) // TODO: i18n in template
     })
 
     // #region API generation
@@ -734,7 +738,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
             limitNumberToRange: NSPanelLuiEditorValidate.limitNumberToRange,
             stringIsNotNullOrEmpty: NSPanelLuiEditorValidate.stringIsNotNullOrEmpty,
         },
-        create,
+        create: NSPanelWidgetFactory,
         util: {
             normalizeLabel,
             getNodeLabel,
@@ -746,4 +750,4 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
         addHardwareButtonEventsIfApplicable,
     }
     // #endregion API generation
-})(RED, $)
+})(RED, jQuery)
