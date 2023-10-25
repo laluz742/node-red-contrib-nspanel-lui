@@ -576,7 +576,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private sendToPanel(data: Array<string> | string | null) {
+    private sendToPanel(data: string[] | string | null) {
         if (data == null || this._panelMqttHandler === null) return
 
         if (typeof data === 'object') {

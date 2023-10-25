@@ -66,12 +66,12 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         try {
             if (Array.isArray(data)) {
                 data.forEach((item) => {
-                    if (item != null && item.payload != null) {
-                        self.mqttClient?.publish(self.panelMqttCustomCommandTopic, item.payload)
+                    if (item != null) {
+                        self.mqttClient?.publish(self.panelMqttCustomCommandTopic, item)
                     }
                 })
-            } else if (data != null && data.payload != null) {
-                self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data.payload)
+            } else if (data != null) {
+                self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data)
             }
         } catch (err: unknown) {
             if (err instanceof Error) {

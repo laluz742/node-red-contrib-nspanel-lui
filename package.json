@@ -42,7 +42,7 @@
         "prebuild": "npm run clean",
         "build:ts": "rimraf build && tsc",
         "build:js": "npx copyfiles --up 2 src/nodes/**/*.json src/nodes/**/*.html src/nodes/**/*.js build/nodes/ && npx copyfiles --up 2 src/lib/**/*.js build/lib/",
-        "build:res": "npx copyfiles --up 2 src/resources/nspanel*.js build/resources/",
+        "build:res": "npx copyfiles --up 2 src/resources/nspanel*.js src/resources/nspanel*.html build/resources/",
         "build": "npm run build:ts && npm run build:js && npm run build:res",
         "test": "jest",
         "prepack": "npm run clean && npm run build && npx copyfiles --exclude **/types.js --up 1 build/lib/**/* build/nodes/**/* build/resources/**/* .",
