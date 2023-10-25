@@ -1,7 +1,5 @@
-declare var RED // eslint-disable-line
-declare var NSPanelLui // eslint-disable-line
-    // eslint-disable-next-line func-names
-;(function ($) {
+// eslint-disable-next-line func-names
+;(function (RED, $) {
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
     const MAX_ENTITIES = 4
     const ALLOWED_ENTITIES = [
@@ -129,4 +127,4 @@ declare var NSPanelLui // eslint-disable-line
         })
 
     $.getScript('resources/node-red-contrib-nspanel-lui/nspanel-lui.js').done(registerType)
-})(jQuery)
+})(RED, $)

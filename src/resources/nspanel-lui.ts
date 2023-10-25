@@ -1,48 +1,18 @@
-// #region types
-type ValidEventDescriptor = import('../types/types').ValidEventDescriptor
-type EventMapping = import('../types/types').EventMapping
-type PanelEntity = import('../types/types').PanelEntity
-type IPageConfig = import('../types/types').IPageConfig
-type PanelBasedConfig = import('../types/types').PanelBasedConfig
-
-type EventTypeAttrs = {
-    hasId: boolean
-    hasLabel: boolean
-    hasIcon: boolean
-    hasOptionalValue: boolean
-    isShutter?: boolean
-    isNumber?: boolean
-    isFan?: boolean
-    isLight?: boolean
-}
-
-type PanelEntityContainer = {
-    entry: PanelEntity
-    element?: any
-}
-
-type TypedInputParams = {
-    default?: string
-    types: TypedInputTypeParams[]
-}
-
-type TypedInputTypeParams = {
-    value: string
-    icon?: string
-    label: string
-    type: string
-    types?: string | string[]
-    options?: any
-}
-
-type EventMappingContainer = {
-    entry: EventMapping
-    element?: any
-}
-
-// eslint-disable-next-line vars-on-top, no-var
+// eslint-disable-next-line no-var
 declare var RED
 
+// #region types
+type ValidEventDescriptor = import('../types/nspanel-lui-editor').ValidEventDescriptor
+type EventMapping = import('../types/nspanel-lui-editor').EventMapping
+type PanelEntity = import('../types/nspanel-lui-editor').PanelEntity
+type IPageConfig = import('../types/nspanel-lui-editor').IPageConfig
+type PanelBasedConfig = import('../types/nspanel-lui-editor').PanelBasedConfig
+
+type EventTypeAttrs = import('../types/nspanel-lui-editor').EventTypeAttrs
+type PanelEntityContainer = import('../types/nspanel-lui-editor').PanelEntityContainer
+type TypedInputParams = import('../types/nspanel-lui-editor').TypedInputParams
+type TypedInputTypeParams = import('../types/nspanel-lui-editor').TypedInputTypeParams
+type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingContainer
 // #endregion types
 
 var NSPanelLui = NSPanelLui || {} // eslint-disable-line
