@@ -1,0 +1,204 @@
+<template id="nspanel-lui-tpl-entitieslist">
+    <!-- row 1-->
+    <div class="nlui-row-1" style="display: flex">
+        <!-- row1_1 -->
+        <div>
+            <select class="node-input-entity-type" style="min-width: 120px; width: 120px; margin-right: 10px"></select>
+        </div>
+
+        <!-- row1_2 -->
+        <div class="nlui-row-1-2" style="flex-grow: 1">
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Id:</span>
+            </label>
+            <input type="text" class="node-input-entity-id" style="width: 10em" />
+        </div>
+
+        <!-- row1_3 -->
+        <div class="nlui-row-1-3" style="flex-grow: 1">
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Label:</span>
+            </label>
+            <input type="text" class="node-input-entity-text" style="width: 10em" />
+        </div>
+    </div>
+
+    <!-- rowOptionalValue -->
+    <div class="nlui-row-optional-value" style="display: flex; margin-top: 8px">
+        <!-- rowOptionalValue1 -->
+        <div>
+            <div style="width: 42px; padding-right: 10px; box-sizing: border-box"></div>
+        </div>
+        <!-- rowOptionalValue2 -->
+        <div style="flex-grow: 1">
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Text:</span>
+            </label>
+            <input type="text" class="node-input-entity-optionalvalue" style="width: 10em" />
+        </div>
+    </div>
+
+    <!-- rowIcon -->
+    <div class="nlui-row-icon" style="display: flex; margin-top: 8px">
+        <!-- rowIcon1 -->
+        <div>
+            <div style="width: 42px; padding-right: 10px; box-sizing: border-box"></div>
+        </div>
+        <!-- rowIcon2 -->
+        <div style="flex-grow: 1">
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Icon:</span>
+            </label>
+            <input type="text" class="node-input-entity-icon" style="width: 10em" />
+
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Farbe:</span>
+            </label>
+            <input type="color" class="node-input-entity-iconcolor" style="width: 42px" />
+        </div>
+    </div>
+
+    <!-- rowShutter -->
+    <div class="nlui-row-shutter" style="display: flex; margin-top: 8px">
+        <!-- rowShutter1 -->
+        <div>
+            <div style="width: 42px; padding-right: 10px; box-sizing: border-box"></div>
+        </div>
+        <!-- rowShutter2 -->
+        <div style="flex-grow: 1">
+            <!-- iconDownField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Ab:</span>
+            </label>
+            <input type="text" class="node-input-entity-shutter-icondown" style="width: 6em" />
+
+            <!-- iconStopField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Stop:</span>
+            </label>
+            <input type="text" class="node-input-entity-shutter-iconstop" style="width: 6em" />
+
+            <!-- iconUpField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Auf:</span>
+            </label>
+            <input type="text" class="node-input-entity-shutter-iconup" style="width: 6em" />
+        </div>
+    </div>
+
+    <!-- rowShutterTiltIcons -->
+    <div class="nlui-row-shutter-tilt-icons" style="display: flex; margin-top: 8px">
+        <!-- rowShutterTiltIcons1 -->
+        <div>
+            <div style="width: 42px; padding-right: 10px; box-sizing: border-box"></div>
+        </div>
+
+        <!-- rowShutterTiltIcons2 -->
+        <div style="flex-grow: 1">
+            <!-- hasTiltField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Tilt</span>
+            </label>
+            <input type="checkbox" class="node-input-entity-shutter-hastilt" style="width: 1em" />
+
+            <!-- iconTiltLeftField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Links</span>
+            </label>
+            <input type="text" class="node-input-entity-shutter-icontiltleft" style="width: 6em" />
+
+            <!-- iconTiltStopField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Stopp</span>
+            </label>
+            <input type="text" class="node-input-entity-shutter-icontiltstop" style="width: 6em" />
+
+            <!-- iconTiltRightField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Rechts</span>
+            </label>
+            <input type="text" class="node-input-entity-shutter-icontiltright" style="width: 6em" />
+        </div>
+    </div>
+
+    <!-- rowNumber -->
+    <div class="nlui-row-number" style="display: flex; margin-top: 8px">
+        <!-- rowNumber1 -->
+        <div>
+            <div style="width: 42px; padding-right: 10px; box-sizing: border-box"></div>
+        </div>
+
+        <!-- rowNumber2 -->
+        <div style="flex-grow: 1">
+            <!-- numberMinField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Min:</span>
+            </label>
+            <input type="number" class="node-input-entity-num-min" style="width: 10em" />
+
+            <!-- numberMaxField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Max:</span>
+            </label>
+            <input type="number" class="node-input-entity-num-max" style="width: 10em" />
+        </div>
+    </div>
+
+    <!-- rowFanModes -->
+    <div class="nlui-row-fan-modes" style="display: flex; margin-top: 8px">
+        <!-- rowFan1 -->
+        <div>
+            <div style="width: 42px; padding-right: 10px; box-sizing: border-box"></div>
+        </div>
+
+        <!-- rowFan2 -->
+        <div style="flex-grow: 1">
+            <!-- fanMode1Field -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Modus 1:</span>
+            </label>
+            <input type="text" class="node-input-entity-fan-mode1" style="width: 6em" />
+
+            <!-- fanMode2Field -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Modus 2:</span>
+            </label>
+            <input type="text" class="node-input-entity-fan-mode2" style="width: 6em" />
+
+            <!-- fanMode3Field -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Modus 3:</span>
+            </label>
+            <input type="text" class="node-input-entity-fan-mode3" style="width: 6em" />
+        </div>
+    </div>
+
+    <!-- rowLight -->
+    <div class="nlui-row-light" style="display: flex; margin-top: 8px">
+        <!-- rowLight1 -->
+        <div>
+            <div style="width: 42px; padding-right: 10px; box-sizing: border-box"></div>
+        </div>
+
+        <!-- rowLight2 -->
+        <div style="flex-grow: 1">
+            <!-- lightDimmableField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>dimmbar:</span>
+            </label>
+            <input type="checkbox" class="node-input-entity-light-dimmable" style="width: 6em" />
+
+            <!-- lightColorTemperatureField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Temperatur:</span>
+            </label>
+            <input type="checkbox" class="node-input-entity-light-colorTemperature" style="width: 6em" />
+
+            <!-- lightColorField -->
+            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
+                <span>Farbe:</span>
+            </label>
+            <input type="checkbox" class="node-input-entity-light-color" style="width: 6em" />
+        </div>
+    </div>
+</template>

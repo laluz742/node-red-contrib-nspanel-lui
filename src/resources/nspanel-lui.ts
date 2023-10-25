@@ -35,6 +35,11 @@ type TypedInputTypeParams = {
     options?: any
 }
 
+type EventMappingContainer = {
+    entry: EventMapping
+    element?: any
+}
+
 // eslint-disable-next-line vars-on-top, no-var
 declare var RED
 
@@ -44,13 +49,9 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
 // eslint-disable-next-line func-names, @typescript-eslint/no-shadow
 ;(function (RED, $) {
+    if (NSPanelLui.Editor != null) return
+
     // #region events
-
-    interface EventMappingContainer {
-        entry: EventMapping
-        element?: any
-    }
-
     const ALL_VALID_NAVIGATION_EVENTS = [
         { event: 'nav.prev', label: 'nav.prev' },
         { event: 'nav.next', label: 'nav.next' },
@@ -100,15 +101,13 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
     const DEFAULT_COLOR = '#ffffff'
 
-    // #region validation helpers
-    // eslint-disable-next-line func-names
-    const validate = (function () {
-        const numberInRange = (v: any, min: number, max: number): boolean => {
+    class NSPanelLuiEditorValidate {
+        public static numberInRange(v: any, min: number, max: number): boolean {
             const n = Number(v)
             return Number.isNaN(n) === false && n >= min && n <= max
         }
 
-        const limitNumberToRange = (v: any, min: number, max: number, defaultValue: number): number => {
+        public static limitNumberToRange(v: any, min: number, max: number, defaultValue: number): number {
             const n = Number(v)
             if (Number.isNaN(n)) return defaultValue === undefined ? min : defaultValue
 
@@ -117,27 +116,22 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
             return v
         }
-        const stringIsNotNullOrEmpty = (str: any): boolean => {
-            return str !== undefined && str !== null && typeof str === 'string' ? str.trim().length > 0 : false
+
+        public static stringIsNotNullOrEmpty(str: any): boolean {
+            return str != null && typeof str === 'string' ? str.trim().length > 0 : false
         }
-        return {
-            isNumberInRange: numberInRange,
-            limitNumberToRange,
-            stringIsNotNullOrEmpty,
-        }
-    })()
-    // #endregion validation helpers
+    }
 
     // #region i18n and labels
     const i18n = (key: string, dict: string, group?: string) => {
         return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
     }
     const normalizeLabel = (node: any) => {
-        return validate.stringIsNotNullOrEmpty(node.name) ? node.name : `[${node.type}:${node.id}]`
+        return NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(node.name) ? node.name : `[${node.type}:${node.id}]`
     }
     const getNodeLabel = (node: any) => {
         const panelNode = RED.nodes.node(node.nsPanel)
-        const nodeName = validate.stringIsNotNullOrEmpty(node.name)
+        const nodeName = NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(node.name)
             ? node.name
             : NSPanelLui._('defaults.name', node.type)
 
@@ -206,16 +200,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
             })
         }
 
-        function createLabel(parent: JQuery, text: string, width: string = '50px') {
-            const label = $('<label/>', {
-                style: `margin-left: 14px; vertical-align: middle; width: ${width}`, // margin-top: 7px
-            }).appendTo(parent)
-            $('<span/>').text(text).appendTo(label)
-            return label
-        }
-
         // #region editable event list
-
         const createEditableEventList = (
             node: IPageConfig,
             controlDomSelector: string,
@@ -308,47 +293,20 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                             whiteSpace: 'nowrap',
                         })
 
-                        // #region create fragment
-                        const fragment = document.createDocumentFragment()
-                        const ROW1 = $('<div/>', { style: 'display: flex' }).appendTo(fragment)
-                        const ROW2 = $('<div/>', { style: 'display:flex; margin-top:8px;' }).appendTo(fragment).hide()
+                        // #region create DOM
+                        const template = $('#nspanel-lui-tpl-eventslist').contents().clone()
+                        const tpl = $(container[0]).append($(template))
 
-                        const ROW1_1 = $('<div/>', { style: 'display: flex;' }).appendTo(ROW1)
-                        const selectEventField = $('<select/>', {
-                            class: 'node-input-event',
-                            style: 'width: 120px; margin-right: 10px',
-                        }).appendTo(ROW1_1)
+                        const ROW2 = tpl.find('.nlui-row-2').hide()
 
-                        const ROW1_2 = $('<div/>', { style: 'display: flex; padding-right: 10px;' }).appendTo(ROW1)
-                        createLabel(ROW1_2, 'Icon:') // TODO: i18n
-                        const iconField = $('<input/>', {
-                            class: 'node-input-event-icon',
-                            style: 'width: 10em',
-                            type: 'text',
-                        }).appendTo(ROW1_2)
-
-                        const ROW1_3 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(ROW1)
-                        const valueField = $('<input/>', {
-                            class: 'node-input-event-value',
-                            style: 'width: 100%',
-                            type: 'text',
-                        }).appendTo(ROW1_3)
-
-                        const ROW2_1 = $('<div/>', { style: 'display: flex;' }).appendTo(ROW2)
-                        $('<div/>', { style: 'width: 130px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            ROW2_1
-                        )
-
-                        const ROW2_2 = $('<div/>', { style: 'flex-grow: 1; margin-top: 8px' }).appendTo(ROW2)
-
-                        const valueDataField = $('<input/>', {
-                            class: 'node-input-event-data',
-                            style: 'width: 100%',
-                        }).appendTo(ROW2_2)
+                        const selectEventField = tpl.find('.node-input-event')
+                        const iconField = tpl.find('.node-input-event-icon')
+                        const valueField = tpl.find('.node-input-event-value')
+                        const valueDataField = tpl.find('.node-input-event-data')
 
                         createPageTypedInput(valueField, entry.t, node, 'nsPanel')
                         createPayloadTypedInput(valueDataField)
-                        // #endregion create fragment
+                        // #endregion create DOM
 
                         // placeholder for following call to update event select fields
                         selectEventField.append($('<option />').val(entry.event ?? pageEvents.available[0]))
@@ -374,8 +332,6 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
                         selectEventField.trigger('change')
                         valueDataField.trigger('change')
-
-                        container[0].append(fragment)
 
                         updateSelectEventFields()
                     },
@@ -485,255 +441,81 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                             whiteSpace: 'nowrap',
                         })
 
-                        // #region create fragment
-                        // TODO use template instead of code
-                        const fragment = document.createDocumentFragment()
-                        const ROW1 = $('<div/>', { style: 'display: flex' }).appendTo(fragment)
-                        const rowOptionalValue = $('<div/>', { style: 'display: flex; margin-top:8px;' }).appendTo(
-                            fragment
-                        )
-                        const rowIcon = $('<div/>', { style: 'display: flex; margin-top:8px;' })
-                            .appendTo(fragment)
-                            .hide()
-                        const rowShutter = $('<div/>', { style: 'display: flex; margin-top:8px;' })
-                            .appendTo(fragment)
-                            .hide()
-                        const rowShutterTiltIcons = $('<div/>', { style: 'display: flex; margin-top:8px;' })
-                            .appendTo(fragment)
-                            .hide()
-                        const rowNumber = $('<div/>', { style: 'display: flex; margin-top:8px;' })
-                            .appendTo(fragment)
-                            .hide()
-                        const rowFanModes = $('<div/>', { style: 'display: flex; margin-top:8px;' })
-                            .appendTo(fragment)
-                            .hide()
-                        const rowLight = $('<div/>', { style: 'display: flex; margin-top:8px;' })
-                            .appendTo(fragment)
-                            .hide()
+                        // #region create DOM
+                        const template = $('#nspanel-lui-tpl-entitieslist').contents().clone()
+                        const tpl = $(container[0]).append($(template))
+
+                        const ROW1_2 = tpl.find('.nlui-row-1-2')
+                        const ROW1_3 = tpl.find('.nlui-row-1-3')
+                        const rowOptionalValue = tpl.find('.nlui-row-optional-value')
+                        const rowIcon = tpl.find('.nlui-row-icon')
+                        const rowShutter = tpl.find('.nlui-row-shutter')
+                        const rowShutterTiltIcons = tpl.find('.nlui-row-shutter-tilt-icons')
+                        const rowNumber = tpl.find('.nlui-row-number')
+                        const rowFanModes = tpl.find('.nlui-row-fan-modes')
+                        const rowLight = tpl.find('.nlui-row-light')
+                        rowIcon.hide()
+                        rowShutter.hide()
+                        rowShutterTiltIcons.hide()
+                        rowNumber.hide()
+                        rowFanModes.hide()
+                        rowLight.hide()
 
                         // #region row1
-                        const ROW1_1 = $('<div/>').appendTo(ROW1)
-                        const selectTypeField = $('<select/>', {
-                            class: 'node-input-entity-type',
-                            style: 'min-width: 120px; width:120px; margin-right: 10px',
-                        }).appendTo(ROW1_1)
+                        const selectTypeField = tpl.find('.node-input-entity-type')
+
                         validEntities.forEach((item) => {
                             const label = i18n(`label.${item}`, 'nspanel-panel', 'common')
                             $('<option/>').val(item).text(label).appendTo(selectTypeField)
                         })
-
-                        const ROW1_2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(ROW1)
-                        createLabel(ROW1_2, 'Id:') // TODO: i18n
-                        const entityIdField = $('<input/>', {
-                            class: 'node-input-entity-id',
-                            style: 'width: 10em',
-                            type: 'text',
-                        }).appendTo(ROW1_2)
-
-                        const ROW1_3 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(ROW1)
-                        createLabel(ROW1_3, 'Label:') // TODO: i18n
-                        const entityTextField = $('<input/>', {
-                            class: 'node-input-entity-text',
-                            style: 'width: 10em',
-                            type: 'text',
-                        }).appendTo(ROW1_3)
-
+                        const entityIdField = tpl.find('.node-input-entity-id')
+                        const entityTextField = tpl.find('.node-input-entity-text')
                         // #endregion row1
 
                         // #region rowOptionalValue
-                        const rowOptionalValue1 = $('<div/>').appendTo(rowOptionalValue)
-                        $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowOptionalValue1
-                        )
-                        const rowOptionalValue2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowOptionalValue)
-                        createLabel(rowOptionalValue2, 'Text:') // TODO: i18n
-                        const optionalValueField = $('<input/>', {
-                            class: 'node-input-entity-optionalvalue',
-                            style: 'width: 10em',
-                            type: 'text',
-                        }).appendTo(rowOptionalValue2)
+                        const optionalValueField = tpl.find('.node-input-entity-optionalvalue')
                         // #endregion row2
 
                         // #region rowIcon
-                        const rowIcon1 = $('<div/>').appendTo(rowIcon)
-                        $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowIcon1
-                        )
-
-                        const rowIcon2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowIcon)
-
-                        createLabel(rowIcon2, 'Icon:') // TODO: i18n
-                        const entityIconField = $('<input/>', {
-                            class: 'node-input-entity-icon',
-                            style: 'width: 10em',
-                            type: 'text',
-                        }).appendTo(rowIcon2)
-
-                        createLabel(rowIcon2, 'Farbe:') // TODO: i18n
-                        const entityIconColorField = $('<input/>', {
-                            class: 'node-input-entity-iconcolor',
-                            style: 'width: 42px',
-                            type: 'color',
-                        }).appendTo(rowIcon2)
+                        const entityIconField = tpl.find('.node-input-entity-icon')
+                        const entityIconColorField = tpl.find('.node-input-entity-iconcolor')
                         // #endregion rowIcon
 
                         // #region rowShutter
-                        const rowShutter1 = $('<div/>').appendTo(rowShutter)
-                        $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowShutter1
-                        )
-
-                        const rowShutter2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowShutter)
-
-                        // TODO: Label "Icons:"
-                        createLabel(rowShutter2, 'Ab') // TODO: i18n
-                        const iconDownField = $('<input/>', {
-                            class: 'node-input-entity-shutter-icondown',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowShutter2)
-
-                        createLabel(rowShutter2, 'Stop') // TODO: i18n
-                        const iconStopField = $('<input/>', {
-                            class: 'node-input-entity-shutter-iconstop',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowShutter2)
-
-                        createLabel(rowShutter2, 'Auf') // TODO: i18n
-                        const iconUpField = $('<input/>', {
-                            class: 'node-input-entity-shutter-iconup',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowShutter2)
+                        const iconDownField = tpl.find('.node-input-entity-shutter-icondown')
+                        const iconStopField = tpl.find('.node-input-entity-shutter-iconstop')
+                        const iconUpField = tpl.find('.node-input-entity-shutter-iconup')
                         // #endregion rowShutter
 
                         // #region rowShutterTiltIcons
-                        const rowShutterTiltIcons1 = $('<div/>').appendTo(rowShutterTiltIcons)
-                        $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowShutterTiltIcons1
-                        )
-                        // TODO: input has tilt
-                        const rowShutterTiltIcons2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(
-                            rowShutterTiltIcons
-                        )
-
-                        // TODO: Label "TILT"
-                        createLabel(rowShutterTiltIcons2, 'Tilt') // TODO: i18n
-                        const hasTiltField = $('<input/>', {
-                            class: 'node-input-entity-shutter-hastilt',
-                            style: 'width: 1em',
-                            type: 'checkbox',
-                        }).appendTo(rowShutterTiltIcons2)
-
-                        createLabel(rowShutterTiltIcons2, 'Links') // TODO: i18n
-                        const iconTiltLeftField = $('<input/>', {
-                            class: 'node-input-entity-shutter-icontiltleft',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowShutterTiltIcons2)
-
-                        createLabel(rowShutterTiltIcons2, 'Stopp') // TODO: i18n
-                        const iconTiltStopField = $('<input/>', {
-                            class: 'node-input-entity-shutter-icontiltstop',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowShutterTiltIcons2)
-
-                        createLabel(rowShutterTiltIcons2, 'Rechts') // TODO: i18n
-                        const iconTiltRightField = $('<input/>', {
-                            class: 'node-input-entity-shutter-icontiltright',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowShutterTiltIcons2)
+                        const hasTiltField = tpl.find('.node-input-entity-shutter-hastilt')
+                        const iconTiltLeftField = tpl.find('.node-input-entity-shutter-icontiltleft')
+                        const iconTiltStopField = tpl.find('.node-input-entity-shutter-icontiltstop')
+                        const iconTiltRightField = tpl.find('.node-input-entity-shutter-icontiltright')
                         // #endregion rowShutterTiltIcons
 
                         // #region rowNumber
-                        const rowNumber1 = $('<div/>').appendTo(rowNumber)
-                        $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowNumber1
-                        )
-                        const rowNumber2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowNumber)
-                        createLabel(rowNumber2, 'Min:') // TODO: i18n
-                        const numberMinField = $('<input/>', {
-                            class: 'node-input-entity-num-min',
-                            style: 'width: 10em',
-                            type: 'number',
-                        }).appendTo(rowNumber2)
-
-                        createLabel(rowNumber2, 'Max:') // TODO: i18n
-                        const numberMaxField = $('<input />', {
-                            class: 'node-input-entity-num-max',
-                            style: 'width: 10em',
-                            type: 'number',
-                        }).appendTo(rowNumber2)
+                        const numberMinField = tpl.find('.node-input-entity-num-min')
+                        const numberMaxField = tpl.find('.node-input-entity-num-max')
                         // #endregion rowNumber
 
                         // #region rowFanModes
-                        const rowFan1 = $('<div/>').appendTo(rowFanModes)
-                        $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowFan1
-                        )
-
-                        const rowFan2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowFanModes)
-
-                        // TODO: Label "Icons:"
-                        createLabel(rowFan2, 'Modus 1:') // TODO: i18n
-                        const fanMode1Field = $('<input/>', {
-                            class: 'node-input-entity-fan-mode1',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowFan2)
-
-                        createLabel(rowFan2, 'Modus 2:') // TODO: i18n
-                        const fanMode2Field = $('<input/>', {
-                            class: 'node-input-entity-fan-mode2',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowFan2)
-
-                        createLabel(rowFan2, 'Modus 3:') // TODO: i18n
-                        const fanMode3Field = $('<input/>', {
-                            class: 'node-input-entity-fan-mode3',
-                            style: 'width: 6em',
-                            type: 'text',
-                        }).appendTo(rowFan2)
+                        const fanMode1Field = tpl.find('.node-input-entity-fan-mode1')
+                        const fanMode2Field = tpl.find('.node-input-entity-fan-mode2')
+                        const fanMode3Field = tpl.find('node-input-entity-fan-mode3')
                         // #endregion rowFanModes
 
                         // #region rowLight
-                        const rowLight1 = $('<div/>').appendTo(rowLight)
-                        $('<div/>', { style: 'width: 42px; padding-right: 10px; box-sizing: border-box' }).appendTo(
-                            rowLight1
-                        )
-                        const rowLight2 = $('<div/>', { style: 'flex-grow: 1;' }).appendTo(rowLight)
-
-                        createLabel(rowLight2, 'dimmbar:') // TODO: i18n
-                        const lightDimmableField = $('<input/>', {
-                            class: 'node-input-entity-light-dimmable',
-                            style: 'width: 6em',
-                            type: 'checkbox',
-                        }).appendTo(rowLight2)
-
-                        createLabel(rowLight2, 'Temperatur:') // TODO: i18n
-                        const lightColorTemperatureField = $('<input/>', {
-                            class: 'node-input-entity-light-colorTemperature',
-                            style: 'width: 6em',
-                            type: 'checkbox',
-                        }).appendTo(rowLight2)
-
-                        createLabel(rowLight2, 'Farbe:') // TODO: i18n
-                        const lightColorField = $('<input/>', {
-                            class: 'node-input-entity-light-color',
-                            style: 'width: 6em',
-                            type: 'checkbox',
-                        }).appendTo(rowLight2)
-
+                        const lightDimmableField = tpl.find('.node-input-entity-light-dimmable')
+                        const lightColorTemperatureField = tpl.find('.node-input-entity-light-colorTemperature')
+                        const lightColorField = tpl.find('.node-input-entity-light-color')
                         // #endregion rowLight
-                        // #endregion create fragment
+                        // #endregion create DOM
 
                         selectTypeField.on('change', () => {
                             const val = `${selectTypeField.val()}`
                             const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
+
                             if (entityTypeAttrs !== undefined) {
                                 ROW1_2.toggle(entityTypeAttrs.hasId)
                                 ROW1_3.toggle(entityTypeAttrs.hasLabel)
@@ -790,8 +572,6 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
                         selectTypeField.val(entry.type)
                         selectTypeField.trigger('change')
-
-                        container[0].append(fragment)
                     },
 
                     removeItem(_listItem) {
@@ -844,7 +624,7 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                         iconColor,
                     }
 
-                    if (validate.stringIsNotNullOrEmpty(optionalValue)) {
+                    if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(optionalValue)) {
                         entity.optionalValue = optionalValue
                     }
 
@@ -868,26 +648,26 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
                                 .val()
                                 .toString()
 
-                            if (validate.stringIsNotNullOrEmpty(iconDown)) {
+                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconDown)) {
                                 entity.iconDown = iconDown
                             }
-                            if (validate.stringIsNotNullOrEmpty(iconUp)) {
+                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconUp)) {
                                 entity.iconUp = iconUp
                             }
-                            if (validate.stringIsNotNullOrEmpty(iconStop)) {
+                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconStop)) {
                                 entity.iconStop = iconStop
                             }
 
                             entity.hasTilt = hasTilt
-                            if (validate.stringIsNotNullOrEmpty(iconTiltLeft)) {
+                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltLeft)) {
                                 entity.iconTiltLeft = iconTiltLeft
                             }
 
-                            if (validate.stringIsNotNullOrEmpty(iconTiltStop)) {
+                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltStop)) {
                                 entity.iconTiltStop = iconTiltStop
                             }
 
-                            if (validate.stringIsNotNullOrEmpty(iconTiltRight)) {
+                            if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltRight)) {
                                 entity.iconTiltRight = iconTiltRight
                             }
 
@@ -965,12 +745,25 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
     })()
     // #endregion ui generation
 
+    // load templates
+
+    $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-entitieslist.html').done((tpl) => {
+        $('body').append($(tpl))
+    })
+    $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-eventslist.html').done((tpl) => {
+        $('body').append($(tpl))
+    })
+
     // #region API generation
     NSPanelLui['_'] = i18n
 
     NSPanelLui.Editor = NSPanelLui.Editor || {
         _: i18n,
-        validate,
+        validate: {
+            isNumberInRange: NSPanelLuiEditorValidate.numberInRange,
+            limitNumberToRange: NSPanelLuiEditorValidate.limitNumberToRange,
+            stringIsNotNullOrEmpty: NSPanelLuiEditorValidate.stringIsNotNullOrEmpty,
+        },
         create,
         util: {
             normalizeLabel,
