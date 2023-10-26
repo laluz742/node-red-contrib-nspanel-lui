@@ -1,10 +1,10 @@
 # Outbound Messages Documentation
 
-- [Outbound Messages Documentation](#outbound-messages-documentation)
-  - [General](#general)
-  - [Hardware topic](#hardware-topic)
-  - [Sensor topic](#sensor-topic)
-  - [Event topic](#event-topic)
+-   [Outbound Messages Documentation](#outbound-messages-documentation)
+    -   [General](#general)
+    -   [Hardware topic](#hardware-topic)
+    -   [Sensor topic](#sensor-topic)
+    -   [Event topic](#event-topic)
 
 ## General
 
