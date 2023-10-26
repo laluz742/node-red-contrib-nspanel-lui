@@ -152,6 +152,13 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                     break
                 }
 
+                case 'toggle': {
+                    const toggleParams = <SwitchCommandParams>cmdData.params
+                    const toggleRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (toggleParams.id + 1)
+                    this.sendCommandToPanel(toggleRelayCmd, NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE)
+                    break
+                }
+
                 case 'checkForUpdates': {
                     this._panelUpdater?.checkForUpdates()
                     break

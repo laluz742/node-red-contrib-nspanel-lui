@@ -68,6 +68,17 @@ export class NSPanelMessageUtils {
                     break
                 }
 
+                case 'toggle': {
+                    const switchId = Number(NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'id', -1))
+                    if (switchId === 0 || switchId === 1) {
+                        const switchCmdParams: SwitchCommandParams = {
+                            id: switchId,
+                        }
+                        commandResult = { cmd: 'toggle', params: switchCmdParams }
+                    }
+                    break
+                }
+
                 case 'checkForUpdates': {
                     commandResult = { cmd: 'checkForUpdates' }
                     break

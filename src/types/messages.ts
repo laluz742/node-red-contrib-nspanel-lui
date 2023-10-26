@@ -6,7 +6,7 @@ import { NodeMessageInFlow } from './nodered'
 export interface PanelMessage extends NodeMessageInFlow {}
 
 export type CommandTopic = 'cmd'
-export type Command = 'switch' | 'checkForUpdates'
+export type Command = 'switch' | 'toggle' | 'checkForUpdates'
 
 export interface CommandMessage extends PanelMessage {
     topic: CommandTopic

@@ -18,7 +18,7 @@ _to be added later_
 
 ### 1.2 Messages
 
-#### 1.2.1 Relay control
+#### 1.2.1 Switch Relay
 
 The relays can be switched on or off via messages using the _cmd_ topic.
 
@@ -40,7 +40,28 @@ var switchCmdMsg = {
 | `cmd`    | "switch" for relay control                                                                                                   |
 | `params` | `id` = [`0` \| `1`]; `on` = [ `false` \| `0` \| `'0'`] to switch relay off, and [`true` \| `1` \| `'1'`] for on respectively |
 
-#### 1.2.2 Notifications
+#### 1.2.2 Toggle Relay
+
+The relays can be toggled using the _cmd_ topic.
+
+```javascript
+var switchCmdMsg = {
+    topic: 'cmd'
+    payload: {
+        cmd: 'toggle',
+        params: {
+            id: 0,
+        },
+    },
+}
+```
+
+| Key      | Description         |
+| -------- | ------------------- |
+| `cmd`    | "toggle"            |
+| `params` | `id` = [`0` \| `1`] |
+
+#### 1.2.3 Notifications
 
 To notify the user about special events, notifications can be displayed using the following command syntax using the _notify_ topic. Notifications will be stored in the page history, so after being closed, the last page is shown.
 
@@ -75,7 +96,7 @@ To notify the user about special events, notifications can be displayed using th
 | `icon`         | optional, icon to show                                                                                                     |
 | `iconColor`    | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
 
-#### 1.2.3 Check for Updates
+#### 1.2.4 Check for Updates
 
 To initiate the check for firmware or driver updates, send a message under the topic _cmd_ use the command `checkForUpdates`.
 

@@ -47,11 +47,11 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         this.mqttClient?.end()
     }
 
-    sendCommandToPanel(cmd: string, data: any) {
+    sendCommandToPanel(cmd: string, data: string) {
         if (cmd == null) return
 
         try {
-            this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data.payload) // TODO: data.payload might be empty
+            this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data) // TODO: data.payload might be empty
         } catch (err: unknown) {
             if (err instanceof Error) {
                 log.error(`Could not publish on command topic. Error: ${err.message}`)
