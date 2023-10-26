@@ -110,7 +110,59 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     }
     // #endregion i18n and labels
 
-    // #region widget wrapper
+    // #region widget wrapper / factories
+    const InputWidgetFactory = {
+        createPayloadTypedInput(field, defaultType = undefined) {
+            return field.typedInput({
+                default: defaultType || 'str',
+                // ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 'env'],
+                types: ['str', 'json'],
+            })
+        },
+
+        createPageTypedInput(field: JQuery, defaultType: string, nodeConfig: PanelBasedConfig, panelAttr: string) {
+            const currentPanel = field.val() || nodeConfig[panelAttr]
+            const typedInputParams: TypedInputParams = {
+                default: defaultType || 'msg',
+                types: [{ value: 'msg', label: 'msg.', type: 'msg', types: ['str'] }],
+            }
+
+            if (currentPanel !== '_ADD_' && currentPanel !== '' && currentPanel !== undefined) {
+                const myId = nodeConfig.id
+                const panelNode = RED.nodes.node(currentPanel)
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const knownPages: nodered.Node<any>[] = panelNode?.users ?? []
+                const pageNodeType: TypedInputTypeParams = {
+                    value: 'page',
+                    icon: 'fa fa-desktop',
+                    type: 'page',
+                    label: 'Page',
+                    options: [],
+                }
+
+                // TODO: update on panel changed
+                // eslint-disable-next-line prefer-const
+                for (let i in knownPages) {
+                    // eslint-disable-line
+                    const item = knownPages[i]
+                    if (item.id !== myId && item.type.startsWith('nspanel-page')) {
+                        pageNodeType.options.push({
+                            value: item.id,
+                            label: NSPanelLui.Editor.util.normalizeLabel(item),
+                        })
+                    }
+                }
+
+                typedInputParams.types.push(pageNodeType)
+                typedInputParams.default = defaultType || 'page'
+            }
+
+            field.typedInput(typedInputParams)
+        },
+    }
+
     class EditableEntitiesListWrapper {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore TS6133
@@ -443,60 +495,223 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         }
 
         private _updateListAddButton = () => {
-            this._editableListAddButton.prop('disabled', this._count >= this._maxEntities)
+            this._editableListAddButton?.prop('disabled', this._count >= this._maxEntities)
+        }
+    }
+
+    class EditableEventListWrapper {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore TS6133
+        private _node: IPageConfig
+
+        private _domControl: JQuery<HTMLElement>
+
+        private _domControlList: JQuery<HTMLElement>
+
+        private _updateLock: boolean = false
+
+        private _editableListAddButton: JQuery<HTMLElement>
+
+        private _pageEvents: {
+            all: ValidEventDescriptor[]
+            available: string[]
+            used: string[]
+        } = {
+            all: [],
+            available: [],
+            used: [],
+        }
+
+        constructor(
+            node: IPageConfig,
+            domControl: JQuery<HTMLElement>,
+            domControlList: JQuery<HTMLElement>,
+            allValidEvents: ValidEventDescriptor[]
+        ) {
+            this._node = node
+            this._domControl = domControl
+            this._domControlList = domControlList
+
+            const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
+                node.nsPanel,
+                allValidEvents
+            )
+            this._pageEvents.all = allValidEventsWithHardwareButtons
+
+            this._pageEvents.all.forEach((item) => this._pageEvents.available.push(item.event))
+        }
+
+        private _updateEditableListAddButton() {
+            const disableAdd = this._pageEvents.available.length === 1
+            this._editableListAddButton?.prop('disabled', disableAdd)
+        }
+
+        public makeControl(): void {
+            const self = this // eslint-disable-line
+            this._domControlList.editableList({
+                addItem(container, _i, data: EventMappingContainer) {
+                    self._updateEditableListAddButton()
+                    data.element = container
+
+                    if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
+                        data.entry = { event: self._pageEvents.available[0], t: null, value: null }
+                    }
+                    const entry = data.entry
+                    if (!Object.hasOwnProperty.call(entry, 'event')) {
+                        entry.event = self._pageEvents.available[0]
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                    })
+
+                    // #region create DOM
+                    const template = $('#nspanel-lui-tpl-eventslist').contents().clone()
+                    const tpl = $(container[0]).append($(template))
+
+                    const ROW2 = tpl.find('.nlui-row-2').hide()
+
+                    const selectEventField = tpl.find('.node-input-event')
+                    const iconField = tpl.find('.node-input-event-icon')
+                    const valueField = tpl.find('.node-input-event-value')
+                    const valueDataField = tpl.find('.node-input-event-data')
+
+                    InputWidgetFactory.createPageTypedInput(valueField, entry.t, self._node, 'nsPanel')
+                    InputWidgetFactory.createPayloadTypedInput(valueDataField)
+
+                    // #endregion create DOM
+
+                    // placeholder for following call to update event select fields
+                    selectEventField.append($('<option />').val(entry.event ?? self._pageEvents.available[0]))
+
+                    selectEventField.on('change', () => {
+                        self._updateSelectEventFields()
+                    })
+                    valueField.on('change', (_event, type, _value) => {
+                        if (type === 'msg') {
+                            ROW2.show()
+                        } else {
+                            ROW2.hide()
+                        }
+                    })
+
+                    selectEventField.val(entry.event)
+                    iconField.val(entry.icon)
+                    valueField.typedInput('value', entry.value)
+                    valueField.typedInput('type', entry.t)
+
+                    valueDataField.typedInput('value', entry.data)
+                    valueDataField.typedInput('type', entry.dataType)
+
+                    selectEventField.trigger('change')
+                    valueDataField.trigger('change')
+
+                    self._updateSelectEventFields()
+                },
+
+                removeItem(_listItem) {
+                    this._updateSelectEventFields()
+                    this._updateEditableListAddButton()
+                },
+
+                sortItems(_events) {
+                    // TODO
+                },
+
+                sortable: true,
+                removable: true,
+            })
+            this._editableListAddButton = (
+                this._domControl.prop('tagName') === 'ol'
+                    ? this._domControl.closest('.red-ui-editableList')
+                    : this._domControl
+            ).find('.red-ui-editableList-addButton')
+        }
+
+        public setAvailableEvents(allValidEventSpecs: ValidEventDescriptor[]): void {
+            this._pageEvents.all = allValidEventSpecs.slice()
+            this._updateSelectEventFields()
+        }
+
+        private _updateSelectEventFields(): void {
+            if (this._updateLock) return
+
+            this._updateLock = true
+            const usedEvents: string[] = []
+            const avaiableEvents: string[] = []
+            const eventInputNode: any[] = []
+
+            this._domControl.find('.node-input-event').each((_i, ele) => {
+                const v = $(ele).val() as string
+                if (v) usedEvents.push(v)
+                eventInputNode.push($(ele))
+            })
+
+            this._pageEvents.all.forEach((item) => {
+                if (!usedEvents.includes(item.event)) avaiableEvents.push(item.event)
+            })
+
+            eventInputNode.forEach((inputNode) => {
+                const usedVal = inputNode.val()
+                inputNode.empty()
+                this._pageEvents.all.forEach((item) => {
+                    if (!usedEvents.includes(item.event) || item.event === usedVal) {
+                        $('<option/>').val(item.event).text(item.label).appendTo(inputNode)
+                    }
+                    inputNode.val(usedVal != null ? usedVal : inputNode.children().first().val())
+                })
+            })
+
+            this._pageEvents.used = usedEvents
+            this._pageEvents.available = avaiableEvents
+
+            this._updateLock = false
+        }
+
+        public empty(): void {
+            this._domControlList.editableList('empty')
+        }
+
+        public addItems(items): void {
+            if (items !== undefined && Array.isArray(items)) {
+                items.forEach((item) => {
+                    this._domControlList.editableList('addItem', { entry: item })
+                })
+            }
+            this._updateSelectEventFields()
+        }
+
+        public getEvents(): EventMapping[] {
+            const events: EventMapping[] = []
+            const eventItems = this._domControlList.editableList('items')
+
+            eventItems.each((_i, ele) => {
+                const listItem = $(ele)
+                const eventName = listItem?.find('select')?.val()?.toString() ?? ''
+                const icon = listItem?.find('.node-input-event-icon')?.val()?.toString() ?? ''
+                const entryT = listItem.find('.node-input-event-value').typedInput('type').toString()
+                const entryValue = listItem.find('.node-input-event-value').typedInput('value').toString()
+
+                const entry: EventMapping = { event: eventName, t: entryT, value: entryValue, icon }
+
+                if (entry.t === 'msg') {
+                    entry.data = listItem.find('.node-input-event-data').typedInput('value')
+                    entry.dataType = listItem.find('.node-input-event-data').typedInput('type')
+                }
+                events.push(entry)
+            })
+
+            return events
+        }
+
+        public setPanel(_panel) {
+            // TODO: update on panel changed
         }
     }
 
     const NSPanelWidgetFactory = {
-        createPayloadTypedInput(field, defaultType = undefined) {
-            return field.typedInput({
-                default: defaultType || 'str',
-                // ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 'env'],
-                types: ['str', 'json'],
-            })
-        },
-
-        createPageTypedInput(field: JQuery, defaultType: string, nodeConfig: PanelBasedConfig, panelAttr: string) {
-            const currentPanel = field.val() || nodeConfig[panelAttr]
-            const typedInputParams: TypedInputParams = {
-                default: defaultType || 'msg',
-                types: [{ value: 'msg', label: 'msg.', type: 'msg', types: ['str'] }],
-            }
-
-            if (currentPanel !== '_ADD_' && currentPanel !== '' && currentPanel !== undefined) {
-                const myId = nodeConfig.id
-                const panelNode = RED.nodes.node(currentPanel)
-
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                const knownPages: nodered.Node<any>[] = panelNode?.users ?? []
-                const pageNodeType: TypedInputTypeParams = {
-                    value: 'page',
-                    icon: 'fa fa-desktop',
-                    type: 'page',
-                    label: 'Page',
-                    options: [],
-                }
-
-                // TODO: update on panel changed
-                // eslint-disable-next-line prefer-const
-                for (let i in knownPages) {
-                    // eslint-disable-line
-                    const item = knownPages[i]
-                    if (item.id !== myId && item.type.startsWith('nspanel-page')) {
-                        pageNodeType.options.push({
-                            value: item.id,
-                            label: NSPanelLui.Editor.util.normalizeLabel(item),
-                        })
-                    }
-                }
-
-                typedInputParams.types.push(pageNodeType)
-                typedInputParams.default = defaultType || 'page'
-            }
-
-            field.typedInput(typedInputParams)
-        },
+        createPayloadTypedInput: InputWidgetFactory.createPayloadTypedInput,
+        createPageTypedInput: InputWidgetFactory.createPageTypedInput,
 
         editableEntitiesList(
             node: IPageConfig,
@@ -515,206 +730,21 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             return el
         },
 
-        // #region editable event list
         editableEventList(
             node: IPageConfig,
             controlDomSelector: string,
             allValidEvents: ValidEventDescriptor[],
-            initialData: EventMapping[]
-        ) {
-            const allValidEventsWithHardwareButtons = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
-                node.nsPanel,
-                allValidEvents
-            )
-
-            let updateLock = false
-            const pageEvents: {
-                all: ValidEventDescriptor[]
-                available: string[]
-                used: string[]
-            } = {
-                all: allValidEventsWithHardwareButtons,
-                available: [],
-                used: [],
-            }
-            pageEvents.all.forEach((item) => pageEvents.available.push(item.event))
-
+            initialData: PanelEntity[]
+        ): EditableEventListWrapper {
             const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
             const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
+            if (domControlList.length === 0) return null
 
-            if (domControlList.length === 0) return {} // TODO: if (domControl.length = 0) => not found
-
-            function updateSelectEventFields(): void {
-                if (updateLock) return
-
-                updateLock = true
-                const usedEvents: string[] = []
-                const avaiableEvents: string[] = []
-                const eventInputNode: any[] = []
-
-                domControl.find('.node-input-event').each((_i, ele) => {
-                    const v = $(ele).val() as string
-                    if (v) usedEvents.push(v)
-                    eventInputNode.push($(ele))
-                })
-
-                pageEvents.all.forEach((item) => {
-                    if (!usedEvents.includes(item.event)) avaiableEvents.push(item.event)
-                })
-
-                eventInputNode.forEach((inputNode) => {
-                    const usedVal = inputNode.val()
-                    inputNode.empty()
-                    pageEvents.all.forEach((item) => {
-                        if (!usedEvents.includes(item.event) || item.event === usedVal) {
-                            $('<option/>').val(item.event).text(item.label).appendTo(inputNode)
-                        }
-                        inputNode.val(usedVal != null ? usedVal : inputNode.children().first().val())
-                    })
-                })
-
-                pageEvents.used = usedEvents
-                pageEvents.available = avaiableEvents
-
-                updateLock = false
-            }
-
-            function setAvailableEvents(allValidEventSpecs: ValidEventDescriptor[]): void {
-                pageEvents.all = allValidEventSpecs.slice()
-                updateSelectEventFields()
-            }
-
-            function makeControl() {
-                let editableListAddButton
-                function updateEditableListAddButton() {
-                    const disableAdd = pageEvents.available.length === 1
-                    editableListAddButton.prop('disabled', disableAdd)
-                }
-
-                domControlList.editableList({
-                    addItem(container, _i, data: EventMappingContainer) {
-                        updateEditableListAddButton()
-                        data.element = container
-
-                        if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
-                            data.entry = { event: pageEvents.available[0], t: null, value: null }
-                        }
-                        const entry = data.entry
-                        if (!Object.hasOwnProperty.call(entry, 'event')) {
-                            entry.event = pageEvents.available[0]
-                        }
-                        container.css({
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                        })
-
-                        // #region create DOM
-                        const template = $('#nspanel-lui-tpl-eventslist').contents().clone()
-                        const tpl = $(container[0]).append($(template))
-
-                        const ROW2 = tpl.find('.nlui-row-2').hide()
-
-                        const selectEventField = tpl.find('.node-input-event')
-                        const iconField = tpl.find('.node-input-event-icon')
-                        const valueField = tpl.find('.node-input-event-value')
-                        const valueDataField = tpl.find('.node-input-event-data')
-
-                        NSPanelWidgetFactory.createPageTypedInput(valueField, entry.t, node, 'nsPanel')
-                        NSPanelWidgetFactory.createPayloadTypedInput(valueDataField)
-                        // #endregion create DOM
-
-                        // placeholder for following call to update event select fields
-                        selectEventField.append($('<option />').val(entry.event ?? pageEvents.available[0]))
-
-                        selectEventField.on('change', () => {
-                            updateSelectEventFields()
-                        })
-                        valueField.on('change', (_event, type, _value) => {
-                            if (type === 'msg') {
-                                ROW2.show()
-                            } else {
-                                ROW2.hide()
-                            }
-                        })
-
-                        selectEventField.val(entry.event)
-                        iconField.val(entry.icon)
-                        valueField.typedInput('value', entry.value)
-                        valueField.typedInput('type', entry.t)
-
-                        valueDataField.typedInput('value', entry.data)
-                        valueDataField.typedInput('type', entry.dataType)
-
-                        selectEventField.trigger('change')
-                        valueDataField.trigger('change')
-
-                        updateSelectEventFields()
-                    },
-
-                    removeItem(_listItem) {
-                        updateSelectEventFields()
-                        updateEditableListAddButton()
-                    },
-
-                    sortItems(_events) {},
-
-                    sortable: true,
-                    removable: true,
-                })
-                editableListAddButton = (
-                    domControl.prop('tagName') === 'ol' ? domControl.closest('.red-ui-editableList') : domControl
-                ).find('.red-ui-editableList-addButton')
-            }
-
-            function addItems(items) {
-                if (items !== undefined && Array.isArray(items)) {
-                    items.forEach((item) => {
-                        domControlList.editableList('addItem', { entry: item })
-                    })
-                }
-                updateSelectEventFields()
-            }
-
-            function empty() {
-                domControlList.editableList('empty')
-            }
-
-            function getEvents() {
-                const events: EventMapping[] = []
-                const eventItems = domControlList.editableList('items')
-
-                eventItems.each((_i, ele) => {
-                    const listItem = $(ele)
-                    const eventName = listItem?.find('select')?.val()?.toString() ?? ''
-                    const icon = listItem?.find('.node-input-event-icon')?.val()?.toString() ?? ''
-                    const entryT = listItem.find('.node-input-event-value').typedInput('type').toString()
-                    const entryValue = listItem.find('.node-input-event-value').typedInput('value').toString()
-
-                    const entry: EventMapping = { event: eventName, t: entryT, value: entryValue, icon }
-
-                    if (entry.t === 'msg') {
-                        entry.data = listItem.find('.node-input-event-data').typedInput('value')
-                        entry.dataType = listItem.find('.node-input-event-data').typedInput('type')
-                    }
-                    events.push(entry)
-                })
-
-                return events
-            }
-
-            makeControl()
-            addItems(initialData)
-
-            return {
-                setPanel: (_panel) => {}, // TODO: update on panel changed
-                addItems: (items) => addItems(items),
-                empty: () => empty(),
-                getEvents: () => getEvents(),
-                setAvailableEvents: (allValidEventSpecs: ValidEventDescriptor[]) =>
-                    setAvailableEvents(allValidEventSpecs),
-            }
+            const el = new EditableEventListWrapper(node, domControl, domControlList, allValidEvents)
+            el.makeControl()
+            el.addItems(initialData)
+            return el
         },
-        // #endregion editable event list
     }
 
     // #endregion widget wrapper
