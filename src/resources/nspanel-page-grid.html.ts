@@ -1,6 +1,6 @@
 // eslint-disable-next-line func-names
 ;(function ($) {
-    const ALL_VALID_EVENTS_BASE: ValidEventSpec[] = NSPanelLui.Events.allNavigationEvents
+    const ALL_VALID_EVENTS_BASE: ValidEventDescriptor[] = NSPanelLui.Events.allNavigationEvents
 
     const MAX_ENTITIES = 6
 

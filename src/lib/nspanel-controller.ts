@@ -135,7 +135,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         if (currentPage != null && page.id === currentPageNode?.id) {
             // TODO: check if all pages have bExit events... so long... restart panel
-            this.activateStartupPage() // FIXME: navigate to bExit or activate scrensaver?
+            this.activateStartupPage() // TODO: navigate to bExit or activate scrensaver?
         }
     }
 
@@ -250,7 +250,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
             case NSPanelConstants.STR_LUI_EVENT_SLEEPREACHED:
                 this.activateScreenSaver()
-                this.notifyControllerNode(eventArgs) // FIXME: set source to currentPage ?
+                this.notifyControllerNode(eventArgs) // TODO: set source to currentPage ?
                 break
 
             case 'relay':
@@ -576,16 +576,17 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private sendToPanel(data: Array<string> | string | null) {
+    private sendToPanel(data: string[] | string | null) {
         if (data == null || this._panelMqttHandler === null) return
 
         if (typeof data === 'object') {
             // eslint-disable-next-line prefer-const
             for (let d in data) {
-                this._panelMqttHandler.sendToPanel({ payload: data[d] })
+                const dStr: string = data[d] as string
+                this._panelMqttHandler.sendToPanel(dStr)
             }
         } else {
-            this._panelMqttHandler.sendToPanel({ payload: data })
+            this._panelMqttHandler.sendToPanel(data)
         }
     }
 
@@ -610,7 +611,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private sendCommandToPanel(cmd: string, data: string) {
-        this._panelMqttHandler?.sendCommandToPanel(cmd, { payload: data })
+        this._panelMqttHandler?.sendCommandToPanel(cmd, data)
     }
 
     // #region basic panel commands

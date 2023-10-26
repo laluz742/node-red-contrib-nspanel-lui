@@ -1,7 +1,7 @@
 import { ActiveCharacteristic } from './base'
 import { PanelColor } from './colors'
 import { EventArgs } from './events'
-import { NodeMessageInFlow, NodeMessageParts } from './nodered'
+import { NodeMessageInFlow } from './nodered'
 
 export interface PanelMessage extends NodeMessageInFlow {}
 
@@ -25,8 +25,6 @@ export interface SwitchCommandParams {
 }
 
 // #region page input data messages
-export interface PageInputMessageParts extends NodeMessageParts {}
-
 export type PageInputTopic = 'data' | 'status' | 'notify' | 'event' | 'sensor'
 
 export interface NotifyData {
@@ -62,10 +60,6 @@ export interface PageInputMessage extends PanelMessage {
     topic: PageInputTopic | undefined
 
     payload?: PageEntityData | PageEntityData[] | EventArgs | StatusItemData | StatusItemData[]
-}
-
-export interface PageOutputMessage extends PanelMessage {
-    // FIXME:
 }
 
 export interface PageEntityDataBase {

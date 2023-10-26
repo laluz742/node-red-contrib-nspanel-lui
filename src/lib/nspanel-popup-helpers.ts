@@ -106,14 +106,14 @@ export class NSPanelPopupHelpers {
 
         const brightness = entity.dimmable ? lightEntityData?.brightness : NSPanelConstants.STR_DISABLE
         const colorTemp = entity.hasColorTemperature ? lightEntityData?.colorTemperature : NSPanelConstants.STR_DISABLE
-        const colorMode = entity.hasColor ? '1' : NSPanelConstants.STR_DISABLE // FIXME: check with HMI
+        const colorMode = entity.hasColor ? '1' : NSPanelConstants.STR_DISABLE // TODO: check with HMI code
         result.push(NSPanelUtils.toHmiState(lightEntityData?.active ?? 0))
         result.push(brightness ?? '')
         result.push(colorTemp ?? '')
         result.push(colorMode)
-        result.push(entity.hasColor ? 'Farbe' : NSPanelConstants.STR_EMPTY) // FIXME: i18n
-        result.push(entity.hasColorTemperature ? 'Lichttemperatur' : NSPanelConstants.STR_EMPTY) // FIXME: i18n
-        result.push(entity.dimmable ? 'Helligkeit' : NSPanelConstants.STR_EMPTY) // FIXME: i18n
+        result.push(entity.hasColor ? 'Farbe' : NSPanelConstants.STR_EMPTY) // TODO: i18n
+        result.push(entity.hasColorTemperature ? 'Lichttemperatur' : NSPanelConstants.STR_EMPTY) // TODO: i18n
+        result.push(entity.dimmable ? 'Helligkeit' : NSPanelConstants.STR_EMPTY) // TODO: i18n
 
         return result.join(NSPanelConstants.STR_LUI_DELIMITER)
     }
@@ -135,7 +135,7 @@ export class NSPanelPopupHelpers {
         result.push(entity.entityId)
         result.push(posValue ?? NSPanelConstants.STR_EMPTY)
         result.push(shutterEntityData?.text ?? NSPanelConstants.STR_EMPTY)
-        result.push('Position') // FIXME: i18n
+        result.push('Position') // TODO: i18n
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
         result.push(NSPanelUtils.getIcon(entity.iconUp ?? NSPanelConstants.STR_EMPTY))
         result.push(NSPanelUtils.getIcon(entity.iconStop ?? NSPanelConstants.STR_EMPTY))

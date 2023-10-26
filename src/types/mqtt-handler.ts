@@ -6,9 +6,8 @@ export type OnMqttCloseCallback = (error?: Error) => void
 export type OnMqttErrorCallback = (error: Error) => void
 
 export interface IPanelMqttHandler extends IDisposable {
-    // FIXME param types
-    sendCommandToPanel(cmd: string, data: any): void
-    sendToPanel(data: any): void
+    sendCommandToPanel(cmd: string, data: string): void
+    sendToPanel(data: string[] | string): void
 
     on(event: 'mqtt:connect', listener: OnMqttConnectCallback): void
     on(event: 'mqtt:reconnect', listener: OnMqttConnectCallback): void

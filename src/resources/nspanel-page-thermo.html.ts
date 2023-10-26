@@ -2,7 +2,7 @@
 ;(function ($) {
     const MAX_ENTITIES = 8
     const ALLOWED_ENTITIES = ['delete', 'hvac_action']
-    const ALL_VALID_EVENTS_BASE: ValidEventSpec[] = NSPanelLui.Events.allNavigationEvents
+    const ALL_VALID_EVENTS_BASE: ValidEventDescriptor[] = NSPanelLui.Events.allNavigationEvents
 
     let editableEventList = null
     let editableEntitiesList = null

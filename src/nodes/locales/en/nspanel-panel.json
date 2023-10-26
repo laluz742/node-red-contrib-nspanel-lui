@@ -16,6 +16,29 @@
             "button": "Button",
             "text": "Text",
             "hvac_action": "Action"
+        },
+        "events": {
+            "icon": "Icon"
+        },
+        "entities": {
+            "id": "Id",
+            "label": "Label",
+            "icon": "Icon",
+            "color": "Farbe",
+            "text": "Text",
+            "down": "Ab",
+            "stop": "Stopp",
+            "up": "Auf",
+            "tilt": "Neigung",
+            "left": "Links",
+            "right": "Rechts",
+            "min": "Min",
+            "max": "Max",
+            "mode1": "Modus 1",
+            "mode2": "Modus 2",
+            "mode3": "Modus 3",
+            "dimmable": "Dimmbar",
+            "temperature": "Temperatur"
         }
     },
     "nspanel-panel": {

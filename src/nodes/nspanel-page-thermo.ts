@@ -212,7 +212,7 @@ module.exports = (RED) => {
                         for (let key in msg.payload) {
                             if (Object.prototype.hasOwnProperty.call(this.data, key)) {
                                 this.data[key] = msg.payload[key]
-                                handled = true // FIXME: there might be undhandled data
+                                handled = true // TODO: there might be undhandled data
                                 dirty = true
                             }
                         }

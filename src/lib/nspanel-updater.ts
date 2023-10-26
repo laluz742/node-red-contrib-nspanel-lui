@@ -359,12 +359,10 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                 ? ''
                 : `${this._updateVersionData.versions.current.hmi.model}-`
 
-        const hmiFirmwareUrl = `${URL_HMI_BASE}nspanel${hmiModel}-v${hmiVersion}.tft`
+        const hmiFirmwareUrl: string = `${URL_HMI_BASE}nspanel${hmiModel}-v${hmiVersion}.tft`
 
         this._updateInProgress = true
-        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION, {
-            payload: hmiFirmwareUrl,
-        })
+        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION, hmiFirmwareUrl)
         /*
 UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{"complete":0,"time_elapsed":0}}}
         */
@@ -383,8 +381,8 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_BERRYDRIVER)
 
         this._updateInProgress = true
-        const updCmd = `${NSPanelConstants.STR_TASMOTA_CMD_BACKLOG} ${NSPanelConstants.STR_BERRYDRIVER_CMD_UPDATEDRIVER} ${URL_BERRYDRIVER_LATEST}; ${NSPanelConstants.STR_TASMOTA_CMD_RESTART} ${NSPanelConstants.STR_TASMOTA_PARAM_RESTART_SAVE_TO_FLASH}`
-        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_BACKLOG, { payload: updCmd })
+        const updCmd: string = `${NSPanelConstants.STR_TASMOTA_CMD_BACKLOG} ${NSPanelConstants.STR_BERRYDRIVER_CMD_UPDATEDRIVER} ${URL_BERRYDRIVER_LATEST}; ${NSPanelConstants.STR_TASMOTA_CMD_RESTART} ${NSPanelConstants.STR_TASMOTA_PARAM_RESTART_SAVE_TO_FLASH}`
+        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_BACKLOG, updCmd)
     }
 
     private _updateTasmotaFirmware() {
@@ -392,7 +390,7 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
             this._updateTaskStack.push(NSPanelConstants.FIRMWARE_TASMOTA)
             return
         }
-        // FIXME: keep care of tasmota upgrade path
+        // TODO: keep care of tasmota upgrade path
 
         /*
 onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","source":"","data":{"Upgrade":"Version 13.1.0 from http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin"}}        
@@ -406,12 +404,12 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
         log.info('Updating Tasmota')
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_TASMOTA)
 
-        const otaUrl = this._options.tasmotaOtaUrl
+        const otaUrl: string = this._options.tasmotaOtaUrl
 
         this._updateInProgress = true
-        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_OTAURL, { payload: otaUrl })
+        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_OTAURL, otaUrl)
         // TODO: sleep
-        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_UPGRADE, { payload: '1' })
+        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_UPGRADE, '1')
     }
 
     private setTasmotaVersion(tasmotaVersion: string): void {
@@ -439,18 +437,15 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
     // #region version information retrieval
     private getCurrentHmiVersion(): void {
-        const data = { payload: NSPanelConstants.STR_LUI_CMD_ACTIVATE_STARTUP_PAGE }
-        this._mqttHandler?.sendToPanel(data)
+        this._mqttHandler?.sendToPanel(NSPanelConstants.STR_LUI_CMD_ACTIVATE_STARTUP_PAGE)
     }
 
     private getCurrentBerryDriverVersion(): void {
-        const data = { payload: 'x' }
-        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_BERRYDRIVER_CMD_GETVERSION, data)
+        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_BERRYDRIVER_CMD_GETVERSION, 'x')
     }
 
     private getCurrentTasmotaVersion(): void {
-        const data = { payload: '2' }
-        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_STATUS, data)
+        this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_STATUS, '2')
     }
 
     private getLatestVersion(): void {

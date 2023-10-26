@@ -1,8 +1,7 @@
 import { HSVColor, RGBColor } from './colors'
 import { ActiveCharacteristic } from './base'
 
-export type ValidEventSpec = {
-    // FIXME: naming
+export type ValidEventDescriptor = {
     event: string
     label: string
 }
