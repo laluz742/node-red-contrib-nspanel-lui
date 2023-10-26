@@ -94,6 +94,15 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     const i18n = (key: string, dict: string, group?: string) => {
         return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
     }
+
+    const i18nTpl = (rel: JQuery<HTMLElement>, dict: string, group?: string) => {
+        rel.find('[data-i18n]').each((_i, el) => {
+            const attr = $(el).attr('data-i18n')
+            const val = i18n(attr, dict, group)
+            $(el).text(val)
+        })
+    }
+
     const normalizeLabel = (node: any) => {
         return NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(node.name) ? node.name : `[${node.type}:${node.id}]`
     }
@@ -218,6 +227,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #region create DOM
                     const template = $('#nspanel-lui-tpl-entitieslist').contents().clone()
                     const tpl = $(container[0]).append($(template))
+                    i18nTpl(tpl, 'nspanel-panel', 'common') // TODO: run on template load from server
 
                     const ROW1_2 = tpl.find('.nlui-row-1-2')
                     const ROW1_3 = tpl.find('.nlui-row-1-3')
@@ -568,6 +578,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #region create DOM
                     const template = $('#nspanel-lui-tpl-eventslist').contents().clone()
                     const tpl = $(container[0]).append($(template))
+                    i18nTpl(tpl, 'nspanel-panel', 'common') // TODO: run on template load from server
 
                     const ROW2 = tpl.find('.nlui-row-2').hide()
 
@@ -752,10 +763,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     // load templates
 
     $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-entitieslist.html').done((tpl) => {
-        $('body').append($(tpl)) // TODO: i18n in template
+        $('body').append($(tpl))
     })
     $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-eventslist.html').done((tpl) => {
-        $('body').append($(tpl)) // TODO: i18n in template
+        $('body').append($(tpl))
     })
 
     // #region API generation
