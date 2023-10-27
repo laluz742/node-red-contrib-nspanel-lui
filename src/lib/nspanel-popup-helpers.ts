@@ -72,7 +72,7 @@ export class NSPanelPopupHelpers {
         entity: PanelEntity,
         entityData: PageEntityData | null
     ): string | string[] | null {
-        if (entityData == null) return null
+        // if (entityData == null) return null
 
         const fanEntityData: FanEntityData = <FanEntityData>entityData
         const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
@@ -91,11 +91,12 @@ export class NSPanelPopupHelpers {
     }
 
     private static generatePopupLight(
-        _node: NodeBase<INodeConfig>,
+        node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
     ): string | string[] | null {
-        if (entityData == null) return null
+        // entity data might be undefined, if nothing received yet
+        // if (entityData == null) return null
 
         const lightEntityData: LightEntityData = <LightEntityData>entityData
         const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
@@ -107,25 +108,29 @@ export class NSPanelPopupHelpers {
         const brightness = entity.dimmable ? lightEntityData?.brightness : NSPanelConstants.STR_DISABLE
         const colorTemp = entity.hasColorTemperature ? lightEntityData?.colorTemperature : NSPanelConstants.STR_DISABLE
         const colorMode = entity.hasColor ? '1' : NSPanelConstants.STR_DISABLE // TODO: check with HMI code
+        const strColor = NSPanelUtils.i18n(node, 'light.color', 'nspanel-panel', 'common')
+        const strColorTemp = NSPanelUtils.i18n(node, 'light.temperature', 'nspanel-panel', 'common')
+        const strBrightness = NSPanelUtils.i18n(node, 'light.brightness', 'nspanel-panel', 'common')
         result.push(NSPanelUtils.toHmiState(lightEntityData?.active ?? 0))
-        result.push(brightness ?? '')
-        result.push(colorTemp ?? '')
+        result.push(brightness ?? NSPanelConstants.STR_EMPTY)
+        result.push(colorTemp ?? NSPanelConstants.STR_EMPTY)
         result.push(colorMode)
-        result.push(entity.hasColor ? 'Farbe' : NSPanelConstants.STR_EMPTY) // TODO: i18n
-        result.push(entity.hasColorTemperature ? 'Lichttemperatur' : NSPanelConstants.STR_EMPTY) // TODO: i18n
-        result.push(entity.dimmable ? 'Helligkeit' : NSPanelConstants.STR_EMPTY) // TODO: i18n
+        result.push(entity.hasColor ? strColor : NSPanelConstants.STR_EMPTY)
+        result.push(entity.hasColorTemperature ? strColorTemp : NSPanelConstants.STR_EMPTY)
+        result.push(entity.dimmable ? strBrightness : NSPanelConstants.STR_EMPTY)
 
         return result.join(NSPanelConstants.STR_LUI_DELIMITER)
     }
 
     private static generatePopupShutter(
-        _node: NodeBase<INodeConfig>,
+        node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
     ): string | string[] | null {
-        if (entityData == null) return null
+        // entity data might be undefined, if nothing received yet
+        // if (entityData == null) return null
 
-        const shutterEntityData: ShutterEntityData = <ShutterEntityData>entityData // TODO: type guard
+        const shutterEntityData: ShutterEntityData = entityData as ShutterEntityData // TODO: type guard
         const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
 
         const hasTilt: boolean = entity.hasTilt ?? false
@@ -135,7 +140,7 @@ export class NSPanelPopupHelpers {
         result.push(entity.entityId)
         result.push(posValue ?? NSPanelConstants.STR_EMPTY)
         result.push(shutterEntityData?.text ?? NSPanelConstants.STR_EMPTY)
-        result.push('Position') // TODO: i18n
+        result.push(NSPanelUtils.i18n(node, 'shutter.position', 'nspanel-panel', 'common'))
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
         result.push(NSPanelUtils.getIcon(entity.iconUp ?? NSPanelConstants.STR_EMPTY))
         result.push(NSPanelUtils.getIcon(entity.iconStop ?? NSPanelConstants.STR_EMPTY))
@@ -145,7 +150,7 @@ export class NSPanelPopupHelpers {
         result.push(posValue > 0 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE)
 
         if (hasTilt) {
-            result.push('Neigung') // TODO:i18n
+            result.push(NSPanelUtils.i18n(node, 'shutter.tilt', 'nspanel-panel', 'common'))
             result.push(NSPanelUtils.getIcon(entity.iconTiltLeft ?? NSPanelConstants.STR_EMPTY))
             result.push(NSPanelUtils.getIcon(entity.iconTiltStop ?? NSPanelConstants.STR_EMPTY))
             result.push(NSPanelUtils.getIcon(entity.iconTiltRight ?? NSPanelConstants.STR_EMPTY))

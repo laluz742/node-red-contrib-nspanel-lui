@@ -80,10 +80,10 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
         if (entity != null) {
             const entityData = this.entityData.get(entity.entityId)
 
-            if (entityData != null) {
-                const result = NSPanelPopupHelpers.generatePopup(this, entity, entityData)
-                return result
-            }
+            // if (entityData != null) { // entity data might be undefined, if nothing received yet
+            const result = NSPanelPopupHelpers.generatePopup(this, entity, entityData)
+            return result
+            // }
         }
 
         return null

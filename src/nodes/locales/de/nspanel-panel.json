@@ -17,6 +17,15 @@
             "text": "Text",
             "hvac_action": "Aktion"
         },
+        "shutter": {
+            "position": "Position",
+            "tilt": "Neigung"
+        },
+        "light": {
+            "color": "Farbe",
+            "temperature": "Lichttemperatur",
+            "brightness": "Helligkeit"
+        },
         "events": {
             "icon": "Icon"
         },
