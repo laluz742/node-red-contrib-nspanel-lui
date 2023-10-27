@@ -29,8 +29,10 @@ import {
     FirmwareEventArgs,
     StatusLevel,
     NodeStatus,
+    PanelControllerConfig,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
+import { IPanelNodeEx } from '../types/panel'
 
 const log = Logger('NSPanelController')
 
@@ -48,9 +50,11 @@ declare type PanelDimModes = {
 }
 
 export class NSPanelController extends nEvents.EventEmitter implements IPanelController {
-    private _panelMqttHandler: IPanelMqttHandler = null
+    private _panelMqttHandler: IPanelMqttHandler
 
-    private _panelUpdater: IPanelUpdater = null
+    private _panelUpdater: IPanelUpdater
+
+    private _ctrlConfig: PanelControllerConfig
 
     private _panelConfig: PanelConfig
 
@@ -64,13 +68,13 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         night: { isConfigured: false, dimLow: 100, dimHigh: 100, start: { hours: 0, minutes: 0 } },
     }
 
-    constructor(panelConfig: PanelConfig, i18n: NodeRedI18nResolver) {
+    constructor(ctrlConfig: PanelControllerConfig, panelNode: IPanelNodeEx, i18n: NodeRedI18nResolver) {
         super()
-        this._cache = new SimpleControllerCache()
-        this._panelConfig = panelConfig
+        this._ctrlConfig = ctrlConfig
         this._i18n = i18n
+        this._cache = new SimpleControllerCache()
 
-        this.init(panelConfig)
+        this.init(panelNode)
     }
 
     private onPageIdNavigationRequest(pageId: PageId): void {
@@ -118,9 +122,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     registerPage(page: IPageNode) {
-        // TODO: ignore navTo Node
-        this._cache.addPage(page.id, page)
+        // ignore special nodes, like hmi-control
+        if (page.getPageType()?.charAt(0) === '@') return
 
+        this._cache.addPage(page.id, page)
         page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
         page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
         page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
@@ -206,7 +211,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this._panelMqttHandler?.dispose()
     }
 
-    private init(panelConfig: PanelConfig) {
+    private init(panelNode: IPanelNodeEx) {
+        const panelConfig = panelNode.getPanelConfig()
+        this._panelConfig = panelConfig
+
         log.info(`Starting panel controller for panel ${panelConfig.panel.topic}`)
 
         // preparing dim modes
@@ -234,6 +242,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         // initialize updater
         const panelUpdater = new NSPanelUpdater(this, mqttHandler, this._i18n, {
+            panelNodeTopic: this._panelConfig.panel.topic,
             autoUpdate: this._panelConfig.panel.autoUpdate,
             tasmotaOtaUrl: this._panelConfig.panel.tasmotaOtaUrl,
         })
@@ -417,7 +426,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             { cmd: 'switch', params: { id: 1 } },
         ])
 
-        if (this._panelConfig.panel.screenSaverOnStartup) {
+        if (this._ctrlConfig.screenSaverOnStartup) {
             this.activateScreenSaver()
         }
         this.setNodeStatus('info', this._i18n('common.status.panelStarted'))
@@ -479,10 +488,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onPopupClose() {
-        // TODO: asserts last is popup
-        this._cache.removeLastFromHistory()
+        if (this._cache.getLastFromHistory().historyType === 'popup') {
+            this._cache.removeLastFromHistory()
+        }
 
-        // TODO: asserts is page before popup
         const currentPage: IPageHistory = this._cache.getLastFromHistory()
         this.renderPage(currentPage, true)
     }
@@ -505,6 +514,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 topic: eventArgs.type,
                 payload: { ...eventArgs },
             }
+
             // when hw buttons do not control power outputs translate to event
             if (
                 this._panelConfig.panel.detachRelays &&
@@ -567,6 +577,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (pageData !== null) {
             this.sendToPanel(pageData)
         } else {
+            // close popup, if it cannot be generated, thus is not supported yet
             this.onPopupClose()
         }
     }
@@ -646,9 +657,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private sendDateToPanel() {
         const date = new Date()
         const dateOptions: Intl.DateTimeFormatOptions = {
-            weekday: 'long', // short // TODO: config
+            weekday: 'long', // short
             year: 'numeric',
-            month: 'long', // short // TODO: config
+            month: 'long', // short
             day: 'numeric',
         }
 

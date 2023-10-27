@@ -128,7 +128,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     }
 
     public checkForUpdates(): void {
-        log.info('Checking for updates')
+        log.info(`Checking for updates for panel ${this._options.panelNodeTopic}`)
         this._acquireVersions()
             .then(() => {
                 if (this._options.autoUpdate === false) {
@@ -194,7 +194,9 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                 }
             })
             .catch((versionAcquisitionStatus) => {
-                log.error(`Could not acquire version data ${versionAcquisitionStatus}`)
+                log.error(
+                    `Could not acquire version data for panel ${this._options.panelNodeTopic} (status code ${versionAcquisitionStatus})`
+                )
             })
     }
 
@@ -211,12 +213,14 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
             case 'update': {
                 if (fwEvent.status === 'success') {
-                    log.info(`Update successfully installed (${fwEvent.source})`)
+                    log.info(
+                        `Update for ${fwEvent.source} successfully installed on panel ${this._options.panelNodeTopic}`
+                    )
                     this._updateInProgress = false
                     this.notifyUpdateSuccess(fwEvent)
                     this.processUpdateTasks()
                 } else if (fwEvent.status === 'failed') {
-                    log.error(`Update failed (${fwEvent.source})`)
+                    log.error(`Updating ${fwEvent.source} failed on panel ${this._options.panelNodeTopic}`)
                     // as manual intervention may be neccessary, block further updates
                     this._updateInProgress = false
                     this._updatesBlocked = true
@@ -350,7 +354,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
             return
         }
 
-        log.info('Initiating flashing NSPanel HMI firmware')
+        log.info(`Initiating flashing NSPanel HMI firmware on panel ${this._options.panelNodeTopic}`)
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_HMI)
 
         const hmiVersion = this._updateVersionData.versions.latest.hmi.version
@@ -377,7 +381,7 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
             this._updateTaskStack.push(NSPanelConstants.FIRMWARE_BERRYDRIVER)
             return
         }
-        log.info('Updating NSPanel BerryDriver')
+        log.info(`Updating NSPanel BerryDriver on panel ${this._options.panelNodeTopic}`)
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_BERRYDRIVER)
 
         this._updateInProgress = true
@@ -401,7 +405,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
             return
         }
 
-        log.info('Updating Tasmota')
+        log.info(`Updating Tasmota on panel ${this._options.panelNodeTopic}`)
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_TASMOTA)
 
         const otaUrl: string = this._options.tasmotaOtaUrl

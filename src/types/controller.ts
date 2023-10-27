@@ -2,15 +2,22 @@ import { IDisposable, PageId } from './base'
 import { CommandData, NotifyData } from './messages'
 import { VoidCallback } from './nodered'
 import { IPageNode } from './page-nodes'
+import { PanelBasedConfig } from './pages'
 
 export type PageMap = Map<string, IPageNode>
 
+export type IPageHistoryType = 'page' | 'popup' | 'notify'
+
 export interface IPageHistory {
-    historyType: 'page' | 'popup' | 'notify'
+    historyType: IPageHistoryType
     pageNode?: IPageNode
     popupType?: string
     entityId?: string
     notifyData?: NotifyData
+}
+
+export type PanelControllerConfig = PanelBasedConfig & {
+    screenSaverOnStartup: boolean
 }
 
 export interface IControllerCache {

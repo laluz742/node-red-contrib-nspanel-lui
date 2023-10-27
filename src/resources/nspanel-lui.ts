@@ -734,8 +734,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             maxEntities: number,
             initialData: PanelEntity[],
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
-        ): EditableEntitiesListWrapper {
-            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
+        ): EditableEntitiesListWrapper | null {
+            const domControl = $(controlDomSelector)
             const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
             if (domControlList.length === 0) return null
 
@@ -750,8 +750,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             controlDomSelector: string,
             allValidEvents: ValidEventDescriptor[],
             initialData: PanelEntity[]
-        ): EditableEventListWrapper {
-            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
+        ): EditableEventListWrapper | null {
+            const domControl = $(controlDomSelector)
             const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
             if (domControlList.length === 0) return null
 

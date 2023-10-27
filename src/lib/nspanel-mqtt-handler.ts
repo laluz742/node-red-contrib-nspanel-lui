@@ -233,7 +233,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
 
                     // TODO: commands like SetOption73 ...
                     else if ('CustomSend' in temp) {
-                        // TODO: drop for now... since no relevant data from HMI
+                        // drop for now... since no relevant/relatable data from HMI
                     } else {
                         const parsedEvents: HardwareEventArgs[] = NSPanelMessageParser.parseHardwareEvent(temp)
                         parsedEvents?.forEach((hwEventArgs) => {
