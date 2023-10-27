@@ -180,7 +180,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
                 try {
                     data = eventConfig.data ? JSON.parse(eventConfig.data) : undefined
                 } catch (err: unknown) {
-                    this.warn('Data not JSON compliant, sending as string') // TODO i18n
+                    this.warn('Data not JSON compliant, sending as string')
                     data = eventConfig.data
                 }
                 break

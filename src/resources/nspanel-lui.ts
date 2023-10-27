@@ -19,14 +19,18 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 ;(function (RED, $) {
     if (NSPanelLui.Editor != null) return
 
+    const I18N_DICT: string = 'nspanel-panel'
+    const I18N_GROUP: string = 'editor'
+    const I18N_PREFIX_EVENTS: string = 'events.'
+
     // #region events
     const ALL_VALID_NAVIGATION_EVENTS = [
-        { event: 'nav.prev', label: 'nav.prev' },
-        { event: 'nav.next', label: 'nav.next' },
+        { event: 'nav.prev', label: '' },
+        { event: 'nav.next', label: '' },
     ]
     const ALL_VALID_BUTTON_EVENTS = [
-        { event: 'hw.button1', label: 'hw.button1' },
-        { event: 'hw.button2', label: 'hw.button2' },
+        { event: 'hw.button1', label: '' },
+        { event: 'hw.button2', label: '' },
     ]
 
     const addHardwareButtonEventsIfApplicable = (
@@ -227,7 +231,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #region create DOM
                     const template = $('#nspanel-lui-tpl-entitieslist').contents().clone()
                     const tpl = $(container[0]).append($(template))
-                    i18nTpl(tpl, 'nspanel-panel', 'common') // TODO: run on template load from server
+                    i18nTpl(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
 
                     const ROW1_2 = tpl.find('.nlui-row-1-2')
                     const ROW1_3 = tpl.find('.nlui-row-1-3')
@@ -578,7 +582,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #region create DOM
                     const template = $('#nspanel-lui-tpl-eventslist').contents().clone()
                     const tpl = $(container[0]).append($(template))
-                    i18nTpl(tpl, 'nspanel-panel', 'common') // TODO: run on template load from server
+                    i18nTpl(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
 
                     const ROW2 = tpl.find('.nlui-row-2').hide()
 
@@ -768,6 +772,24 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-eventslist.html').done((tpl) => {
         $('body').append($(tpl))
     })
+
+    // i18n processing
+    // eslint-disable-next-line prefer-const
+    for (let i in ALL_VALID_NAVIGATION_EVENTS) {
+        ALL_VALID_NAVIGATION_EVENTS[i].label = i18n(
+            `${I18N_PREFIX_EVENTS}${ALL_VALID_NAVIGATION_EVENTS[i].event}`,
+            I18N_DICT,
+            I18N_GROUP
+        )
+    }
+    // eslint-disable-next-line prefer-const
+    for (let i in ALL_VALID_BUTTON_EVENTS) {
+        ALL_VALID_BUTTON_EVENTS[i].label = i18n(
+            `${I18N_PREFIX_EVENTS}${ALL_VALID_BUTTON_EVENTS[i].event}`,
+            I18N_DICT,
+            I18N_GROUP
+        )
+    }
 
     // #region API generation
     NSPanelLui['_'] = i18n

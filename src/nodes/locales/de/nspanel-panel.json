@@ -17,28 +17,50 @@
             "text": "Text",
             "hvac_action": "Aktion"
         },
+        "shutter": {
+            "position": "Position",
+            "tilt": "Neigung"
+        },
+        "light": {
+            "color": "Farbe",
+            "temperature": "Lichttemperatur",
+            "brightness": "Helligkeit"
+        }
+    },
+    "editor": {
         "events": {
+            "nav.prev": "Zurück",
+            "nav.next": "Vor",
+            "hw.button1": "Taste 1",
+            "hw.button2": "Taste 2",
+            "bExit": "Seite verlassen",
+            "swipeRight": "Nach rechts wischen",
+            "swipeLeft": "Nach links wischen",
+            "swipeUp": "Nach oben wischen",
+            "swipeDown": "Nach unten wischen"
+        },
+        "template-events": {
             "icon": "Icon"
         },
-        "entities": {
+        "template-entities": {
             "id": "Id",
             "label": "Label",
             "icon": "Icon",
-            "color": "Color",
+            "color": "Farbe",
             "text": "Text",
-            "down": "Down",
-            "stop": "Stop",
-            "up": "Up",
-            "tilt": "Tilt",
-            "left": "Left",
-            "right": "Right",
+            "down": "Ab",
+            "stop": "Stopp",
+            "up": "Auf",
+            "tilt": "Schwenkbar",
+            "left": "Links",
+            "right": "Rechts",
             "min": "Min",
             "max": "Max",
-            "mode1": "Mode 1",
-            "mode2": "Mode 2",
-            "mode3": "Mode 3",
-            "dimmable": "Dimmable",
-            "temperature": "Temperature"
+            "mode1": "Modus 1",
+            "mode2": "Modus 2",
+            "mode3": "Modus 3",
+            "dimmable": "Dimmbar",
+            "temperature": "Temperatur"
         }
     },
     "nspanel-panel": {

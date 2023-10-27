@@ -1,8 +1,13 @@
 import { IconProvider } from './icon-provider'
-import { STR_LUI_DELIMITER } from './nspanel-constants'
-import { ActiveCharacteristic, PanelColor, SplitTime } from '../types/types'
+import { NodeBase } from './node-base'
+import { ActiveCharacteristic, INodeConfig, PanelColor, SplitTime } from '../types/types'
+import * as NSPanelConstants from './nspanel-constants'
 
 export class NSPanelUtils {
+    public static i18n(node: NodeBase<INodeConfig>, key: string, dict: string, group?: string) {
+        return node.RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
+    }
+
     public static getIcon(name: string | undefined | null): string {
         return name != null ? IconProvider.GetIcon(name) ?? '' : ''
     }
@@ -15,11 +20,15 @@ export class NSPanelUtils {
         displayName?: string,
         optionalValue?: string | number
     ): string {
-        if (type === 'delete') return 'delete~~~~~'
+        if (type === 'delete') return `delete${NSPanelConstants.STR_LUI_DELIMITER.repeat(5)}`
 
-        return `${type}${STR_LUI_DELIMITER}${entityId ?? ''}${STR_LUI_DELIMITER}${icon ?? ''}${STR_LUI_DELIMITER}${
-            iconColor ?? ''
-        }${STR_LUI_DELIMITER}${displayName ?? ''}${STR_LUI_DELIMITER}${optionalValue ?? ''}`
+        return `${type}${NSPanelConstants.STR_LUI_DELIMITER}${entityId ?? NSPanelConstants.STR_EMPTY}${
+            NSPanelConstants.STR_LUI_DELIMITER
+        }${icon ?? NSPanelConstants.STR_EMPTY}${NSPanelConstants.STR_LUI_DELIMITER}${
+            iconColor ?? NSPanelConstants.STR_EMPTY
+        }${NSPanelConstants.STR_LUI_DELIMITER}${displayName ?? NSPanelConstants.STR_EMPTY}${
+            NSPanelConstants.STR_LUI_DELIMITER
+        }${optionalValue ?? NSPanelConstants.STR_EMPTY}`
     }
 
     public static makeIcon(
@@ -27,7 +36,9 @@ export class NSPanelUtils {
         iconColor: PanelColor | undefined | null,
         value?: string
     ): string {
-        return `${icon ?? ''}${value ?? ''}${STR_LUI_DELIMITER}${iconColor ?? ''}`
+        return `${icon ?? NSPanelConstants.STR_EMPTY}${value ?? NSPanelConstants.STR_EMPTY}${
+            NSPanelConstants.STR_LUI_DELIMITER
+        }${iconColor ?? NSPanelConstants.STR_EMPTY}`
     }
 
     public static splitTime(str: string | undefined): SplitTime {

@@ -1,13 +1,25 @@
 // eslint-disable-next-line func-names
 ;(function ($) {
+    const I18N_DICT: string = 'nspanel-panel'
+    const I18N_GROUP: string = 'editor'
+    const I18N_PREFIX_EVENTS: string = 'events.'
+
     const ALL_VALID_EVENTS_BASE: ValidEventDescriptor[] = [
-        // TODO: i18n
-        { event: 'bExit', label: 'bExit' },
-        { event: 'swipeRight', label: 'swipeRight' },
-        { event: 'swipeLeft', label: 'swipeLeft' },
-        { event: 'swipeUp', label: 'swipeUp' },
-        { event: 'swipeDown', label: 'swipeDown' },
+        { event: 'bExit', label: '' },
+        { event: 'swipeRight', label: '' },
+        { event: 'swipeLeft', label: '' },
+        { event: 'swipeUp', label: '' },
+        { event: 'swipeDown', label: '' },
     ]
+
+    // eslint-disable-next-line prefer-const
+    for (let i in ALL_VALID_EVENTS_BASE) {
+        ALL_VALID_EVENTS_BASE[i].label = NSPanelLui.Editor._(
+            `${I18N_PREFIX_EVENTS}${ALL_VALID_EVENTS_BASE[i].event}`,
+            I18N_DICT,
+            I18N_GROUP
+        )
+    }
 
     let editableEventList
     const registerType = () =>
