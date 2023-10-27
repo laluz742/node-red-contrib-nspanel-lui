@@ -52,6 +52,7 @@ module.exports = (RED) => {
                     break
                 }
 
+                // TODO: process using NSPanelMessageUtils#convertToCommandData to normalize msg
                 case 'notify': {
                     const notifyData: NotifyData = <NotifyData>msg.payload
                     this.nsPanelController?.showNotification(notifyData)
@@ -75,18 +76,6 @@ module.exports = (RED) => {
             })
 
             this.nsPanelController?.executeCommand(allCommands)
-
-            /* TODO: Beep command   switch (payload.cmd) {
-                   case 'beep':
-                       const cmdParam = payload.params
-                       this.nsPanelController.sendBuzzerCommand(
-                           cmdParam.count,
-                           cmdParam.beep,
-                           cmdParam.silence,
-                           cmdParam.tune
-                       )
-                       break
-               } */
         }
 
         private init(ctrlConfig: PanelControllerConfig) {

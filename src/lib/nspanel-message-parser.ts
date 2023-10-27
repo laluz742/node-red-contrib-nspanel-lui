@@ -65,7 +65,7 @@ export class NSPanelMessageParser {
             const analogSensorData = input['ANALOG']
             const temp = analogSensorData['Temperature1']
             const tempUnit = input['TempUnit']
-            if (temp !== undefined) {
+            if (temp != null) {
                 result = {
                     type: 'sensor',
                     source: 'temperature1',

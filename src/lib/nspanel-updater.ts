@@ -1,4 +1,3 @@
-// TODO: add panel id to messages
 // TODO: NLUI/HMI preferred version handling
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'

@@ -23,6 +23,7 @@ import {
     StartupEventArgs,
     CommandData,
     SwitchCommandParams,
+    BuzzerCommandParams,
     IPageHistory,
     IControllerCache,
     NotifyData,
@@ -122,10 +123,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     registerPage(page: IPageNode) {
-        // ignore special nodes, like hmi-control
-        if (page.getPageType()?.charAt(0) === '@') return
-
         this._cache.addPage(page.id, page)
+
         page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
         page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
         page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
@@ -150,7 +149,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         cmds.forEach((cmdData) => {
             switch (cmdData.cmd) {
                 case 'switch': {
-                    const switchParams = <SwitchCommandParams>cmdData.params
+                    const switchParams = cmdData.params as SwitchCommandParams
                     const switchRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (switchParams.id + 1)
                     this.sendCommandToPanel(switchRelayCmd, switchParams.active?.toString() ?? '')
 
@@ -158,9 +157,15 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 }
 
                 case 'toggle': {
-                    const toggleParams = <SwitchCommandParams>cmdData.params
+                    const toggleParams = cmdData.params as SwitchCommandParams
                     const toggleRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (toggleParams.id + 1)
                     this.sendCommandToPanel(toggleRelayCmd, NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE)
+                    break
+                }
+
+                case 'beep': {
+                    const params = cmdData.params as BuzzerCommandParams
+                    this.sendBuzzerCommand(params.count, params.beepDuration, params.silenceDuration, params.tune)
                     break
                 }
 
@@ -178,7 +183,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     public showNotification(notifyData: NotifyData): void {
-        if (notifyData === undefined || notifyData === null || typeof notifyData !== 'object') {
+        if (notifyData == null || typeof notifyData !== 'object') {
             return
         }
 
@@ -189,19 +194,21 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         this.setCurrentPage(notifyHistory)
+        if (this._ctrlConfig.beepOnNotifications || notifyData.beep) {
+            this.sendBuzzerCommand(3, 2, 1)
+        }
     }
 
-    sendBuzzerCommand(count: number, beepDuration?: number, silenceDuration?: number, tune?: number) {
-        // TODO: message
+    private sendBuzzerCommand(count: number, beepDuration?: number, silenceDuration?: number, tune?: number) {
         const params = [count]
-        if (beepDuration !== undefined) params.push(beepDuration)
-        if (silenceDuration !== undefined) params.push(silenceDuration)
-        if (tune !== undefined) params.push(tune)
+        if (beepDuration != null) params.push(beepDuration)
+        if (silenceDuration != null) params.push(silenceDuration)
+        if (tune != null) params.push(tune)
 
         this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_BUZZER, params.join(','))
     }
 
-    dispose() {
+    public dispose() {
         this.sendLWTToPanel()
         this.cronTaskEveryMinute?.stop()
         this.cronTaskHourly?.stop()
@@ -219,14 +226,14 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         // preparing dim modes
         let tempStartTime = panelConfig.panel.panelDimLowStartTime
-        if (panelConfig.panel.panelDimLowStartTime !== undefined) {
+        if (panelConfig.panel.panelDimLowStartTime != null) {
             this._panelDimModes.day.dimLow = panelConfig.panel.panelDimLow
             this._panelDimModes.day.dimHigh = panelConfig.panel.panelDimHigh
             this._panelDimModes.day.start = tempStartTime
             this._panelDimModes.day.isConfigured = true
         }
         tempStartTime = panelConfig.panel.panelDimLowNightStartTime
-        if (panelConfig.panel.panelDimLowStartTime !== undefined) {
+        if (panelConfig.panel.panelDimLowStartTime != null) {
             this._panelDimModes.night.dimLow = panelConfig.panel.panelDimLowNight
             this._panelDimModes.day.dimHigh = panelConfig.panel.panelDimHighNight
             this._panelDimModes.night.start = tempStartTime
@@ -488,9 +495,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onPopupClose() {
-        if (this._cache.getLastFromHistory().historyType === 'popup') {
-            this._cache.removeLastFromHistory()
-        }
+        this._cache.removeLastFromHistory()
 
         const currentPage: IPageHistory = this._cache.getLastFromHistory()
         this.renderPage(currentPage, true)

@@ -1,6 +1,6 @@
 import { DEFAULT_LUI_COLOR } from './nspanel-constants'
 import { NSPanelColorUtils } from './nspanel-colorutils'
-import { CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '../types/types'
+import { BuzzerCommandParams, CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '../types/types'
 
 const DEFAULT_STATUS: StatusItemData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }
 const DEFAULT_DATA: PageEntityData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }
@@ -76,6 +76,27 @@ export class NSPanelMessageUtils {
                         }
                         commandResult = { cmd: 'toggle', params: switchCmdParams }
                     }
+                    break
+                }
+
+                case 'beep': {
+                    const count = Number(NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'count', 1))
+                    const beepDuration = Number(
+                        NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'beepDuration', 1)
+                    )
+                    const silenceDuration = Number(
+                        NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'silenceDuration', 1)
+                    )
+                    const tune = Number(NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'tune', NaN))
+                    const buzzerCmdParams: BuzzerCommandParams = {
+                        count,
+                        beepDuration,
+                        silenceDuration,
+                    }
+                    if (!Number.isNaN(tune)) {
+                        buzzerCmdParams.tune = tune
+                    }
+                    commandResult = { cmd: 'beep', params: buzzerCmdParams }
                     break
                 }
 

@@ -15,6 +15,7 @@
                 name: { value: NSPanelLui._('defaults.name', 'nspanel-controller') },
                 nsPanel: { value: '', type: 'nspanel-panel', required: true },
                 screenSaverOnStartup: { value: true },
+                beepOnNotifications: { value: false },
             },
 
             label() {

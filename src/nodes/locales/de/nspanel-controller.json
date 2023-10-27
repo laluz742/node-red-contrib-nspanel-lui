@@ -24,7 +24,8 @@
     "nspanel-controller": {
         "label": {
             "palette": "Panel Controller",
-            "screenSaverOnStartup": "Bildschirmschoner nach Start aktivieren"
+            "screenSaverOnStartup": "Bildschirmschoner nach Start aktivieren",
+            "beepOnNotifications": "Signalton bei Benachrichtigungen"
         },
         "placeholder": {
             "name": "Name"

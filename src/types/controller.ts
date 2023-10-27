@@ -18,6 +18,7 @@ export interface IPageHistory {
 
 export type PanelControllerConfig = PanelBasedConfig & {
     screenSaverOnStartup: boolean
+    beepOnNotifications: boolean
 }
 
 export interface IControllerCache {

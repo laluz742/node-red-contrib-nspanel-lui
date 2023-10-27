@@ -140,7 +140,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 types: [{ value: 'msg', label: 'msg.', type: 'msg', types: ['str'] }],
             }
 
-            if (currentPanel !== '_ADD_' && currentPanel !== '' && currentPanel !== undefined) {
+            if (currentPanel !== '_ADD_' && currentPanel !== '' && currentPanel != null) {
                 const myId = nodeConfig.id
                 const panelNode = RED.nodes.node(currentPanel)
 
@@ -304,7 +304,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         const val = `${selectTypeField.val()}`
                         const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
 
-                        if (entityTypeAttrs !== undefined) {
+                        if (entityTypeAttrs != null) {
                             ROW1_2.toggle(entityTypeAttrs.hasId)
                             ROW1_3.toggle(entityTypeAttrs.hasLabel)
                             rowOptionalValue.toggle(entityTypeAttrs.hasOptionalValue ?? false)
