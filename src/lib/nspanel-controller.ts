@@ -272,7 +272,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             }
 
             case NSPanelConstants.STR_LUI_EVENT_SLEEPREACHED:
-                this.activateScreenSaver()
+                this.activateScreenSaver() // TODO: last notification, if applicable
                 this.notifyControllerNode(eventArgs) // TODO: set source to currentPage ?
                 break
 
@@ -372,6 +372,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private onPanelStartup(startupEventArgs: StartupEventArgs) {
         // delay startup until pages had time to register
         if (this.delayPanelStartupFlag) return
+        this._cache.resetHistory()
 
         this._panelUpdater?.setHmiVersion(startupEventArgs.hmiVersion)
         this.setNodeStatus('info', this._i18n('common.status.panelInit'))

@@ -71,7 +71,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                     }
                 })
             } else if (data != null) {
-                self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data)
+                self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data) // TODO: fix issue, when client was disconnecting
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
