@@ -144,7 +144,7 @@ module.exports = (RED) => {
                 const iconColor = entityData?.iconColor ?? entityConfig.iconColor
                 const value = entityData?.value
 
-                const entity = this.makeAction(
+                const entity = this._renderAction(
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(icon ?? ''),
@@ -163,7 +163,7 @@ module.exports = (RED) => {
             return resultActions.join(NSPanelConstants.STR_LUI_DELIMITER)
         }
 
-        private makeAction(
+        private _renderAction(
             type: string,
             entityId?: string,
             icon?: string,
@@ -231,7 +231,6 @@ module.exports = (RED) => {
             }
             if (dirty) {
                 this.getCache().clear()
-                this.requestUpdate()
             } else {
                 handled = super.handleInput(msg, send)
             }
