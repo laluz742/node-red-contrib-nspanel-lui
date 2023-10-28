@@ -261,12 +261,10 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         // TODO: take msg.parts or index into account to allow to set specific status
         const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
 
-        if (Array.isArray(entityInputData)) {
-            entityInputData.forEach((item, _idx) => {
-                const conversionResult = NSPanelMessageUtils.convertToEntityItemData(item)
-                result.push(conversionResult)
-            })
-        }
+        entityInputData.forEach((item, _idx) => {
+            const conversionResult = NSPanelMessageUtils.convertToEntityItemData(item)
+            result.push(conversionResult)
+        })
 
         this.pageData.entities = result.slice(0, this.options?.maxEntities ?? 0)
         return true

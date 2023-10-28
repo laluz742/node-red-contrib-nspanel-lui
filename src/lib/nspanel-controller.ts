@@ -271,7 +271,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
             case NSPanelConstants.STR_LUI_EVENT_SLEEPREACHED:
                 this.activateScreenSaver() // TODO: last notification, if applicable
-                this.notifyControllerNode(eventArgs) // TODO: set source to currentPage ?
+                this.notifyControllerNode(eventArgs)
                 break
 
             case 'relay':
