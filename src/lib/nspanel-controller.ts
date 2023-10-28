@@ -455,7 +455,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private renderPage(pageHistory: IPageHistory, fullUpdate: boolean = false) {
         const pageNode = pageHistory?.pageNode
 
-        switch (pageHistory.historyType) {
+        switch (pageHistory?.historyType) {
             case 'page':
                 if (pageNode != null) {
                     if (fullUpdate) {

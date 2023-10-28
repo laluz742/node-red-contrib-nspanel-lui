@@ -10,6 +10,7 @@ import {
     LightEventArgs,
     FirmwareEventArgs,
     FirmwareType,
+    TasmotaEvent,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -119,6 +120,23 @@ export class NSPanelMessageParser {
         }
 
         return result
+    }
+
+    public static parseTasmotaCommandResult(input: any): TasmotaEvent {
+        let tasmotaEvent: TasmotaEvent | null = null
+
+        if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_TASMOTA_CMD_OTAURL)) {
+            const cmdResult = input[NSPanelConstants.STR_TASMOTA_CMD_OTAURL]
+
+            tasmotaEvent = {
+                type: 'fw',
+                source: NSPanelConstants.FIRMWARE_TASMOTA,
+                event: NSPanelConstants.STR_TASMOTA_CMD_OTAURL,
+                data: cmdResult,
+            }
+        }
+
+        return tasmotaEvent
     }
 
     public static parseTasmotaStatus2Event(input: any): FirmwareEventArgs {

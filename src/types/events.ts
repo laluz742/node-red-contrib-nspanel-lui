@@ -74,3 +74,8 @@ export type FirmwareEventArgs = EventArgs & {
     status?: 'success' | 'failed'
     statusMsg?: string
 }
+
+export type TasmotaEvent = EventArgs & {
+    type: 'fw'
+    event: string
+}

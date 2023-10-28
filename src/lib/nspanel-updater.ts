@@ -402,7 +402,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
         */
 
         if (NSPanelUtils.stringIsNullOrEmpty(this._options.tasmotaOtaUrl)) {
-            // TODO: show error message
+            log.error(`Cannot update tasmota, OTA Url is not set for panel ${this._options.panelNodeTopic}`)
             return
         }
 
@@ -413,7 +413,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
         this._updateInProgress = true
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_OTAURL, otaUrl)
-        // TODO: sleep
+        // TODO: wait for OtaUrl on stat/RESULT (promise with waiting for onFirmwareEvent)
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_UPGRADE, '1')
     }
 
