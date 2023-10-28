@@ -1,14 +1,16 @@
+import * as NSPanelConstants from '../lib/nspanel-constants'
+
 export const PANEL_ENTITY_TYPES = [
-    'delete',
-    'shutter', // popupShutter
-    'light', // popupLight
-    'fan', // popupFan
-    'input_sel', // popupInSel
-    'timer', // popupTimer
-    'switch',
-    'button',
-    'text',
-    'number',
+    NSPanelConstants.STR_LUI_ENTITY_NONE,
+    NSPanelConstants.STR_LUI_ENTITY_SHUTTER, // popupShutter
+    NSPanelConstants.STR_LUI_ENTITY_LIGHT, // popupLight
+    NSPanelConstants.STR_LUI_ENTITY_FAN, // popupFan
+    NSPanelConstants.STR_LUI_ENTITY_INPUTSEL, // popupInSel
+    NSPanelConstants.STR_LUI_ENTITY_TIMER, // popupTimer
+    NSPanelConstants.STR_LUI_ENTITY_SWITCH,
+    NSPanelConstants.STR_LUI_ENTITY_BUTTON,
+    NSPanelConstants.STR_LUI_ENTITY_TEXT,
+    NSPanelConstants.STR_LUI_ENTITY_NUMBER,
 ] as const
 
 export type PanelEntityType = typeof PANEL_ENTITY_TYPES

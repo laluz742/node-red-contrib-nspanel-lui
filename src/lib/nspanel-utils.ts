@@ -20,7 +20,9 @@ export class NSPanelUtils {
         displayName?: string,
         optionalValue?: string | number
     ): string {
-        if (type === 'delete') return `delete${NSPanelConstants.STR_LUI_DELIMITER.repeat(5)}`
+        if (type === NSPanelConstants.STR_LUI_ENTITY_NONE) {
+            return `${NSPanelConstants.STR_LUI_ENTITY_NONE}${NSPanelConstants.STR_LUI_DELIMITER.repeat(5)}`
+        }
 
         return `${type}${NSPanelConstants.STR_LUI_DELIMITER}${entityId ?? NSPanelConstants.STR_EMPTY}${
             NSPanelConstants.STR_LUI_DELIMITER
