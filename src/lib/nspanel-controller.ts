@@ -79,8 +79,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onPageIdNavigationRequest(pageId: PageId): void {
-        // TODO: if empty nav to last page
-
         if (this._cache.isPageKnown(pageId)) {
             const pageNode: IPageNode | null = this._cache.getPage(pageId)
             if (pageNode !== null) {
@@ -596,7 +594,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             pageData = pageData.concat(notifyPageData)
             this.sendToPanel(pageData)
 
-            // TODO: beep
+            if (this._ctrlConfig.beepOnNotifications || history.notifyData.beep) {
+                this.sendBuzzerCommand(3, 2, 1)
+            }
         }
     }
 

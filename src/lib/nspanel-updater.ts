@@ -343,8 +343,10 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     private _updateHmi(): void {
         // sanity checks
-        if (NSPanelUtils.stringIsNullOrEmpty(this._updateVersionData.versions.current.hmi.model)) {
-            // TODO: show error message
+        if (NSPanelUtils.stringIsNullOrEmpty(this._updateVersionData.versions.current.hmi?.model)) {
+            log.error(
+                `HMI firmware cannot be updated, since the model of the NSPanel ${this._options.panelNodeTopic} is unknown`
+            )
             return
         }
 
