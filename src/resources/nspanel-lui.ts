@@ -718,10 +718,6 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
             return events
         }
-
-        public setPanel(_panel) {
-            // TODO: update on panel changed
-        }
     }
 
     const NSPanelWidgetFactory = {
