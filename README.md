@@ -25,10 +25,11 @@ Currently following features are supported:
 
 -   multiple panels supported
 -   screensaver with status icons
--   grid card
+-   grid card and grid2 (8 entities)
 -   entities card
 -   WiFi/QR card
--   basic implementation of thermo card
+-   thermo card
+-   media card
 -   simple navigation between cards using screen and hardware buttons
 -   input data handling
 -   control of relays
