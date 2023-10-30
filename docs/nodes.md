@@ -84,8 +84,8 @@ To notify the user about special events, notifications can be displayed using th
     }
 ```
 
-| Key            | Description                                                                                                                |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- | --- | ---- |
+| Key | Description |
+| -- | -- |
 | `notifyId`     | Identifier for notification (used in history)                                                                              |
 | `heading`      | title                                                                                                                      |
 | `headingColor` | color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`)                        |
