@@ -1,4 +1,3 @@
-// TODO: add panel id to messages
 // TODO: NLUI/HMI preferred version handling
 import * as nEvents from 'events'
 import axios, { AxiosRequestConfig } from 'axios'
@@ -128,7 +127,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
     }
 
     public checkForUpdates(): void {
-        log.info('Checking for updates')
+        log.info(`Checking for updates for panel ${this._options.panelNodeTopic}`)
         this._acquireVersions()
             .then(() => {
                 if (this._options.autoUpdate === false) {
@@ -194,7 +193,9 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
                 }
             })
             .catch((versionAcquisitionStatus) => {
-                log.error(`Could not acquire version data ${versionAcquisitionStatus}`)
+                log.error(
+                    `Could not acquire version data for panel ${this._options.panelNodeTopic} (status code ${versionAcquisitionStatus})`
+                )
             })
     }
 
@@ -211,12 +212,14 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
             case 'update': {
                 if (fwEvent.status === 'success') {
-                    log.info(`Update successfully installed (${fwEvent.source})`)
+                    log.info(
+                        `Update for ${fwEvent.source} successfully installed on panel ${this._options.panelNodeTopic}`
+                    )
                     this._updateInProgress = false
                     this.notifyUpdateSuccess(fwEvent)
                     this.processUpdateTasks()
                 } else if (fwEvent.status === 'failed') {
-                    log.error(`Update failed (${fwEvent.source})`)
+                    log.error(`Updating ${fwEvent.source} failed on panel ${this._options.panelNodeTopic}`)
                     // as manual intervention may be neccessary, block further updates
                     this._updateInProgress = false
                     this._updatesBlocked = true
@@ -340,8 +343,10 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     private _updateHmi(): void {
         // sanity checks
-        if (NSPanelUtils.stringIsNullOrEmpty(this._updateVersionData.versions.current.hmi.model)) {
-            // TODO: show error message
+        if (NSPanelUtils.stringIsNullOrEmpty(this._updateVersionData.versions.current.hmi?.model)) {
+            log.error(
+                `HMI firmware cannot be updated, since the model of the NSPanel ${this._options.panelNodeTopic} is unknown`
+            )
             return
         }
 
@@ -350,7 +355,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
             return
         }
 
-        log.info('Initiating flashing NSPanel HMI firmware')
+        log.info(`Initiating flashing NSPanel HMI firmware on panel ${this._options.panelNodeTopic}`)
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_HMI)
 
         const hmiVersion = this._updateVersionData.versions.latest.hmi.version
@@ -377,7 +382,7 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
             this._updateTaskStack.push(NSPanelConstants.FIRMWARE_BERRYDRIVER)
             return
         }
-        log.info('Updating NSPanel BerryDriver')
+        log.info(`Updating NSPanel BerryDriver on panel ${this._options.panelNodeTopic}`)
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_BERRYDRIVER)
 
         this._updateInProgress = true
@@ -397,18 +402,18 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
         */
 
         if (NSPanelUtils.stringIsNullOrEmpty(this._options.tasmotaOtaUrl)) {
-            // TODO: show error message
+            log.error(`Cannot update tasmota, OTA Url is not set for panel ${this._options.panelNodeTopic}`)
             return
         }
 
-        log.info('Updating Tasmota')
+        log.info(`Updating Tasmota on panel ${this._options.panelNodeTopic}`)
         this.notifyUpdateInitiated(NSPanelConstants.FIRMWARE_TASMOTA)
 
         const otaUrl: string = this._options.tasmotaOtaUrl
 
         this._updateInProgress = true
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_OTAURL, otaUrl)
-        // TODO: sleep
+        // TODO: wait for OtaUrl on stat/RESULT
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_UPGRADE, '1')
     }
 
@@ -489,6 +494,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
     public dispose(): void {}
 
+    // #region notifications
     private notifyUpdateSuccess(fwEventArgs: FirmwareEventArgs): void {
         this.emit('update', fwEventArgs)
     }
@@ -579,4 +585,5 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
         this.emit('update', fwEvent)
     }
+    // #endregion notifications
 }

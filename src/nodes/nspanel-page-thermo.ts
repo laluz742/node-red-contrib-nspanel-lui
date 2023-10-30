@@ -3,13 +3,6 @@ import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import {
-    DEFAULT_LUI_COLOR,
-    STR_LUI_CMD_ENTITYUPDATE,
-    STR_PAGE_TYPE_CARD_THERMO,
-    STR_LUI_DELIMITER,
-    STR_LUI_EVENT_BUTTONPRESS2,
-} from '../lib/nspanel-constants'
-import {
     IEntityBasedPageConfig,
     PageInputMessage,
     NodeRedSendCallback,
@@ -17,6 +10,7 @@ import {
     SensorEventArgs,
     PageEntityData,
 } from '../types/types'
+import * as NSPanelConstants from '../lib/nspanel-constants'
 
 interface PageThermoConfig extends IEntityBasedPageConfig {
     /* options */
@@ -41,7 +35,7 @@ interface PageThermoData {
 
 const MAX_ENTITIES = 8
 const TEMPERATURE_RESOLUTION_FACTOR = 10
-const ACTION_EMPTY = STR_LUI_DELIMITER.repeat(3)
+const ACTION_EMPTY = NSPanelConstants.STR_LUI_DELIMITER.repeat(3)
 
 // TODO: second temperature in settings
 
@@ -79,7 +73,7 @@ module.exports = (RED) => {
         }
 
         constructor(config: PageThermoConfig) {
-            super(config, RED, { pageType: STR_PAGE_TYPE_CARD_THERMO, maxEntities: MAX_ENTITIES })
+            super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_THERMO, maxEntities: MAX_ENTITIES })
 
             this.init(config)
         }
@@ -92,7 +86,7 @@ module.exports = (RED) => {
 
         protected override doGeneratePage(): string | string[] | null {
             const result: string[] = []
-            result.push(STR_LUI_CMD_ENTITYUPDATE)
+            result.push(NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE)
 
             result.push(this.entitiesPageNodeConfig.title ?? '')
             const titleNav = this.generateTitleNav()
@@ -129,7 +123,7 @@ module.exports = (RED) => {
 
             result.push(this.config?.showDetailsPopup ? '' : '1')
 
-            const pageData = result.join(STR_LUI_DELIMITER)
+            const pageData = result.join(NSPanelConstants.STR_LUI_DELIMITER)
             return pageData
         }
 
@@ -150,11 +144,11 @@ module.exports = (RED) => {
                 const iconColor = entityData?.iconColor ?? entityConfig.iconColor
                 const value = entityData?.value
 
-                const entity = this.makeAction(
+                const entity = this._renderAction(
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(icon ?? ''),
-                    NSPanelColorUtils.toHmiIconColor(iconColor ?? DEFAULT_LUI_COLOR),
+                    NSPanelColorUtils.toHmiIconColor(iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR),
                     value
                 )
 
@@ -166,21 +160,21 @@ module.exports = (RED) => {
                 }
             }
 
-            return resultActions.join(STR_LUI_DELIMITER)
+            return resultActions.join(NSPanelConstants.STR_LUI_DELIMITER)
         }
 
-        private makeAction(
+        private _renderAction(
             type: string,
             entityId?: string,
             icon?: string,
             iconColorActive?: number,
             state?: string | number
         ): string {
-            if (type === 'delete') return ACTION_EMPTY
+            if (type === NSPanelConstants.STR_LUI_ENTITY_NONE) return ACTION_EMPTY
 
-            return `${icon ?? ''}${STR_LUI_DELIMITER}${iconColorActive ?? ''}${STR_LUI_DELIMITER}${
-                state ?? ''
-            }${STR_LUI_DELIMITER}${entityId ?? ''}`
+            return `${icon ?? ''}${NSPanelConstants.STR_LUI_DELIMITER}${iconColorActive ?? ''}${
+                NSPanelConstants.STR_LUI_DELIMITER
+            }${state ?? ''}${NSPanelConstants.STR_LUI_DELIMITER}${entityId ?? ''}`
         }
 
         protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
@@ -223,7 +217,10 @@ module.exports = (RED) => {
                 case 'event': {
                     const eventArgs: EventArgs = msg.payload as EventArgs
 
-                    if (eventArgs.event === STR_LUI_EVENT_BUTTONPRESS2 && eventArgs.event2 === 'tempUpd') {
+                    if (
+                        eventArgs.event === NSPanelConstants.STR_LUI_EVENT_BUTTONPRESS2 &&
+                        eventArgs.event2 === 'tempUpd'
+                    ) {
                         const tempNum = Number(eventArgs.value)
                         if (!Number.isNaN(tempNum)) {
                             this.data.targetTemperature = tempNum / TEMPERATURE_RESOLUTION_FACTOR
@@ -234,7 +231,6 @@ module.exports = (RED) => {
             }
             if (dirty) {
                 this.getCache().clear()
-                this.requestUpdate()
             } else {
                 handled = super.handleInput(msg, send)
             }

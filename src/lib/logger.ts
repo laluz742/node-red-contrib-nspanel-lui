@@ -22,7 +22,7 @@ const logMessage = (callback: LogCallbackFunction, facility: LogFacility, prefix
             'en-GB',
             timeOptions
         )}`
-        const prefixStr = node !== undefined ? `${node.name}:${node.id}` : prefix
+        const prefixStr = node != null ? `${node.name}:${node.id}` : prefix
 
         return prefixStr
             ? callback(`${timestamp} - [${facility}] [${prefixStr}] ${message}`)

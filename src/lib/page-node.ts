@@ -21,6 +21,7 @@ import {
     IPageCache,
     IPageNode,
 } from '../types/types'
+import * as NSPanelConstants from './nspanel-constants'
 
 export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> implements IPageNode {
     private panelNode: IPanelNode | null = null
@@ -53,7 +54,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         this.initPageNode(config, options)
         const panelNode = (<unknown>RED.nodes.getNode(config.nsPanel)) as IPanelNode
         if (!panelNode || panelNode.type !== 'nspanel-panel') {
-            this.warn('Panel configuration is wrong or missing, please review the node settings') // TODO i18n panel missing
+            this.warn('Panel configuration is wrong or missing, please review the node settings')
             this.status({
                 fill: 'red',
                 shape: 'dot',
@@ -99,23 +100,23 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
 
     protected generateTitleNav() {
         // TODO: feature-request: retrieve icons from nav target
-        let navPrev = NSPanelUtils.makeEntity('delete')
-        let navNext = NSPanelUtils.makeEntity('delete')
+        let navPrev = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
+        let navNext = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
 
         this.pageNodeConfig.events.forEach((item) => {
             switch (item.event) {
-                case 'nav.prev':
+                case NSPanelConstants.STR_NAV_ID_PREVIOUS:
                     navPrev = NSPanelUtils.makeEntity(
-                        'button',
-                        'nav.prev',
+                        NSPanelConstants.STR_LUI_ENTITY_BUTTON,
+                        NSPanelConstants.STR_NAV_ID_PREVIOUS,
                         NSPanelUtils.getIcon(item.icon ?? ''),
                         NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
                     break
-                case 'nav.next':
+                case NSPanelConstants.STR_NAV_ID_NEXT:
                     navNext = NSPanelUtils.makeEntity(
-                        'button',
-                        'nav.next',
+                        NSPanelConstants.STR_LUI_ENTITY_BUTTON,
+                        NSPanelConstants.STR_NAV_ID_NEXT,
                         NSPanelUtils.getIcon(item.icon ?? ''),
                         NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
@@ -260,12 +261,10 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         // TODO: take msg.parts or index into account to allow to set specific status
         const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
 
-        if (Array.isArray(entityInputData)) {
-            entityInputData.forEach((item, _idx) => {
-                const conversionResult = NSPanelMessageUtils.convertToEntityItemData(item)
-                result.push(conversionResult)
-            })
-        }
+        entityInputData.forEach((item, _idx) => {
+            const conversionResult = NSPanelMessageUtils.convertToEntityItemData(item)
+            result.push(conversionResult)
+        })
 
         this.pageData.entities = result.slice(0, this.options?.maxEntities ?? 0)
         return true

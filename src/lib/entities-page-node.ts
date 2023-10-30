@@ -77,6 +77,7 @@ export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends Pa
 
         const entity: PanelEntity = entities.filter((e) => e.entityId === entityId)[0] ?? null
 
+        // generate popup only, if related to a known entity
         if (entity != null) {
             const entityData = this.entityData.get(entity.entityId)
 

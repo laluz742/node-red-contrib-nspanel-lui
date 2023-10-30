@@ -23,14 +23,17 @@ import {
     StartupEventArgs,
     CommandData,
     SwitchCommandParams,
+    BuzzerCommandParams,
     IPageHistory,
     IControllerCache,
     NotifyData,
     FirmwareEventArgs,
     StatusLevel,
     NodeStatus,
+    PanelControllerConfig,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
+import { IPanelNodeEx } from '../types/panel'
 
 const log = Logger('NSPanelController')
 
@@ -48,9 +51,11 @@ declare type PanelDimModes = {
 }
 
 export class NSPanelController extends nEvents.EventEmitter implements IPanelController {
-    private _panelMqttHandler: IPanelMqttHandler = null
+    private _panelMqttHandler: IPanelMqttHandler
 
-    private _panelUpdater: IPanelUpdater = null
+    private _panelUpdater: IPanelUpdater
+
+    private _ctrlConfig: PanelControllerConfig
 
     private _panelConfig: PanelConfig
 
@@ -64,18 +69,16 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         night: { isConfigured: false, dimLow: 100, dimHigh: 100, start: { hours: 0, minutes: 0 } },
     }
 
-    constructor(panelConfig: PanelConfig, i18n: NodeRedI18nResolver) {
+    constructor(ctrlConfig: PanelControllerConfig, panelNode: IPanelNodeEx, i18n: NodeRedI18nResolver) {
         super()
-        this._cache = new SimpleControllerCache()
-        this._panelConfig = panelConfig
+        this._ctrlConfig = ctrlConfig
         this._i18n = i18n
+        this._cache = new SimpleControllerCache()
 
-        this.init(panelConfig)
+        this.init(panelNode)
     }
 
     private onPageIdNavigationRequest(pageId: PageId): void {
-        // TODO: if empty nav to last page
-
         if (this._cache.isPageKnown(pageId)) {
             const pageNode: IPageNode | null = this._cache.getPage(pageId)
             if (pageNode !== null) {
@@ -118,7 +121,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     registerPage(page: IPageNode) {
-        // TODO: ignore navTo Node
         this._cache.addPage(page.id, page)
 
         page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
@@ -145,7 +147,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         cmds.forEach((cmdData) => {
             switch (cmdData.cmd) {
                 case 'switch': {
-                    const switchParams = <SwitchCommandParams>cmdData.params
+                    const switchParams = cmdData.params as SwitchCommandParams
                     const switchRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (switchParams.id + 1)
                     this.sendCommandToPanel(switchRelayCmd, switchParams.active?.toString() ?? '')
 
@@ -153,9 +155,15 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 }
 
                 case 'toggle': {
-                    const toggleParams = <SwitchCommandParams>cmdData.params
+                    const toggleParams = cmdData.params as SwitchCommandParams
                     const toggleRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (toggleParams.id + 1)
                     this.sendCommandToPanel(toggleRelayCmd, NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE)
+                    break
+                }
+
+                case 'beep': {
+                    const params = cmdData.params as BuzzerCommandParams
+                    this.sendBuzzerCommand(params.count, params.beepDuration, params.silenceDuration, params.tune)
                     break
                 }
 
@@ -173,7 +181,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     public showNotification(notifyData: NotifyData): void {
-        if (notifyData === undefined || notifyData === null || typeof notifyData !== 'object') {
+        if (notifyData == null || typeof notifyData !== 'object') {
             return
         }
 
@@ -184,19 +192,21 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         this.setCurrentPage(notifyHistory)
+        if (this._ctrlConfig.beepOnNotifications || notifyData.beep) {
+            this.sendBuzzerCommand(3, 2, 1)
+        }
     }
 
-    sendBuzzerCommand(count: number, beepDuration?: number, silenceDuration?: number, tune?: number) {
-        // TODO: message
+    private sendBuzzerCommand(count: number, beepDuration?: number, silenceDuration?: number, tune?: number) {
         const params = [count]
-        if (beepDuration !== undefined) params.push(beepDuration)
-        if (silenceDuration !== undefined) params.push(silenceDuration)
-        if (tune !== undefined) params.push(tune)
+        if (beepDuration != null) params.push(beepDuration)
+        if (silenceDuration != null) params.push(silenceDuration)
+        if (tune != null) params.push(tune)
 
         this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_BUZZER, params.join(','))
     }
 
-    dispose() {
+    public dispose() {
         this.sendLWTToPanel()
         this.cronTaskEveryMinute?.stop()
         this.cronTaskHourly?.stop()
@@ -206,19 +216,22 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this._panelMqttHandler?.dispose()
     }
 
-    private init(panelConfig: PanelConfig) {
+    private init(panelNode: IPanelNodeEx) {
+        const panelConfig = panelNode.getPanelConfig()
+        this._panelConfig = panelConfig
+
         log.info(`Starting panel controller for panel ${panelConfig.panel.topic}`)
 
         // preparing dim modes
         let tempStartTime = panelConfig.panel.panelDimLowStartTime
-        if (panelConfig.panel.panelDimLowStartTime !== undefined) {
+        if (panelConfig.panel.panelDimLowStartTime != null) {
             this._panelDimModes.day.dimLow = panelConfig.panel.panelDimLow
             this._panelDimModes.day.dimHigh = panelConfig.panel.panelDimHigh
             this._panelDimModes.day.start = tempStartTime
             this._panelDimModes.day.isConfigured = true
         }
         tempStartTime = panelConfig.panel.panelDimLowNightStartTime
-        if (panelConfig.panel.panelDimLowStartTime !== undefined) {
+        if (panelConfig.panel.panelDimLowStartTime != null) {
             this._panelDimModes.night.dimLow = panelConfig.panel.panelDimLowNight
             this._panelDimModes.day.dimHigh = panelConfig.panel.panelDimHighNight
             this._panelDimModes.night.start = tempStartTime
@@ -234,6 +247,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         // initialize updater
         const panelUpdater = new NSPanelUpdater(this, mqttHandler, this._i18n, {
+            panelNodeTopic: this._panelConfig.panel.topic,
             autoUpdate: this._panelConfig.panel.autoUpdate,
             tasmotaOtaUrl: this._panelConfig.panel.tasmotaOtaUrl,
         })
@@ -256,8 +270,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             }
 
             case NSPanelConstants.STR_LUI_EVENT_SLEEPREACHED:
-                this.activateScreenSaver()
-                this.notifyControllerNode(eventArgs) // TODO: set source to currentPage ?
+                this.activateScreenSaver() // TODO: last notification, if applicable
+                this.notifyControllerNode(eventArgs)
                 break
 
             case 'relay':
@@ -356,6 +370,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private onPanelStartup(startupEventArgs: StartupEventArgs) {
         // delay startup until pages had time to register
         if (this.delayPanelStartupFlag) return
+        this._cache.resetHistory()
 
         this._panelUpdater?.setHmiVersion(startupEventArgs.hmiVersion)
         this.setNodeStatus('info', this._i18n('common.status.panelInit'))
@@ -417,7 +432,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             { cmd: 'switch', params: { id: 1 } },
         ])
 
-        if (this._panelConfig.panel.screenSaverOnStartup) {
+        if (this._ctrlConfig.screenSaverOnStartup) {
             this.activateScreenSaver()
         }
         this.setNodeStatus('info', this._i18n('common.status.panelStarted'))
@@ -440,7 +455,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private renderPage(pageHistory: IPageHistory, fullUpdate: boolean = false) {
         const pageNode = pageHistory?.pageNode
 
-        switch (pageHistory.historyType) {
+        switch (pageHistory?.historyType) {
             case 'page':
                 if (pageNode != null) {
                     if (fullUpdate) {
@@ -479,10 +494,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private onPopupClose() {
-        // TODO: asserts last is popup
         this._cache.removeLastFromHistory()
 
-        // TODO: asserts is page before popup
         const currentPage: IPageHistory = this._cache.getLastFromHistory()
         this.renderPage(currentPage, true)
     }
@@ -505,6 +518,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 topic: eventArgs.type,
                 payload: { ...eventArgs },
             }
+
             // when hw buttons do not control power outputs translate to event
             if (
                 this._panelConfig.panel.detachRelays &&
@@ -567,6 +581,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (pageData !== null) {
             this.sendToPanel(pageData)
         } else {
+            // close popup, if it cannot be generated, thus is not supported yet
             this.onPopupClose()
         }
     }
@@ -579,7 +594,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             pageData = pageData.concat(notifyPageData)
             this.sendToPanel(pageData)
 
-            // TODO: beep
+            if (this._ctrlConfig.beepOnNotifications || history.notifyData.beep) {
+                this.sendBuzzerCommand(3, 2, 1)
+            }
         }
     }
 
@@ -646,9 +663,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private sendDateToPanel() {
         const date = new Date()
         const dateOptions: Intl.DateTimeFormatOptions = {
-            weekday: 'long', // short // TODO: config
+            weekday: 'long', // short
             year: 'numeric',
-            month: 'long', // short // TODO: config
+            month: 'long', // short
             day: 'numeric',
         }
 

@@ -1,7 +1,7 @@
 import { HSVColor, RGBColor } from './colors'
 import { ActiveCharacteristic } from './base'
 
-export type ValidEventDescriptor = {
+export type EventDescriptor = {
     event: string
     label: string
 }
@@ -73,4 +73,9 @@ export type FirmwareEventArgs = EventArgs & {
     model?: string
     status?: 'success' | 'failed'
     statusMsg?: string
+}
+
+export type TasmotaEventArgs = EventArgs & {
+    type: 'fw'
+    event: string
 }

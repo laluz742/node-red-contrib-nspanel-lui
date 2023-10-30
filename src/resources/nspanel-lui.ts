@@ -2,7 +2,7 @@ declare var RED // eslint-disable-line
 var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 
 // #region types
-type ValidEventDescriptor = import('../types/nspanel-lui-editor').ValidEventDescriptor
+type EventDescriptor = import('../types/nspanel-lui-editor').EventDescriptor
 type EventMapping = import('../types/nspanel-lui-editor').EventMapping
 type PanelEntity = import('../types/nspanel-lui-editor').PanelEntity
 type IPageConfig = import('../types/nspanel-lui-editor').IPageConfig
@@ -24,19 +24,19 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     const I18N_PREFIX_EVENTS: string = 'events.'
 
     // #region events
-    const ALL_VALID_NAVIGATION_EVENTS = [
+    const ALL_VALID_NAVIGATION_EVENTS: EventDescriptor[] = [
         { event: 'nav.prev', label: '' },
         { event: 'nav.next', label: '' },
     ]
-    const ALL_VALID_BUTTON_EVENTS = [
+    const ALL_VALID_BUTTON_EVENTS: EventDescriptor[] = [
         { event: 'hw.button1', label: '' },
         { event: 'hw.button2', label: '' },
     ]
 
     const addHardwareButtonEventsIfApplicable = (
         nsPanelId: string,
-        validEventsBase: ValidEventDescriptor[]
-    ): ValidEventDescriptor[] => {
+        validEventsBase: EventDescriptor[]
+    ): EventDescriptor[] => {
         let result = validEventsBase
         const panelNode = RED.nodes.node(nsPanelId)
 
@@ -140,7 +140,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 types: [{ value: 'msg', label: 'msg.', type: 'msg', types: ['str'] }],
             }
 
-            if (currentPanel !== '_ADD_' && currentPanel !== '' && currentPanel !== undefined) {
+            if (currentPanel !== '_ADD_' && currentPanel !== '' && currentPanel != null) {
                 const myId = nodeConfig.id
                 const panelNode = RED.nodes.node(currentPanel)
 
@@ -304,7 +304,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         const val = `${selectTypeField.val()}`
                         const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
 
-                        if (entityTypeAttrs !== undefined) {
+                        if (entityTypeAttrs != null) {
                             ROW1_2.toggle(entityTypeAttrs.hasId)
                             ROW1_3.toggle(entityTypeAttrs.hasLabel)
                             rowOptionalValue.toggle(entityTypeAttrs.hasOptionalValue ?? false)
@@ -527,7 +527,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         private _editableListAddButton: JQuery<HTMLElement>
 
         private _pageEvents: {
-            all: ValidEventDescriptor[]
+            all: EventDescriptor[]
             available: string[]
             used: string[]
         } = {
@@ -540,7 +540,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             node: IPageConfig,
             domControl: JQuery<HTMLElement>,
             domControlList: JQuery<HTMLElement>,
-            allValidEvents: ValidEventDescriptor[]
+            allValidEvents: EventDescriptor[]
         ) {
             this._node = node
             this._domControl = domControl
@@ -643,7 +643,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             ).find('.red-ui-editableList-addButton')
         }
 
-        public setAvailableEvents(allValidEventSpecs: ValidEventDescriptor[]): void {
+        public setAvailableEvents(allValidEventSpecs: EventDescriptor[]): void {
             this._pageEvents.all = allValidEventSpecs.slice()
             this._updateSelectEventFields()
         }
@@ -734,8 +734,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             maxEntities: number,
             initialData: PanelEntity[],
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
-        ): EditableEntitiesListWrapper {
-            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
+        ): EditableEntitiesListWrapper | null {
+            const domControl = $(controlDomSelector)
             const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
             if (domControlList.length === 0) return null
 
@@ -748,10 +748,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         editableEventList(
             node: IPageConfig,
             controlDomSelector: string,
-            allValidEvents: ValidEventDescriptor[],
+            allValidEvents: EventDescriptor[],
             initialData: PanelEntity[]
-        ): EditableEventListWrapper {
-            const domControl = $(controlDomSelector) // TODO: if (domControl.length = 0) => not found
+        ): EditableEventListWrapper | null {
+            const domControl = $(controlDomSelector)
             const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
             if (domControlList.length === 0) return null
 
@@ -759,6 +759,46 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             el.makeControl()
             el.addItems(initialData)
             return el
+        },
+    }
+
+    const NSPanelInteractions = {
+        addPanelChangeBehavior(
+            panelInputField: JQuery<HTMLElement>,
+            eventInputControl: JQuery<HTMLElement>,
+            eventList: EditableEventListWrapper,
+            validEventsBase: EventDescriptor[],
+            originalPanelId: string
+        ): void {
+            const eventListLastVal = eventList?.getEvents()
+            let panelChangedFlag = false
+
+            panelInputField.on('change', () => {
+                const nsPanelId = panelInputField.val() as string
+
+                if (nsPanelId === '_ADD_') {
+                    eventInputControl.hide()
+                } else {
+                    if (nsPanelId !== originalPanelId) {
+                        eventList.empty()
+                        panelChangedFlag = true
+                    } else if (panelChangedFlag === true) {
+                        eventList.addItems(eventListLastVal)
+                        panelChangedFlag = false
+                    }
+
+                    const allValidEvents = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
+                        nsPanelId,
+                        validEventsBase
+                    )
+                    if (eventList != null) {
+                        eventList.setAvailableEvents(allValidEvents)
+                    }
+
+                    eventInputControl.show()
+                }
+            })
+            panelInputField.trigger('change')
         },
     }
 
@@ -773,7 +813,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         $('body').append($(tpl))
     })
 
-    // i18n processing
+    // i18n processing // TODO: should be done when template loaded
     // eslint-disable-next-line prefer-const
     for (let i in ALL_VALID_NAVIGATION_EVENTS) {
         ALL_VALID_NAVIGATION_EVENTS[i].label = i18n(
@@ -812,5 +852,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         allButtonEvents: ALL_VALID_BUTTON_EVENTS,
         addHardwareButtonEventsIfApplicable,
     }
+    NSPanelLui.Interactions = NSPanelLui.Interactions || NSPanelInteractions
+
     // #endregion API generation
 })(RED, jQuery)

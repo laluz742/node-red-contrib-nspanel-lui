@@ -6,24 +6,30 @@ import { NodeMessageInFlow } from './nodered'
 export interface PanelMessage extends NodeMessageInFlow {}
 
 export type CommandTopic = 'cmd'
-export type Command = 'switch' | 'toggle' | 'checkForUpdates'
+export type Command = 'switch' | 'toggle' | 'beep' | 'checkForUpdates'
 
-export interface CommandMessage extends PanelMessage {
+export type CommandMessage = PanelMessage & {
     topic: CommandTopic
 
     payload: CommandData | CommandData[]
 }
 
-export interface CommandData {
+export type CommandData = {
     cmd: Command
-    params?: SwitchCommandParams
+    params?: SwitchCommandParams | BuzzerCommandParams
 }
 
-export interface SwitchCommandParams {
+export type SwitchCommandParams = {
     id: 0 | 1
     active?: ActiveCharacteristic
 }
 
+export type BuzzerCommandParams = {
+    count: number
+    beepDuration?: number
+    silenceDuration?: number
+    tune?: number
+}
 // #region page input data messages
 export type PageInputTopic = 'data' | 'status' | 'notify' | 'event' | 'sensor'
 

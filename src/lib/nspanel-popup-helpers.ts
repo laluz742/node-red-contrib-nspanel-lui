@@ -1,6 +1,7 @@
 import { NodeBase } from './node-base'
 import { NSPanelColorUtils } from './nspanel-colorutils'
 import { NSPanelUtils } from './nspanel-utils'
+import { Logger } from './logger'
 import {
     FanEntityData,
     INodeConfig,
@@ -12,13 +13,15 @@ import {
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
+const log = Logger('NSPanelController')
+
 export class NSPanelPopupHelpers {
     public static generatePopup(
         node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
     ): string | string[] | null {
-        let result: string | string[] | null = null
+        let result: string | string[] | null
 
         switch (entity.type) {
             case 'fan':
@@ -37,6 +40,11 @@ export class NSPanelPopupHelpers {
             case 'input_sel':
             case 'timer':
                 // TODO
+                break
+
+            default:
+                log.debug(`Popup type ${entity.type} is not supported, yet.`)
+                result = null
                 break
         }
 

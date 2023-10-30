@@ -1,6 +1,7 @@
 import { DEFAULT_LUI_COLOR } from './nspanel-constants'
 import { NSPanelColorUtils } from './nspanel-colorutils'
-import { CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '../types/types'
+import { BuzzerCommandParams, CommandData, PageEntityData, StatusItemData, SwitchCommandParams } from '../types/types'
+import { NSPanelUtils } from './nspanel-utils'
 
 const DEFAULT_STATUS: StatusItemData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }
 const DEFAULT_DATA: PageEntityData = { icon: undefined, iconColor: DEFAULT_LUI_COLOR, text: undefined }
@@ -34,13 +35,19 @@ export class NSPanelMessageUtils {
     public static convertToEntityItemData(input: any, defaultData: PageEntityData = DEFAULT_DATA): PageEntityData {
         const result: PageEntityData = { ...defaultData }
 
-        // TODO: intNameEntity
-        result.text = NSPanelMessageUtils.hasProperty(input, 'text', true) ? input['text'] : null // TODO: could be anything else but string
-        result.value = NSPanelMessageUtils.hasProperty(input, 'value', true) ? input['value'] : null // TODO: could be anything else but string
-        result.icon = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null // TODO: could be anything else but string
-        result.iconColor = NSPanelMessageUtils.hasProperty(input, 'iconColor')
+        const dEntityId: any = NSPanelMessageUtils.hasProperty(input, 'entityId', true) ? input['entityId'] : null
+        const dText: any = NSPanelMessageUtils.hasProperty(input, 'text', true) ? input['text'] : null
+        const dValue: any = NSPanelMessageUtils.hasProperty(input, 'value', true) ? input['value'] : null
+        const dIcon: any = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null
+        const dIconColor: any = NSPanelMessageUtils.hasProperty(input, 'iconColor')
             ? NSPanelColorUtils.toHmiIconColor(input['iconColor'])
             : DEFAULT_LUI_COLOR
+
+        result.entityId = NSPanelUtils.isString(dEntityId) ? dEntityId : null
+        result.text = NSPanelUtils.isString(dText) ? dText : null
+        result.value = NSPanelUtils.isString(dValue) ? dValue : null
+        result.icon = NSPanelUtils.isString(dIcon) ? dIcon : null
+        result.iconColor = dIconColor
 
         return result
     }
@@ -76,6 +83,27 @@ export class NSPanelMessageUtils {
                         }
                         commandResult = { cmd: 'toggle', params: switchCmdParams }
                     }
+                    break
+                }
+
+                case 'beep': {
+                    const count = Number(NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'count', 1))
+                    const beepDuration = Number(
+                        NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'beepDuration', 1)
+                    )
+                    const silenceDuration = Number(
+                        NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'silenceDuration', 1)
+                    )
+                    const tune = Number(NSPanelMessageUtils.getPropertyOrDefault(inputParams, 'tune', NaN))
+                    const buzzerCmdParams: BuzzerCommandParams = {
+                        count,
+                        beepDuration,
+                        silenceDuration,
+                    }
+                    if (!Number.isNaN(tune)) {
+                        buzzerCmdParams.tune = tune
+                    }
+                    commandResult = { cmd: 'beep', params: buzzerCmdParams }
                     break
                 }
 

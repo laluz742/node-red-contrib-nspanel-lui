@@ -24,7 +24,8 @@
     "nspanel-controller": {
         "label": {
             "palette": "Panel Controller",
-            "screenSaverOnStartup": "Activate screensaver after startup"
+            "screenSaverOnStartup": "Activate screensaver after startup",
+            "beepOnNotifications": "Beep for notifications"
         },
         "defaults": {
             "name": "Controller"

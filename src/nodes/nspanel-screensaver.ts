@@ -81,7 +81,7 @@ module.exports = (RED) => {
             for (let idx = 0; idx < 2; idx += 1) {
                 const item = this.statusData[idx]
                 const tmp: string =
-                    item !== undefined
+                    item != null
                         ? NSPanelUtils.makeIcon(
                               (item.prefix ?? '') + NSPanelUtils.getIcon(item.icon) + (item.text ?? ''),
                               item.iconColor
@@ -129,7 +129,7 @@ module.exports = (RED) => {
 
             if (Array.isArray(statusInputData)) {
                 for (let i = 0; i < 2; i += 1) {
-                    if (statusInputData[i] !== undefined) {
+                    if (statusInputData[i] != null) {
                         const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
                             statusInputData[i]
                         ) as StatusItemData
@@ -137,7 +137,7 @@ module.exports = (RED) => {
                         statusItems[idx] = item
                     }
                 }
-            } else if (statusInputData !== undefined) {
+            } else if (statusInputData != null) {
                 const item = NSPanelMessageUtils.convertToStatusItemData(statusInputData) as StatusItemData
                 const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', 0)
                 statusItems[idx] = item

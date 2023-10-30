@@ -32,10 +32,16 @@
                 telePeriod: {
                     value: 1,
                     required: false,
-                    validate: (v) =>
-                        v === 0 || // disable
-                        v === 1 || // firmware default
-                        NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TELEPERIOD_MIN, PANEL_TELEPERIOD_MAX),
+                    validate(v) {
+                        const vNum = Number(v)
+                        if (Number.isNaN(vNum)) return false
+
+                        return (
+                            vNum === 0 || // disable
+                            vNum === 1 || // firmware default ) {
+                            NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TELEPERIOD_MIN, PANEL_TELEPERIOD_MAX)
+                        )
+                    },
                 },
 
                 panelTimeout: {

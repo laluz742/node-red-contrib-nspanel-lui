@@ -35,10 +35,10 @@ var switchCmdMsg = {
 }
 ```
 
-| Key      | Description                                                                                                                  |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `cmd`    | "switch" for relay control                                                                                                   |
-| `params` | `id` = [`0` \| `1`]; `on` = [ `false` \| `0` \| `'0'`] to switch relay off, and [`true` \| `1` \| `'1'`] for on respectively |
+| Key      | Description                                                                                                                |
+| -------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `cmd`    | "switch" for relay control                                                                                                 |
+| `params` | `id` = [`0` \| `1`]; `on` [ `false` \| `0` \| `'0'`] to switch relay off, and [`true` \| `1` \| `'1'`] for on respectively |
 
 #### 1.2.2 Toggle Relay
 
@@ -78,13 +78,14 @@ To notify the user about special events, notifications can be displayed using th
             fontSize: 2,
             timeout: 0,
             icon: "wrench"
-            iconColor: "#22ffff"
+            iconColor: "#22ffff",
+            beep: 1
         }
     }
 ```
 
 | Key            | Description                                                                                                                |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- | --- | ---- |
 | `notifyId`     | Identifier for notification (used in history)                                                                              |
 | `heading`      | title                                                                                                                      |
 | `headingColor` | color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`)                        |
@@ -95,8 +96,37 @@ To notify the user about special events, notifications can be displayed using th
 | `timeout`      | the timeout in seconds after which the notification will disappear, 0 for no timeout                                       |
 | `icon`         | optional, icon to show                                                                                                     |
 | `iconColor`    | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `beep`         | plays sound on panel, when [true                                                                                           | 1   | '1'] |
 
-#### 1.2.4 Check for Updates
+#### 1.2.4 Buzzer
+
+To output sound patterns on the NSPanel, the command `beep` command can be used under the _cmd_ topic
+
+```javascript
+var buzzerCommand = {
+    topic: 'cmd',
+    payload: {
+        cmd: 'beep',
+        params: {
+            count: 3,
+            beepDuration: 2,
+            silenceDuration: 1,
+            tune: 0xf54,
+        },
+    },
+}
+```
+
+| Key               | Description                                                               |
+| ----------------- | ------------------------------------------------------------------------- |
+| `count`           | number of beeps, defaults to 1                                            |
+| `beepDuration`    | duration of one beep in 100ms, defaults to 1                              |
+| `silenceDuration` | duration of silence in 100ms, defaults to 1                               |
+| `tune`            | 32bit bitmask of beep and silence according to previous duration settings |
+
+For further details, see [Tasmota Buzzer Command](https://tasmota.github.io/docs/Buzzer/#buzzer-command) description.
+
+#### 1.2.5 Check for Updates
 
 To initiate the check for firmware or driver updates, send a message under the topic _cmd_ use the command `checkForUpdates`.
 

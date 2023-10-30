@@ -13,6 +13,7 @@ import {
     FirmwareEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
+import { TasmotaEventArgs } from '../types/events'
 
 const log = Logger('NSPanelMqttHandler')
 
@@ -43,15 +44,15 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         this.init(panelConfig)
     }
 
-    dispose() {
+    public dispose() {
         this.mqttClient?.end()
     }
 
-    sendCommandToPanel(cmd: string, data: string) {
+    public sendCommandToPanel(cmd: string, data: string) {
         if (cmd == null) return
 
         try {
-            this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data) // TODO: data.payload might be empty
+            this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data)
         } catch (err: unknown) {
             if (err instanceof Error) {
                 log.error(`Could not publish on command topic. Error: ${err.message}`)
@@ -59,7 +60,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         }
     }
 
-    sendToPanel(data: any) {
+    public sendToPanel(data: any) {
         if (data == null) return
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
@@ -71,7 +72,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                     }
                 })
             } else if (data != null) {
-                self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data)
+                self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data) // TODO: fix issue, when client was disconnecting
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -159,34 +160,6 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         }
     }
 
-    private onMqttConnect(): void {
-        this.connected = true
-        log.info('mqtt broker connected')
-        this.emit('mqtt:connect')
-    }
-
-    private onMqttReconnect(): void {
-        this.connected = false
-        log.info('mqtt broker reconnect')
-        this.emit('mqtt:reconnect')
-    }
-
-    private onMqttClose(): void {
-        if (this.connected) {
-            this.connected = false
-        }
-
-        log.info('mqtt broker disconnected')
-        this.emit('mqtt:close')
-    }
-
-    private onMqttError(error: Error): void {
-        log.error(`mqtt broker error${error.message}`)
-        log.error('mqtt broker error stack:')
-        log.error(error.stack)
-        this.emit('mqtt:error', error)
-    }
-
     private onMqttMessage(topic: string, payload: Buffer) {
         const payloadStr = payload.toString()
 
@@ -222,23 +195,47 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
 
             case this.panelMqttStatResultTopic: {
                 try {
+                    // TODO: consolidate into #parseStatResult ? to reduce redundant checks
                     const temp = JSON.parse(payloadStr)
-                    if (NSPanelConstants.STR_BERRYDRIVER_CMD_UPDATEDRIVER in temp) {
-                        const parsedEvent: FirmwareEventArgs = NSPanelMessageParser.parseBerryDriverUpdateEvent(temp)
-                        this.emit('msg', parsedEvent)
-                    } else if (NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION in temp) {
-                        const parsedEvent: FirmwareEventArgs = NSPanelMessageParser.parseBerryDriverUpdateEvent(temp)
-                        this.emit('msg', parsedEvent)
-                    }
+                    if (temp != null) {
+                        // eslint-disable-next-line prefer-const
+                        for (let key in temp) {
+                            switch (key) {
+                                case NSPanelConstants.STR_BERRYDRIVER_CMD_UPDATEDRIVER: {
+                                    const bdUpdEvent: FirmwareEventArgs =
+                                        NSPanelMessageParser.parseBerryDriverUpdateEvent(temp)
+                                    this.emit('msg', bdUpdEvent)
+                                    break
+                                }
 
-                    // TODO: commands like SetOption73 ...
-                    else if ('CustomSend' in temp) {
-                        // TODO: drop for now... since no relevant data from HMI
-                    } else {
-                        const parsedEvents: HardwareEventArgs[] = NSPanelMessageParser.parseHardwareEvent(temp)
-                        parsedEvents?.forEach((hwEventArgs) => {
-                            this.emit('event', hwEventArgs)
-                        })
+                                case NSPanelConstants.STR_BERRYDRIVER_CMD_FLASHNEXTION: {
+                                    const fwFlashEvent: FirmwareEventArgs =
+                                        NSPanelMessageParser.parseBerryDriverUpdateEvent(temp)
+                                    this.emit('msg', fwFlashEvent)
+                                    break
+                                }
+
+                                case NSPanelConstants.STR_TASMOTA_CMD_OTAURL: {
+                                    const tEvent: TasmotaEventArgs =
+                                        NSPanelMessageParser.parseTasmotaCommandResult(temp)
+                                    this.emit('msg', tEvent)
+                                    break
+                                }
+                                // TODO: commands like SetOption73 ...
+
+                                case 'CustomSend':
+                                    // drop for now... since no relevant/relatable data from HMI
+                                    break
+
+                                default: {
+                                    const hwEvents: HardwareEventArgs[] = NSPanelMessageParser.parseHardwareEvent(temp)
+                                    hwEvents?.forEach((hwEventArgs) => {
+                                        this.emit('event', hwEventArgs)
+                                    })
+                                    break
+                                }
+                            }
+                        }
                     }
                 } catch (err: unknown) {
                     if (err instanceof Error) {
@@ -288,6 +285,34 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                 break
             }
         }
+    }
+
+    private onMqttConnect(): void {
+        this.connected = true
+        log.info('mqtt broker connected')
+        this.emit('mqtt:connect')
+    }
+
+    private onMqttReconnect(): void {
+        this.connected = false
+        log.info('mqtt broker reconnect')
+        this.emit('mqtt:reconnect')
+    }
+
+    private onMqttClose(): void {
+        if (this.connected) {
+            this.connected = false
+        }
+
+        log.info('mqtt broker disconnected')
+        this.emit('mqtt:close')
+    }
+
+    private onMqttError(error: Error): void {
+        log.error(`mqtt broker error${error.message}`)
+        log.error('mqtt broker error stack:')
+        log.error(error.stack)
+        this.emit('mqtt:error', error)
     }
 
     private getMqttOptionsFromPanelConfig(panelConfig: PanelConfig): mqtt.IClientOptions {

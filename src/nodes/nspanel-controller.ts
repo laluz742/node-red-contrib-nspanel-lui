@@ -7,34 +7,30 @@ import {
     EventArgs,
     FirmwareEventArgs,
     IPanelController,
+    PanelControllerConfig,
     IPanelNodeEx,
     NodeMessageInFlow,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
     NodeStatus,
     NotifyData,
-    PanelBasedConfig,
     PanelMessage,
     StatusLevel,
 } from '../types/types'
 
-interface NSPanelControllerConfig extends PanelBasedConfig {
-    screenSaverOnStartup: boolean
-}
-
 module.exports = (RED) => {
-    class NSPanelControllerNode extends NodeBase<NSPanelControllerConfig> {
+    class NSPanelControllerNode extends NodeBase<PanelControllerConfig> {
         private nsPanelController: IPanelController | null = null
 
         private panelNode: IPanelNodeEx | null = null
 
-        private config: NSPanelControllerConfig
+        private config: PanelControllerConfig
 
-        constructor(config: NSPanelControllerConfig) {
+        constructor(config: PanelControllerConfig) {
             super(config, RED)
 
             this.config = { ...config }
-            this.panelNode = <IPanelNodeEx>(<unknown>RED.nodes.getNode(this.config.nsPanel))
+            this.panelNode = (<unknown>RED.nodes.getNode(this.config.nsPanel)) as IPanelNodeEx
 
             this.on('input', (msg: NodeMessageInFlow, send: NodeRedSendCallback) => this.onInput(msg, send))
             this.on('close', (done: NodeRedOnErrorCallback) => this.onClose(done))
@@ -56,6 +52,7 @@ module.exports = (RED) => {
                     break
                 }
 
+                // TODO: process using NSPanelMessageUtils#convertToCommandData to normalize msg
                 case 'notify': {
                     const notifyData: NotifyData = <NotifyData>msg.payload
                     this.nsPanelController?.showNotification(notifyData)
@@ -79,30 +76,15 @@ module.exports = (RED) => {
             })
 
             this.nsPanelController?.executeCommand(allCommands)
-
-            /* TODO: Beep command   switch (payload.cmd) {
-                   case 'beep':
-                       const cmdParam = payload.params
-                       this.nsPanelController.sendBuzzerCommand(
-                           cmdParam.count,
-                           cmdParam.beep,
-                           cmdParam.silence,
-                           cmdParam.tune
-                       )
-                       break
-               } */
         }
 
-        private init(config: NSPanelControllerConfig) {
+        private init(ctrlConfig: PanelControllerConfig) {
             // build panel config
             if (this.panelNode === null) {
                 this.setNodeStatus('error', RED._('common.status.notAssignedToAPanel'))
             } else {
-                const panelConfig = this.panelNode.getPanelConfig()
-                panelConfig.panel.screenSaverOnStartup = config.screenSaverOnStartup
-
                 // init controller and link events
-                const controller = new NSPanelController(panelConfig, RED._)
+                const controller = new NSPanelController(ctrlConfig, this.panelNode, RED._)
                 this.nsPanelController = controller
                 controller.on('status', (eventArgs) => this.onControllerStatusEvent(eventArgs))
                 controller.on('sensor', (sensorData) => this.onControllerSensorEvent(sensorData))

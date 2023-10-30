@@ -10,6 +10,7 @@ import {
     LightEventArgs,
     FirmwareEventArgs,
     FirmwareType,
+    TasmotaEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -65,7 +66,7 @@ export class NSPanelMessageParser {
             const analogSensorData = input['ANALOG']
             const temp = analogSensorData['Temperature1']
             const tempUnit = input['TempUnit']
-            if (temp !== undefined) {
+            if (temp != null) {
                 result = {
                     type: 'sensor',
                     source: 'temperature1',
@@ -119,6 +120,23 @@ export class NSPanelMessageParser {
         }
 
         return result
+    }
+
+    public static parseTasmotaCommandResult(input: any): TasmotaEventArgs {
+        let tasmotaEvent: TasmotaEventArgs | null = null
+
+        if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_TASMOTA_CMD_OTAURL)) {
+            const cmdResult = input[NSPanelConstants.STR_TASMOTA_CMD_OTAURL]
+
+            tasmotaEvent = {
+                type: 'fw',
+                source: NSPanelConstants.FIRMWARE_TASMOTA,
+                event: NSPanelConstants.STR_TASMOTA_CMD_OTAURL,
+                data: cmdResult,
+            }
+        }
+
+        return tasmotaEvent
     }
 
     public static parseTasmotaStatus2Event(input: any): FirmwareEventArgs {
