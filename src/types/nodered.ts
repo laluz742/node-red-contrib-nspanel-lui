@@ -1,9 +1,9 @@
 import * as nodeRed from 'node-red' // eslint-disable-line
 
 export interface NodeAPI extends nodeRed.NodeAPI {}
-export interface NodeMessage extends nodeRed.NodeMessage {}
-export interface NodeMessageInFlow extends nodeRed.NodeMessageInFlow {}
-export interface NodeMessageParts extends nodeRed.NodeMessageParts {}
+export type NodeMessage = nodeRed.NodeMessage & {}
+export type NodeMessageInFlow = nodeRed.NodeMessageInFlow & {}
+export type NodeMessageParts = nodeRed.NodeMessageParts & {}
 
 export type VoidCallback = () => void
 export type NodeRedOnErrorCallback = (err?: Error) => void

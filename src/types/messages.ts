@@ -3,7 +3,7 @@ import { PanelColor } from './colors'
 import { EventArgs } from './events'
 import { NodeMessageInFlow } from './nodered'
 
-export interface PanelMessage extends NodeMessageInFlow {}
+export type PanelMessage = NodeMessageInFlow
 
 export type CommandTopic = 'cmd'
 export type Command = 'switch' | 'toggle' | 'beep' | 'checkForUpdates'
@@ -33,7 +33,7 @@ export type BuzzerCommandParams = {
 // #region page input data messages
 export type PageInputTopic = 'data' | 'status' | 'notify' | 'event' | 'sensor' | 'media'
 
-export interface NotifyData {
+export type NotifyData = {
     notifyId?: string
 
     heading?: string
@@ -56,52 +56,54 @@ export interface NotifyData {
     beep?: ActiveCharacteristic
 }
 
-export interface NotifyMessage extends PanelMessage {
+export type NotifyMessage = PanelMessage & {
     topic: 'notify'
 
     payload?: NotifyData
 }
 
-export interface PageInputMessage extends PanelMessage {
+export type PageInputMessage = PanelMessage & {
     topic: PageInputTopic | undefined
 
     payload?: PageEntityData | PageEntityData[] | EventArgs | StatusItemData | StatusItemData[]
 }
 
-export interface PageEntityDataBase {
+export type PageEntityDataBase = {
     icon?: string
     iconColor?: PanelColor
     text?: string
 }
 
-export interface PageEntityData extends PageEntityDataBase {
+export type PageEntityData = PageEntityDataBase & {
     entityId?: string
     value?: string | number
 }
 
-export interface SwitchEntityData extends PageEntityData {
+export type SwitchEntityData = PageEntityData & {
     active: ActiveCharacteristic
 }
 
-export interface FanEntityData extends SwitchEntityData {
+export type FanEntityData = SwitchEntityData & {
     speed: number
     maxSpeed: number
     mode: string
     text: string
 }
 
-export interface ShutterEntityData extends PageEntityData {
+export type ShutterEntityData = PageEntityData & {
     tilt?: number
 }
 
-export interface LightEntityData extends SwitchEntityData {
+export type InputSelectEntityData = PageEntityData & {}
+
+export type LightEntityData = SwitchEntityData & {
     brightness?: number
     colorTemperature?: number
     hue?: number
     saturation?: number
 }
 
-export interface StatusItemData extends PageEntityDataBase {
+export type StatusItemData = PageEntityDataBase & {
     // used in screensaver
     prefix?: string
     iconFont?: string
