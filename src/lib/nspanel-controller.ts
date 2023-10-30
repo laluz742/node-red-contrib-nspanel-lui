@@ -700,6 +700,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             log.error('Invalid date format configuration, using default settings')
             dateStr = date.toLocaleDateString(undefined, DEFAULT_DATE_OPTIONS)
         }
+
         this.sendToPanel(NSPanelConstants.STR_LUI_CMD_DATE + dateStr)
     }
 
