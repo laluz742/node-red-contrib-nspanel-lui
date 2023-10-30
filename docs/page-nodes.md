@@ -103,4 +103,4 @@ Additional data must be specified depending on the entity type.
 | `entityId`       | id of the entity as configured in node settings                                                                              |
 | `iconColor`      | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
 | `selectedOption` | selected option, must be included in `options`                                                                               |
-| `options`        | available options to chose from                                                                                              |
+| `options`        | available options to choose from                                                                                              |
