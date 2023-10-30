@@ -77,7 +77,7 @@ To notify the user about special events, notifications can be displayed using th
             textColor: "#ff22ff",
             fontSize: 2,
             timeout: 0,
-            icon: "wrench"
+            icon: "wrench",
             iconColor: "#22ffff",
             beep: 1
         }
