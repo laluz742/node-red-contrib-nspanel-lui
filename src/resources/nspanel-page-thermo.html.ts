@@ -27,10 +27,35 @@
                 entities: { value: [] },
                 useOwnTempSensor: { value: true },
                 showDetailsPopup: { value: false },
+                hasSecondTargetTemperature: { value: false },
                 currentTemperatureLabel: { value: '' },
                 statusLabel: { value: '' },
                 targetTemperature: {
-                    value: 25,
+                    value: 21,
+                    required: true,
+                    validate(v) {
+                        const vNum = Number(v)
+                        if (Number.isNaN(vNum) === true) return false
+
+                        const minLimit = Number($('#node-input-minHeatSetpointLimit').val())
+                        const maxLimit = Number($('#node-input-maxHeatSetpointLimit').val())
+
+                        let result: boolean
+                        if (Number.isNaN(minLimit) && Number.isNaN(maxLimit)) {
+                            result = true
+                        } else if (Number.isNaN(minLimit) && !Number.isNaN(maxLimit)) {
+                            result = vNum <= maxLimit
+                        } else if (!Number.isNaN(minLimit) && Number.isNaN(maxLimit)) {
+                            result = vNum >= minLimit
+                        } else {
+                            result = NSPanelLui.Editor.validate.isNumberInRange(v, minLimit, maxLimit)
+                        }
+
+                        return result
+                    },
+                },
+                targetTemperature2: {
+                    value: 21,
                     required: true,
                     validate(v) {
                         const vNum = Number(v)
@@ -96,6 +121,14 @@
             },
 
             oneditprepare() {
+                const hasSecondTargetTempField = $('#node-input-hasSecondTargetTemperature')
+                const nsPanelTargetTemperature2 = $('#nsPanel-targetTemperature2')
+
+                hasSecondTargetTempField.on('change', () => {
+                    const checked = hasSecondTargetTempField.is(':checked')
+                    nsPanelTargetTemperature2.toggle(checked)
+                })
+
                 // eslint-disable-next-line @typescript-eslint/no-this-alias
                 const self = this
                 const eventInputControl = $('#node-input-event-control')

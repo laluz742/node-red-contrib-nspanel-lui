@@ -848,6 +848,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         allButtonEvents: ALL_VALID_BUTTON_EVENTS,
         addHardwareButtonEventsIfApplicable,
     }
+    NSPanelLui.Entities = NSPanelLui.Entities || {
+        allEntityTypes: ALL_PANEL_ENTITY_TYPES,
+    }
     NSPanelLui.Interactions = NSPanelLui.Interactions || NSPanelInteractions
 
     // #endregion API generation

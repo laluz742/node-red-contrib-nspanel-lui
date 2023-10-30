@@ -66,26 +66,26 @@ var switchCmdMsg = {
 To notify the user about special events, notifications can be displayed using the following command syntax using the _notify_ topic. Notifications will be stored in the page history, so after being closed, the last page is shown.
 
 ```javascript
-    var notifyMsg = {
-        topic: 'notify',
-        payload: {
-            notifyId: "notify.0",
-            heading: "Warning",
-            headingColor: "#fcae1e",
-            okText: "OK",
-            text: "Fan alarm of the ventilation system",
-            textColor: "#ff22ff",
-            fontSize: 2,
-            timeout: 0,
-            icon: "wrench",
-            iconColor: "#22ffff",
-            beep: 1
-        }
-    }
+var notifyMsg = {
+    topic: 'notify',
+    payload: {
+        notifyId: 'notify.0',
+        heading: 'Warning',
+        headingColor: '#fcae1e',
+        okText: 'OK',
+        text: 'Fan alarm of the ventilation system',
+        textColor: '#ff22ff',
+        fontSize: 2,
+        timeout: 0,
+        icon: 'wrench',
+        iconColor: '#22ffff',
+        beep: 1,
+    },
+}
 ```
 
-| Key | Description |
-| -- | -- |
+| Key            | Description                                                                                                                |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- | --- | ---- |
 | `notifyId`     | Identifier for notification (used in history)                                                                              |
 | `heading`      | title                                                                                                                      |
 | `headingColor` | color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`)                        |

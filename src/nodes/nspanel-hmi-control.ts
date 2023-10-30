@@ -2,7 +2,7 @@
 import { NodeBase } from '../lib/node-base'
 
 import {
-    IPageConfig,
+    PageConfig,
     IPageNode,
     IPanelNode,
     NodeMessageInFlow,
@@ -10,7 +10,7 @@ import {
     NodeRedSendCallback,
 } from '../types/types'
 
-interface NSPanelNavToConfig extends IPageConfig {}
+interface NSPanelNavToConfig extends PageConfig {}
 
 module.exports = (RED) => {
     class NSPanelHMIControlNode extends NodeBase<NSPanelNavToConfig> implements IPageNode {

@@ -40,6 +40,7 @@ export class NSPanelPopupHelpers {
             case 'input_sel':
             case 'timer':
                 // TODO
+                result = null
                 break
 
             default:

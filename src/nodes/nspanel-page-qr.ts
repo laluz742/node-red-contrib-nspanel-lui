@@ -1,9 +1,9 @@
 /* eslint-disable import/no-import-module-exports */
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '../lib/nspanel-constants'
-import { IEntityBasedPageConfig, PanelEntity } from '../types/types'
+import { EntityBasedPageConfig, PanelEntity } from '../types/types'
 
-interface PageQRConfig extends IEntityBasedPageConfig {
+interface PageQRConfig extends EntityBasedPageConfig {
     qrCode: string | undefined
 }
 

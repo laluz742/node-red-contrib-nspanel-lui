@@ -31,7 +31,7 @@ export type BuzzerCommandParams = {
     tune?: number
 }
 // #region page input data messages
-export type PageInputTopic = 'data' | 'status' | 'notify' | 'event' | 'sensor'
+export type PageInputTopic = 'data' | 'status' | 'notify' | 'event' | 'sensor' | 'media'
 
 export interface NotifyData {
     notifyId?: string

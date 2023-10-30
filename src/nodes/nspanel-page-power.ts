@@ -3,15 +3,15 @@ import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { DEFAULT_LUI_COLOR, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_POWER } from '../lib/nspanel-constants'
-import { IEntityBasedPageConfig } from '../types/types'
+import { EntityBasedPageConfig } from '../types/types'
 
-interface PageEntitiesConfig extends IEntityBasedPageConfig {}
+type PagePowerConfig = EntityBasedPageConfig & {}
 
 const MAX_ENTITIES = 8
 
 module.exports = (RED) => {
-    class PagePowerNode extends EntitiesPageNode<PageEntitiesConfig> {
-        constructor(config: PageEntitiesConfig) {
+    class PagePowerNode extends EntitiesPageNode<PagePowerConfig> {
+        constructor(config: PagePowerConfig) {
             super(config, RED, { pageType: STR_PAGE_TYPE_CARD_POWER, maxEntities: MAX_ENTITIES })
         }
 
