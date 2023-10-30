@@ -55,6 +55,11 @@ export interface PanelParameters {
     panelDimHighNight: number
     panelDimLowStartTime: SplitTime
     panelDimLowNightStartTime: SplitTime
+
+    dateFormatWeekday: 'short' | 'long'
+    dateFormatDay: 'numeric' | '2-digit'
+    dateFormatMonth: 'numeric' | '2-digit' | 'short' | 'long'
+    dateFormatYear: 'numeric' | '2-digit'
 }
 
 export interface IPanelConfigNode {

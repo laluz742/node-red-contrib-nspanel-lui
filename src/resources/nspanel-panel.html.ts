@@ -80,6 +80,10 @@
                     validate: (v) =>
                         NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_DIMVALUE_MIN, PANEL_DIMVALUE_MAX),
                 },
+                dateFormatWeekday: { value: 'long' },
+                dateFormatDay: { value: 'numeric' },
+                dateFormatMonth: { value: 'long' },
+                dateFormatYear: { value: 'numeric' },
             },
 
             label() {
@@ -113,6 +117,12 @@
                     id: 'nspanel-page-tab-update',
                     iconClass: 'fa fa-refresh',
                     label: NSPanelLui._('label.update', 'nspanel-panel', 'common'),
+                })
+
+                tabs.addTab({
+                    id: 'nspanel-page-tab-date',
+                    iconClass: 'fa fa-refresh',
+                    label: NSPanelLui._('label.date-time', 'nspanel-panel', 'common'),
                 })
             },
         })
