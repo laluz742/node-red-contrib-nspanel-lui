@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-nspanel-lui",
-    "version": "0.0.1-alpha.32",
+    "version": "0.0.1-alpha.33",
     "description": "Node-RED based backend for NSPanel Lovelace UI custom firmware.",
     "license": "Apache-2.0",
     "keywords": [
@@ -26,6 +26,8 @@
             "nspanel-hmi-control": "nodes/nspanel-hmi-control.js",
             "nspanel-page-entities": "nodes/nspanel-page-entities.js",
             "nspanel-page-grid": "nodes/nspanel-page-grid.js",
+            "nspanel-page-grid2": "nodes/nspanel-page-grid2.js",
+            "nspanel-page-media": "nodes/nspanel-page-media.js",
             "nspanel-page-power": "nodes/nspanel-page-power.js",
             "nspanel-page-qr": "nodes/nspanel-page-qr.js",
             "nspanel-page-thermo": "nodes/nspanel-page-thermo.js",

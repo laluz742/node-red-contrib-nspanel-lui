@@ -1,11 +1,11 @@
-import { HSVColor, RGBColor, RGBHSVTuple } from '../types/types'
+import { HSVColor, PanelColor, RGBColor, RGBHSVTuple } from '../types/types'
 import { DEFAULT_LUI_COLOR } from './nspanel-constants'
 
 const colorRegex =
     /#(?<hexColor>(?<hexAlpha>[a-f\d]{2})?(?<hexRed>[a-f\d]{2})(?<hexGreen>[a-f\d]{2})(?<hexBlue>[a-f\d]{2}))|rgb\((?<rgbColor>(?<rgbRed>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbGreen>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbBlue>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d))\)/
 
 export class NSPanelColorUtils {
-    public static toHmiIconColor(color: string | number | number[], defaultColor: number = DEFAULT_LUI_COLOR): number {
+    public static toHmiIconColor(color: PanelColor, defaultColor: number = DEFAULT_LUI_COLOR): number {
         const result = Number(color)
         if (!Number.isNaN(result)) return result
 

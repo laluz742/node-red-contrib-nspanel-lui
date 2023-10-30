@@ -3,8 +3,8 @@ import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 import { NSPanelUtils } from './nspanel-utils'
 import { PageNode } from './page-node'
 import {
-    IPageOptions,
-    IEntityBasedPageConfig,
+    PageOptions,
+    EntityBasedPageConfig,
     PanelEntity,
     NodeAPI,
     PageInputMessage,
@@ -13,14 +13,14 @@ import {
 } from '../types/types'
 import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
 
-export class EntitiesPageNode<TConfig extends IEntityBasedPageConfig> extends PageNode<TConfig> {
-    protected entitiesPageNodeConfig: IEntityBasedPageConfig
+export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends PageNode<TConfig> {
+    protected entitiesPageNodeConfig: EntityBasedPageConfig
 
     private entities: Map<string, PanelEntity> = new Map<string, PanelEntity>()
 
     private entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>()
 
-    constructor(config: TConfig, RED: NodeAPI, options: IPageOptions) {
+    constructor(config: TConfig, RED: NodeAPI, options: PageOptions) {
         super(config, RED, options)
         this.entitiesPageNodeConfig = config
         this.options = options

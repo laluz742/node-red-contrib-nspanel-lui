@@ -1,9 +1,14 @@
+// TODO: create custom messages for events
+/*
+{"type":"event","date":"2023-10-30T11:59:06.965Z","event":"buttonPress2","source":"thermo","event2":"tempUpdHighLow","data":"275|280"}
+{"type":"event","date":"2023-10-30T11:59:21.771Z","event":"buttonPress2","source":"thermo","event2":"tempUpd","value":225}
+*/
 /* eslint-disable import/no-import-module-exports */
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import {
-    IEntityBasedPageConfig,
+    EntityBasedPageConfig,
     PageInputMessage,
     NodeRedSendCallback,
     EventArgs,
@@ -12,23 +17,26 @@ import {
 } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
-interface PageThermoConfig extends IEntityBasedPageConfig {
+type PageThermoConfig = EntityBasedPageConfig & {
     /* options */
     currentTemperatureLabel: string
     statusLabel: string
     useOwnTempSensor: boolean
     showDetailsPopup: boolean
+    hasSecondTargetTemperature: boolean
 
     /* setpoints */
     targetTemperature: number
+    targetTemperature2: number
     minHeatSetpointLimit: number
     maxHeatSetpointLimit: number
     temperatureSteps: number
     temperatureUnit: string
 }
 
-interface PageThermoData {
+type PageThermoData = {
     targetTemperature: number
+    targetTemperature2: number
     currentTemperature?: number | null
     status?: string | null
 }
@@ -37,37 +45,13 @@ const MAX_ENTITIES = 8
 const TEMPERATURE_RESOLUTION_FACTOR = 10
 const ACTION_EMPTY = NSPanelConstants.STR_LUI_DELIMITER.repeat(3)
 
-// TODO: second temperature in settings
-
-/*
-entityUpd
-heading
-navLeft[6]
-navRight[6]
-entityId
-currentTemp
-dstTemp
-status
-minTemp
-maxTemp
-tempStep
-hvacAction[8] hvacAction = (icon, iconColorActive, buttonState, intName)
-currentlyLabel
-StateLabel 
-<ignored>
-tempUnit
-dstTemp2
-detailButton (1=hide)
-
-
- */
-
 module.exports = (RED) => {
     class PageThermoNode extends EntitiesPageNode<PageThermoConfig> {
         private config: PageThermoConfig | null = null
 
         private data: PageThermoData = {
             targetTemperature: NaN,
+            targetTemperature2: NaN,
             currentTemperature: null,
             status: null,
         }
@@ -82,6 +66,7 @@ module.exports = (RED) => {
             this.config = config
 
             this.data.targetTemperature = this.config.targetTemperature
+            this.data.targetTemperature2 = this.config.targetTemperature2
         }
 
         protected override doGeneratePage(): string | string[] | null {
@@ -100,13 +85,15 @@ module.exports = (RED) => {
                     : `${this.data.currentTemperature.toFixed(1)} °${this.config?.temperatureUnit}`
 
             const targetTemp = this.data.targetTemperature * TEMPERATURE_RESOLUTION_FACTOR ?? 0
+            const targetTemp2 = this.data.targetTemperature2 * TEMPERATURE_RESOLUTION_FACTOR ?? 0
 
-            const minHeatSetPoint: number = this.config?.minHeatSetpointLimit ?? 0 * TEMPERATURE_RESOLUTION_FACTOR
-            const maxHeatSetPoint: number = this.config?.maxHeatSetpointLimit ?? 0 * TEMPERATURE_RESOLUTION_FACTOR
+            const minHeatSetPoint: number = (this.config?.minHeatSetpointLimit ?? 0) * TEMPERATURE_RESOLUTION_FACTOR
+            const maxHeatSetPoint: number = (this.config?.maxHeatSetpointLimit ?? 0) * TEMPERATURE_RESOLUTION_FACTOR
             const tempStep = Number(this.config?.temperatureSteps) * TEMPERATURE_RESOLUTION_FACTOR // TODO: NaN check
+
             result.push(currTemp)
             result.push(targetTemp.toString())
-            result.push(this.data.status ?? '')
+            result.push(this.data.status ?? NSPanelConstants.STR_EMPTY)
             result.push(minHeatSetPoint.toString())
             result.push(maxHeatSetPoint.toString())
             result.push(tempStep.toString())
@@ -114,14 +101,17 @@ module.exports = (RED) => {
             const actions = this.generateActions()
             result.push(actions)
 
-            result.push(this.config?.currentTemperatureLabel ?? '')
-            result.push(this.config?.statusLabel ?? '')
-            result.push('')
+            result.push(this.config?.currentTemperatureLabel ?? NSPanelConstants.STR_EMPTY)
+            result.push(this.config?.statusLabel ?? NSPanelConstants.STR_EMPTY)
+            result.push(NSPanelConstants.STR_EMPTY)
             result.push(`°${this.config?.temperatureUnit}`)
 
-            result.push('') // TODO: second target temperature
+            result.push(
+                (this.config?.hasSecondTargetTemperature ? targetTemp2.toString() : NSPanelConstants.STR_EMPTY) ??
+                    NSPanelConstants.STR_EMPTY
+            )
 
-            result.push(this.config?.showDetailsPopup ? '' : '1')
+            result.push(this.config?.showDetailsPopup ? NSPanelConstants.STR_EMPTY : '1')
 
             const pageData = result.join(NSPanelConstants.STR_LUI_DELIMITER)
             return pageData

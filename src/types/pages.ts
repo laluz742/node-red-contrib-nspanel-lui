@@ -16,23 +16,23 @@ export type PanelBasedConfig = INodeConfig & {
     nsPanel: string
 }
 
-export type IPageConfig = PanelBasedConfig & {
+export type PageConfig = PanelBasedConfig & {
     timeout: number | string
     title: string | undefined
 
     events: EventMapping[]
 }
 
-export interface IEntityBasedPageConfig extends IPageConfig {
+export type EntityBasedPageConfig = PageConfig & {
     entities: PanelEntity[]
 }
 
-export declare interface IPageOptions {
+export type PageOptions = {
     pageType: string
     maxEntities: number
 }
 
-export declare interface PageData {
+export declare type PageData = {
     entities: PageEntityData[]
 }
 

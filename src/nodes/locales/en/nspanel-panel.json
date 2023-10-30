@@ -9,7 +9,7 @@
             "shutter": "Shutter",
             "light": "Light",
             "fan": "Fan",
-            "input_sel": "Input",
+            "input_sel": "Selection",
             "timer": "Timer",
             "switch": "Switch",
             "number": "Number",
@@ -60,7 +60,8 @@
             "mode2": "Mode 2",
             "mode3": "Mode 3",
             "dimmable": "Dimmable",
-            "temperature": "Temperature"
+            "temperature": "Temperature",
+            "inputsel-notice": "The options are set via messages."
         }
     },
     "nspanel-panel": {

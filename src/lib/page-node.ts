@@ -7,7 +7,7 @@ import { NSPanelColorUtils } from './nspanel-colorutils'
 import { SimplePageCache } from './nspanel-page-cache'
 import {
     IPanelNode,
-    IPageConfig,
+    PageConfig,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
     EventArgs,
@@ -15,7 +15,7 @@ import {
     ConfiguredEventsMap,
     PageInputMessage,
     PageEntityData,
-    IPageOptions,
+    PageOptions,
     PageData,
     NodeAPI,
     IPageCache,
@@ -23,12 +23,12 @@ import {
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
-export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> implements IPageNode {
+export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> implements IPageNode {
     private panelNode: IPanelNode | null = null
 
-    private pageNodeConfig: IPageConfig
+    private pageNodeConfig: PageConfig
 
-    protected options: IPageOptions | null = null
+    protected options: PageOptions | null = null
 
     private __log: ILogger | null = null
 
@@ -42,7 +42,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
 
     private isActive = false
 
-    constructor(config: TConfig, RED: NodeAPI, options: IPageOptions) {
+    constructor(config: TConfig, RED: NodeAPI, options: PageOptions) {
         super(config, RED)
         this.pageNodeConfig = config
         this.options = options
@@ -192,7 +192,7 @@ export class PageNode<TConfig extends IPageConfig> extends NodeBase<TConfig> imp
         send(outMsg)
     }
 
-    private initPageNode(config: TConfig, _options: IPageOptions): void {
+    private initPageNode(config: TConfig, _options: PageOptions): void {
         this.clearNodeStatus()
 
         // build event mapping index

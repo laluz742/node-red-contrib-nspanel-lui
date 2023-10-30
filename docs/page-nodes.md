@@ -2,36 +2,57 @@
 
 ## Contents
 
--   [General](#1-general)
--   [Entities Node](#2-entities-node)
--   [Grid Node](#3-grid-node)
--   [Thermo Node](#4-thermo-node)
--   [QR Node](#5-qr-page-node)
+-   [General](#general)
+-   [Entities Node](#2ntities-node)
+-   [Grid Node](#grid-node)
+-   [Thermo Node](#thermo-node)
+-   [QR Node](#qr-page-node)
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
-### 1 General
+### General
 
 The icon set, that can be used in node configuration or in messages is based on the Material Design Icons. All supported icons are listed in the [Lovelace UI Icon Cheatsheet](https://docs.nspanel.pky.eu/icon-cheatsheet.html).
 
-### 2 Entities Node
+#### Messages
 
-#### 2.1 Configuration
+Page item related data must be sent using the _data_ topic.
+```json
+{
+    "topic": "data",
+    "payload": {
+        "entityId": "<id of entity specified in configuration>"
+        // <... further data ...>
+    }
+}
+```
+Additional data must be specified depending on the entity type.
 
-#### 2.2 Messages
 
-### 2 Grid Node
+### Entities Node
 
-#### 3.1 Configuration
+#### Configuration
 
-#### 3.2 Messages
+#### Messages
 
-### 4 Thermo Node
+### Grid Node
 
-#### 4.1 Configuration
+#### Configuration
 
-#### 4.2 Messages
+#### Messages
 
-### 5 QR Page Node
+### Thermo Node
 
-#### 5.1 Configuration
+#### Configuration
+
+#### Messages
+
+### QR Page Node
+
+#### Configuration
+
+### Media Page Node
+
+#### Configuration
+
+#### Messages

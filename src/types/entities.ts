@@ -45,4 +45,7 @@ export type PanelEntity = {
     dimmable?: boolean
     hasColorTemperature?: boolean
     hasColor?: boolean
+
+    // input select
+    inputSelType?: string
 }

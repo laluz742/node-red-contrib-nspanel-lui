@@ -9,13 +9,13 @@ import { STR_LUI_DELIMITER, STR_LUI_EVENT_BEXIT } from '../lib/nspanel-constants
 import {
     EventArgs,
     EventMapping,
-    IPageConfig,
+    PageConfig,
     NodeRedSendCallback,
     PageInputMessage,
     StatusItemData,
 } from '../types/types'
 
-interface ScreenSaverConfig extends IPageConfig {
+interface ScreenSaverConfig extends PageConfig {
     doubleTapToExit: boolean
 }
 

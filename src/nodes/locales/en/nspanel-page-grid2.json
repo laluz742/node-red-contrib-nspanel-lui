@@ -1,0 +1,28 @@
+{
+    "common": {
+        "label": {
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Title",
+            "unassigned": "not assiged",
+            "panelTimeout": "Stand-by timeout override",
+            "panelTimeoutSeconds": "seconds"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "active": "Active",
+            "notAssignedToAPanel": "No NSPanel assigned"
+        }
+    },
+    "nspanel-page-grid2": {
+        "label": {
+            "palette": "Grid Extended"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Page Grid Extended"
+        }
+    }
+}

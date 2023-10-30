@@ -72,6 +72,16 @@ export class NSPanelUtils {
         return active ? '1' : '0'
     }
 
+    public static limitNumberToRange(v: any, min: number, max: number, defaultValue: number): number {
+        const n = Number(v)
+        if (Number.isNaN(n)) return defaultValue === undefined ? min : defaultValue
+
+        if (v < min) return min
+        if (v > max) return max
+
+        return v
+    }
+
     public static convertTemperature(temperature: number, sourceUnit: string, targetUnit: string): number | null {
         if (
             sourceUnit === targetUnit ||

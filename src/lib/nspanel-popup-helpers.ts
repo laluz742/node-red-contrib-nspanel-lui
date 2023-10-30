@@ -5,6 +5,7 @@ import { Logger } from './logger'
 import {
     FanEntityData,
     INodeConfig,
+    InputSelectEntityData,
     LightEntityData,
     NotifyData,
     PageEntityData,
@@ -36,10 +37,14 @@ export class NSPanelPopupHelpers {
                 result = NSPanelPopupHelpers.generatePopupShutter(node, entity, entityData)
                 break
 
-            case 'thermo':
             case 'input_sel':
+                result = NSPanelPopupHelpers.generatePopupInputSelect(node, entity, entityData)
+                break
+
+            case 'thermo':
             case 'timer':
                 // TODO
+                result = null
                 break
 
             default:
@@ -168,6 +173,29 @@ export class NSPanelPopupHelpers {
             result.push(shutterEntityData?.tilt ?? 0)
         } else {
             result.push(NSPanelConstants.STR_LUI_DELIMITER.repeat(7) + NSPanelConstants.STR_DISABLE)
+        }
+
+        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+    }
+
+    private static generatePopupInputSelect(
+        _node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData | null
+    ): string | string[] | null {
+        const inputSelectEntityData: InputSelectEntityData = entityData as InputSelectEntityData // TODO: type guard
+        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL2]
+
+        result.push(entity.entityId)
+        result.push(NSPanelConstants.STR_EMPTY) // icon ignored
+        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+
+        if (inputSelectEntityData != null) {
+            const optionsString: string = inputSelectEntityData?.options?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
+
+            result.push(inputSelectEntityData?.mode ?? NSPanelConstants.STR_EMPTY)
+            result.push(inputSelectEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY) // TODO: text like 'no data'??
+            result.push(optionsString)
         }
 
         return result.join(NSPanelConstants.STR_LUI_DELIMITER)
