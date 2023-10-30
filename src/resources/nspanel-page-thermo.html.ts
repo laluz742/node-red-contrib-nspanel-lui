@@ -2,7 +2,7 @@
 ;(function ($) {
     const MAX_ENTITIES = 8
     const ALLOWED_ENTITIES = ['delete', 'hvac_action']
-    const ALL_VALID_EVENTS_BASE: ValidEventDescriptor[] = NSPanelLui.Events.allNavigationEvents
+    const ALL_VALID_EVENTS_BASE: EventDescriptor[] = NSPanelLui.Events.allNavigationEvents
 
     let editableEventList = null
     let editableEntitiesList = null
@@ -102,31 +102,6 @@
                 const nsPanelInputField = $('#node-input-nsPanel')
                 const nsPanelInputFieldLastVal = this.nsPanel
 
-                // TODO: refactor since code same on any page node
-                nsPanelInputField.on('change', () => {
-                    if (nsPanelInputField.val() === '_ADD_') {
-                        eventInputControl.hide()
-                        // TODO remove all events? ... keep track of original nsPanelId
-                    } else {
-                        if (nsPanelInputField.val() !== nsPanelInputFieldLastVal) eventInputControl.empty()
-
-                        const nsPanelId = nsPanelInputField.val() as string
-                        const allValidEvents = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
-                            nsPanelId,
-                            ALL_VALID_EVENTS_BASE
-                        )
-                        if (
-                            editableEventList != null &&
-                            Object.prototype.hasOwnProperty.call(editableEventList, 'setAvailableEvents')
-                        ) {
-                            editableEventList.setAvailableEvents(allValidEvents)
-                        }
-
-                        eventInputControl.show()
-                    }
-                })
-                nsPanelInputField.trigger('change')
-
                 editableEntitiesList = NSPanelLui.Editor.create.editableEntitiesList(
                     self,
                     '#node-input-entities-control',
@@ -140,6 +115,13 @@
                     '#node-input-event-control',
                     ALL_VALID_EVENTS_BASE,
                     self.events
+                )
+                NSPanelLui.Interactions.addPanelChangeBehavior(
+                    nsPanelInputField,
+                    eventInputControl,
+                    editableEventList,
+                    ALL_VALID_EVENTS_BASE,
+                    nsPanelInputFieldLastVal
                 )
 
                 const tabs = RED.tabs.create({

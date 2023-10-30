@@ -13,7 +13,7 @@ import {
     FirmwareEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
-import { TasmotaEvent } from '../types/events'
+import { TasmotaEventArgs } from '../types/events'
 
 const log = Logger('NSPanelMqttHandler')
 
@@ -44,11 +44,11 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         this.init(panelConfig)
     }
 
-    dispose() {
+    public dispose() {
         this.mqttClient?.end()
     }
 
-    sendCommandToPanel(cmd: string, data: string) {
+    public sendCommandToPanel(cmd: string, data: string) {
         if (cmd == null) return
 
         try {
@@ -60,7 +60,7 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         }
     }
 
-    sendToPanel(data: any) {
+    public sendToPanel(data: any) {
         if (data == null) return
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
@@ -160,34 +160,6 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         }
     }
 
-    private onMqttConnect(): void {
-        this.connected = true
-        log.info('mqtt broker connected')
-        this.emit('mqtt:connect')
-    }
-
-    private onMqttReconnect(): void {
-        this.connected = false
-        log.info('mqtt broker reconnect')
-        this.emit('mqtt:reconnect')
-    }
-
-    private onMqttClose(): void {
-        if (this.connected) {
-            this.connected = false
-        }
-
-        log.info('mqtt broker disconnected')
-        this.emit('mqtt:close')
-    }
-
-    private onMqttError(error: Error): void {
-        log.error(`mqtt broker error${error.message}`)
-        log.error('mqtt broker error stack:')
-        log.error(error.stack)
-        this.emit('mqtt:error', error)
-    }
-
     private onMqttMessage(topic: string, payload: Buffer) {
         const payloadStr = payload.toString()
 
@@ -244,7 +216,8 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                                 }
 
                                 case NSPanelConstants.STR_TASMOTA_CMD_OTAURL: {
-                                    const tEvent: TasmotaEvent = NSPanelMessageParser.parseTasmotaCommandResult(temp)
+                                    const tEvent: TasmotaEventArgs =
+                                        NSPanelMessageParser.parseTasmotaCommandResult(temp)
                                     this.emit('msg', tEvent)
                                     break
                                 }
@@ -312,6 +285,34 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
                 break
             }
         }
+    }
+
+    private onMqttConnect(): void {
+        this.connected = true
+        log.info('mqtt broker connected')
+        this.emit('mqtt:connect')
+    }
+
+    private onMqttReconnect(): void {
+        this.connected = false
+        log.info('mqtt broker reconnect')
+        this.emit('mqtt:reconnect')
+    }
+
+    private onMqttClose(): void {
+        if (this.connected) {
+            this.connected = false
+        }
+
+        log.info('mqtt broker disconnected')
+        this.emit('mqtt:close')
+    }
+
+    private onMqttError(error: Error): void {
+        log.error(`mqtt broker error${error.message}`)
+        log.error('mqtt broker error stack:')
+        log.error(error.stack)
+        this.emit('mqtt:error', error)
     }
 
     private getMqttOptionsFromPanelConfig(panelConfig: PanelConfig): mqtt.IClientOptions {

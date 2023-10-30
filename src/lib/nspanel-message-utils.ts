@@ -35,6 +35,7 @@ export class NSPanelMessageUtils {
     public static convertToEntityItemData(input: any, defaultData: PageEntityData = DEFAULT_DATA): PageEntityData {
         const result: PageEntityData = { ...defaultData }
 
+        const dEntityId: any = NSPanelMessageUtils.hasProperty(input, 'entityId', true) ? input['entityId'] : null
         const dText: any = NSPanelMessageUtils.hasProperty(input, 'text', true) ? input['text'] : null
         const dValue: any = NSPanelMessageUtils.hasProperty(input, 'value', true) ? input['value'] : null
         const dIcon: any = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null
@@ -42,7 +43,7 @@ export class NSPanelMessageUtils {
             ? NSPanelColorUtils.toHmiIconColor(input['iconColor'])
             : DEFAULT_LUI_COLOR
 
-        // TODO: intNameEntity
+        result.entityId = NSPanelUtils.isString(dEntityId) ? dEntityId : null
         result.text = NSPanelUtils.isString(dText) ? dText : null
         result.value = NSPanelUtils.isString(dValue) ? dValue : null
         result.icon = NSPanelUtils.isString(dIcon) ? dIcon : null

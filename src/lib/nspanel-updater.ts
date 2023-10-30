@@ -413,7 +413,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
         this._updateInProgress = true
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_OTAURL, otaUrl)
-        // TODO: wait for OtaUrl on stat/RESULT (promise with waiting for onFirmwareEvent)
+        // TODO: wait for OtaUrl on stat/RESULT
         this._mqttHandler?.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_UPGRADE, '1')
     }
 
@@ -494,6 +494,7 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
     public dispose(): void {}
 
+    // #region notifications
     private notifyUpdateSuccess(fwEventArgs: FirmwareEventArgs): void {
         this.emit('update', fwEventArgs)
     }
@@ -584,4 +585,5 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
         this.emit('update', fwEvent)
     }
+    // #endregion notifications
 }

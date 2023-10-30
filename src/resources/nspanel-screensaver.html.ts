@@ -4,7 +4,7 @@
     const I18N_GROUP: string = 'editor'
     const I18N_PREFIX_EVENTS: string = 'events.'
 
-    const ALL_VALID_EVENTS_BASE: ValidEventDescriptor[] = [
+    const ALL_VALID_EVENTS_BASE: EventDescriptor[] = [
         { event: 'bExit', label: '' },
         { event: 'swipeRight', label: '' },
         { event: 'swipeLeft', label: '' },
@@ -54,31 +54,18 @@
                 const nsPanelInputField = $('#node-input-nsPanel')
                 const nsPanelInputFieldLastVal = this.nsPanel
 
-                // TODO: refactor since code same on any page node
-                nsPanelInputField.on('change', () => {
-                    if (nsPanelInputField.val() === '_ADD_') {
-                        eventInputControl.hide()
-                        // TODO remove all events? ... keep track of original nsPanelId
-                    } else {
-                        if (nsPanelInputField.val() !== nsPanelInputFieldLastVal) eventInputControl.empty()
-
-                        const nsPanelId = nsPanelInputField.val() as string
-                        const allValidEvents = NSPanelLui.Events.addHardwareButtonEventsIfApplicable(
-                            nsPanelId,
-                            ALL_VALID_EVENTS_BASE
-                        )
-                        editableEventList?.setAvailableEvents(allValidEvents)
-
-                        eventInputControl.show()
-                    }
-                })
-                nsPanelInputField.trigger('change')
-
                 editableEventList = NSPanelLui.Editor.create.editableEventList(
                     self,
                     '#node-input-event-control',
                     ALL_VALID_EVENTS_BASE,
                     self.events
+                )
+                NSPanelLui.Interactions.addPanelChangeBehavior(
+                    nsPanelInputField,
+                    eventInputControl,
+                    editableEventList,
+                    ALL_VALID_EVENTS_BASE,
+                    nsPanelInputFieldLastVal
                 )
 
                 const tabs = RED.tabs.create({

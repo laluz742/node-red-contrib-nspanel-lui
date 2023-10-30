@@ -10,7 +10,7 @@ import {
     LightEventArgs,
     FirmwareEventArgs,
     FirmwareType,
-    TasmotaEvent,
+    TasmotaEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -122,8 +122,8 @@ export class NSPanelMessageParser {
         return result
     }
 
-    public static parseTasmotaCommandResult(input: any): TasmotaEvent {
-        let tasmotaEvent: TasmotaEvent | null = null
+    public static parseTasmotaCommandResult(input: any): TasmotaEventArgs {
+        let tasmotaEvent: TasmotaEventArgs | null = null
 
         if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_TASMOTA_CMD_OTAURL)) {
             const cmdResult = input[NSPanelConstants.STR_TASMOTA_CMD_OTAURL]
