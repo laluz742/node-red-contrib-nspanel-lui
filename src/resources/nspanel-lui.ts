@@ -57,7 +57,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         ['shutter', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isShutter: true }],
         ['light', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isLight: true }],
         ['fan', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isFan: true }],
-        ['input_sel', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
+        ['input_sel', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isInputSel: true }],
         ['timer', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
         ['switch', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
         ['number', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isNumber: true }],
@@ -242,12 +242,14 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const rowNumber = tpl.find('.nlui-row-number')
                     const rowFanModes = tpl.find('.nlui-row-fan-modes')
                     const rowLight = tpl.find('.nlui-row-light')
+                    const rowInputSel = tpl.find('.nlui-row-inputsel')
                     rowIcon.hide()
                     rowShutter.hide()
                     rowShutterTiltIcons.hide()
                     rowNumber.hide()
                     rowFanModes.hide()
                     rowLight.hide()
+                    rowInputSel.hide()
 
                     // #region row1
                     const selectTypeField = tpl.find('.node-input-entity-type')
@@ -298,6 +300,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const lightColorTemperatureField = tpl.find('.node-input-entity-light-colorTemperature')
                     const lightColorField = tpl.find('.node-input-entity-light-color')
                     // #endregion rowLight
+
                     // #endregion create DOM
 
                     selectTypeField.on('change', () => {
@@ -314,6 +317,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                             rowNumber.toggle((entityTypeAttrs.isNumber || entityTypeAttrs.isFan) ?? false)
                             rowFanModes.toggle(entityTypeAttrs.isFan ?? false)
                             rowLight.toggle(entityTypeAttrs.isLight ?? false)
+                            rowInputSel.toggle(entityTypeAttrs.isInputSel ?? false)
 
                             // fan min/max number handling
                             if (entityTypeAttrs.isFan) {

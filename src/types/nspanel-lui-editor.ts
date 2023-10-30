@@ -13,6 +13,7 @@ export type EventTypeAttrs = {
     isNumber?: boolean
     isFan?: boolean
     isLight?: boolean
+    isInputSel?: boolean
 }
 
 export type PanelEntityContainer = {

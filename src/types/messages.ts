@@ -94,7 +94,11 @@ export type ShutterEntityData = PageEntityData & {
     tilt?: number
 }
 
-export type InputSelectEntityData = PageEntityData & {}
+export type InputSelectEntityData = PageEntityData & {
+    mode?: string
+    options?: string[]
+    selectedOption: string
+}
 
 export type LightEntityData = SwitchEntityData & {
     brightness?: number

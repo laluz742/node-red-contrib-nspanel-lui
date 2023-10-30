@@ -9,7 +9,7 @@
             "shutter": "Rollladen",
             "light": "Licht",
             "fan": "Ventilator",
-            "input_sel": "Eingang",
+            "input_sel": "Auswahl",
             "timer": "Timer",
             "switch": "Schalter",
             "number": "Zahl",
@@ -60,7 +60,8 @@
             "mode2": "Modus 2",
             "mode3": "Modus 3",
             "dimmable": "Dimmbar",
-            "temperature": "Temperatur"
+            "temperature": "Temperatur",
+            "inputsel-notice": "Die Optionen werden über Nachrichten festegelegt."
         }
     },
     "nspanel-panel": {

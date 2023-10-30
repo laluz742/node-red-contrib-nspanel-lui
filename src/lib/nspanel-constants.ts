@@ -11,12 +11,14 @@ export const STR_NAV_ID_NEXT: string = 'nav.next'
 // nspanel lovelace ui / HMI
 export const STR_LUI_LINEBREAK: string = '\r\n'
 export const STR_LUI_DELIMITER: string = '~'
+export const STR_LUI_LIST_DELIMITER: string = '?'
 export const STR_LUI_COLOR_RED: number = 63488
 export const STR_LUI_COLOR_GREEN: number = 2016
 export const STR_LUI_COLOR_WHITE: number = 65535
 export const STR_LUI_CMD_SUCCESS: string = 'Done'
 export const STR_LUI_CMD_ENTITYUPDATE: string = 'entityUpd'
 export const STR_LUI_CMD_ENTITYUPDATEDETAIL: string = 'entityUpdateDetail'
+export const STR_LUI_CMD_ENTITYUPDATEDETAIL2: string = 'entityUpdateDetail2'
 export const STR_LUI_CMD_PAGETYPE: string = `pageType${STR_LUI_DELIMITER}`
 export const STR_LUI_CMD_TIME: string = `time${STR_LUI_DELIMITER}`
 export const STR_LUI_CMD_DATE: string = `date${STR_LUI_DELIMITER}`
