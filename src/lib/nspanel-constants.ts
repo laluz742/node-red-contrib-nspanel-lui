@@ -68,6 +68,7 @@ export const STR_BERRYDRIVER_CMD_FLASHNEXTION: string = 'FlashNextion'
 // page/card types
 export const STR_PAGE_TYPE_CARD_ENTITIES: string = 'cardEntities'
 export const STR_PAGE_TYPE_CARD_GRID: string = 'cardGrid'
+export const STR_PAGE_TYPE_CARD_GRID2: string = 'cardGrid2'
 export const STR_PAGE_TYPE_CARD_MEDIA: string = 'cardMedia'
 export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'

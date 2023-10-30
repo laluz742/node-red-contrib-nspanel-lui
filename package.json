@@ -26,6 +26,7 @@
             "nspanel-hmi-control": "nodes/nspanel-hmi-control.js",
             "nspanel-page-entities": "nodes/nspanel-page-entities.js",
             "nspanel-page-grid": "nodes/nspanel-page-grid.js",
+            "nspanel-page-grid2": "nodes/nspanel-page-grid2.js",
             "nspanel-page-media": "nodes/nspanel-page-media.js",
             "nspanel-page-power": "nodes/nspanel-page-power.js",
             "nspanel-page-qr": "nodes/nspanel-page-qr.js",
