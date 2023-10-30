@@ -33,6 +33,14 @@ interface NSPanelConfig extends INodeConfig {
     panelDimHighNight: number
     panelDimLowStartTime: string | undefined
     panelDimLowNightStartTime: string | undefined
+
+    dateFormatWeekday: 'short' | 'long'
+    dateFormatDay: 'numeric' | '2-digit'
+    dateFormatMonth: 'numeric' | '2-digit' | 'short' | 'long'
+    dateFormatYear: 'numeric' | '2-digit'
+
+    timeFormatHour: 'numeric' | '2-digit'
+    timeFormatMinute: 'numeric' | '2-digit'
 }
 
 module.exports = (RED) => {
@@ -85,6 +93,14 @@ module.exports = (RED) => {
                     panelDimHighNight: this.config.panelDimHighNight,
                     panelDimLowStartTime: NSPanelUtils.splitTime(this.config.panelDimLowStartTime),
                     panelDimLowNightStartTime: NSPanelUtils.splitTime(this.config.panelDimLowNightStartTime),
+
+                    dateFormatWeekday: this.config.dateFormatWeekday,
+                    dateFormatDay: this.config.dateFormatDay,
+                    dateFormatMonth: this.config.dateFormatMonth,
+                    dateFormatYear: this.config.dateFormatYear,
+
+                    timeFormatHour: this.config.timeFormatHour,
+                    timeFormatMinute: this.config.timeFormatMinute,
                 },
 
                 mqtt: this.nsPanelConfigNode.getMqttConfig(),

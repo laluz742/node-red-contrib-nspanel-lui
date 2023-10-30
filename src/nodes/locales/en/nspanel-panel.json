@@ -3,6 +3,7 @@
         "label": {
             "general": "General",
             "update": "Updates",
+            "date-time": "Date & time",
             "events": "Events",
             "entities": "Entities",
             "delete": "blank",
@@ -16,6 +17,13 @@
             "button": "Button",
             "text": "Text",
             "hvac_action": "Action"
+        },
+        "date": {
+            "none": "-",
+            "short": "short",
+            "long": "long",
+            "2-digit": "2-digit",
+            "numeric": "numeric"
         },
         "shutter": {
             "position": "Position",
@@ -86,7 +94,15 @@
             "enableUpdates": "Enable check for updates",
             "autoUpdate": "Install new firmware automatically",
             "timeToCheckForUpdates": "Time to check for updates",
-            "tasmotaOtaUrl": "Tasmota OTA Url"
+            "tasmotaOtaUrl": "Tasmota OTA Url",
+            "dateFormat": "Date format",
+            "dateFormatYear": "Year",
+            "dateFormatMonth": "Month",
+            "dateFormatDay": "Day",
+            "dateFormatWeekday": "Weekday",
+            "timeFormat": "Time format",
+            "timeFormatHour": "Hour",
+            "timeFormatMinute": "Minute"
         },
         "placeholder": {
             "name": "Name",

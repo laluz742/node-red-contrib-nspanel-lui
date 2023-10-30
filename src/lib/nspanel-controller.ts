@@ -37,6 +37,17 @@ import { IPanelNodeEx } from '../types/panel'
 
 const log = Logger('NSPanelController')
 
+const DEFAULT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+    weekday: 'long', // short
+    year: 'numeric',
+    month: 'long', // short
+    day: 'numeric',
+}
+const DEFAULT_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+}
+
 declare type PanelDimMode = {
     isConfigured: boolean
     dimLow: number
@@ -652,24 +663,43 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     private sendTimeToPanel() {
         const date = new Date()
-        const timeHours = date.getHours()
-        const timeMinutes = date.getMinutes()
+        const timeOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_TIME_OPTIONS }
+        let timeStr: string
 
-        const timeStr = `${timeHours.toString().padStart(2, '0')}:${timeMinutes.toString().padStart(2, '0')}`
+        try {
+            if (this._panelConfig.panel.timeFormatHour != null)
+                timeOptions.hour = this._panelConfig.panel.timeFormatHour
+            if (this._panelConfig.panel.dateFormatMonth != null)
+                timeOptions.minute = this._panelConfig.panel.timeFormatMinute
+
+            timeStr = date.toLocaleTimeString(undefined, timeOptions)
+        } catch {
+            log.error('Invalid time format configuration, using default settings')
+            timeStr = date.toLocaleTimeString(undefined, DEFAULT_TIME_OPTIONS)
+        }
 
         this.sendToPanel(NSPanelConstants.STR_LUI_CMD_TIME + timeStr)
     }
 
     private sendDateToPanel() {
         const date = new Date()
-        const dateOptions: Intl.DateTimeFormatOptions = {
-            weekday: 'long', // short
-            year: 'numeric',
-            month: 'long', // short
-            day: 'numeric',
-        }
+        const dateOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_DATE_OPTIONS }
+        let dateStr: string
 
-        const dateStr = date.toLocaleDateString(undefined, dateOptions)
+        try {
+            if (this._panelConfig.panel.dateFormatYear != null)
+                dateOptions.year = this._panelConfig.panel.dateFormatYear
+            if (this._panelConfig.panel.dateFormatMonth != null)
+                dateOptions.month = this._panelConfig.panel.dateFormatMonth
+            if (this._panelConfig.panel.dateFormatDay != null) dateOptions.day = this._panelConfig.panel.dateFormatDay
+            if (this._panelConfig.panel.dateFormatWeekday != null)
+                dateOptions.weekday = this._panelConfig.panel.dateFormatWeekday
+
+            dateStr = date.toLocaleDateString(undefined, dateOptions)
+        } catch {
+            log.error('Invalid date format configuration, using default settings')
+            dateStr = date.toLocaleDateString(undefined, DEFAULT_DATE_OPTIONS)
+        }
         this.sendToPanel(NSPanelConstants.STR_LUI_CMD_DATE + dateStr)
     }
 
