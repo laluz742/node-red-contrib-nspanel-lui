@@ -2,23 +2,23 @@
 
 ## Contents
 
--   [Controller](#1-controller)
--   [ScreenSaver Node](#2-screensaver-node)
--   [HMI Control Node](#3-hmi-control-node)
+-   [Panel Controller](#controller)
+-   [ScreenSaver Node](#screensaver-node)
+-   [HMI Control Node](#hmi-control-node)
 
 Further details about the page-specific nodes representing the different types of screens / cards, see [Page Nodes](./page-nodes.md)
 
-## 1. Controller
+## Panel Controller
 
 The controller is the basis for managing cards for the NSPanel. It integrates communication with the panel and controls the page flow.
 
-### 1.1 Configuration
+### Configuration
 
 _to be added later_
 
-### 1.2 Messages
+### Messages
 
-#### 1.2.1 Switch Relay
+#### Switch Relay
 
 The relays can be switched on or off via messages using the _cmd_ topic.
 
@@ -40,7 +40,7 @@ var switchCmdMsg = {
 | `cmd`    | "switch" for relay control                                                                                                 |
 | `params` | `id` = [`0` \| `1`]; `on` [ `false` \| `0` \| `'0'`] to switch relay off, and [`true` \| `1` \| `'1'`] for on respectively |
 
-#### 1.2.2 Toggle Relay
+#### Toggle Relay
 
 The relays can be toggled using the _cmd_ topic.
 
@@ -61,7 +61,7 @@ var switchCmdMsg = {
 | `cmd`    | "toggle"            |
 | `params` | `id` = [`0` \| `1`] |
 
-#### 1.2.3 Notifications
+#### Notifications
 
 To notify the user about special events, notifications can be displayed using the following command syntax using the _notify_ topic. Notifications will be stored in the page history, so after being closed, the last page is shown.
 
@@ -84,8 +84,8 @@ var notifyMsg = {
 }
 ```
 
-| Key | Description |
-| -- | -- |
+| Key            | Description |
+| --- | ---- |
 | `notifyId`     | Identifier for notification (used in history)                                                                              |
 | `heading`      | title                                                                                                                      |
 | `headingColor` | color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`)                        |
@@ -98,7 +98,7 @@ var notifyMsg = {
 | `iconColor`    | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
 | `beep`         | plays sound on panel, when [true                                                                                           | 1   | '1'] |
 
-#### 1.2.4 Buzzer
+#### Buzzer
 
 To output sound patterns on the NSPanel, the command `beep` command can be used under the _cmd_ topic
 
@@ -126,7 +126,7 @@ var buzzerCommand = {
 
 For further details, see [Tasmota Buzzer Command](https://tasmota.github.io/docs/Buzzer/#buzzer-command) description.
 
-#### 1.2.5 Check for Updates
+#### Check for Updates
 
 To initiate the check for firmware or driver updates, send a message under the topic _cmd_ use the command `checkForUpdates`.
 
@@ -139,7 +139,7 @@ var checkForUpdatesMsg = {
 }
 ```
 
-### 2. ScreenSaver Node
+### ScreenSaver Node
 
 The screensaver node serves as a standby screen for your panel and is automatically activated after startup when the _Activate screensaver after startup_ option is checked in your controller node.
 
@@ -148,13 +148,11 @@ It can process input messages with the topic
 -   _status_ for status icons and
 -   _data_ for wheater data
 
-#### 2.1 Configuration
+#### Configuration
 
-_to be added later_
+#### Messages
 
-#### 2.2 Messages
-
-##### 2.2.1 Status Icons
+##### Status Icons
 
 Status data sent using topic _status_ will be displayed in the upper corners of the screen.
 
@@ -182,7 +180,7 @@ The message payload can be either a single object or an array of objects each pr
 | `index` | position (0=left, 1=right) |
 | `prefix` | optional, `prefix` is displayed left to the icon |
 
-##### 2.2.2 Weather Data
+##### Weather Data
 
 Messages with the topic _data_ will be handled to show entities at the bottom of the screensaver screen
 
@@ -232,18 +230,17 @@ The message payload can be an array of up to six object
 | `icon` | optional, the icon to be shown |
 | `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
 
-### 3. HMI Control Node
+### HMI Control Node
 
 The HMI control node can be used to activate the page defined by a page nodes like _Entities_, _Grid_, or _Thermo_ by messages in the flow.
 
-#### 3.1 Configuration
+#### Configuration
 
-_to be added later_
-
-#### 3.2 Messages
+#### Messages
 
 ```javascript
 var hmiControlMsg = {
+    topic: 'nav',
     payload: '<page name>',
 }
 ```
