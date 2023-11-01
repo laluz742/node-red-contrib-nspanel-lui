@@ -11,6 +11,7 @@ import {
     PageEntityData,
     PanelEntity,
     ShutterEntityData,
+    TimerEntityData,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -41,10 +42,8 @@ export class NSPanelPopupHelpers {
                 result = NSPanelPopupHelpers.generatePopupInputSelect(node, entity, entityData)
                 break
 
-            case 'thermo':
             case 'timer':
-                // TODO
-                result = null
+                result = NSPanelPopupHelpers.generatePopupTimer(node, entity, entityData)
                 break
 
             default:
@@ -197,6 +196,44 @@ export class NSPanelPopupHelpers {
             result.push(inputSelectEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY) // TODO: text like 'no data'??
             result.push(optionsString)
         }
+
+        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+    }
+
+    private static generatePopupTimer(
+        _node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData | null
+    ): string | string[] | null {
+        const timerEntityData: TimerEntityData = entityData as TimerEntityData
+        const dAdjustable: string = entity?.adjustable ? '1' : '0' ?? '0'
+        const dAction1: string = timerEntityData?.action1 ?? entity?.action1
+        const dAction2: string = timerEntityData?.action2 ?? entity?.action2
+        const dAction3: string = timerEntityData?.action3 ?? entity?.action3
+        const dLabel1: string = timerEntityData?.label1 ?? entity?.label1
+        const dLabel2: string = timerEntityData?.label2 ?? entity?.label2
+        const dLabel3: string = timerEntityData?.label3 ?? entity?.label3
+        const dTimer: number = timerEntityData?.timerRemainingSeconds ?? entity?.timer ?? Number.NaN
+        const dTimerMins: number = Number.isNaN(dTimer) ? 0 : Math.floor(dTimer / 60)
+        const dTimerSecs: number = Number.isNaN(dTimer) ? 0 : dTimer % 60
+
+        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+        result.push(entity.entityId)
+        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
+        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        result.push(entity.entityId)
+
+        result.push(dTimerMins)
+        result.push(dTimerSecs)
+
+        result.push(dAdjustable)
+
+        result.push(dAction1 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dAction2 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dAction3 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dLabel1 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dLabel2 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dLabel3 ?? NSPanelConstants.STR_EMPTY)
 
         return result.join(NSPanelConstants.STR_LUI_DELIMITER)
     }

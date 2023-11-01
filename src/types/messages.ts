@@ -107,6 +107,19 @@ export type LightEntityData = SwitchEntityData & {
     saturation?: number
 }
 
+export type TimerEntityData = PageEntityData & {
+    adjustable?: boolean
+    timerRemainingSeconds?: number
+
+    action1?: string
+    action2?: string
+    action3?: string
+
+    label1?: string
+    label2?: string
+    label3?: string
+}
+
 export type StatusItemData = PageEntityDataBase & {
     // used in screensaver
     prefix?: string

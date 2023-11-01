@@ -14,6 +14,7 @@ export type EventTypeAttrs = {
     isFan?: boolean
     isLight?: boolean
     isInputSel?: boolean
+    isTimer?: boolean
 }
 
 export type PanelEntityContainer = {

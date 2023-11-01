@@ -104,3 +104,28 @@ Additional data must be specified depending on the entity type.
 | `iconColor`      | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
 | `selectedOption` | selected option, must be included in `options`                                                                               |
 | `options`        | available options to choose from                                                                                             |
+
+#### Timer (_timer_ entity)
+
+```json
+{
+    "topic": "data",
+    "payload": {
+        "entityId": "<entityId>",
+        "timerRemainingSeconds": "<remaining time in seconds>",
+        "action1": "<action1>",
+        "action2": "<action2>",
+        "action3": "<action3>",
+        "label1": "<label for action1>",
+        "label2": "<label for action2>",
+        "label3": "<label for action3>"
+    }
+}
+```
+
+| Key              | Description                                                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `entityId`       | id of the entity as configured in node settings                                                                              |
+| `iconColor`      | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `selectedOption` | selected option, must be included in `options`                                                                               |
+| `options`        | available options to choose from                                                                                             |

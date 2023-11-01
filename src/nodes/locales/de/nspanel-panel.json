@@ -69,7 +69,16 @@
             "mode3": "Modus 3",
             "dimmable": "Dimmbar",
             "temperature": "Temperatur",
-            "inputsel-notice": "Die Optionen werden über Nachrichten festegelegt."
+            "inputsel-notice": "Die Optionen werden über Nachrichten festegelegt.",
+            "adjustable": "Einstellbar",
+            "action1": "Aktion 1",
+            "action2": "Aktion 2",
+            "action3": "Aktion 3",
+            "label1": "Text 1",
+            "label2": "Text 2",
+            "label3": "Text 3",
+            "timerDefault": "Timer",
+            "seconds": "Sekunden"
         }
     },
     "nspanel-panel": {
