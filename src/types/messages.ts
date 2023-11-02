@@ -120,6 +120,23 @@ export type TimerEntityData = PageEntityData & {
     label3?: string
 }
 
+export type ThermoEntityData = PageEntityData & {
+    heading?: string
+    mode?: string
+    selectedOption: string
+    options?: string[] | string
+
+    heading1?: string
+    mode1?: string
+    selectedOption1: string
+    options1?: string[] | string
+
+    heading2?: string
+    mode2?: string
+    selectedOption2: string
+    options2?: string[] | string
+}
+
 export type StatusItemData = PageEntityDataBase & {
     // used in screensaver
     prefix?: string

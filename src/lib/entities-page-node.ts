@@ -28,6 +28,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         this.entitiesPageNodeConfig.entities?.forEach((entity) => {
             this.entities.set(entity.entityId, entity)
         })
+        this.entities.set(config.name, { entityId: config.name, type: '@self' })
     }
 
     protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback) {
@@ -72,17 +73,16 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         return pageData
     }
 
-    public generatePopupDetails(_type: string, entityId: string): string | string[] | null {
-        const entities = this.entitiesPageNodeConfig.entities ?? []
+    public generatePopupDetails(type: string, entityId: string): string | string[] | null {
+        const entities = [...this.entities.values()] ?? []
 
+        // generate popup only, if related to a known entity or the page itself
         const entity: PanelEntity = entities.filter((e) => e.entityId === entityId)[0] ?? null
-
-        // generate popup only, if related to a known entity
         if (entity != null) {
             const entityData = this.entityData.get(entity.entityId)
 
             // if (entityData != null) { // entity data might be undefined, if nothing received yet
-            const result = NSPanelPopupHelpers.generatePopup(this, entity, entityData)
+            const result = NSPanelPopupHelpers.generatePopup(type, this, entity, entityData)
             return result
             // }
         }
