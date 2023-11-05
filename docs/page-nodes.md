@@ -8,6 +8,7 @@
 -   [Thermo Node](#thermo-node)
 -   [QR Node](#qr-page-node)
 -   [Media Node](#media-page-node)
+-   [Chart Node](#chart-page-node)
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
@@ -81,6 +82,46 @@ Additional data must be specified depending on the entity type.
 | `artistColor`   | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
 | `volume`        | optional, number between 0 and 100, volume                                                                                   |
 | `iconPlayPause` | optional, the icon to use for play/pause                                                                                     |
+
+### Chart Page Node
+
+#### Configuration
+
+#### Messages
+
+Example Message:
+
+```json
+{
+    "topic": "data",
+    "payload": {
+        "values": [
+            {
+                "value": 10,
+                "label": "Jul"
+            },
+            {
+                "value": 20,
+                "label": "Aug"
+            },
+            {
+                "value": 30,
+                "label": "Sep"
+            },
+            {
+                "value": 40,
+                "label": "Oct"
+            },
+            {
+                "value": 50,
+                "label": "Nov"
+            }
+        ],
+        "yAxisTicks": [10, 50, 100],
+        "yAxisLabel": "Amount"
+    }
+}
+```
 
 ### Popups
 
