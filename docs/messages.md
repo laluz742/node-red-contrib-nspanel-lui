@@ -133,8 +133,8 @@ When received from NSPanel, sensor data will be transformed and forwarded from t
 }
 ```
 
-| Key          | Description                                                                                                       |
-| ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Key | Description |
+| --- | --- |
 | `hmiVersion` | `version` = `null`<br> `internalVersion` = internal numeric version number<br> `model` = `us-p` \| `us-l` \| `eu` |
 
 </td>
