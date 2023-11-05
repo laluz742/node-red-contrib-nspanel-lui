@@ -30,7 +30,7 @@ export type EntityBasedPageConfig = PageConfig & {
 export type PageOptions = {
     pageType: string
     maxEntities: number
-    forceRedraw: boolean
+    forceRedraw?: boolean
 }
 
 export declare type PageData = {

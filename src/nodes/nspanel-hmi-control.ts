@@ -60,6 +60,10 @@ module.exports = (RED) => {
             return null
         }
 
+        public isForceRedraw(): boolean {
+            return false
+        }
+
         public setActive(_state: boolean) {}
 
         public isScreenSaver(): boolean {
