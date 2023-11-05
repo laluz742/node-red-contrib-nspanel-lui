@@ -58,7 +58,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         ['light', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isLight: true }],
         ['fan', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isFan: true }],
         ['input_sel', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isInputSel: true }],
-        ['timer', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
+        ['timer', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isTimer: true }],
         ['switch', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
         ['number', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isNumber: true }],
         ['button', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
@@ -236,20 +236,16 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const ROW1_2 = tpl.find('.nlui-row-1-2')
                     const ROW1_3 = tpl.find('.nlui-row-1-3')
                     const rowOptionalValue = tpl.find('.nlui-row-optional-value')
-                    const rowIcon = tpl.find('.nlui-row-icon')
-                    const rowShutter = tpl.find('.nlui-row-shutter')
-                    const rowShutterTiltIcons = tpl.find('.nlui-row-shutter-tilt-icons')
-                    const rowNumber = tpl.find('.nlui-row-number')
-                    const rowFanModes = tpl.find('.nlui-row-fan-modes')
-                    const rowLight = tpl.find('.nlui-row-light')
-                    const rowInputSel = tpl.find('.nlui-row-inputsel')
-                    rowIcon.hide()
-                    rowShutter.hide()
-                    rowShutterTiltIcons.hide()
-                    rowNumber.hide()
-                    rowFanModes.hide()
-                    rowLight.hide()
-                    rowInputSel.hide()
+                    const rowIcon = tpl.find('.nlui-row-icon').hide()
+                    const rowShutter = tpl.find('.nlui-row-shutter').hide()
+                    const rowShutterTiltIcons = tpl.find('.nlui-row-shutter-tilt-icons').hide()
+                    const rowNumber = tpl.find('.nlui-row-number').hide()
+                    const rowFanModes = tpl.find('.nlui-row-fan-modes').hide()
+                    const rowLight = tpl.find('.nlui-row-light').hide()
+                    const rowInputSel = tpl.find('.nlui-row-inputsel').hide()
+                    const rowTimer = tpl.find('.nlui-row-timer').hide()
+                    const rowTimerActions = tpl.find('.nlui-row-timer-actions').hide()
+                    const rowTimerLabels = tpl.find('.nlui-row-timer-labels').hide()
 
                     // #region row1
                     const selectTypeField = tpl.find('.node-input-entity-type')
@@ -301,6 +297,18 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const lightColorField = tpl.find('.node-input-entity-light-color')
                     // #endregion rowLight
 
+                    // #region timer
+                    const timerAdjustableField = tpl.find('.node-input-entity-timer-adjustable')
+                    const timerDefaultField = tpl.find('.node-input-entity-timer-default')
+                    const timerAction1Field = tpl.find('.node-input-entity-timer-action1')
+                    const timerAction2Field = tpl.find('.node-input-entity-timer-action2')
+                    const timerAction3Field = tpl.find('.node-input-entity-timer-action3')
+                    const timerLabel1Field = tpl.find('.node-input-entity-timer-label1')
+                    const timerLabel2Field = tpl.find('.node-input-entity-timer-label2')
+                    const timerLabel3Field = tpl.find('.node-input-entity-timer-label3')
+
+                    // #endregion timer
+
                     // #endregion create DOM
 
                     selectTypeField.on('change', () => {
@@ -318,6 +326,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                             rowFanModes.toggle(entityTypeAttrs.isFan ?? false)
                             rowLight.toggle(entityTypeAttrs.isLight ?? false)
                             rowInputSel.toggle(entityTypeAttrs.isInputSel ?? false)
+                            rowTimer.toggle(entityTypeAttrs.isTimer ?? false)
+                            rowTimerActions.toggle(entityTypeAttrs.isTimer ?? false)
+                            rowTimerLabels.toggle(entityTypeAttrs.isTimer ?? false)
 
                             // fan min/max number handling
                             if (entityTypeAttrs.isFan) {
@@ -361,6 +372,16 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     lightDimmableField.prop('checked', entry.dimmable ?? false)
                     lightColorTemperatureField.prop('checked', entry.hasColorTemperature ?? false)
                     lightColorField.prop('checked', entry.hasColor ?? false)
+
+                    // timer
+                    timerAdjustableField.prop('checked', entry.adjustable ?? false)
+                    timerDefaultField.val(entry.timer ?? '')
+                    timerAction1Field.val(entry.action1 ?? '')
+                    timerAction2Field.val(entry.action2 ?? '')
+                    timerAction3Field.val(entry.action3 ?? '')
+                    timerLabel1Field.val(entry.label1 ?? '')
+                    timerLabel2Field.val(entry.label2 ?? '')
+                    timerLabel3Field.val(entry.label3 ?? '')
 
                     selectTypeField.val(entry.type)
                     selectTypeField.trigger('change')
@@ -499,6 +520,29 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         entity.dimmable = dimmable
                         entity.hasColorTemperature = hasColorTemperature
                         entity.hasColor = hasColor
+                        break
+                    }
+
+                    case 'timer': {
+                        const timerAdjustable: boolean = listItem
+                            .find('.node-input-entity-timer-adjustable')
+                            .is(':checked')
+                        entity.adjustable = timerAdjustable
+                        const action1 = listItem.find('.node-input-entity-timer-action1').val().toString()
+                        const action2 = listItem.find('.node-input-entity-timer-action2').val().toString()
+                        const action3 = listItem.find('.node-input-entity-timer-action3').val().toString()
+                        const label1 = listItem.find('.node-input-entity-timer-label1').val().toString()
+                        const label2 = listItem.find('.node-input-entity-timer-label2').val().toString()
+                        const label3 = listItem.find('.node-input-entity-timer-label3').val().toString()
+                        const timerDefault = Number(listItem.find('.node-input-entity-timer-default').val())
+
+                        entity.timer = Number.isNaN(timerDefault) ? undefined : timerDefault
+                        entity.action1 = action1
+                        entity.action2 = action2
+                        entity.action3 = action3
+                        entity.label1 = label1
+                        entity.label2 = label2
+                        entity.label3 = label3
                         break
                     }
                 }

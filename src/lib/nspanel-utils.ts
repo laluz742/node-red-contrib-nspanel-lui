@@ -43,8 +43,8 @@ export class NSPanelUtils {
         }${iconColor ?? NSPanelConstants.STR_EMPTY}`
     }
 
-    public static splitTime(str: string | undefined): SplitTime {
-        if (str === undefined) return { hours: -1, minutes: -1 }
+    public static splitTime(str: string | null): SplitTime {
+        if (str == null) return { hours: -1, minutes: -1 }
 
         const parts = str.split(':')
 

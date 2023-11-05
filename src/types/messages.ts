@@ -107,9 +107,50 @@ export type LightEntityData = SwitchEntityData & {
     saturation?: number
 }
 
+export type TimerEntityData = PageEntityData & {
+    adjustable?: boolean
+    timerRemainingSeconds?: number
+
+    action1?: string
+    action2?: string
+    action3?: string
+
+    label1?: string
+    label2?: string
+    label3?: string
+}
+
+export type ThermoEntityData = PageEntityData & {
+    heading?: string
+    mode?: string
+    selectedOption: string
+    options?: string[] | string
+
+    heading1?: string
+    mode1?: string
+    selectedOption1: string
+    options1?: string[] | string
+
+    heading2?: string
+    mode2?: string
+    selectedOption2: string
+    options2?: string[] | string
+}
+
 export type StatusItemData = PageEntityDataBase & {
     // used in screensaver
     prefix?: string
     iconFont?: string
     index?: 0 | 1
+}
+
+export type ChartDataItem = {
+    value: number
+    label?: string
+}
+
+export type ChartData = {
+    values: ChartDataItem[]
+    yAxisLabel?: string
+    yAxisTicks?: number[]
 }

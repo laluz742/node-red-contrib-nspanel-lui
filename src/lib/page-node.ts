@@ -81,6 +81,10 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
         return this.options.pageType
     }
 
+    public isForceRedraw(): boolean {
+        return this.options?.forceRedraw ?? false
+    }
+
     public generatePage(): string | string[] | null {
         if (this.getCache().containsData()) return this.getCache().get()
 

@@ -48,4 +48,15 @@ export type PanelEntity = {
 
     // input select
     inputSelType?: string
+
+    // timer
+    adjustable?: boolean
+    timer?: number
+    action1?: string
+    action2?: string
+    action3?: string
+
+    label1?: string
+    label2?: string
+    label3?: string
 }

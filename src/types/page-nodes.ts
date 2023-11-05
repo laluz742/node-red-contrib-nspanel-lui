@@ -16,11 +16,13 @@ export type PageOnInputCallback = (
 export type PageEventCallbackType = (page: IPageNode) => void
 export type PageIdEventCallbackType = (pageId: PageId) => void
 
+// FIXME: hierarchy mismatch
 export interface IPageNode extends INodeConfig {
     getPageType(): string
     generatePage(): string | string[] | null
     generatePopupDetails(type: string, entityId: string): string | string[] | null
     isScreenSaver(): boolean
+    isForceRedraw(): boolean
     setActive(state: boolean): void
     getPanel(): IPanelNode | null
     getTimeout(): number | null

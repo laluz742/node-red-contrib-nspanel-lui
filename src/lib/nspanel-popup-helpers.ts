@@ -11,6 +11,8 @@ import {
     PageEntityData,
     PanelEntity,
     ShutterEntityData,
+    ThermoEntityData,
+    TimerEntityData,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -18,33 +20,36 @@ const log = Logger('NSPanelController')
 
 export class NSPanelPopupHelpers {
     public static generatePopup(
+        type: string,
         node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
     ): string | string[] | null {
         let result: string | string[] | null
 
-        switch (entity.type) {
-            case 'fan':
+        switch (type) {
+            case 'popupFan':
                 result = NSPanelPopupHelpers.generatePopupFan(node, entity, entityData)
                 break
 
-            case 'light':
+            case 'popupLight':
                 result = NSPanelPopupHelpers.generatePopupLight(node, entity, entityData)
                 break
 
-            case 'shutter':
+            case 'popupShutter':
                 result = NSPanelPopupHelpers.generatePopupShutter(node, entity, entityData)
                 break
 
-            case 'input_sel':
+            case 'popupInSel':
                 result = NSPanelPopupHelpers.generatePopupInputSelect(node, entity, entityData)
                 break
 
-            case 'thermo':
-            case 'timer':
-                // TODO
-                result = null
+            case 'popupThermo':
+                result = NSPanelPopupHelpers.generatePopupThermo(node, entity, entityData)
+                break
+
+            case 'popupTimer':
+                result = NSPanelPopupHelpers.generatePopupTimer(node, entity, entityData)
                 break
 
             default:
@@ -191,12 +196,106 @@ export class NSPanelPopupHelpers {
         result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
 
         if (inputSelectEntityData != null) {
-            const optionsString: string = inputSelectEntityData?.options?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
+            const optionsString: string = Array.isArray(inputSelectEntityData?.options)
+                ? inputSelectEntityData?.options?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
+                : inputSelectEntityData?.options
 
             result.push(inputSelectEntityData?.mode ?? NSPanelConstants.STR_EMPTY)
             result.push(inputSelectEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY) // TODO: text like 'no data'??
-            result.push(optionsString)
+            result.push(optionsString ?? NSPanelConstants.STR_EMPTY)
         }
+
+        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+    }
+
+    private static generatePopupThermo(
+        _node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData | null
+    ): string | string[] | null {
+        const thermoEntityData: ThermoEntityData = entityData as ThermoEntityData // TODO: type guard
+        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+
+        const heading: string = thermoEntityData?.heading ?? NSPanelConstants.STR_EMPTY
+        const mode: string = thermoEntityData?.mode ?? NSPanelConstants.STR_EMPTY
+        const selectedMode: string = thermoEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY
+        const modeList: string =
+            (Array.isArray(thermoEntityData?.options)
+                ? thermoEntityData?.options?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
+                : thermoEntityData?.options) ?? NSPanelConstants.STR_EMPTY
+
+        const heading1: string = thermoEntityData?.heading1 ?? NSPanelConstants.STR_EMPTY
+        const mode1: string = thermoEntityData?.mode1 ?? NSPanelConstants.STR_EMPTY
+        const selectedMode1: string = thermoEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY
+        const modeList1: string =
+            (Array.isArray(thermoEntityData?.options1)
+                ? thermoEntityData?.options1?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
+                : thermoEntityData?.options1) ?? NSPanelConstants.STR_EMPTY
+
+        const heading2: string = thermoEntityData?.heading2 ?? NSPanelConstants.STR_EMPTY
+        const mode2: string = thermoEntityData?.mode2 ?? NSPanelConstants.STR_EMPTY
+        const selectedMode2: string = thermoEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY
+        const modeList2: string =
+            (Array.isArray(thermoEntityData?.options2)
+                ? thermoEntityData?.options2?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
+                : thermoEntityData?.options2) ?? NSPanelConstants.STR_EMPTY
+
+        result.push(entity.entityId)
+        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
+        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+
+        result.push(heading)
+        result.push(mode)
+        result.push(selectedMode)
+        result.push(modeList)
+
+        result.push(heading1)
+        result.push(mode1)
+        result.push(selectedMode1)
+        result.push(modeList1)
+
+        result.push(heading2)
+        result.push(mode2)
+        result.push(selectedMode2)
+        result.push(modeList2)
+
+        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+    }
+
+    private static generatePopupTimer(
+        _node: NodeBase<INodeConfig>,
+        entity: PanelEntity,
+        entityData: PageEntityData | null
+    ): string | string[] | null {
+        const timerEntityData: TimerEntityData = entityData as TimerEntityData
+        const dAdjustable: string = entity?.adjustable ? '1' : '0' ?? '0'
+        const dAction1: string = timerEntityData?.action1 ?? entity?.action1
+        const dAction2: string = timerEntityData?.action2 ?? entity?.action2
+        const dAction3: string = timerEntityData?.action3 ?? entity?.action3
+        const dLabel1: string = timerEntityData?.label1 ?? entity?.label1
+        const dLabel2: string = timerEntityData?.label2 ?? entity?.label2
+        const dLabel3: string = timerEntityData?.label3 ?? entity?.label3
+        const dTimer: number = timerEntityData?.timerRemainingSeconds ?? entity?.timer ?? Number.NaN
+        const dTimerMins: number = Number.isNaN(dTimer) ? 0 : Math.floor(dTimer / 60)
+        const dTimerSecs: number = Number.isNaN(dTimer) ? 0 : dTimer % 60
+
+        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+        result.push(entity.entityId)
+        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
+        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        result.push(entity.entityId)
+
+        result.push(dTimerMins)
+        result.push(dTimerSecs)
+
+        result.push(dAdjustable)
+
+        result.push(dAction1 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dAction2 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dAction3 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dLabel1 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dLabel2 ?? NSPanelConstants.STR_EMPTY)
+        result.push(dLabel3 ?? NSPanelConstants.STR_EMPTY)
 
         return result.join(NSPanelConstants.STR_LUI_DELIMITER)
     }

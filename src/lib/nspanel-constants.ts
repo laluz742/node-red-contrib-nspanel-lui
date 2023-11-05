@@ -74,6 +74,8 @@ export const STR_PAGE_TYPE_CARD_GRID2: string = 'cardGrid2'
 export const STR_PAGE_TYPE_CARD_MEDIA: string = 'cardMedia'
 export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
+export const STR_PAGE_TYPE_CARD_CHART: string = 'cardChart'
+export const STR_PAGE_TYPE_CARD_LCHART: string = 'cardLChart'
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
 
 // update process
@@ -93,5 +95,4 @@ export const STR_UPDATE_ERROR_ICON: string = 'exclamation-thick'
 
 // defaults
 export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE
-export const DEFAULT_COLOR: string = '#ffffff'
 export const DEFAULT_FONTSIZE: number = 1

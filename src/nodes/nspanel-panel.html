@@ -75,7 +75,7 @@
             <div class="form-row"></div>
 
             <div class="form-row">
-                <label for="node-config-input-panelDimLow" style="margin-left: 1.5em;">
+                <label style="margin-left: 1.5em;">
                     <i class="fa fa-sun-o"></i>
                     <span data-i18n="nspanel-panel.label.brightnessScreenSaver"></span>
                 </label>
@@ -158,6 +158,7 @@
                 </label>
             </div>
         </div>
+
         <div id="nspanel-page-tab-update" style="display:none">
             <div class="form-row">
                 <input
@@ -169,6 +170,7 @@
                     <span data-i18n="nspanel-panel.label.enableUpdates"></span>
                 </label>
             </div>
+
             <div id="updateSettings">
                 <div class="form-row">
                     <input
@@ -202,6 +204,83 @@
                         data-i18n="[placeholder]nspanel-panel.placeholder.tasmotaOtaUrl"
                     />
                 </div>
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-date" style="display:none">
+            <div class="form-row" style="display: flex;">
+                <label style="flex-grow: 1;">
+                    <i class="fa fa-calendar"></i>
+                    <span data-i18n="nspanel-panel.label.dateFormat"></span>
+                </label>
+            </div>
+
+            <div class="form-row">
+                <label style="flex-grow: 1;">
+                    <span data-i18n="nspanel-panel.label.dateFormatYear"></span>
+                </label>
+                <select id="node-config-input-dateFormatYear">
+                    <option value="numeric" data-i18n="common.date.numeric">numeric</option>
+                    <option value="2-digit" data-i18n="common.date.2-digit">2-digit</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label style="flex-grow: 1;">
+                    <span data-i18n="nspanel-panel.label.dateFormatMonth"></span>
+                </label>
+                <select id="node-config-input-dateFormatMonth">
+                    <option value="numeric" data-i18n="common.date.numeric">numeric</option>
+                    <option value="2-digit" data-i18n="common.date.2-digit">2-digit</option>
+                    <option value="short" data-i18n="common.date.short">short</option>
+                    <option value="long" data-i18n="common.date.long">long</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label style="flex-grow: 1;">
+                    <span data-i18n="nspanel-panel.label.dateFormatDay"></span>
+                </label>
+                <select id="node-config-input-dateFormatDay">
+                    <option value="numeric" data-i18n="common.date.numeric">numeric</option>
+                    <option value="2-digit" data-i18n="common.date.2-digit">2-digit</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label style="flex-grow: 1;">
+                    <span data-i18n="nspanel-panel.label.dateFormatWeekday"></span>
+                </label>
+                <select id="node-config-input-dateFormatWeekday">
+                    <option value="short" data-i18n="common.date.short">short</option>
+                    <option value="long" data-i18n="common.date.long">long</option>
+                </select>
+            </div>
+
+            <br />
+            <div class="form-row" style="display: flex;">
+                <label style="flex-grow: 1;">
+                    <i class="fa fa-calendar"></i>
+                    <span data-i18n="nspanel-panel.label.timeFormat"></span>
+                </label>
+            </div>
+            <div class="form-row">
+                <label style="flex-grow: 1;">
+                    <span data-i18n="nspanel-panel.label.timeFormatHour"></span>
+                </label>
+                <select id="node-config-input-timeFormatHour">
+                    <option value="numeric" data-i18n="common.date.numeric">numeric</option>
+                    <option value="2-digit" data-i18n="common.date.2-digit">2-digit</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label style="flex-grow: 1;">
+                    <span data-i18n="nspanel-panel.label.timeFormatMinute"></span>
+                </label>
+                <select id="node-config-input-timeFormatMinute">
+                    <option value="numeric" data-i18n="common.date.numeric">numeric</option>
+                    <option value="2-digit" data-i18n="common.date.2-digit">2-digit</option>
+                </select>
             </div>
         </div>
     </div>

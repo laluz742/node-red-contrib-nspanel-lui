@@ -3,6 +3,7 @@
         "label": {
             "general": "Allgemein",
             "update": "Updates",
+            "date-time": "Datum & Uhrzeit",
             "events": "Ereignisse",
             "entities": "Elemente",
             "delete": "leer",
@@ -16,6 +17,13 @@
             "button": "Taste",
             "text": "Text",
             "hvac_action": "Aktion"
+        },
+        "date": {
+            "none": "-",
+            "short": "Kurz",
+            "long": "Lang",
+            "2-digit": "Zweistellig",
+            "numeric": "Numerisch"
         },
         "shutter": {
             "position": "Position",
@@ -61,7 +69,16 @@
             "mode3": "Modus 3",
             "dimmable": "Dimmbar",
             "temperature": "Temperatur",
-            "inputsel-notice": "Die Optionen werden über Nachrichten festegelegt."
+            "inputsel-notice": "Die Optionen werden über Nachrichten festegelegt.",
+            "adjustable": "Einstellbar",
+            "action1": "Aktion 1",
+            "action2": "Aktion 2",
+            "action3": "Aktion 3",
+            "label1": "Text 1",
+            "label2": "Text 2",
+            "label3": "Text 3",
+            "timerDefault": "Timer",
+            "seconds": "Sekunden"
         }
     },
     "nspanel-panel": {
@@ -86,7 +103,15 @@
             "enableUpdates": "Prüfung auf Updates aktivieren",
             "autoUpdate": "Neue Firmware automatisch installieren",
             "timeToCheckForUpdates": "Time to check for updates",
-            "tasmotaOtaUrl": "Tasmota OTA Url"
+            "tasmotaOtaUrl": "Tasmota OTA Url",
+            "dateFormat": "Datumsformat",
+            "dateFormatYear": "Jahr",
+            "dateFormatMonth": "Monat",
+            "dateFormatDay": "Tag",
+            "dateFormatWeekday": "Wochentag",
+            "timeFormat": "Zeitformat",
+            "timeFormatHour": "Stunde",
+            "timeFormatMinute": "Minute"
         },
         "placeholder": {
             "name": "Name",
