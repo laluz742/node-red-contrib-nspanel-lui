@@ -35,9 +35,9 @@ var switchCmdMsg = {
 }
 ```
 
-| Key      | Description                                                                                                                |
-| -------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `cmd`    | "switch" for relay control                                                                                                 |
+| Key | Description |
+| --- | --- |
+| `cmd` | "switch" for relay control |
 | `params` | `id` = [`0` \| `1`]; `on` [ `false` \| `0` \| `'0'`] to switch relay off, and [`true` \| `1` \| `'1'`] for on respectively |
 
 #### Toggle Relay
@@ -84,19 +84,19 @@ var notifyMsg = {
 }
 ```
 
-| Key            | Description |
-| --- | ---- |
-| `notifyId`     | Identifier for notification (used in history)                                                                              |
-| `heading`      | title                                                                                                                      |
-| `headingColor` | color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`)                        |
-| `okText`       | Text for confirmation button                                                                                               |
-| `text`         | the message to show                                                                                                        |
-| `textColor`    | color for message text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`)                      |
-| `fontSize`     | the font size                                                                                                              |
-| `timeout`      | the timeout in seconds after which the notification will disappear, 0 for no timeout                                       |
-| `icon`         | optional, icon to show                                                                                                     |
-| `iconColor`    | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `beep`         | plays sound on panel, when [true                                                                                           | 1   | '1'] |
+| Key | Description |
+| --- | --- | --- | --- |
+| `notifyId` | Identifier for notification (used in history) |
+| `heading` | title |
+| `headingColor` | color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `okText` | Text for confirmation button |
+| `text` | the message to show |
+| `textColor` | color for message text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `fontSize` | the font size |
+| `timeout` | the timeout in seconds after which the notification will disappear, 0 for no timeout |
+| `icon` | optional, icon to show |
+| `iconColor` | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `beep` | plays sound on panel, when [true | 1 | '1'] |
 
 #### Buzzer
 
@@ -172,8 +172,9 @@ var statusMsg = {
 ```
 
 The message payload can be either a single object or an array of objects each providing the following data
+
 | Key | Description |
-| ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| --- | --- |
 | `icon` | The icon to be shown |
 | `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
 | `text` | the text to show |
@@ -223,8 +224,9 @@ var weatherDataMsg = {
 ```
 
 The message payload can be an array of up to six object
+
 | Key | Description |
-| ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| --- | --- |
 | `text` | the text to show |
 | `value` | the value to be displays |
 | `icon` | optional, the icon to be shown |

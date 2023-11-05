@@ -1,15 +1,12 @@
 # node-red-contrib-nspanel-lui
 
-![Project Development](https://img.shields.io/badge/under-Development-blue)
-[![GitHub Release](https://img.shields.io/badge/alpha-releases-blue)](https://github.com/laluz742/node-red-contrib-nspanel-lui/releases)
-[![GitHub Activity](https://img.shields.io/github/commit-activity/m/laluz742/node-red-contrib-nspanel-lui)](https://github.com/laluz742/node-red-contrib-nspanel-lui/commits/main)
+![Project Development](https://img.shields.io/badge/under-Development-blue) [![GitHub Release](https://img.shields.io/badge/alpha-releases-blue)](https://github.com/laluz742/node-red-contrib-nspanel-lui/releases) [![GitHub Activity](https://img.shields.io/github/commit-activity/m/laluz742/node-red-contrib-nspanel-lui)](https://github.com/laluz742/node-red-contrib-nspanel-lui/commits/main)
 
 This project is in an earlier stage of development (alpha), so use at your own risk. However, in my personal daily use it runs stable.
 
 ## Support & Contributing
 
-If you like to support this free project, any help is welcome. You can donate by clicking the following link:
-<a target="blank" href="https://www.paypal.me/laluz742"><img src="https://img.shields.io/badge/Donate-PayPal-blue.svg"/></a>
+If you like to support this free project, any help is welcome. You can donate by clicking the following link: <a target="blank" href="https://www.paypal.me/laluz742"><img src="https://img.shields.io/badge/Donate-PayPal-blue.svg"/></a>
 
 Contributors are welcome.
 
@@ -30,6 +27,7 @@ Currently following features are supported:
 -   WiFi/QR card
 -   thermo card
 -   media card
+-   chart card
 -   simple navigation between cards using screen and hardware buttons
 -   input data handling
 -   control of relays

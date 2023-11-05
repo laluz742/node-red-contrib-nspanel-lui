@@ -6,5 +6,6 @@
     "printWidth": 120,
     "bracketSpacing": true,
     "insertPragma": false,
-    "endOfLine": "crlf"
+    "endOfLine": "crlf",
+    "proseWrap": "never"
 }

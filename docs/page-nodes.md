@@ -74,14 +74,14 @@ Additional data must be specified depending on the entity type.
 }
 ```
 
-| Key             | Description                                                                                                                  |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `title`         | optional, the text to show                                                                                                   |
-| `titleColor`    | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `artist`        | optional, the icon to be shown                                                                                               |
-| `artistColor`   | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `volume`        | optional, number between 0 and 100, volume                                                                                   |
-| `iconPlayPause` | optional, the icon to use for play/pause                                                                                     |
+| Key | Description |
+| --- | --- |
+| `title` | optional, the text to show |
+| `titleColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `artist` | optional, the icon to be shown |
+| `artistColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `volume` | optional, number between 0 and 100, volume |
+| `iconPlayPause` | optional, the icon to use for play/pause |
 
 ### Chart Page Node
 
@@ -139,12 +139,12 @@ Example Message:
 }
 ```
 
-| Key              | Description                                                                                                                  |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `entityId`       | id of the entity as configured in node settings                                                                              |
-| `iconColor`      | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `selectedOption` | selected option, must be included in `options`                                                                               |
-| `options`        | available options to choose from                                                                                             |
+| Key | Description |
+| --- | --- |
+| `entityId` | id of the entity as configured in node settings |
+| `iconColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `selectedOption` | selected option, must be included in `options` |
+| `options` | available options to choose from |
 
 #### Timer (_timer_ entity)
 
@@ -164,9 +164,9 @@ Example Message:
 }
 ```
 
-| Key              | Description                                                                                                                  |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `entityId`       | id of the entity as configured in node settings                                                                              |
-| `iconColor`      | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `selectedOption` | selected option, must be included in `options`                                                                               |
-| `options`        | available options to choose from                                                                                             |
+| Key | Description |
+| --- | --- |
+| `entityId` | id of the entity as configured in node settings |
+| `iconColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `selectedOption` | selected option, must be included in `options` |
+| `options` | available options to choose from |

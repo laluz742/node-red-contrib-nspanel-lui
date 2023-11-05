@@ -12,8 +12,7 @@ To start usign the nodes please ensure you have prepared your NSPanel as describ
 
 The _Panel Controller_ node is required to manage your NSPanel with Node-RED and adding your custom pages. It can be found under the NSPanel section of your node palette.
 
-After dragging the node into your flow, please edit it to create a new NSPanel configuration node. Please use the device topic and full topic as configured on your panel in section _Configure MQTT_.
-To enable communication with your panel using your MQTT server, please add a new NSPanel configuration.
+After dragging the node into your flow, please edit it to create a new NSPanel configuration node. Please use the device topic and full topic as configured on your panel in section _Configure MQTT_. To enable communication with your panel using your MQTT server, please add a new NSPanel configuration.
 
 ## Nodes
 
