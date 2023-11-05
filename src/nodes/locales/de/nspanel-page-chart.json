@@ -1,0 +1,31 @@
+{
+    "common": {
+        "label": {
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Überschrift",
+            "unassigned": "nicht zugewiesen",
+            "panelTimeout": "Stand-by Überschreibung",
+            "seconds": "Sekunden"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "active": "Aktiv",
+            "notAssignedToAPanel": "Kein NSPanel zugeordnet"
+        }
+    },
+    "nspanel-page-chart": {
+        "label": {
+            "palette": "Chart",
+            "lineChart": "Liniendiagramm",
+            "yAxisLabel": "Beschriftung Y-Achse",
+            "chartColor": "Farbe"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Chart"
+        }
+    }
+}

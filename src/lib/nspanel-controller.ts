@@ -583,8 +583,17 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private updatePage(page: IPageNode) {
+        const data: string[] = []
+        if (page.isForceRedraw()) data.push(NSPanelConstants.STR_LUI_CMD_PAGETYPE + page.getPageType())
+
         const pageData = page.generatePage()
-        this.sendToPanel(pageData)
+        if (Array.isArray(pageData)) {
+            data.push(...pageData)
+        } else {
+            data.push(pageData)
+        }
+
+        this.sendToPanel(data)
     }
 
     private updatePopup(page: IPageNode, popupType: string, entityId: string) {

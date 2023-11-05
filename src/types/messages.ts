@@ -143,3 +143,14 @@ export type StatusItemData = PageEntityDataBase & {
     iconFont?: string
     index?: 0 | 1
 }
+
+export type ChartDataItem = {
+    value: number
+    label?: string
+}
+
+export type ChartData = {
+    values: ChartDataItem[]
+    yAxisLabel?: string
+    yAxisTicks?: number[]
+}
