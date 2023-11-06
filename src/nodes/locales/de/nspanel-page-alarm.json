@@ -1,0 +1,38 @@
+{
+    "common": {
+        "label": {
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Überschrift",
+            "unassigned": "nicht zugewiesen",
+            "panelTimeout": "Stand-by Überschreibung",
+            "seconds": "Sekunden"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "active": "Aktiv",
+            "notAssignedToAPanel": "Kein NSPanel zugeordnet"
+        }
+    },
+    "nspanel-page-alarm": {
+        "label": {
+            "palette": "Alarm",
+            "numPadDisabled": "Tastenfeld deaktivieren",
+            "flashingStatusDisabled": "Blinkenden Status deaktivieren",
+            "status": "Status",
+            "iconStatus": "Icon",
+            "iconStatusColor": "Farbe",
+            "keypad": "Eingabe",
+            "extraButton": "Extra-Taste:",
+            "extraButtonIcon": "Icon",
+            "extraButtonIconColor": "Farbe",
+            "extraButtonId": "Id"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Alarm"
+        }
+    }
+}

@@ -9,7 +9,7 @@ export class NSPanelUtils {
     }
 
     public static getIcon(name: string | undefined | null): string {
-        return name != null ? IconProvider.GetIcon(name) ?? '' : ''
+        return name != null ? IconProvider.GetIcon(name) ?? NSPanelConstants.STR_EMPTY : NSPanelConstants.STR_EMPTY
     }
 
     public static makeEntity(

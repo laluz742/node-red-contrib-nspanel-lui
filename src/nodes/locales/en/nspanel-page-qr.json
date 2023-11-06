@@ -6,7 +6,7 @@
             "title": "Title",
             "unassigned": "not assiged",
             "panelTimeout": "Stand-by timeout override",
-            "panelTimeoutSeconds": "seconds"
+            "seconds": "seconds"
         },
         "placeholder": {
             "name": "Name"

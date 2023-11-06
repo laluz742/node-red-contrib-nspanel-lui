@@ -16,7 +16,8 @@
             "number": "Number",
             "button": "Button",
             "text": "Text",
-            "hvac_action": "Action"
+            "hvac_action": "Action",
+            "alarm_action": "Button"
         },
         "date": {
             "none": "-",

@@ -1,0 +1,38 @@
+{
+    "common": {
+        "label": {
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Title",
+            "unassigned": "not assiged",
+            "panelTimeout": "Stand-by timeout override",
+            "panelTimeoutSeconds": "seconds"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "active": "Active",
+            "notAssignedToAPanel": "No NSPanel assigned"
+        }
+    },
+    "nspanel-page-alarm": {
+        "label": {
+            "palette": "Alarm",
+            "numPadDisabled": "Disable num pad",
+            "flashingStatusDisabled": "Disable flashing status",
+            "status": "Status",
+            "iconStatus": "Icon",
+            "iconStatusColor": "Color",
+            "keypad": "Keypad",
+            "extraButton": "Extra button:",
+            "extraButtonIcon": "Icon",
+            "extraButtonIconColor": "Color",
+            "extraButtonId": "Id"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Alarm"
+        }
+    }
+}

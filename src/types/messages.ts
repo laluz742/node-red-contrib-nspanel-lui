@@ -153,3 +153,10 @@ export type ChartData = {
     yAxisLabel?: string
     yAxisTicks?: number[]
 }
+
+export type AlarmData = {
+    statusIcon?: string
+    statusIconColor?: PanelColor
+    statusIconFlashing?: boolean
+    numPadDisabled?: boolean
+}
