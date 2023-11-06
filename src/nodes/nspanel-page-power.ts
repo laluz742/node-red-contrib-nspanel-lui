@@ -29,7 +29,7 @@ module.exports = (RED) => {
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(entityConfig.icon ?? ''),
-                    NSPanelColorUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
+                    NSPanelColorUtils.toHmiColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
                     entityConfig.text,
                     entityConfig.optionalValue
                 )

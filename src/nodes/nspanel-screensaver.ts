@@ -36,6 +36,9 @@ type ScreenSaverConfig = PageConfig & {
 }
 
 const MAX_ENTITIES = 6
+const CMD_COLOR: string = 'color'
+const CMD_STATUSUPDATE: string = 'statusUpdate'
+const CMD_WEATHERUPDATE: string = 'weatherUpdate'
 
 module.exports = (RED) => {
     class ScreenSaverNode extends PageNode<ScreenSaverConfig> {
@@ -44,7 +47,7 @@ module.exports = (RED) => {
         protected statusData: StatusItemData[] = []
 
         constructor(config: ScreenSaverConfig) {
-            super(config, RED, { pageType: 'screensaver', maxEntities: MAX_ENTITIES })
+            super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER, maxEntities: MAX_ENTITIES })
 
             this.config = config
         }
@@ -75,6 +78,9 @@ module.exports = (RED) => {
             const weatherUpdate = this.generateWeatherUpdate()
             if (weatherUpdate) result.push(weatherUpdate)
 
+            const colorSet = this.generateColorCommand()
+            if (colorSet) result.push(colorSet)
+
             return result
         }
 
@@ -91,7 +97,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            let cmd = `statusUpdate${NSPanelConstants.STR_LUI_DELIMITER}`
+            let cmd = `${CMD_STATUSUPDATE}${NSPanelConstants.STR_LUI_DELIMITER}`
             const cmdParams: string[] = []
 
             for (let idx = 0; idx < 2; idx += 1) {
@@ -114,7 +120,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            let result = `weatherUpdate${NSPanelConstants.STR_LUI_DELIMITER}`
+            let result = `${CMD_WEATHERUPDATE}${NSPanelConstants.STR_LUI_DELIMITER}`
             const resultEntities: string[] = []
             const data = this.pageData.entities
 
@@ -125,7 +131,7 @@ module.exports = (RED) => {
                     '',
                     '',
                     NSPanelUtils.getIcon(item.icon),
-                    NSPanelColorUtils.toHmiIconColor(item.iconColor ?? NaN),
+                    NSPanelColorUtils.toHmiColor(item.iconColor ?? NaN),
                     item.text,
                     item.value
                 )
@@ -134,6 +140,87 @@ module.exports = (RED) => {
 
             result += resultEntities.join(NSPanelConstants.STR_LUI_DELIMITER)
             return result
+        }
+
+        private generateColorCommand(): string {
+            const result: (number | string)[] = [CMD_COLOR]
+
+            const colorBackground = NSPanelColorUtils.toHmiColor(
+                this.config?.colorBackground,
+                NSPanelConstants.STR_LUI_COLOR_BLACK
+            )
+            const colorTime = NSPanelColorUtils.toHmiColor(this.config?.colorTime, NSPanelConstants.STR_LUI_COLOR_WHITE)
+            const colorTimeAmPm = NSPanelColorUtils.toHmiColor(
+                this.config?.colorTimeAmPm,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorDate = NSPanelColorUtils.toHmiColor(this.config?.colorDate, NSPanelConstants.STR_LUI_COLOR_WHITE)
+            const colorMainText = NSPanelColorUtils.toHmiColor(
+                this.config?.colorMainText,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecast1 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecast1,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecast2 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecast2,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecast3 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecast3,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecast4 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecast4,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecastVal1 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecastVal1,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecastVal2 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecastVal2,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecastVal3 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecastVal3,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorForecastVal4 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorForecastVal4,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorBar = NSPanelColorUtils.toHmiColor(this.config?.colorBar, NSPanelConstants.STR_LUI_COLOR_WHITE)
+            const colorMainTextAlt2 = NSPanelColorUtils.toHmiColor(
+                this.config?.colorMainTextAlt2,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+            const colorTimeAdd = NSPanelColorUtils.toHmiColor(
+                this.config?.colorTimeAdd,
+                NSPanelConstants.STR_LUI_COLOR_WHITE
+            )
+
+            result.push(colorBackground)
+            result.push(colorTime)
+            result.push(colorTimeAmPm)
+            result.push(colorDate)
+            result.push(colorMainText)
+            result.push(colorForecast1)
+            result.push(colorForecast2)
+            result.push(colorForecast3)
+            result.push(colorForecast4)
+            result.push(colorForecastVal1)
+            result.push(colorForecastVal2)
+            result.push(colorForecastVal3)
+            result.push(colorForecastVal4)
+            result.push(colorBar)
+            result.push(colorMainTextAlt2)
+            result.push(colorTimeAdd)
+
+            const cmdResult = result.join(NSPanelConstants.STR_LUI_DELIMITER)
+
+            return cmdResult
         }
 
         private handleStatusInput(msg: PageInputMessage): void {

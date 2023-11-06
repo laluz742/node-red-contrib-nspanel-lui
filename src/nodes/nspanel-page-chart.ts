@@ -103,7 +103,7 @@ module.exports = (RED) => {
             const result: string[] = [NSPanelPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
             const titleNav = this.generateTitleNav()
             const yAxisLabel = this.data?.yAxisLabel ?? this.config?.yAxisLabel
-            const chartColor = NSPanelColorUtils.toHmiIconColor(this.config?.chartColor)
+            const chartColor = NSPanelColorUtils.toHmiColor(this.config?.chartColor)
             const yTicks: string = this.data?.yAxisTicks?.join(':')
 
             const values: string[] = []

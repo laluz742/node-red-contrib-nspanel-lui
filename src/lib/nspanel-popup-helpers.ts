@@ -70,17 +70,17 @@ export class NSPanelPopupHelpers {
 
         result.push(notifyData.notifyId ?? NSPanelConstants.STR_EMPTY)
         result.push(notifyData.heading ?? NSPanelConstants.STR_EMPTY)
-        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.headingColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
+        result.push(NSPanelColorUtils.toHmiColor(notifyData.headingColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
         result.push(notifyData.cancelText ?? NSPanelConstants.STR_EMPTY)
-        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.cancelColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
+        result.push(NSPanelColorUtils.toHmiColor(notifyData.cancelColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
         result.push(notifyData.okText ?? NSPanelConstants.STR_EMPTY)
-        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.okColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
+        result.push(NSPanelColorUtils.toHmiColor(notifyData.okColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
         result.push(notifyData.text ?? NSPanelConstants.STR_EMPTY)
-        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.textColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
+        result.push(NSPanelColorUtils.toHmiColor(notifyData.textColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
         result.push(notifyData.timeout ?? NSPanelConstants.STR_EMPTY)
         result.push(notifyData.fontSize ?? NSPanelConstants.DEFAULT_FONTSIZE)
         result.push(NSPanelUtils.getIcon(notifyData.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(NSPanelColorUtils.toHmiIconColor(notifyData.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
+        result.push(NSPanelColorUtils.toHmiColor(notifyData.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
 
         return result.join(NSPanelConstants.STR_LUI_DELIMITER)
     }
@@ -97,7 +97,7 @@ export class NSPanelPopupHelpers {
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
+        result.push(NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
         result.push(NSPanelUtils.toHmiState(fanEntityData?.active ?? 0))
         result.push(fanEntityData?.speed ?? NSPanelConstants.STR_EMPTY)
         result.push(entity.max ?? NSPanelConstants.STR_EMPTY)
@@ -121,7 +121,7 @@ export class NSPanelPopupHelpers {
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
 
         const brightness = entity.dimmable ? lightEntityData?.brightness : NSPanelConstants.STR_DISABLE
         const colorTemp = entity.hasColorTemperature ? lightEntityData?.colorTemperature : NSPanelConstants.STR_DISABLE
@@ -193,7 +193,7 @@ export class NSPanelPopupHelpers {
 
         result.push(entity.entityId)
         result.push(NSPanelConstants.STR_EMPTY) // icon ignored
-        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
 
         if (inputSelectEntityData != null) {
             const optionsString: string = Array.isArray(inputSelectEntityData?.options)
@@ -242,7 +242,7 @@ export class NSPanelPopupHelpers {
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
 
         result.push(heading)
         result.push(mode)
@@ -282,7 +282,7 @@ export class NSPanelPopupHelpers {
         const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(`${NSPanelColorUtils.toHmiIconColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
         result.push(entity.entityId)
 
         result.push(dTimerMins)

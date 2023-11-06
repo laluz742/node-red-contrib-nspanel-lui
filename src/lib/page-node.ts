@@ -114,7 +114,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
                         NSPanelConstants.STR_LUI_ENTITY_BUTTON,
                         NSPanelConstants.STR_NAV_ID_PREVIOUS,
                         NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
                     break
                 case NSPanelConstants.STR_NAV_ID_NEXT:
@@ -122,7 +122,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
                         NSPanelConstants.STR_LUI_ENTITY_BUTTON,
                         NSPanelConstants.STR_NAV_ID_NEXT,
                         NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
                     break
             }

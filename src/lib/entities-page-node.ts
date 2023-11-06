@@ -120,7 +120,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
                 entityConfig.type,
                 entityConfig.entityId,
                 NSPanelUtils.getIcon(icon ?? ''),
-                NSPanelColorUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
+                NSPanelColorUtils.toHmiColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
                 text ?? '',
                 optionalValue
             )

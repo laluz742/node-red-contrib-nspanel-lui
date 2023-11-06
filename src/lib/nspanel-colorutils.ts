@@ -5,27 +5,30 @@ const colorRegex =
     /#(?<hexColor>(?<hexAlpha>[a-f\d]{2})?(?<hexRed>[a-f\d]{2})(?<hexGreen>[a-f\d]{2})(?<hexBlue>[a-f\d]{2}))|rgb\((?<rgbColor>(?<rgbRed>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbGreen>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(?<rgbBlue>0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d))\)/
 
 export class NSPanelColorUtils {
-    public static toHmiIconColor(color: PanelColor, defaultColor: number = DEFAULT_LUI_COLOR): number {
-        const result = Number(color)
-        if (!Number.isNaN(result)) return result
+    public static toHmiColor(color: PanelColor, defaultColor: number = DEFAULT_LUI_COLOR): number {
+        const colorNum = Number(color)
+        let result: number = defaultColor
 
-        if (typeof color === 'string' || Array.isArray(color)) {
+        if (color == null) {
+            result = defaultColor
+        } else if (!Number.isNaN(colorNum)) {
+            result = colorNum
+        } else if (typeof color === 'string' || Array.isArray(color)) {
             return NSPanelColorUtils.color2dec565(color, defaultColor)
         }
 
-        return defaultColor
+        return result
     }
 
-    public static hmiPosToColor(x: number, y: number): RGBHSVTuple {
+    public static hmiPosToColor(posX: number, posY: number): RGBHSVTuple {
         let r = 160 / 2
-        x = Math.round(((x - r) / r) * 100) / 100
-        y = Math.round(((r - y) / r) * 100) / 100
-
-        r = Math.sqrt(x * x + y * y)
         let saturation = 0
-        if (r > 1) {
-            saturation = 0
-        } else {
+
+        const x = Math.round(((posX - r) / r) * 100) / 100
+        const y = Math.round(((r - posY) / r) * 100) / 100
+        r = Math.sqrt(x * x + y * y)
+
+        if (r <= 1) {
             saturation = r
         }
 

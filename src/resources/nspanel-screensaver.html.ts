@@ -43,6 +43,7 @@
                 colorBackground: { value: '#000000' },
                 colorTime: { value: '#ffffff' },
                 colorTimeAmPm: { value: '#ffffff' },
+                colorTimeAdd: { value: '#ffffff' },
                 colorDate: { value: '#ffffff' },
                 colorMainText: { value: '#ffffff' },
                 colorForecast1: { value: '#ffffff' },
@@ -55,7 +56,6 @@
                 colorForecastVal4: { value: '#ffffff' },
                 colorBar: { value: '#ffffff' },
                 colorMainTextAlt2: { value: '#ffffff' },
-                colorTimeAdd: { value: '#ffffff' },
             },
 
             label() {
