@@ -39,6 +39,8 @@ const MAX_ENTITIES = 6
 const CMD_COLOR: string = 'color'
 const CMD_STATUSUPDATE: string = 'statusUpdate'
 const CMD_WEATHERUPDATE: string = 'weatherUpdate'
+const DEFAULT_LUI_BACKGROUND = NSPanelConstants.STR_LUI_COLOR_BLACK
+const DEFAULT_LUI_FOREGROUND = NSPanelConstants.STR_LUI_COLOR_WHITE
 
 module.exports = (RED) => {
     class ScreenSaverNode extends PageNode<ScreenSaverConfig> {
@@ -145,61 +147,37 @@ module.exports = (RED) => {
         private generateColorCommand(): string {
             const result: (number | string)[] = [CMD_COLOR]
 
-            const colorBackground = NSPanelColorUtils.toHmiColor(
-                this.config?.colorBackground,
-                NSPanelConstants.STR_LUI_COLOR_BLACK
-            )
-            const colorTime = NSPanelColorUtils.toHmiColor(this.config?.colorTime, NSPanelConstants.STR_LUI_COLOR_WHITE)
-            const colorTimeAmPm = NSPanelColorUtils.toHmiColor(
-                this.config?.colorTimeAmPm,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
-            )
-            const colorDate = NSPanelColorUtils.toHmiColor(this.config?.colorDate, NSPanelConstants.STR_LUI_COLOR_WHITE)
-            const colorMainText = NSPanelColorUtils.toHmiColor(
-                this.config?.colorMainText,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
-            )
-            const colorForecast1 = NSPanelColorUtils.toHmiColor(
-                this.config?.colorForecast1,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
-            )
-            const colorForecast2 = NSPanelColorUtils.toHmiColor(
-                this.config?.colorForecast2,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
-            )
-            const colorForecast3 = NSPanelColorUtils.toHmiColor(
-                this.config?.colorForecast3,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
-            )
-            const colorForecast4 = NSPanelColorUtils.toHmiColor(
-                this.config?.colorForecast4,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
-            )
+            const colorBackground = NSPanelColorUtils.toHmiColor(this.config?.colorBackground, DEFAULT_LUI_BACKGROUND)
+            const colorTime = NSPanelColorUtils.toHmiColor(this.config?.colorTime, DEFAULT_LUI_FOREGROUND)
+            const colorTimeAmPm = NSPanelColorUtils.toHmiColor(this.config?.colorTimeAmPm, DEFAULT_LUI_FOREGROUND)
+            const colorDate = NSPanelColorUtils.toHmiColor(this.config?.colorDate, DEFAULT_LUI_FOREGROUND)
+            const colorMainText = NSPanelColorUtils.toHmiColor(this.config?.colorMainText, DEFAULT_LUI_FOREGROUND)
+            const colorForecast1 = NSPanelColorUtils.toHmiColor(this.config?.colorForecast1, DEFAULT_LUI_FOREGROUND)
+            const colorForecast2 = NSPanelColorUtils.toHmiColor(this.config?.colorForecast2, DEFAULT_LUI_FOREGROUND)
+            const colorForecast3 = NSPanelColorUtils.toHmiColor(this.config?.colorForecast3, DEFAULT_LUI_FOREGROUND)
+            const colorForecast4 = NSPanelColorUtils.toHmiColor(this.config?.colorForecast4, DEFAULT_LUI_FOREGROUND)
             const colorForecastVal1 = NSPanelColorUtils.toHmiColor(
                 this.config?.colorForecastVal1,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
+                DEFAULT_LUI_FOREGROUND
             )
             const colorForecastVal2 = NSPanelColorUtils.toHmiColor(
                 this.config?.colorForecastVal2,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
+                DEFAULT_LUI_FOREGROUND
             )
             const colorForecastVal3 = NSPanelColorUtils.toHmiColor(
                 this.config?.colorForecastVal3,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
+                DEFAULT_LUI_FOREGROUND
             )
             const colorForecastVal4 = NSPanelColorUtils.toHmiColor(
                 this.config?.colorForecastVal4,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
+                DEFAULT_LUI_FOREGROUND
             )
-            const colorBar = NSPanelColorUtils.toHmiColor(this.config?.colorBar, NSPanelConstants.STR_LUI_COLOR_WHITE)
+            const colorBar = NSPanelColorUtils.toHmiColor(this.config?.colorBar, DEFAULT_LUI_FOREGROUND)
             const colorMainTextAlt2 = NSPanelColorUtils.toHmiColor(
                 this.config?.colorMainTextAlt2,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
+                DEFAULT_LUI_FOREGROUND
             )
-            const colorTimeAdd = NSPanelColorUtils.toHmiColor(
-                this.config?.colorTimeAdd,
-                NSPanelConstants.STR_LUI_COLOR_WHITE
-            )
+            const colorTimeAdd = NSPanelColorUtils.toHmiColor(this.config?.colorTimeAdd, DEFAULT_LUI_FOREGROUND)
 
             result.push(colorBackground)
             result.push(colorTime)
