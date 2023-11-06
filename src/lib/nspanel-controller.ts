@@ -9,7 +9,6 @@ import { SimpleControllerCache } from './nspanel-controller-cache'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 
 import {
-    Nullable,
     PanelConfig,
     EventArgs,
     SplitTime,
@@ -48,14 +47,14 @@ const DEFAULT_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
     minute: '2-digit',
 }
 
-declare type PanelDimMode = {
+type PanelDimMode = {
     isConfigured: boolean
     dimLow: number
     dimHigh: number
     start: SplitTime
 }
 
-declare type PanelDimModes = {
+type PanelDimModes = {
     isNight: boolean
     day: PanelDimMode
     night: PanelDimMode
@@ -537,7 +536,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 eventArgs.event === 'button' &&
                 eventArgs.event2 === 'press'
             ) {
-                nodeMsg.topic = 'event'
+                nodeMsg.topic = NSPanelConstants.STR_MSG_TOPIC_EVENT
             }
 
             page.emit(event, nodeMsg)
@@ -732,15 +731,15 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     // #endregion basic panel commands
 
     // #region cron jobs
-    private cronTaskEveryMinute: Nullable<CronosTask> = null
+    private cronTaskEveryMinute: CronosTask | null = null
 
-    private cronTaskHourly: Nullable<CronosTask> = null
+    private cronTaskHourly: CronosTask = null
 
-    private cronTaskDimModeDay: Nullable<CronosTask> = null
+    private cronTaskDimModeDay: CronosTask = null
 
-    private cronTaskDimModeNight: Nullable<CronosTask> = null
+    private cronTaskDimModeNight: CronosTask = null
 
-    private cronTaskCheckForUpdates: Nullable<CronosTask> = null
+    private cronTaskCheckForUpdates: CronosTask = null
 
     private onCronEveryMinute() {
         try {

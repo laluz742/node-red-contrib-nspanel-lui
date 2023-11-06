@@ -8,12 +8,22 @@ export const STR_HTTP_USER_AGENT_VALUE: string = 'node-red-contrib-nspanel-lui'
 export const STR_NAV_ID_PREVIOUS: string = 'nav.prev'
 export const STR_NAV_ID_NEXT: string = 'nav.next'
 
+// messages
+export const STR_MSG_TOPIC_COMMAND: string = 'cmd'
+export const STR_MSG_TOPIC_DATA: string = 'data'
+export const STR_MSG_TOPIC_EVENT: string = 'event'
+export const STR_MSG_TOPIC_MEDIA: string = 'media'
+export const STR_MSG_TOPIC_NOTIFY: string = 'notify'
+export const STR_MSG_TOPIC_SENSOR: string = 'sensor'
+export const STR_MSG_TOPIC_STATUS: string = 'status'
+
 // nspanel lovelace ui / HMI
 export const STR_LUI_LINEBREAK: string = '\r\n'
 export const STR_LUI_DELIMITER: string = '~'
 export const STR_LUI_LIST_DELIMITER: string = '?'
-export const STR_LUI_COLOR_RED: number = 63488
+export const STR_LUI_COLOR_BLACK: number = 0
 export const STR_LUI_COLOR_GREEN: number = 2016
+export const STR_LUI_COLOR_RED: number = 63488
 export const STR_LUI_COLOR_WHITE: number = 65535
 export const STR_LUI_CMD_SUCCESS: string = 'Done'
 export const STR_LUI_CMD_ENTITYUPDATE: string = 'entityUpd'
@@ -68,14 +78,16 @@ export const STR_BERRYDRIVER_CMD_UPDATEDRIVER: string = 'UpdateDriverVersion'
 export const STR_BERRYDRIVER_CMD_FLASHNEXTION: string = 'FlashNextion'
 
 // page/card types
+export const STR_PAGE_TYPE_CARD_ALARM: string = 'cardAlarm'
+export const STR_PAGE_TYPE_CARD_CHART: string = 'cardChart'
 export const STR_PAGE_TYPE_CARD_ENTITIES: string = 'cardEntities'
 export const STR_PAGE_TYPE_CARD_GRID: string = 'cardGrid'
 export const STR_PAGE_TYPE_CARD_GRID2: string = 'cardGrid2'
+export const STR_PAGE_TYPE_CARD_LCHART: string = 'cardLChart'
 export const STR_PAGE_TYPE_CARD_MEDIA: string = 'cardMedia'
 export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
-export const STR_PAGE_TYPE_CARD_CHART: string = 'cardChart'
-export const STR_PAGE_TYPE_CARD_LCHART: string = 'cardLChart'
+export const STR_PAGE_TYPE_CARD_SCREENSAVER: string = 'screensaver'
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
 
 // update process

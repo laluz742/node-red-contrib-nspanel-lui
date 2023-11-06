@@ -33,7 +33,7 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
-                case 'data': {
+                case NSPanelPanelConstants.STR_MSG_TOPIC_DATA: {
                     if (msg.payload != null && typeof msg.payload === 'object') {
                         const dTicks: number[] = []
                         const dValues: ChartDataItem[] = []
@@ -90,6 +90,7 @@ module.exports = (RED) => {
             }
 
             if (dirty) {
+                handled = true
                 this.getCache().clear()
             } else {
                 handled = super.handleInput(msg, send)
@@ -102,7 +103,7 @@ module.exports = (RED) => {
             const result: string[] = [NSPanelPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
             const titleNav = this.generateTitleNav()
             const yAxisLabel = this.data?.yAxisLabel ?? this.config?.yAxisLabel
-            const chartColor = NSPanelColorUtils.toHmiIconColor(this.config?.chartColor)
+            const chartColor = NSPanelColorUtils.toHmiColor(this.config?.chartColor)
             const yTicks: string = this.data?.yAxisTicks?.join(':')
 
             const values: string[] = []

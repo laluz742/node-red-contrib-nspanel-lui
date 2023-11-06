@@ -1,7 +1,7 @@
 /* eslint-disable import/no-import-module-exports */
 import { EntitiesPageNode } from '../lib/entities-page-node'
-import { STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER, STR_PAGE_TYPE_CARD_QR } from '../lib/nspanel-constants'
 import { EntityBasedPageConfig, PanelEntity } from '../types/types'
+import * as NSPanelConstants from '../lib/nspanel-constants'
 
 interface PageQRConfig extends EntityBasedPageConfig {
     qrCode: string | undefined
@@ -28,13 +28,13 @@ module.exports = (RED) => {
                 }
             }
 
-            super(config, RED, { pageType: STR_PAGE_TYPE_CARD_QR, maxEntities: MAX_ENTITIES })
+            super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_QR, maxEntities: MAX_ENTITIES })
 
             this.config = { ...config }
         }
 
         protected override doGeneratePage(): string | string[] | null {
-            const result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
+            const result: string[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
             result.push(this.config.title ?? '')
             const titleNav = this.generateTitleNav()
             result.push(titleNav)
@@ -45,7 +45,7 @@ module.exports = (RED) => {
             const entitites = this.generateEntities()
             result.push(entitites)
 
-            return result.join(STR_LUI_DELIMITER)
+            return result.join(NSPanelConstants.STR_LUI_DELIMITER)
         }
     }
 

@@ -64,6 +64,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         ['button', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
         ['text', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
         ['hvac_action', { hasId: true, hasLabel: false, hasIcon: true, hasOptionalValue: false }],
+        ['alarm_action', { hasId: true, hasLabel: true, hasIcon: false, hasOptionalValue: false }],
     ])
 
     const ALL_PANEL_ENTITY_TYPES = (() => {

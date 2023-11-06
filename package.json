@@ -24,6 +24,7 @@
             "nspanel-panel": "nodes/nspanel-panel.js",
             "nspanel-controller": "nodes/nspanel-controller.js",
             "nspanel-hmi-control": "nodes/nspanel-hmi-control.js",
+            "nspanel-page-alarm": "nodes/nspanel-page-alarm.js",
             "nspanel-page-chart": "nodes/nspanel-page-chart.js",
             "nspanel-page-entities": "nodes/nspanel-page-entities.js",
             "nspanel-page-grid": "nodes/nspanel-page-grid.js",

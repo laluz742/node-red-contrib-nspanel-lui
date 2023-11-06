@@ -138,7 +138,7 @@ module.exports = (RED) => {
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(icon ?? ''),
-                    NSPanelColorUtils.toHmiIconColor(iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR),
+                    NSPanelColorUtils.toHmiColor(iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR),
                     value
                 )
 
@@ -172,7 +172,7 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
-                case 'sensor': {
+                case NSPanelConstants.STR_MSG_TOPIC_SENSOR: {
                     if (this.isUseOwnSensorData()) {
                         const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
                         if (sensorEventArgs.temp) {
@@ -190,7 +190,7 @@ module.exports = (RED) => {
                     break
                 }
 
-                case 'data': {
+                case NSPanelConstants.STR_MSG_TOPIC_DATA: {
                     if (!Array.isArray(msg.payload)) {
                         // eslint-disable-next-line prefer-const
                         for (let key in msg.payload) {
@@ -204,7 +204,7 @@ module.exports = (RED) => {
                     break
                 }
 
-                case 'event': {
+                case NSPanelConstants.STR_MSG_TOPIC_EVENT: {
                     const eventArgs: EventArgs = msg.payload as EventArgs
 
                     if (

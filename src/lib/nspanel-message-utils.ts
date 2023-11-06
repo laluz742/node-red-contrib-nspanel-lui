@@ -19,7 +19,7 @@ export class NSPanelMessageUtils {
         result.text = NSPanelMessageUtils.hasProperty(input, 'text', true) ? input['text'] : null
         result.icon = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null
         result.iconColor = NSPanelMessageUtils.hasProperty(input, 'iconColor')
-            ? NSPanelColorUtils.toHmiIconColor(input['iconColor'])
+            ? NSPanelColorUtils.toHmiColor(input['iconColor'])
             : DEFAULT_LUI_COLOR
         result.prefix = NSPanelMessageUtils.hasProperty(input, 'prefix', true) ? input['prefix'] : null
         if (NSPanelMessageUtils.hasProperty(input, 'index')) {
@@ -40,7 +40,7 @@ export class NSPanelMessageUtils {
         const dValue: any = NSPanelMessageUtils.hasProperty(input, 'value', true) ? input['value'] : null
         const dIcon: any = NSPanelMessageUtils.hasProperty(input, 'icon', true) ? input['icon'] : null
         const dIconColor: any = NSPanelMessageUtils.hasProperty(input, 'iconColor')
-            ? NSPanelColorUtils.toHmiIconColor(input['iconColor'])
+            ? NSPanelColorUtils.toHmiColor(input['iconColor'])
             : DEFAULT_LUI_COLOR
 
         result.entityId = NSPanelUtils.isString(dEntityId) ? dEntityId : null

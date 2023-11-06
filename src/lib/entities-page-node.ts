@@ -11,7 +11,7 @@ import {
     NodeRedSendCallback,
     PageEntityData,
 } from '../types/types'
-import { DEFAULT_LUI_COLOR, STR_LUI_CMD_ENTITYUPDATE, STR_LUI_DELIMITER } from './nspanel-constants'
+import * as NSPanelConstants from './nspanel-constants'
 
 export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends PageNode<TConfig> {
     protected entitiesPageNodeConfig: EntityBasedPageConfig
@@ -33,7 +33,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
 
     protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback) {
         switch (msg.topic) {
-            case 'data': {
+            case NSPanelConstants.STR_MSG_TOPIC_DATA: {
                 // copy cached data
                 const entityData: Map<string, PageEntityData> = new Map<string, PageEntityData>(this.entityData)
                 const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
@@ -61,7 +61,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
     }
 
     protected doGeneratePage(): string | string[] | null {
-        const result: string[] = [STR_LUI_CMD_ENTITYUPDATE]
+        const result: string[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
         result.push(this.entitiesPageNodeConfig.title ?? '')
         const titleNav = this.generateTitleNav()
         result.push(titleNav)
@@ -69,7 +69,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         const entitites = this.generateEntities()
         result.push(entitites)
 
-        const pageData: string = result.join(STR_LUI_DELIMITER)
+        const pageData: string = result.join(NSPanelConstants.STR_LUI_DELIMITER)
         return pageData
     }
 
@@ -120,7 +120,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
                 entityConfig.type,
                 entityConfig.entityId,
                 NSPanelUtils.getIcon(icon ?? ''),
-                NSPanelColorUtils.toHmiIconColor(entityConfig.iconColor ?? DEFAULT_LUI_COLOR),
+                NSPanelColorUtils.toHmiColor(entityConfig.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR),
                 text ?? '',
                 optionalValue
             )
@@ -128,6 +128,6 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
             resultEntities.push(entity)
         }
 
-        return resultEntities.join(STR_LUI_DELIMITER)
+        return resultEntities.join(NSPanelConstants.STR_LUI_DELIMITER)
     }
 }

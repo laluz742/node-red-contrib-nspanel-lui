@@ -52,7 +52,7 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
-                case 'media': {
+                case NSPanelConstants.STR_MSG_TOPIC_MEDIA: {
                     if (!Array.isArray(msg.payload)) {
                         // eslint-disable-next-line prefer-const
                         for (let key in msg.payload) {
@@ -82,9 +82,9 @@ module.exports = (RED) => {
             const titleNav = this.generateTitleNav()
 
             const dTitle: string = this.data.title ?? NSPanelConstants.STR_EMPTY
-            const dTitleColor: string = `${NSPanelColorUtils.toHmiIconColor(this.data.titleColor ?? NaN)}`
+            const dTitleColor: string = `${NSPanelColorUtils.toHmiColor(this.data.titleColor ?? NaN)}`
             const dArtist: string = this.data.artist ?? NSPanelConstants.STR_EMPTY
-            const dArtistColor: string = `${NSPanelColorUtils.toHmiIconColor(this.data.artistColor ?? NaN)}`
+            const dArtistColor: string = `${NSPanelColorUtils.toHmiColor(this.data.artistColor ?? NaN)}`
             const dVolume: string = `${NSPanelUtils.limitNumberToRange(
                 this.data.volume,
                 VOLUME_MIN,
@@ -94,7 +94,7 @@ module.exports = (RED) => {
             const dIconPlayPause: string =
                 this.data.iconPlayPause != null ? this.data.iconPlayPause : this.config.iconPlayPause
             const dOnOffButton: string = this.config.hasOnOffButton
-                ? `${NSPanelColorUtils.toHmiIconColor(this.config.onOffButtonColor)}`
+                ? `${NSPanelColorUtils.toHmiColor(this.config.onOffButtonColor)}`
                 : NSPanelConstants.STR_DISABLE
             const dIconShuffle: string = this.config.hasIconShuffle
                 ? this.config.shuffleIcon ?? NSPanelConstants.STR_DISABLE

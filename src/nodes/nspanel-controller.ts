@@ -17,6 +17,7 @@ import {
     PanelMessage,
     StatusLevel,
 } from '../types/types'
+import * as NSPanelConstants from '../lib/nspanel-constants'
 
 module.exports = (RED) => {
     class NSPanelControllerNode extends NodeBase<PanelControllerConfig> {
@@ -47,13 +48,13 @@ module.exports = (RED) => {
             if (!NSPanelMessageUtils.hasProperty(msg, 'payload')) return
 
             switch (msg.topic) {
-                case 'cmd': {
+                case NSPanelConstants.STR_MSG_TOPIC_COMMAND: {
                     this.handleCommandInput(msg)
                     break
                 }
 
                 // TODO: process using NSPanelMessageUtils#convertToCommandData to normalize msg
-                case 'notify': {
+                case NSPanelConstants.STR_MSG_TOPIC_NOTIFY: {
                     const notifyData: NotifyData = <NotifyData>msg.payload
                     this.nsPanelController?.showNotification(notifyData)
                     break

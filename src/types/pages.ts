@@ -33,7 +33,7 @@ export type PageOptions = {
     forceRedraw?: boolean
 }
 
-export declare type PageData = {
+export type PageData = {
     entities: PageEntityData[]
 }
 

@@ -9,6 +9,7 @@
 -   [QR Node](#qr-page-node)
 -   [Media Node](#media-page-node)
 -   [Chart Node](#chart-page-node)
+-   [Alarm Node](#alarm-page-node)
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
@@ -122,6 +123,31 @@ Example Message:
     }
 }
 ```
+
+### Alarm Page Node
+
+#### Configuration
+
+#### Messages
+
+```json
+{
+    "topic": "data",
+    "payload": {
+        "statusIcon": "home",
+        "statusIconColor": "<color>",
+        "statusIconFlashing": true,
+        "numPadDisabled": true
+    }
+}
+```
+
+| Key | Description |
+| --- | --- |
+| `statusIcon` | optional, icon to show |
+| `statusIconColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `statusIconFlashing` | `true` for flashing status icon, otherwise `false` |
+| `numPadDisabled` | `true` to hide num-pad, otherwise `false` |
 
 ### Popups
 

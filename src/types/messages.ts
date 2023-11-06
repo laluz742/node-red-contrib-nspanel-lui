@@ -5,11 +5,10 @@ import { NodeMessageInFlow } from './nodered'
 
 export type PanelMessage = NodeMessageInFlow
 
-export type CommandTopic = 'cmd'
 export type Command = 'switch' | 'toggle' | 'beep' | 'checkForUpdates'
 
 export type CommandMessage = PanelMessage & {
-    topic: CommandTopic
+    topic: 'cmd'
 
     payload: CommandData | CommandData[]
 }
@@ -153,4 +152,11 @@ export type ChartData = {
     values: ChartDataItem[]
     yAxisLabel?: string
     yAxisTicks?: number[]
+}
+
+export type AlarmData = {
+    statusIcon?: string
+    statusIconColor?: PanelColor
+    statusIconFlashing?: boolean
+    numPadDisabled?: boolean
 }

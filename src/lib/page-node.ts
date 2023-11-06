@@ -114,7 +114,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
                         NSPanelConstants.STR_LUI_ENTITY_BUTTON,
                         NSPanelConstants.STR_NAV_ID_PREVIOUS,
                         NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
                     break
                 case NSPanelConstants.STR_NAV_ID_NEXT:
@@ -122,7 +122,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
                         NSPanelConstants.STR_LUI_ENTITY_BUTTON,
                         NSPanelConstants.STR_NAV_ID_NEXT,
                         NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiIconColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
                     )
                     break
             }
@@ -215,7 +215,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
 
         if (NSPanelMessageUtils.hasProperty(msg, 'topic', true)) {
             switch (msg.topic) {
-                case 'event': {
+                case NSPanelConstants.STR_MSG_TOPIC_EVENT: {
                     const eventArgs = <EventArgs>msg.payload
                     const uiEventHandled = this._handleUiEvent(eventArgs, send)
                     if (!uiEventHandled) {
@@ -250,7 +250,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
 
         if (handled === false) {
             switch (msg.topic) {
-                case 'data':
+                case NSPanelConstants.STR_MSG_TOPIC_DATA:
                     handled = this._handleDataInputInternal(msg, send)
                     break
             }
