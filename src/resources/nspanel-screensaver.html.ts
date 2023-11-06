@@ -36,10 +36,26 @@
             defaults: {
                 name: { value: '' },
                 nsPanel: { value: '', type: 'nspanel-panel', required: true },
-                doubleTapToExit: { value: false },
                 timeout: { value: null },
-
                 events: { value: [] },
+
+                doubleTapToExit: { value: false },
+                colorBackground: { value: '#000000' },
+                colorTime: { value: '#ffffff' },
+                colorTimeAmPm: { value: '#ffffff' },
+                colorDate: { value: '#ffffff' },
+                colorMainText: { value: '#ffffff' },
+                colorForecast1: { value: '#ffffff' },
+                colorForecast2: { value: '#ffffff' },
+                colorForecast3: { value: '#ffffff' },
+                colorForecast4: { value: '#ffffff' },
+                colorForecastVal1: { value: '#ffffff' },
+                colorForecastVal2: { value: '#ffffff' },
+                colorForecastVal3: { value: '#ffffff' },
+                colorForecastVal4: { value: '#ffffff' },
+                colorBar: { value: '#ffffff' },
+                colorMainTextAlt2: { value: '#ffffff' },
+                colorTimeAdd: { value: '#ffffff' },
             },
 
             label() {
@@ -84,6 +100,11 @@
                     id: 'nspanel-page-tab-events',
                     iconClass: 'fa fa-list',
                     label: NSPanelLui._('label.events', 'nspanel-panel', 'common'),
+                })
+                tabs.addTab({
+                    id: 'nspanel-page-tab-colors',
+                    iconClass: 'fa fa-paint-brush',
+                    label: NSPanelLui._('label.tabColors', 'nspanel-screensaver'),
                 })
             },
             oneditsave() {

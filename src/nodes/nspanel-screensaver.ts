@@ -1,11 +1,8 @@
 /* eslint-disable import/no-import-module-exports */
 import { PageNode } from '../lib/page-node'
-
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-
-import { STR_LUI_DELIMITER, STR_LUI_EVENT_BEXIT } from '../lib/nspanel-constants'
 import {
     EventArgs,
     EventMapping,
@@ -13,10 +10,29 @@ import {
     NodeRedSendCallback,
     PageInputMessage,
     StatusItemData,
+    PanelColor,
 } from '../types/types'
+import * as NSPanelConstants from '../lib/nspanel-constants'
 
-interface ScreenSaverConfig extends PageConfig {
+type ScreenSaverConfig = PageConfig & {
     doubleTapToExit: boolean
+
+    colorBackground?: PanelColor
+    colorTime?: PanelColor
+    colorTimeAmPm?: PanelColor
+    colorDate?: PanelColor
+    colorMainText?: PanelColor
+    colorForecast1?: PanelColor
+    colorForecast2?: PanelColor
+    colorForecast3?: PanelColor
+    colorForecast4?: PanelColor
+    colorForecastVal1?: PanelColor
+    colorForecastVal2?: PanelColor
+    colorForecastVal3?: PanelColor
+    colorForecastVal4?: PanelColor
+    colorBar?: PanelColor
+    colorMainTextAlt2?: PanelColor
+    colorTimeAdd?: PanelColor
 }
 
 const MAX_ENTITIES = 6
@@ -63,7 +79,7 @@ module.exports = (RED) => {
         }
 
         public prePageNavigationEvent(eventArgs: EventArgs, _eventConfig: EventMapping) {
-            if (eventArgs.event2 === STR_LUI_EVENT_BEXIT && this.config.doubleTapToExit) {
+            if (eventArgs.event2 === NSPanelConstants.STR_LUI_EVENT_BEXIT && this.config.doubleTapToExit) {
                 return eventArgs.value ? eventArgs.value >= 2 : false
             }
 
@@ -75,7 +91,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            let cmd = `statusUpdate${STR_LUI_DELIMITER}`
+            let cmd = `statusUpdate${NSPanelConstants.STR_LUI_DELIMITER}`
             const cmdParams: string[] = []
 
             for (let idx = 0; idx < 2; idx += 1) {
@@ -89,7 +105,7 @@ module.exports = (RED) => {
                         : NSPanelUtils.makeIcon(null, null)
                 cmdParams.push(tmp)
             }
-            cmd += cmdParams.join(STR_LUI_DELIMITER)
+            cmd += cmdParams.join(NSPanelConstants.STR_LUI_DELIMITER)
             return cmd
         }
 
@@ -98,7 +114,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            let result = `weatherUpdate${STR_LUI_DELIMITER}`
+            let result = `weatherUpdate${NSPanelConstants.STR_LUI_DELIMITER}`
             const resultEntities: string[] = []
             const data = this.pageData.entities
 
@@ -116,7 +132,7 @@ module.exports = (RED) => {
                 resultEntities.push(entity)
             }
 
-            result += resultEntities.join(STR_LUI_DELIMITER)
+            result += resultEntities.join(NSPanelConstants.STR_LUI_DELIMITER)
             return result
         }
 

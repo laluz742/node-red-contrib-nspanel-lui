@@ -16,7 +16,24 @@
     "nspanel-screensaver": {
         "label": {
             "palette": "ScreenSaver",
-            "doubleTapToExit": "Zum Verlassen doppelt tippen"
+            "doubleTapToExit": "Zum Verlassen doppelt tippen",
+            "tabColors": "Farben",
+            "colorBackground": "Hintergrund",
+            "colorTime": "Uhrzeit",
+            "colorTimeAmPm": "Uhrzeit-Bezeichner (am/pm)",
+            "colorTimeAdd": "Uhrzeit Ergänzung",
+            "colorDate": "Datum",
+            "colorMainText": "Text",
+            "colorMainTextAlt2": "Text 2",
+            "colorBar": "Linie",
+            "colorForecast1": "Vorhersage 1",
+            "colorForecastVal1": "Vorhersage Wert 1",
+            "colorForecast2": "Vorhersage 2",
+            "colorForecastVal2": "Vorhersage Wert 2",
+            "colorForecast3": "Vorhersage 3",
+            "colorForecastVal3": "Vorhersage Wert 3",
+            "colorForecast4": "Vorhersage 4",
+            "colorForecastVal4": "Vorhersage Wert 4"
         },
         "placeholder": {},
         "defaults": {
