@@ -1,5 +1,6 @@
 /* eslint-disable import/no-import-module-exports */
 import { EntitiesPageNode } from '../lib/entities-page-node'
+import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { EntityBasedPageConfig, PanelColor } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
@@ -15,6 +16,10 @@ type PageAlarmConfig = EntityBasedPageConfig & {
 }
 
 const MAX_ENTITIES = 4
+const EMPTY_ENTITY: PanelEntity = {
+    type: 'delete',
+    entityId: 'none.',
+}
 
 module.exports = (RED) => {
     class AlarmPageNode extends EntitiesPageNode<PageAlarmConfig> {
@@ -22,6 +27,15 @@ module.exports = (RED) => {
 
         constructor(config: PageAlarmConfig) {
             super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_ALARM, maxEntities: MAX_ENTITIES })
+
+            if ((config.entities?.length ?? 0) < MAX_ENTITIES) {
+                const fillCount = MAX_ENTITIES - (config.entities?.length ?? 0)
+                for (let i = 0; i < fillCount; i += 1) {
+                    const entityFill = { ...EMPTY_ENTITY }
+                    entityFill.entityId += +i
+                    config.entities.push(entityFill)
+                }
+            }
 
             this.config = { ...config }
         }
@@ -32,25 +46,25 @@ module.exports = (RED) => {
             const titleNav = this.generateTitleNav()
             const entitites = this.generateEntities()
             const numpadStatus = this.config?.numPadDisabled
-                ? NSPanelConstants.STR_ENABLE
-                : NSPanelConstants.STR_DISABLE
+                ? NSPanelConstants.STR_DISABLE
+                : NSPanelConstants.STR_ENABLE
             const flashingStatus = this.config?.flashingStatusDisabled
-                ? NSPanelConstants.STR_ENABLE
-                : NSPanelConstants.STR_DISABLE
+                ? NSPanelConstants.STR_DISABLE
+                : NSPanelConstants.STR_ENABLE
 
             result.push(this.config.title ?? NSPanelConstants.STR_EMPTY)
             result.push(titleNav)
             result.push(this.config?.name ?? NSPanelConstants.STR_EMPTY)
 
             result.push(entitites)
-            result.push(this.config?.iconStatus ?? NSPanelConstants.STR_EMPTY)
+            result.push(NSPanelUtils.getIcon(this.config?.iconStatus))
             result.push(NSPanelColorUtils.toHmiColor(this.config?.iconStatusColor))
             result.push(numpadStatus)
             result.push(flashingStatus)
 
-            result.push(this.config?.extraButtonIcon ?? NSPanelConstants.STR_EMPTY)
+            result.push(NSPanelUtils.getIcon(this.config?.extraButtonIcon))
             result.push(NSPanelColorUtils.toHmiColor(this.config?.extraButtonIconColor))
-            result.push(NSPanelColorUtils.toHmiColor(this.config?.extraButtonId ?? NSPanelConstants.STR_EMPTY))
+            result.push(this.config?.extraButtonId ?? NSPanelConstants.STR_EMPTY)
 
             return result.join(NSPanelConstants.STR_LUI_DELIMITER)
         }
@@ -69,7 +83,7 @@ module.exports = (RED) => {
                 const text = entityData?.text ?? entityConfig.text
 
                 if (entityConfig.type === NSPanelConstants.STR_LUI_ENTITY_NONE) {
-                    resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}`)
+                    resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}${entityConfig.entityId}`)
                 } else {
                     resultEntities.push(
                         `${text}${NSPanelConstants.STR_LUI_DELIMITER}${

@@ -1,7 +1,7 @@
 // eslint-disable-next-line func-names
 ;(function ($) {
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
-    const ALL_VALID_ENTITIES = ['text', 'button']
+    const ALL_VALID_ENTITIES = ['delete', 'alarm_action']
 
     const MAX_ENTITIES = 4
     let editableEventList
@@ -26,7 +26,7 @@
                 events: { value: [] },
                 entities: { value: [] },
                 numPadDisabled: { value: false },
-                flashingStatusDisabled: { value: false },
+                flashingStatusDisabled: { value: true },
                 iconStatus: { value: '' },
                 iconStatusColor: { value: '#ffffff' },
                 extraButtonIcon: { value: '' },
