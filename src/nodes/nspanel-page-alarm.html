@@ -1,0 +1,68 @@
+<script type="text/javascript" src="resources/node-red-contrib-nspanel-lui/nspanel-page-alarm.html.js"></script>
+
+<script type="text/html" data-template-name="nspanel-page-alarm">
+    <div class="form-row nspanel-page-tabs-row">
+        <ul style="min-width: 600px; margin-bottom: 20px;" id="nspanel-page-tabs"></ul>
+    </div>
+
+    <div id="nspanel-page-tabs-content" style="min-height: calc(100% - 100px);">
+        <div id="nspanel-page-tab-general" style="display:none">
+            <div class="form-row">
+                <label for="node-input-name" style="vertical-align: middle">
+                    <i class="fa fa-tag"></i>
+                    <span data-i18n="common.label.name"></span>
+                </label>
+                <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-nsPanel" style="vertical-align: middle">
+                    <i class="fa fa-television"></i>
+                    <span data-i18n="common.label.panel"></span>
+                </label>
+                <input type="text" id="node-input-nsPanel" />
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-title" style="vertical-align: middle">
+                    <i class="fa fa-header"></i>
+                    <span data-i18n="common.label.title"></span>
+                </label>
+                <input type="text" id="node-input-title" />
+            </div>
+
+            <br />
+            <div class="form-row">
+                <label for="node-input-timeout" style="vertical-align: middle">
+                    <i class="fa fa-hourglass-end"></i>
+                    <span data-i18n="common.label.panelTimeout"></span>
+                </label>
+                <input type="number" id="node-input-timeout" style="width: 7em;" />
+                <label for="node-input-timeout" data-i18n="common.label.panelTimeoutSeconds"></label>
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-entities" style="display:none">
+            <div
+                class="form-row node-input-entities-control"
+                id="node-input-entities-control"
+                style="min-height: calc(100% - 100px);"
+            >
+                <div class="form-row node-input-entities-container-row">
+                    <ol id="node-input-entities-container" style="min-width: 620px"></ol>
+                </div>
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-events" style="display:none">
+            <div
+                class="form-row node-input-event-control"
+                style="min-height: calc(100% - 100px);"
+                id="node-input-event-control"
+            >
+                <div class="form-row node-input-event-container-row">
+                    <ol id="node-input-event-container" style="min-width: 520px"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

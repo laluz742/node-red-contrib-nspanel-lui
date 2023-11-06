@@ -78,6 +78,7 @@ export const STR_BERRYDRIVER_CMD_UPDATEDRIVER: string = 'UpdateDriverVersion'
 export const STR_BERRYDRIVER_CMD_FLASHNEXTION: string = 'FlashNextion'
 
 // page/card types
+export const STR_PAGE_TYPE_CARD_ALARM: string = 'cardAlarm'
 export const STR_PAGE_TYPE_CARD_CHART: string = 'cardChart'
 export const STR_PAGE_TYPE_CARD_ENTITIES: string = 'cardEntities'
 export const STR_PAGE_TYPE_CARD_GRID: string = 'cardGrid'
