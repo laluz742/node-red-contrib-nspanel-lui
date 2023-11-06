@@ -25,7 +25,13 @@
                 timeout: { value: null },
                 events: { value: [] },
                 entities: { value: [] },
-                qrCode: { value: '' },
+                numPadDisabled: { value: false },
+                flashingStatusDisabled: { value: false },
+                iconStatus: { value: '' },
+                iconStatusColor: { value: '#ffffff' },
+                extraButtonIcon: { value: '' },
+                extraButtonIconColor: { value: '#ffffff' },
+                extraButtonId: { value: '' },
             },
 
             label() {
