@@ -18,7 +18,15 @@
     },
     "nspanel-page-alarm": {
         "label": {
-            "palette": "Alarm"
+            "palette": "Alarm",
+            "numPadDisabled": "Disable num pad",
+            "flashingStatusDisabled": "Disable flashing status",
+            "iconStatus": "Icon",
+            "iconStatusColor": "Color",
+            "extraButton": "Extra button:",
+            "extraButtonIcon": "Icon",
+            "extraButtonIconColor": "Color",
+            "extraButtonId": "Id"
         },
         "placeholder": {},
         "defaults": {
