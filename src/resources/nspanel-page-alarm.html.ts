@@ -12,7 +12,7 @@
             category: 'NSPanel',
             paletteLabel: NSPanelLui._('label.palette', 'nspanel-page-alarm'),
 
-            inputs: 0,
+            inputs: 1,
             outputs: 1,
 
             icon: 'font-awesome/fa-television',
@@ -26,7 +26,6 @@
                 events: { value: [] },
                 entities: { value: [] },
                 numPadDisabled: { value: false },
-                flashingStatusDisabled: { value: true },
                 iconStatus: { value: '' },
                 iconStatusColor: { value: '#ffffff' },
                 extraButtonIcon: { value: '' },

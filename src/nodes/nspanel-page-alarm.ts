@@ -2,12 +2,11 @@
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-import { EntityBasedPageConfig, PanelColor } from '../types/types'
+import { AlarmData, EntityBasedPageConfig, NodeRedSendCallback, PageInputMessage, PanelColor } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
 type PageAlarmConfig = EntityBasedPageConfig & {
     numPadDisabled: boolean
-    flashingStatusDisabled: boolean
     iconStatus: string
     iconStatusColor: PanelColor
     extraButtonIcon: string
@@ -25,6 +24,8 @@ module.exports = (RED) => {
     class AlarmPageNode extends EntitiesPageNode<PageAlarmConfig> {
         private config: PageAlarmConfig
 
+        private data: AlarmData = {}
+
         constructor(config: PageAlarmConfig) {
             super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_ALARM, maxEntities: MAX_ENTITIES })
 
@@ -40,25 +41,69 @@ module.exports = (RED) => {
             this.config = { ...config }
         }
 
+        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
+            let handled = false
+            let dirty = false
+
+            switch (msg.topic) {
+                case NSPanelConstants.STR_MSG_TOPIC_DATA: {
+                    if (msg.payload != null && typeof msg.payload === 'object') {
+                        const msgData: AlarmData = msg.payload as AlarmData
+
+                        const statusIcon: string = msgData?.statusIcon ?? null
+                        const statusIconColor: PanelColor = msgData?.statusIconColor ?? null
+                        const statusIconFlashing: boolean =
+                            msgData?.statusIconFlashing != null ? msgData?.statusIconFlashing === true : null
+                        const numPadDisabled: boolean =
+                            msgData?.numPadDisabled != null ? msgData?.numPadDisabled === true : null
+
+                        this.data.statusIcon = statusIcon
+                        this.data.statusIconColor = statusIconColor
+                        this.data.statusIconFlashing = statusIconFlashing
+                        this.data.numPadDisabled = numPadDisabled
+
+                        dirty =
+                            statusIcon != null ||
+                            statusIconColor != null ||
+                            statusIconFlashing != null ||
+                            numPadDisabled != null
+                    }
+                    break
+                }
+            }
+
+            if (dirty) {
+                handled = true
+                this.getCache().clear()
+            } else {
+                handled = super.handleInput(msg, send)
+            }
+
+            return handled
+        }
+
         protected override doGeneratePage(): string | string[] | null {
             const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
 
             const titleNav = this.generateTitleNav()
             const entitites = this.generateEntities()
-            const numpadStatus = this.config?.numPadDisabled
-                ? NSPanelConstants.STR_DISABLE
-                : NSPanelConstants.STR_ENABLE
-            const flashingStatus = this.config?.flashingStatusDisabled
-                ? NSPanelConstants.STR_DISABLE
-                : NSPanelConstants.STR_ENABLE
+
+            const statusIcon = this.data?.statusIcon ?? this.config?.iconStatus ?? NSPanelConstants.STR_EMPTY
+            const statusIconColor = this.data?.statusIconColor ?? this.config?.iconStatusColor
+            const numpadStatus =
+                this.data?.numPadDisabled ?? this.config?.numPadDisabled ?? false
+                    ? NSPanelConstants.STR_DISABLE
+                    : NSPanelConstants.STR_ENABLE
+            const flashingStatus =
+                this.data?.statusIconFlashing ?? false ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE
 
             result.push(this.config.title ?? NSPanelConstants.STR_EMPTY)
             result.push(titleNav)
             result.push(this.config?.name ?? NSPanelConstants.STR_EMPTY)
 
             result.push(entitites)
-            result.push(NSPanelUtils.getIcon(this.config?.iconStatus))
-            result.push(NSPanelColorUtils.toHmiColor(this.config?.iconStatusColor))
+            result.push(NSPanelUtils.getIcon(statusIcon))
+            result.push(NSPanelColorUtils.toHmiColor(statusIconColor))
             result.push(numpadStatus)
             result.push(flashingStatus)
 
