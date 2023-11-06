@@ -90,6 +90,7 @@ module.exports = (RED) => {
             }
 
             if (dirty) {
+                handled = true
                 this.getCache().clear()
             } else {
                 handled = super.handleInput(msg, send)
