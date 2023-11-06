@@ -11,9 +11,9 @@ import {
     IPanelMqttHandler,
     SensorEventArgs,
     FirmwareEventArgs,
+    TasmotaEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
-import { TasmotaEventArgs } from '../types/events'
 
 const log = Logger('NSPanelMqttHandler')
 

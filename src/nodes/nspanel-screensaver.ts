@@ -60,7 +60,7 @@ module.exports = (RED) => {
             if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return false
 
             switch (msg.topic) {
-                case 'status':
+                case NSPanelConstants.STR_MSG_TOPIC_STATUS:
                     this.handleStatusInput(msg)
                     this.requestUpdate()
                     return true

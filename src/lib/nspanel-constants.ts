@@ -8,6 +8,15 @@ export const STR_HTTP_USER_AGENT_VALUE: string = 'node-red-contrib-nspanel-lui'
 export const STR_NAV_ID_PREVIOUS: string = 'nav.prev'
 export const STR_NAV_ID_NEXT: string = 'nav.next'
 
+// messages
+export const STR_MSG_TOPIC_COMMAND: string = 'cmd'
+export const STR_MSG_TOPIC_DATA: string = 'data'
+export const STR_MSG_TOPIC_EVENT: string = 'event'
+export const STR_MSG_TOPIC_MEDIA: string = 'media'
+export const STR_MSG_TOPIC_NOTIFY: string = 'notify'
+export const STR_MSG_TOPIC_SENSOR: string = 'sensor'
+export const STR_MSG_TOPIC_STATUS: string = 'status'
+
 // nspanel lovelace ui / HMI
 export const STR_LUI_LINEBREAK: string = '\r\n'
 export const STR_LUI_DELIMITER: string = '~'

@@ -52,7 +52,7 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
-                case 'media': {
+                case NSPanelConstants.STR_MSG_TOPIC_MEDIA: {
                     if (!Array.isArray(msg.payload)) {
                         // eslint-disable-next-line prefer-const
                         for (let key in msg.payload) {

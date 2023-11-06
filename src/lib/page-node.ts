@@ -215,7 +215,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
 
         if (NSPanelMessageUtils.hasProperty(msg, 'topic', true)) {
             switch (msg.topic) {
-                case 'event': {
+                case NSPanelConstants.STR_MSG_TOPIC_EVENT: {
                     const eventArgs = <EventArgs>msg.payload
                     const uiEventHandled = this._handleUiEvent(eventArgs, send)
                     if (!uiEventHandled) {
@@ -250,7 +250,7 @@ export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> impl
 
         if (handled === false) {
             switch (msg.topic) {
-                case 'data':
+                case NSPanelConstants.STR_MSG_TOPIC_DATA:
                     handled = this._handleDataInputInternal(msg, send)
                     break
             }

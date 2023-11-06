@@ -33,7 +33,7 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
-                case 'data': {
+                case NSPanelPanelConstants.STR_MSG_TOPIC_DATA: {
                     if (msg.payload != null && typeof msg.payload === 'object') {
                         const dTicks: number[] = []
                         const dValues: ChartDataItem[] = []
