@@ -4,6 +4,7 @@
 
 -   [Panel Controller](#controller)
 -   [ScreenSaver Node](#screensaver-node)
+-   [ScreenSaver Extended Node](#screensaver-extended-node)
 -   [HMI Control Node](#hmi-control-node)
 
 Further details about the page-specific nodes representing the different types of screens / cards, see [Page Nodes](./page-nodes.md)
@@ -216,6 +217,141 @@ var weatherDataMsg = {
         {
             value: '7°',
             text: 'Wed',
+            icon: 'weather-rainy',
+            iconColor: '#abcabc',
+        },
+    ],
+}
+```
+
+The message payload can be an array of up to six object
+
+| Key | Description |
+| --- | --- |
+| `text` | the text to show |
+| `value` | the value to be displays |
+| `icon` | optional, the icon to be shown |
+| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+
+### ScreenSaver Extended Node
+
+The ScreenSaver Extended node behaves is screensaver and its behaviour similiar to [ScreenSaver Node](#screensaver-node).
+
+It can process input messages with the topic
+
+-   _status_ for 2 status icons at bottom of screen
+-   _status2_ for extended status data
+-   _data_ for wheater data
+
+#### Configuration
+
+#### Messages
+
+##### Status Icons
+
+Status data sent using topic _status_ will be displayed at the bottom of the screen.
+
+```javascript
+var statusMsg = {
+    topic: 'status',
+    payload: [
+        {
+            icon: 'heat-wave',
+            iconColor: '#fcae1e',
+            text: '23.1°',
+            index: 0,
+            prefix: 'p',
+        },
+    ],
+}
+```
+
+The message payload can be either a single object or an array of objects each providing the following data
+
+| Key | Description |
+| --- | --- |
+| `icon` | The icon to be shown |
+| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `text` | the text to show |
+| `index` | position (0=left, 1=right) |
+| `prefix` | optional, `prefix` is displayed left to the icon |
+
+##### Extended Status Icons
+
+Status data sent using topic _status2_ will be displayed at different positions on the screen:
+
+```javascript
+var statusMsg = {
+    topic: 'status',
+    payload: [
+        {
+            icon: 'heat-wave',
+            iconColor: '#fcae1e',
+            text: '23.1°',
+            index: 0,
+            prefix: 'p',
+        },
+    ],
+}
+```
+
+The message payload can be either a single object or an array of objects each providing the following data
+
+| Key | Description |
+| --- | --- |
+| `icon` | The icon to be shown |
+| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `text` | the text to show |
+| `index` | position (0=left, 1=right) |
+| `prefix` | optional, `prefix` is displayed left to the icon |
+
+| Index      | Position                              |
+| ---------- | ------------------------------------- |
+| `0`        | upper left corner, thus main status   |
+| `1` to `5` | below time and date                   |
+| `6` to `8` | left side of screen below main status |
+
+##### Weather Data
+
+Messages with the topic _data_ will be handled to show up to six entities at the bottom of the screensaver screen
+
+```javascript
+var weatherDataMsg = {
+    topic: 'data',
+    payload: [
+        {
+            value: '15.0°',
+            text: 'Now',
+            icon: 'weather-partly-cloudy',
+            iconColor: '#abcabc',
+        },
+        {
+            value: '15°',
+            text: 'Today',
+            icon: 'weather-rainy',
+            iconColor: '#abcabc',
+        },
+        {
+            value: '17°',
+            text: 'Mo',
+            icon: 'weather-rainy',
+            iconColor: '#abcabc',
+        },
+        {
+            value: '14°',
+            text: 'Tue',
+            icon: 'weather-rainy',
+            iconColor: '#abcabc',
+        },
+        {
+            value: '7°',
+            text: 'Wed',
+            icon: 'weather-rainy',
+            iconColor: '#abcabc',
+        },
+        {
+            value: '12°',
+            text: 'Thu',
             icon: 'weather-rainy',
             iconColor: '#abcabc',
         },
