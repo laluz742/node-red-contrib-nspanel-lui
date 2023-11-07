@@ -8,7 +8,7 @@ export class NodeBase<TConfig extends INodeConfig, TCreds extends {} = {}> exten
         super(config, RED)
     }
 
-    protected setNodeStatus(statusLevel: StatusLevel, msg: string): void {
+    public setNodeStatus(statusLevel: StatusLevel, msg: string): void {
         const nodeRedStatus = NSPanelNodeUtils.createNodeStatus(statusLevel, msg)
 
         this.status(nodeRedStatus)

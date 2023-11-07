@@ -88,6 +88,7 @@ export const STR_PAGE_TYPE_CARD_MEDIA: string = 'cardMedia'
 export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
 export const STR_PAGE_TYPE_CARD_SCREENSAVER: string = 'screensaver'
+export const STR_PAGE_TYPE_CARD_SCREENSAVER2: string = 'screensaver2'
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
 
 // update process

@@ -26,15 +26,17 @@ type ScreenSaverConfig = ScreenSaverBaseConfig & {
 
 const MAX_ENTITIES = 6
 const CMD_COLOR: string = 'color'
-
 const CMD_WEATHERUPDATE: string = 'weatherUpdate'
 const DEFAULT_LUI_BACKGROUND = NSPanelConstants.STR_LUI_COLOR_BLACK
 const DEFAULT_LUI_FOREGROUND = NSPanelConstants.STR_LUI_COLOR_WHITE
 
 module.exports = (RED) => {
-    class ScreenSaverPageNode extends ScreenSaverNode<ScreenSaverConfig> {
+    class ScreenSaver2PageNode extends ScreenSaverNode<ScreenSaverConfig> {
         constructor(config: ScreenSaverConfig) {
-            super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER, maxEntities: MAX_ENTITIES })
+            super(config, RED, {
+                pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER2,
+                maxEntities: MAX_ENTITIES,
+            })
         }
 
         public override generatePage(): string | string[] | null {
@@ -123,5 +125,5 @@ module.exports = (RED) => {
         }
     }
 
-    RED.nodes.registerType('nspanel-screensaver', ScreenSaverPageNode)
+    RED.nodes.registerType('nspanel-screensaver2', ScreenSaver2PageNode)
 }

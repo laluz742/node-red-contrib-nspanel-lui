@@ -1,0 +1,43 @@
+{
+    "common": {
+        "label": {
+            "name": "Name",
+            "panel": "NSPanel",
+            "unassigned": "nicht zugewiesen"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "active": "Aktiv",
+            "notAssignedToAPanel": "Kein NSPanel zugeordnet"
+        }
+    },
+    "nspanel-screensaver2": {
+        "label": {
+            "palette": "ScreenSaver Erweitert",
+            "doubleTapToExit": "Zum Verlassen doppelt tippen",
+            "tabColors": "Farben",
+            "colorBackground": "Hintergrund",
+            "colorTime": "Uhrzeit",
+            "colorTimeAmPm": "Uhrzeit-Bezeichner (am/pm)",
+            "colorTimeAdd": "Uhrzeit Ergänzung",
+            "colorDate": "Datum",
+            "colorMainText": "Text",
+            "colorMainTextAlt2": "Text 2",
+            "colorBar": "Linie",
+            "colorForecast1": "Vorhersage 1",
+            "colorForecastVal1": "Vorhersage Wert 1",
+            "colorForecast2": "Vorhersage 2",
+            "colorForecastVal2": "Vorhersage Wert 2",
+            "colorForecast3": "Vorhersage 3",
+            "colorForecastVal3": "Vorhersage Wert 3",
+            "colorForecast4": "Vorhersage 4",
+            "colorForecastVal4": "Vorhersage Wert 4"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "ScreenSaver Erweitert"
+        }
+    }
+}

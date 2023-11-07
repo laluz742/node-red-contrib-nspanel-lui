@@ -37,9 +37,11 @@ export type PageData = {
     entities: PageEntityData[]
 }
 
-// #region callbacks
+export type ScreenSaverBaseConfig = PageConfig & {
+    doubleTapToExit: boolean
+}
 
+// #region callbacks
 export type OnEventCallback = (eventArgs: EventArgs) => void
 export type OnSensorDataCallback = (msg: any) => void
-
 // #endregion callbacks
