@@ -23,10 +23,10 @@ import {
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
-export class PageNode<TConfig extends PageConfig> extends NodeBase<TConfig> implements IPageNode {
+export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> implements IPageNode {
     private panelNode: IPanelNode | null = null
 
-    private pageNodeConfig: PageConfig
+    private pageNodeConfig: TConfig
 
     protected options: PageOptions | null = null
 

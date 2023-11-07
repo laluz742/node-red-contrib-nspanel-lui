@@ -559,15 +559,22 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this._cache.getAllKnownPages()?.filter((pageNode) => pageNode.isScreenSaver()) ?? []
 
         if (screenSaverPageNodes.length >= 1) {
+            const firstScreenSaver: IPageNode = screenSaverPageNodes[0]
             const pageHistory: IPageHistory = {
                 historyType: 'page',
-                pageNode: screenSaverPageNodes[0],
+                pageNode: firstScreenSaver,
             }
             this.setCurrentPage(pageHistory)
 
             if (screenSaverPageNodes.length >= 2) {
-                this.setNodeStatus('warn', this._i18n('common.status.tooManyScreenSaver'))
                 log.warn(`More than one screensaver attached. Found ${screenSaverPageNodes.length}`)
+                // eslint-disable-next-line prefer-const
+                for (let i in screenSaverPageNodes) {
+                    const node = screenSaverPageNodes[i]
+                    if (node.id !== firstScreenSaver.id) {
+                        node.setNodeStatus('warn', this._i18n('common.status.tooManyScreenSaver'))
+                    }
+                }
             }
         } else {
             this.setNodeStatus('warn', this._i18n('common.status.noScreenSaverPage'))

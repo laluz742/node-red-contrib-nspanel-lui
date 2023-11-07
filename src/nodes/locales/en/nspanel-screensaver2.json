@@ -1,0 +1,26 @@
+{
+    "common": {
+        "label": {
+            "name": "Name",
+            "panel": "NSPanel",
+            "unassigned": "not assiged"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "active": "Active",
+            "notAssignedToAPanel": "No NSPanel assigned"
+        }
+    },
+    "nspanel-screensaver2": {
+        "label": {
+            "palette": "ScreenSaver Extended",
+            "doubleTapToExit": "double tap to exit"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "ScreenSaver Extended"
+        }
+    }
+}

@@ -16,6 +16,7 @@ export const STR_MSG_TOPIC_MEDIA: string = 'media'
 export const STR_MSG_TOPIC_NOTIFY: string = 'notify'
 export const STR_MSG_TOPIC_SENSOR: string = 'sensor'
 export const STR_MSG_TOPIC_STATUS: string = 'status'
+export const STR_MSG_TOPIC_STATUS2: string = 'status2'
 
 // nspanel lovelace ui / HMI
 export const STR_LUI_LINEBREAK: string = '\r\n'
@@ -88,6 +89,7 @@ export const STR_PAGE_TYPE_CARD_MEDIA: string = 'cardMedia'
 export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
 export const STR_PAGE_TYPE_CARD_SCREENSAVER: string = 'screensaver'
+export const STR_PAGE_TYPE_CARD_SCREENSAVER2: string = 'screensaver2'
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
 
 // update process

@@ -1,0 +1,49 @@
+<script type="text/javascript" src="resources/node-red-contrib-nspanel-lui/nspanel-screensaver2.html.js"></script>
+
+<script type="text/html" data-template-name="nspanel-screensaver2">
+    <div class="form-row nspanel-page-tabs-row">
+        <ul style="min-width: 600px; margin-bottom: 20px;" id="nspanel-page-tabs"></ul>
+    </div>
+    <div id="nspanel-page-tabs-content" style="min-height: calc(100% - 100px);">
+        <div id="nspanel-page-tab-general" style="display:none">
+            <div class="form-row">
+                <label for="node-input-name">
+                    <i class="fa fa-tag"></i>
+                    <span data-i18n="common.label.name"></span>
+                </label>
+                <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-nsPanel">
+                    <i class="fa fa-television"></i>
+                    <span data-i18n="common.label.panel"></span>
+                </label>
+                <input type="text" id="node-input-nsPanel" />
+            </div>
+
+            <div class="form-row">
+                <input
+                    type="checkbox"
+                    id="node-input-doubleTapToExit"
+                    style="display:inline-block; width:auto; vertical-align:top;"
+                />
+                <label for="node-input-doubleTapToExit" style="width:70% !important;">
+                    <span data-i18n="nspanel-screensaver2.label.doubleTapToExit"></span>
+                </label>
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-events" style="display:none">
+            <div
+                class="form-row node-input-event-control"
+                style="min-height: calc(100% - 100px);"
+                id="node-input-event-control"
+            >
+                <div class="form-row node-input-event-container-row">
+                    <ol id="node-input-event-container" style="min-height: 300px; min-width: 520px"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

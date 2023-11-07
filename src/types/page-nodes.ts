@@ -27,6 +27,8 @@ export interface IPageNode extends INodeConfig {
     getPanel(): IPanelNode | null
     getTimeout(): number | null
 
+    setNodeStatus(statusLevel: StatusLevel, msg: string): void
+
     emit(event: string | symbol, ...args: any[]): boolean
     on(event: 'page:update', callback: PageEventCallbackType): void
     on(event: 'nav:pageId', listener: PageIdEventCallbackType): void

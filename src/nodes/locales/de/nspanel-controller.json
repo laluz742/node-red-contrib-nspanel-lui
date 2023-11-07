@@ -13,7 +13,7 @@
             "panelInit": "Initialisiere Panel",
             "panelStarted": "Panel gestartet",
             "waitForPages": "Warte auf Seiten",
-            "tooManyScreenSaver": "Mehr als ein Bildschirmschoner",
+            "tooManyScreenSaver": "Node ignoriert (zu viele ScreenSaver)",
             "noScreenSaverPage": "Kein Bildschirmschoner",
             "newFirmwareAvailable": "Neue Firmware verfügbar",
             "updateInstalling": "Installiere Firmware-Update",

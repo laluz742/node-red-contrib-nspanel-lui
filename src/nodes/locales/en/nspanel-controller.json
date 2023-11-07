@@ -11,7 +11,7 @@
         "status": {
             "notAssignedToAPanel": "No NSPanel assigned",
             "waitForPages": "Waiting for pages",
-            "tooManyScreenSaver": "Too many screensaver nodes found",
+            "tooManyScreenSaver": "Node ignored (too many screensaver nodes found)",
             "noScreenSaverPage": "No screensaver found",
             "panelInit": "Initializing panel",
             "panelStarted": "Panel started",
