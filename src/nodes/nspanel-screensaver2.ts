@@ -1,37 +1,28 @@
 /* eslint-disable import/no-import-module-exports */
-import { ScreenSaverNode } from '../lib/screensaver-node'
+import { ScreenSaverNodeBase } from '../lib/screensaver-node-base'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-import { PanelColor, ScreenSaverBaseConfig } from '../types/types'
+import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
+import {
+    NodeRedSendCallback,
+    PageEntityData,
+    PageInputMessage,
+    ScreenSaverBaseConfig,
+    StatusItemData,
+} from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
-type ScreenSaverConfig = ScreenSaverBaseConfig & {
-    colorBackground?: PanelColor
-    colorTime?: PanelColor
-    colorTimeAmPm?: PanelColor
-    colorDate?: PanelColor
-    colorMainText?: PanelColor
-    colorForecast1?: PanelColor
-    colorForecast2?: PanelColor
-    colorForecast3?: PanelColor
-    colorForecast4?: PanelColor
-    colorForecastVal1?: PanelColor
-    colorForecastVal2?: PanelColor
-    colorForecastVal3?: PanelColor
-    colorForecastVal4?: PanelColor
-    colorBar?: PanelColor
-    colorMainTextAlt2?: PanelColor
-    colorTimeAdd?: PanelColor
-}
+type ScreenSaverConfig = ScreenSaverBaseConfig & {}
 
 const MAX_ENTITIES = 6
-const CMD_COLOR: string = 'color'
+const MAX_STATUS2_ITEMS = 8
 const CMD_WEATHERUPDATE: string = 'weatherUpdate'
-const DEFAULT_LUI_BACKGROUND = NSPanelConstants.STR_LUI_COLOR_BLACK
-const DEFAULT_LUI_FOREGROUND = NSPanelConstants.STR_LUI_COLOR_WHITE
+const BLANK_ENTITY = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
 
 module.exports = (RED) => {
-    class ScreenSaver2PageNode extends ScreenSaverNode<ScreenSaverConfig> {
+    class ScreenSaver2PageNode extends ScreenSaverNodeBase<ScreenSaverConfig> {
+        protected status2Data: StatusItemData[] = [] // [0]: main icon/text [1..5] right icons [6..8] left icons
+
         constructor(config: ScreenSaverConfig) {
             super(config, RED, {
                 pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER2,
@@ -48,80 +39,126 @@ module.exports = (RED) => {
             const weatherUpdate = this.generateWeatherUpdate()
             if (weatherUpdate) result.push(weatherUpdate)
 
-            const colorSet = this.generateColorCommand()
-            if (colorSet) result.push(colorSet)
-
             return result
         }
 
-        private generateWeatherUpdate() {
+        protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
+            if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return false
+
+            let handled: boolean = false
+            switch (msg.topic) {
+                case NSPanelConstants.STR_MSG_TOPIC_STATUS2: {
+                    handled = this.handleStatus2Input(msg)
+                    break
+                }
+            }
+
+            return handled
+        }
+
+        private handleStatus2Input(msg: PageInputMessage): boolean {
+            if (msg.payload === undefined) return false
+
+            let handled: boolean = false
+            let dirty: boolean = false
+
+            // TODO: take msg.parts into account to allow to set specific status
+            const status2InputData = msg.payload
+            const status2Items: StatusItemData[] = this.status2Data.map((item) => item)
+
+            if (Array.isArray(status2InputData)) {
+                for (let i = 0; i < MAX_STATUS2_ITEMS; i += 1) {
+                    const inputData = status2InputData[i]
+                    if (inputData != null) {
+                        const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
+                            inputData
+                        ) as StatusItemData
+                        const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', i)
+                        item.index = idx
+
+                        status2Items[idx] = item
+                        dirty = true
+                    }
+                }
+            } else if (status2InputData != null) {
+                const item = NSPanelMessageUtils.convertToStatusItemData(status2InputData) as StatusItemData
+                const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', 0)
+                item.index = idx
+                status2Items[idx] = item
+                dirty = true
+            }
+
+            if (dirty) {
+                this.status2Data = status2Items
+                handled = true
+            }
+
+            return handled
+        }
+
+        private generateWeatherUpdate(): string {
             if (this.pageData.entities.length === 0) {
                 return null
             }
 
-            let result = `${CMD_WEATHERUPDATE}${NSPanelConstants.STR_LUI_DELIMITER}`
-            const resultEntities: string[] = []
-            const data = this.pageData.entities
+            const result: (string | number)[] = []
+            result.push(CMD_WEATHERUPDATE)
+
+            const mainStatusEntity = this.makeStatusItem(this.status2Data[0])
+            result.push(mainStatusEntity)
 
             // eslint-disable-next-line prefer-const
-            for (let i in data) {
-                const item = data[i]
-                const entity = NSPanelUtils.makeEntity(
-                    '',
-                    '',
-                    NSPanelUtils.getIcon(item.icon),
-                    NSPanelColorUtils.toHmiColor(item.iconColor ?? NaN),
-                    item.text,
-                    item.value
-                )
-                resultEntities.push(entity)
+            for (let idx = 6; idx < 9; idx += 1) {
+                const item = this.status2Data[idx]
+                const entity = this.makeStatusItem(item)
+                result.push(entity)
             }
 
-            result += resultEntities.join(NSPanelConstants.STR_LUI_DELIMITER)
-            return result
+            // 6 bottom entities
+            const entityData: PageEntityData[] = this.pageData.entities
+            // eslint-disable-next-line prefer-const
+            for (let i = 0; i < MAX_ENTITIES; i += 1) {
+                const item = entityData[i]
+                const entity =
+                    item != null
+                        ? NSPanelUtils.makeEntity(
+                              '',
+                              '',
+                              NSPanelUtils.getIcon(item.icon),
+                              NSPanelColorUtils.toHmiColor(item.iconColor ?? NaN),
+                              item.text,
+                              item.value
+                          )
+                        : BLANK_ENTITY
+                result.push(entity)
+            }
+
+            // 5 right icons
+            // eslint-disable-next-line prefer-const
+            for (let idx = 1; idx < 6; idx += 1) {
+                const item = this.status2Data[idx]
+                const entity = this.makeStatusItem(item)
+                result.push(entity)
+            }
+
+            const resultStr: string = result.join(NSPanelConstants.STR_LUI_DELIMITER)
+            return resultStr
         }
 
-        private generateColorCommand(): string {
-            const result: (number | string)[] = [CMD_COLOR]
-            const config: ScreenSaverConfig = this.getConfig()
+        private makeStatusItem(item: StatusItemData): string {
+            const entity =
+                item != null
+                    ? NSPanelUtils.makeEntity(
+                          'text',
+                          `${item.index}`,
+                          (item.prefix ?? '') + NSPanelUtils.getIcon(item.icon),
+                          NSPanelColorUtils.toHmiColor(NaN),
+                          null,
+                          item.text ?? ''
+                      )
+                    : BLANK_ENTITY
 
-            const colorBackground = NSPanelColorUtils.toHmiColor(config?.colorBackground, DEFAULT_LUI_BACKGROUND)
-            const colorTime = NSPanelColorUtils.toHmiColor(config?.colorTime, DEFAULT_LUI_FOREGROUND)
-            const colorTimeAmPm = NSPanelColorUtils.toHmiColor(config?.colorTimeAmPm, DEFAULT_LUI_FOREGROUND)
-            const colorDate = NSPanelColorUtils.toHmiColor(config?.colorDate, DEFAULT_LUI_FOREGROUND)
-            const colorMainText = NSPanelColorUtils.toHmiColor(config?.colorMainText, DEFAULT_LUI_FOREGROUND)
-            const colorForecast1 = NSPanelColorUtils.toHmiColor(config?.colorForecast1, DEFAULT_LUI_FOREGROUND)
-            const colorForecast2 = NSPanelColorUtils.toHmiColor(config?.colorForecast2, DEFAULT_LUI_FOREGROUND)
-            const colorForecast3 = NSPanelColorUtils.toHmiColor(config?.colorForecast3, DEFAULT_LUI_FOREGROUND)
-            const colorForecast4 = NSPanelColorUtils.toHmiColor(config?.colorForecast4, DEFAULT_LUI_FOREGROUND)
-            const colorForecastVal1 = NSPanelColorUtils.toHmiColor(config?.colorForecastVal1, DEFAULT_LUI_FOREGROUND)
-            const colorForecastVal2 = NSPanelColorUtils.toHmiColor(config?.colorForecastVal2, DEFAULT_LUI_FOREGROUND)
-            const colorForecastVal3 = NSPanelColorUtils.toHmiColor(config?.colorForecastVal3, DEFAULT_LUI_FOREGROUND)
-            const colorForecastVal4 = NSPanelColorUtils.toHmiColor(config?.colorForecastVal4, DEFAULT_LUI_FOREGROUND)
-            const colorBar = NSPanelColorUtils.toHmiColor(config?.colorBar, DEFAULT_LUI_FOREGROUND)
-            const colorMainTextAlt2 = NSPanelColorUtils.toHmiColor(config?.colorMainTextAlt2, DEFAULT_LUI_FOREGROUND)
-            const colorTimeAdd = NSPanelColorUtils.toHmiColor(config?.colorTimeAdd, DEFAULT_LUI_FOREGROUND)
-
-            result.push(colorBackground)
-            result.push(colorTime)
-            result.push(colorTimeAmPm)
-            result.push(colorDate)
-            result.push(colorMainText)
-            result.push(colorForecast1)
-            result.push(colorForecast2)
-            result.push(colorForecast3)
-            result.push(colorForecast4)
-            result.push(colorForecastVal1)
-            result.push(colorForecastVal2)
-            result.push(colorForecastVal3)
-            result.push(colorForecastVal4)
-            result.push(colorBar)
-            result.push(colorMainTextAlt2)
-            result.push(colorTimeAdd)
-
-            const cmdResult = result.join(NSPanelConstants.STR_LUI_DELIMITER)
-
-            return cmdResult
+            return entity
         }
     }
 

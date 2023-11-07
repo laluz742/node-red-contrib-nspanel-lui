@@ -1,4 +1,4 @@
-import { PageNode } from './page-node'
+import { PageNodeBase } from './page-node-base'
 import { NSPanelUtils } from './nspanel-utils'
 import {
     PageOptions,
@@ -15,10 +15,13 @@ import { NSPanelMessageUtils } from './nspanel-message-utils'
 
 const CMD_STATUSUPDATE: string = 'statusUpdate'
 
-export class ScreenSaverNode<TConfig extends ScreenSaverBaseConfig> extends PageNode<TConfig> implements IPageNode {
+export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
+    extends PageNodeBase<TConfig>
+    implements IPageNode
+{
     private config: TConfig
 
-    protected statusData: StatusItemData[] = []
+    private statusData: StatusItemData[] = []
 
     constructor(config: TConfig, RED: NodeAPI, options: PageOptions) {
         super(config, RED, options)
@@ -53,7 +56,9 @@ export class ScreenSaverNode<TConfig extends ScreenSaverBaseConfig> extends Page
                         statusInputData[i]
                     ) as StatusItemData
                     const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', i)
-                    statusItems[idx] = item
+                    if (idx === 0 || idx === 1) {
+                        statusItems[idx] = item
+                    }
                 }
             }
         } else if (statusInputData != null) {

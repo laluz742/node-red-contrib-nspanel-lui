@@ -1,5 +1,5 @@
 /* eslint-disable import/no-import-module-exports */
-import { PageNode } from '../lib/page-node'
+import { PageNodeBase } from '../lib/page-node-base'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import { ChartData, ChartDataItem, EntityBasedPageConfig, NodeRedSendCallback, PageInputMessage } from '../types/types'
@@ -12,7 +12,7 @@ type PageChartConfig = EntityBasedPageConfig & {
 }
 
 module.exports = (RED) => {
-    class ChartPageNode extends PageNode<PageChartConfig> {
+    class ChartPageNode extends PageNodeBase<PageChartConfig> {
         private config: PageChartConfig
 
         private data: ChartData

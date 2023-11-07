@@ -16,24 +16,7 @@
     "nspanel-screensaver2": {
         "label": {
             "palette": "ScreenSaver Extended",
-            "doubleTapToExit": "double tap to exit",
-            "tabColors": "Colors",
-            "colorBackground": "Background",
-            "colorTime": "Time",
-            "colorTimeAmPm": "Time designator (am/pm)",
-            "colorTimeAdd": "Time addendum",
-            "colorDate": "Date",
-            "colorMainText": "Text",
-            "colorMainTextAlt2": "Text 2",
-            "colorBar": "Bar",
-            "colorForecast1": "Forecast 1",
-            "colorForecastVal1": "Forecast Value 1",
-            "colorForecast2": "Forecast 2",
-            "colorForecastVal2": "Forecast Value 2",
-            "colorForecast3": "Forecast 3",
-            "colorForecastVal3": "Forecast Value 3",
-            "colorForecast4": "Forecast 4",
-            "colorForecastVal4": "Forecast Value 4"
+            "doubleTapToExit": "double tap to exit"
         },
         "placeholder": {},
         "defaults": {

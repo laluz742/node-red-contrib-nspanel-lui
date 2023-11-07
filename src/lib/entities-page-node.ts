@@ -1,7 +1,7 @@
 import { NSPanelColorUtils } from './nspanel-colorutils'
 import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
 import { NSPanelUtils } from './nspanel-utils'
-import { PageNode } from './page-node'
+import { PageNodeBase } from './page-node-base'
 import {
     PageOptions,
     EntityBasedPageConfig,
@@ -13,7 +13,7 @@ import {
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
-export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends PageNode<TConfig> {
+export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends PageNodeBase<TConfig> {
     protected entitiesPageNodeConfig: EntityBasedPageConfig
 
     private entities: Map<string, PanelEntity> = new Map<string, PanelEntity>()

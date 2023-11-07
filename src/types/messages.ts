@@ -140,7 +140,7 @@ export type StatusItemData = PageEntityDataBase & {
     // used in screensaver
     prefix?: string
     iconFont?: string
-    index?: 0 | 1
+    index?: number
 }
 
 export type ChartDataItem = {

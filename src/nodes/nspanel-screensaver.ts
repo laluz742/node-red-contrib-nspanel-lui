@@ -1,5 +1,5 @@
 /* eslint-disable import/no-import-module-exports */
-import { ScreenSaverNode } from '../lib/screensaver-node'
+import { ScreenSaverNodeBase } from '../lib/screensaver-node-base'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { PanelColor, ScreenSaverBaseConfig } from '../types/types'
@@ -32,7 +32,7 @@ const DEFAULT_LUI_BACKGROUND = NSPanelConstants.STR_LUI_COLOR_BLACK
 const DEFAULT_LUI_FOREGROUND = NSPanelConstants.STR_LUI_COLOR_WHITE
 
 module.exports = (RED) => {
-    class ScreenSaverPageNode extends ScreenSaverNode<ScreenSaverConfig> {
+    class ScreenSaverPageNode extends ScreenSaverNodeBase<ScreenSaverConfig> {
         constructor(config: ScreenSaverConfig) {
             super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER, maxEntities: MAX_ENTITIES })
         }

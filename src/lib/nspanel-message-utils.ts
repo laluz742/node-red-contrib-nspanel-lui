@@ -24,7 +24,7 @@ export class NSPanelMessageUtils {
         result.prefix = NSPanelMessageUtils.hasProperty(input, 'prefix', true) ? input['prefix'] : null
         if (NSPanelMessageUtils.hasProperty(input, 'index')) {
             const n = Number(input['index'])
-            if (n === 0 || n === 1) {
+            if (!Number.isNaN(n)) {
                 result.index = n
             }
         }
