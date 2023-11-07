@@ -58,6 +58,9 @@
                     value: 21,
                     required: true,
                     validate(v) {
+                        const has2ndTemp = $('#node-input-hasSecondTargetTemperature').is(':checked')
+                        if (has2ndTemp === false) return true
+
                         const vNum = Number(v)
                         if (Number.isNaN(vNum) === true) return false
 
