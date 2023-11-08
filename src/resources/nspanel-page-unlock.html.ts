@@ -1,6 +1,9 @@
 // eslint-disable-next-line func-names
 ;(function ($) {
-    const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
+    const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents.concat({
+        event: 'unlock',
+        label: NSPanelLui._('events.unlock', 'nspanel-page-unlock'),
+    })
     let editableEventList
 
     const registerType = () =>
@@ -30,6 +33,7 @@
                         return Number.isNaN(pinCodeNum) !== true
                     },
                 },
+                unlockLabel: { value: NSPanelLui._('defaults.unlockLabel', 'nspanel-page-unlock') },
                 iconStatus: { value: 'lock' },
                 iconStatusColor: { value: '#ff1111' },
             },

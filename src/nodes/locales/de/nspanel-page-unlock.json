@@ -24,9 +24,13 @@
             "pinCode": "PIN",
             "unlockLabel": "Label confirm button"
         },
+        "events": {
+            "unlock": "Entsperrung"
+        },
         "placeholder": {},
         "defaults": {
-            "name": "Codesperre"
+            "name": "Codesperre",
+            "unlockLabel": "OK"
         }
     }
 }

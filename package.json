@@ -32,9 +32,10 @@
             "nspanel-page-media": "nodes/nspanel-page-media.js",
             "nspanel-page-power": "nodes/nspanel-page-power.js",
             "nspanel-page-qr": "nodes/nspanel-page-qr.js",
-            "nspanel-page-thermo": "nodes/nspanel-page-thermo.js",
             "nspanel-screensaver": "nodes/nspanel-screensaver.js",
-            "nspanel-screensaver2": "nodes/nspanel-screensaver2.js"
+            "nspanel-screensaver2": "nodes/nspanel-screensaver2.js",
+            "nspanel-page-thermo": "nodes/nspanel-page-thermo.js",
+            "nspanel-page-unlock": "nodes/nspanel-page-unlock.js"
         }
     },
     "engines": {

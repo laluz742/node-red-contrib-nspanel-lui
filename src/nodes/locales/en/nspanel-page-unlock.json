@@ -24,9 +24,13 @@
             "pinCode": "PIN",
             "unlockLabel": "Text Eingabetaste"
         },
+        "events": {
+            "unlock": "Unlock"
+        },
         "placeholder": {},
         "defaults": {
-            "name": "Lock screen"
+            "name": "Lock screen",
+            "unlockLabel": "OK"
         }
     }
 }
