@@ -1,0 +1,86 @@
+<script type="text/javascript" src="resources/node-red-contrib-nspanel-lui/nspanel-page-unlock.html.js"></script>
+
+<script type="text/html" data-template-name="nspanel-page-unlock">
+    <div class="form-row nspanel-page-tabs-row">
+        <ul style="min-width: 600px; margin-bottom: 20px;" id="nspanel-page-tabs"></ul>
+    </div>
+
+    <div id="nspanel-page-tabs-content" style="min-height: calc(100% - 100px);">
+        <div id="nspanel-page-tab-general" style="display:none">
+            <div class="form-row">
+                <label for="node-input-name" style="vertical-align: middle">
+                    <i class="fa fa-tag"></i>
+                    <span data-i18n="common.label.name"></span>
+                </label>
+                <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-nsPanel" style="vertical-align: middle">
+                    <i class="fa fa-television"></i>
+                    <span data-i18n="common.label.panel"></span>
+                </label>
+                <input type="text" id="node-input-nsPanel" />
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-title" style="vertical-align: middle">
+                    <i class="fa fa-header"></i>
+                    <span data-i18n="common.label.title"></span>
+                </label>
+                <input type="text" id="node-input-title" />
+            </div>
+
+            <br />
+            <div class="form-row">
+                <label for="node-input-timeout" style="vertical-align: middle">
+                    <i class="fa fa-hourglass-end"></i>
+                    <span data-i18n="common.label.panelTimeout"></span>
+                </label>
+                <input type="number" id="node-input-timeout" style="width: 7em;" />
+                <label for="node-input-timeout" data-i18n="common.label.seconds"></label>
+            </div>
+
+            <br />
+            <div class="form-row">
+                <label for="node-input-pinCode" style="vertical-align: middle">
+                    <i class="fa "></i>
+                    <span data-i18n="nspanel-page-unlock.label.pinCode"></span>
+                </label>
+                <input type="text" id="node-input-pinCode" style="width: 6em;" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-unlockLabel" style="vertical-align: middle">
+                    <i class="fa "></i>
+                    <span data-i18n="nspanel-page-unlock.label.unlockLabel"></span>
+                </label>
+                <input type="text" id="node-input-unlockLabel" style="width: 6em;" />
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-iconStatus" style="vertical-align: middle">
+                    <i class="fa "></i>
+                    <span data-i18n="nspanel-page-unlock.label.iconStatus"></span>
+                </label>
+                <input type="text" id="node-input-iconStatus" style="width: 6em;" />
+
+                <label for="node-input-iconStatusColor" style="vertical-align: middle">
+                    <i class="fa"></i>
+                    <span data-i18n="nspanel-page-unlock.label.iconStatusColor"></span>
+                </label>
+                <input type="color" id="node-input-iconStatusColor" style="width: 42px;" />
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-events" style="display:none">
+            <div
+                class="form-row node-input-event-control"
+                style="min-height: calc(100% - 100px);"
+                id="node-input-event-control"
+            >
+                <div class="form-row node-input-event-container-row">
+                    <ol id="node-input-event-container" style="min-width: 520px"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
