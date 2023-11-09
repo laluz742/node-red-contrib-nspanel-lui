@@ -49,7 +49,9 @@
             "swipeDown": "Swipe down"
         },
         "template-events": {
-            "icon": "Icon"
+            "icon": "Icon",
+            "msgContent": "Content",
+            "msgTopic": "Topic"
         },
         "template-entities": {
             "id": "Id",
