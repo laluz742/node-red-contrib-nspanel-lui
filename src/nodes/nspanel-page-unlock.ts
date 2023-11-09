@@ -1,9 +1,9 @@
 /* eslint-disable import/no-import-module-exports */
-import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-import { EntityBasedPageConfig, NodeRedSendCallback, PageInputMessage, PanelColor } from '../types/types'
+import { EntityBasedPageConfig, EventArgs, NodeRedSendCallback, PanelColor } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
+import { PageNodeBase } from '../lib/page-node-base'
 
 type PageUnlockConfig = EntityBasedPageConfig & {
     iconStatus: string
@@ -17,7 +17,7 @@ const DEFAULT_LABEL = 'OK'
 const UNLOCK_ACTION = 'unlock'
 
 module.exports = (RED) => {
-    class UnlockPageNode extends EntitiesPageNode<PageUnlockConfig> {
+    class UnlockPageNode extends PageNodeBase<PageUnlockConfig> {
         private config: PageUnlockConfig
 
         constructor(config: PageUnlockConfig) {
@@ -26,19 +26,27 @@ module.exports = (RED) => {
             this.config = { ...config }
         }
 
-        protected override handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
-            const handled = false
+        protected preHandleUiEvent(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
+            if (eventArgs.event2 === UNLOCK_ACTION) {
+                const inputPinCode = `${eventArgs.value}`
+                const pinCode = this.config?.pinCode
+                if (inputPinCode === pinCode) {
+                    const cfgEvent = this.getConfiguredEvents().get(UNLOCK_ACTION)
+                    this.handleConfiguredEvent(eventArgs, cfgEvent, send)
+                }
 
-            // TODO: transcribe unlock event to navigation event if passcode matches
+                // suppress further processing of UNLOCK_ACTION
+                return true
+            }
 
-            return handled
+            return false
         }
 
         protected override doGeneratePage(): string | string[] | null {
             const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
 
             const titleNav = this.generateTitleNav()
-            const entitites = this.generateEntities()
+            const entitites = this.generateActionButtons()
 
             const statusIcon = this.config?.iconStatus ?? NSPanelConstants.STR_EMPTY
             const statusIconColor = this.config?.iconStatusColor
@@ -63,15 +71,14 @@ module.exports = (RED) => {
             return result.join(NSPanelConstants.STR_LUI_DELIMITER)
         }
 
-        protected override generateEntities(): string {
+        private generateActionButtons(): string {
             const resultEntities: string[] = []
-
-            resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}`)
-            resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}`)
-            resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}`)
             resultEntities.push(
                 `${this.config?.unlockLabel ?? DEFAULT_LABEL}${NSPanelConstants.STR_LUI_DELIMITER}${UNLOCK_ACTION}`
             )
+            resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}`)
+            resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}`)
+            resultEntities.push(`${NSPanelConstants.STR_LUI_DELIMITER}`)
 
             return resultEntities.join(NSPanelConstants.STR_LUI_DELIMITER)
         }

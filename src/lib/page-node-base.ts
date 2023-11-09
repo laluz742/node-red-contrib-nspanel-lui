@@ -274,8 +274,21 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return true
     }
 
+    protected getConfiguredEvents(): ConfiguredEventsMap {
+        return this.configuredEvents
+    }
+
+    protected preHandleUiEvent(_eventArgs: EventArgs, _send: NodeRedSendCallback): boolean {
+        return false
+    }
+
     private _handleUiEvent(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
         let handled = false
+
+        const preHandleUiEventResult = this.preHandleUiEvent(eventArgs, send)
+        if (preHandleUiEventResult === true) {
+            return preHandleUiEventResult
+        }
 
         // translate possible hardware button press when hw buttons do not controll power outputs (@see
         const event2 = eventArgs.type === 'hw' ? `${eventArgs.type}.${eventArgs.source}` : eventArgs.event2
@@ -284,24 +297,31 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         if (event2 != null && this.configuredEvents.has(event2)) {
             const cfgEvent = this.configuredEvents.get(event2)
 
-            if (cfgEvent) {
-                switch (cfgEvent.t) {
-                    // mapped to navigation action
-                    case 'page': {
-                        const preHandleResult = this.prePageNavigationEvent(eventArgs, cfgEvent)
-                        if (preHandleResult !== false) {
-                            this.handlePageNavigationEvent(eventArgs, cfgEvent)
-                        }
-                        handled = true
-                        break
-                    }
+            handled = this.handleConfiguredEvent(eventArgs, cfgEvent, send)
+        }
 
-                    // mapped to out msg
-                    case 'msg': {
-                        this.handlePageMessageEvent(eventArgs, cfgEvent, send)
-                        handled = true
-                        break
+        return handled
+    }
+
+    protected handleConfiguredEvent(eventArgs: EventArgs, cfgEvent: EventMapping, send: NodeRedSendCallback): boolean {
+        let handled: boolean = false
+        if (cfgEvent) {
+            switch (cfgEvent.t) {
+                // mapped to navigation action
+                case 'page': {
+                    const preHandleResult = this.prePageNavigationEvent(eventArgs, cfgEvent)
+                    if (preHandleResult !== false) {
+                        this.handlePageNavigationEvent(eventArgs, cfgEvent)
                     }
+                    handled = true
+                    break
+                }
+
+                // mapped to out msg
+                case 'msg': {
+                    this.handlePageMessageEvent(eventArgs, cfgEvent, send)
+                    handled = true
+                    break
                 }
             }
         }
