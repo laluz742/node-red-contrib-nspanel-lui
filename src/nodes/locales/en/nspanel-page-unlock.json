@@ -1,0 +1,36 @@
+{
+    "common": {
+        "label": {
+            "name": "Name",
+            "panel": "NSPanel",
+            "title": "Title",
+            "unassigned": "not assiged",
+            "panelTimeout": "Stand-by timeout override",
+            "panelTimeoutSeconds": "seconds"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "active": "Active",
+            "notAssignedToAPanel": "No NSPanel assigned"
+        }
+    },
+    "nspanel-page-unlock": {
+        "label": {
+            "palette": "Lock Screen",
+            "iconStatus": "Icon",
+            "iconStatusColor": "Color",
+            "pinCode": "PIN",
+            "unlockLabel": "Text Eingabetaste"
+        },
+        "events": {
+            "unlock": "Unlock"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Lock screen",
+            "unlockLabel": "OK"
+        }
+    }
+}
