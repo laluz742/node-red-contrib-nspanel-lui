@@ -42,7 +42,7 @@ module.exports = (RED) => {
             return result
         }
 
-        protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
+        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
             if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return false
 
             let handled: boolean = false
@@ -51,6 +51,10 @@ module.exports = (RED) => {
                     handled = this.handleStatus2Input(msg)
                     break
                 }
+
+                default:
+                    handled = super.handleInput(msg, send)
+                    break
             }
 
             return handled
