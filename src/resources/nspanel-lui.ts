@@ -633,12 +633,16 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const tpl = $(container[0]).append($(template))
                     i18nTpl(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
 
-                    const ROW2 = tpl.find('.nlui-row-2').hide()
+                    const eventRow2 = tpl.find('.nlui-row-2')
+                    eventRow2.show()
+                    const eventRow3 = tpl.find('.nlui-row-3').hide()
+                    const eventRow4 = tpl.find('.nlui-row-4').hide()
 
                     const selectEventField = tpl.find('.node-input-event')
                     const iconField = tpl.find('.node-input-event-icon')
                     const valueField = tpl.find('.node-input-event-value')
                     const valueDataField = tpl.find('.node-input-event-data')
+                    const msgTopicField = tpl.find('.node-input-event-msgTopic')
 
                     InputWidgetFactory.createPageTypedInput(valueField, entry.t, self._node, 'nsPanel')
                     InputWidgetFactory.createPayloadTypedInput(valueDataField)
@@ -652,11 +656,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         self._updateSelectEventFields()
                     })
                     valueField.on('change', (_event, type, _value) => {
-                        if (type === 'msg') {
-                            ROW2.show()
-                        } else {
-                            ROW2.hide()
-                        }
+                        const isMsgType = type === 'msg'
+                        eventRow3.toggle(isMsgType)
+                        eventRow4.toggle(isMsgType)
                     })
 
                     selectEventField.val(entry.event)
@@ -666,6 +668,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                     valueDataField.typedInput('value', entry.data)
                     valueDataField.typedInput('type', entry.dataType)
+                    msgTopicField.val(entry.msgTopic)
 
                     selectEventField.trigger('change')
                     valueDataField.trigger('change')
@@ -761,6 +764,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 if (entry.t === 'msg') {
                     entry.data = listItem.find('.node-input-event-data').typedInput('value')
                     entry.dataType = listItem.find('.node-input-event-data').typedInput('type')
+                    entry.msgTopic = listItem.find('.node-input-event-msgTopic')?.val()?.toString() ?? ''
                 }
                 events.push(entry)
             })

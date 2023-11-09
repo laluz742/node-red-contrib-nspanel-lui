@@ -14,6 +14,7 @@ export declare type EventMapping = {
     dataType?: string
     icon?: string
     iconColor?: string
+    msgTopic?: string
 }
 
 export type EventArgs = {
