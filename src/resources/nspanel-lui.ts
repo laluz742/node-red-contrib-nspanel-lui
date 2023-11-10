@@ -177,28 +177,6 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         },
     }
 
-    class AsyncLock {
-        private disable: () => void
-        private promise: Promise<void>
-
-        constructor() {
-            this.disable = () => {}
-            this.promise = Promise.resolve()
-        }
-
-        public lock() {
-            this.promise = new Promise((resolve) => (this.disable = resolve))
-        }
-
-        public unlock() {
-            this.disable()
-        }
-
-        public async wait(): Promise<void> {
-            await this.promise
-        }
-    }
-
     interface IObserver {
         update(o: Observable, args: any): void
     }
