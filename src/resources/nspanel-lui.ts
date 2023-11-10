@@ -177,7 +177,72 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         },
     }
 
-    class EditableEntitiesListWrapper {
+    class AsyncLock {
+        private disable: () => void
+        private promise: Promise<void>
+
+        constructor() {
+            this.disable = () => {}
+            this.promise = Promise.resolve()
+        }
+
+        public lock() {
+            this.promise = new Promise((resolve) => (this.disable = resolve))
+        }
+
+        public unlock() {
+            this.disable()
+        }
+
+        public async wait(): Promise<void> {
+            await this.promise
+        }
+    }
+
+    interface IObserver {
+        update(o: Observable, args: any): void
+    }
+
+    class Observable {
+        private changed: boolean = false
+
+        private observers: WeakSet<IObserver> = new WeakSet<IObserver>()
+
+        public addObserver(o: IObserver): void {
+            if (o == null) return
+
+            this.observers.add(o)
+        }
+
+        public removeObserver(o: IObserver): void {
+            if (o == null) return
+
+            this.observers.delete(o)
+        }
+
+        public notify(args: any): void {
+            if (this.changed === false) {
+                return
+            }
+            this.changed = false
+
+            Set.prototype.forEach.call(this.observers, (obs) => obs.update(this, args))
+        }
+
+        public setChanged(): void {
+            this.changed = true
+        }
+
+        public clearChanged(): void {
+            this.changed = false
+        }
+
+        public hasChanged(): boolean {
+            return this.changed
+        }
+    }
+
+    class EditableEntitiesListWrapper extends Observable {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore TS6133
         private _node: IPageConfig
@@ -201,6 +266,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             maxEntities: number,
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
         ) {
+            super()
             this._node = node
             this._domControl = domControl
             this._domControlList = domControlList
@@ -562,7 +628,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         }
     }
 
-    class EditableEventListWrapper {
+    class EditableEventListWrapper implements IObserver {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore TS6133
         private _node: IPageConfig
@@ -589,7 +655,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             node: IPageConfig,
             domControl: JQuery<HTMLElement>,
             domControlList: JQuery<HTMLElement>,
-            allValidEvents: EventDescriptor[]
+            allValidEvents: EventDescriptor[],
+            entitiesList: EditableEntitiesListWrapper
         ) {
             this._node = node
             this._domControl = domControl
@@ -602,6 +669,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             this._pageEvents.all = allValidEventsWithHardwareButtons
 
             this._pageEvents.all.forEach((item) => this._pageEvents.available.push(item.event))
+
+            entitiesList.addObserver(this)
         }
 
         private _updateEditableListAddButton() {
@@ -735,6 +804,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             this._updateLock = false
         }
 
+        public update(_o: Observable, _args: any): void {}
+
         public empty(): void {
             this._domControlList.editableList('empty')
         }
@@ -798,13 +869,14 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             node: IPageConfig,
             controlDomSelector: string,
             allValidEvents: EventDescriptor[],
-            initialData: PanelEntity[]
+            initialData: PanelEntity[],
+            entitiesList: EditableEntitiesListWrapper
         ): EditableEventListWrapper | null {
             const domControl = $(controlDomSelector)
             const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
             if (domControlList.length === 0) return null
 
-            const el = new EditableEventListWrapper(node, domControl, domControlList, allValidEvents)
+            const el = new EditableEventListWrapper(node, domControl, domControlList, allValidEvents, entitiesList)
             el.makeControl()
             el.addItems(initialData)
             return el
