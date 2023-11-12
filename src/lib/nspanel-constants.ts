@@ -35,6 +35,7 @@ export const STR_LUI_CMD_TIME: string = `time${STR_LUI_DELIMITER}`
 export const STR_LUI_CMD_DATE: string = `date${STR_LUI_DELIMITER}`
 export const STR_LUI_CMD_DIMMODE: string = `dimmode${STR_LUI_DELIMITER}`
 export const STR_LUI_CMD_TIMEOUT: string = `timeout${STR_LUI_DELIMITER}`
+export const STR_LUI_CMD_NOTIFY: string = 'notify'
 export const STR_LUI_CMD_ACTIVATE_STARTUP_PAGE: string = `${STR_LUI_CMD_PAGETYPE}pageStartup`
 export const STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY: string = `${STR_LUI_CMD_PAGETYPE}popupNotify`
 export const STR_LUI_CMD_ACTIVATE_SCREENSAVER: string = `${STR_LUI_CMD_PAGETYPE}screensaver`

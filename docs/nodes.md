@@ -233,6 +233,29 @@ The message payload can be an array of up to six object
 | `icon` | optional, the icon to be shown |
 | `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
 
+##### Notifications
+
+The screensaver can display notifications instead of weather data. Messages must use the _notify_ topic for this. Notifications will not be stored in the history, so after being closed, wheather data will be shown again.
+
+```javascript
+var notifyMsg = {
+    topic: 'notify',
+    payload: {
+        heading: 'Warning',
+        headingColor: '#fcae1e',
+        text: 'Fan alarm of the ventilation system',
+        textColor: '#ff22ff'
+    },
+}
+```
+
+| Key | Description |
+| --- | --- |
+| `heading` | title |
+| `headingColor` | optional, color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| `text` | optional, the message to show |
+| `textColor` | optional, color for message text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+
 ### ScreenSaver Extended Node
 
 The ScreenSaver Extended node behaves is screensaver and its behaviour similiar to [ScreenSaver Node](#screensaver-node).
