@@ -30,13 +30,12 @@ export const STR_LUI_CMD_SUCCESS: string = 'Done'
 export const STR_LUI_CMD_ENTITYUPDATE: string = 'entityUpd'
 export const STR_LUI_CMD_ENTITYUPDATEDETAIL: string = 'entityUpdateDetail'
 export const STR_LUI_CMD_ENTITYUPDATEDETAIL2: string = 'entityUpdateDetail2'
-export const STR_LUI_CMD_PAGETYPE: string = `pageType${STR_LUI_DELIMITER}`
-export const STR_LUI_CMD_TIME: string = `time${STR_LUI_DELIMITER}`
-export const STR_LUI_CMD_DATE: string = `date${STR_LUI_DELIMITER}`
-export const STR_LUI_CMD_DIMMODE: string = `dimmode${STR_LUI_DELIMITER}`
-export const STR_LUI_CMD_TIMEOUT: string = `timeout${STR_LUI_DELIMITER}`
+export const STR_LUI_CMD_PAGETYPE: string = `pageType`
+export const STR_LUI_CMD_TIME: string = `time`
+export const STR_LUI_CMD_DATE: string = `date`
+export const STR_LUI_CMD_DIMMODE: string = `dimmode`
+export const STR_LUI_CMD_TIMEOUT: string = `timeout`
 export const STR_LUI_CMD_NOTIFY: string = 'notify'
-export const STR_LUI_CMD_ACTIVATE_STARTUP_PAGE: string = `${STR_LUI_CMD_PAGETYPE}pageStartup`
 export const STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY: string = `${STR_LUI_CMD_PAGETYPE}popupNotify`
 export const STR_LUI_CMD_ACTIVATE_SCREENSAVER: string = `${STR_LUI_CMD_PAGETYPE}screensaver`
 export const STR_LUI_EVENT_BEXIT: string = 'bExit'
@@ -91,6 +90,7 @@ export const STR_PAGE_TYPE_CARD_POWER: string = 'cardPower'
 export const STR_PAGE_TYPE_CARD_QR: string = 'cardQR'
 export const STR_PAGE_TYPE_CARD_SCREENSAVER: string = 'screensaver'
 export const STR_PAGE_TYPE_CARD_SCREENSAVER2: string = 'screensaver2'
+export const STR_PAGE_TYPE_CARD_STARTUP: string = `pageStartup`
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
 
 // update process

@@ -8,6 +8,7 @@ import {
     NodeMessageInFlow,
     NodeRedOnErrorCallback,
     NodeRedSendCallback,
+    HMICommand,
 } from '../types/types'
 
 interface NSPanelNavToConfig extends PageConfig {}
@@ -52,8 +53,8 @@ module.exports = (RED) => {
             return '@hmi-control'
         }
 
-        public generatePage() {
-            return ''
+        public generatePage(): HMICommand | HMICommand[] | null {
+            return null
         }
 
         public generatePopupDetails(_type: string, _entityId: string) {

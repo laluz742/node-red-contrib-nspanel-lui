@@ -1,6 +1,6 @@
 import { IconProvider } from './icon-provider'
 import { NodeBase } from './node-base'
-import { ActiveCharacteristic, INodeConfig, PanelColor, SplitTime } from '../types/types'
+import { ActiveCharacteristic, HMICommand, INodeConfig, PanelColor, SplitTime } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
 export class NSPanelUtils {
@@ -80,6 +80,13 @@ export class NSPanelUtils {
         if (v > max) return max
 
         return v
+    }
+
+    public static transformHmiCommand(hmiCmd: HMICommand): string {
+        let result: string = hmiCmd.cmd + NSPanelConstants.STR_LUI_DELIMITER
+        result += Array.isArray(hmiCmd.params) ? hmiCmd.params.join(NSPanelConstants.STR_LUI_DELIMITER) : hmiCmd.params
+
+        return result
     }
 
     public static convertTemperature(temperature: number, sourceUnit: string, targetUnit: string): number | null {

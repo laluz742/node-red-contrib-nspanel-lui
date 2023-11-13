@@ -2,7 +2,7 @@
 import { ScreenSaverNodeBase } from '../lib/screensaver-node-base'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-import { PageData, PanelColor, ScreenSaverBaseConfig } from '../types/types'
+import { HMICommand, HMICommandParameters, PageData, PanelColor, ScreenSaverBaseConfig } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
 type ScreenSaverConfig = ScreenSaverBaseConfig & {
@@ -37,29 +37,28 @@ module.exports = (RED) => {
             super(config, RED, { pageType: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER, maxEntities: MAX_ENTITIES })
         }
 
-        public override generatePage(): string | string[] | null {
-            const result: string[] = []
+        public override generatePage(): HMICommand | HMICommand[] | null {
+            const result: HMICommand[] = []
 
-            const statusUpdate = this.generateStatusUpdate()
+            const statusUpdate: HMICommand = this.generateStatusUpdate()
             if (statusUpdate) result.push(statusUpdate)
 
-            const weatherUpdate = this.generateWeatherUpdate()
+            const weatherUpdate: HMICommand = this.generateWeatherUpdate()
             if (weatherUpdate) result.push(weatherUpdate)
 
-            const colorSet = this.generateColorCommand()
+            const colorSet: HMICommand = this.generateColorCommand()
             if (colorSet) result.push(colorSet)
 
             return result
         }
 
-        private generateWeatherUpdate() {
+        private generateWeatherUpdate(): HMICommand {
             const pageData: PageData = this.getPageData()
             if (pageData.entities.length === 0) {
                 return null
             }
 
-            let result = `${CMD_WEATHERUPDATE}${NSPanelConstants.STR_LUI_DELIMITER}`
-            const resultEntities: string[] = []
+            let hmiCmdParams: HMICommandParameters = []
             const data = pageData.entities
 
             // eslint-disable-next-line prefer-const
@@ -73,15 +72,18 @@ module.exports = (RED) => {
                     item.text,
                     item.value
                 )
-                resultEntities.push(entity)
+                hmiCmdParams.push(entity)
             }
 
-            result += resultEntities.join(NSPanelConstants.STR_LUI_DELIMITER)
-            return result
+            const hmiCmd: HMICommand = {
+                cmd: CMD_WEATHERUPDATE,
+                params: hmiCmdParams,
+            }
+
+            return hmiCmd
         }
 
-        private generateColorCommand(): string {
-            const result: (number | string)[] = [CMD_COLOR]
+        private generateColorCommand(): HMICommand {
             const config: ScreenSaverConfig = this.getConfig()
 
             const colorBackground = NSPanelColorUtils.toHmiColor(config?.colorBackground, DEFAULT_LUI_BACKGROUND)
@@ -101,6 +103,7 @@ module.exports = (RED) => {
             const colorMainTextAlt2 = NSPanelColorUtils.toHmiColor(config?.colorMainTextAlt2, DEFAULT_LUI_FOREGROUND)
             const colorTimeAdd = NSPanelColorUtils.toHmiColor(config?.colorTimeAdd, DEFAULT_LUI_FOREGROUND)
 
+            const result: HMICommandParameters = []
             result.push(colorBackground)
             result.push(colorTime)
             result.push(colorTimeAmPm)
@@ -118,9 +121,12 @@ module.exports = (RED) => {
             result.push(colorMainTextAlt2)
             result.push(colorTimeAdd)
 
-            const cmdResult = result.join(NSPanelConstants.STR_LUI_DELIMITER)
+            const hmiCmd: HMICommand = {
+                cmd: CMD_COLOR,
+                params: result,
+            }
 
-            return cmdResult
+            return hmiCmd
         }
     }
 

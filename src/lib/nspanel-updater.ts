@@ -16,6 +16,7 @@ import {
     NodeRedI18nResolver,
     FirmwareEventArgs,
     FirmwareType,
+    HMICommand,
 } from '../types/types'
 
 import * as NSPanelConstants from './nspanel-constants'
@@ -442,7 +443,12 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
 
     // #region version information retrieval
     private getCurrentHmiVersion(): void {
-        this._mqttHandler?.sendToPanel(NSPanelConstants.STR_LUI_CMD_ACTIVATE_STARTUP_PAGE)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
+            params: NSPanelConstants.STR_PAGE_TYPE_CARD_STARTUP,
+        }
+        const mqttCmd: string = NSPanelUtils.transformHmiCommand(hmiCmd)
+        this._mqttHandler?.sendToPanel(mqttCmd)
     }
 
     private getCurrentBerryDriverVersion(): void {

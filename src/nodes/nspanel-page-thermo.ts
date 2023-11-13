@@ -15,6 +15,8 @@ import {
     SensorEventArgs,
     PageEntityData,
     InputHandlingResult,
+    HMICommand,
+    HMICommandParameters,
 } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
@@ -70,16 +72,10 @@ module.exports = (RED) => {
             this.data.targetTemperature2 = this.config.targetTemperature2
         }
 
-        protected override doGeneratePage(): string | string[] | null {
-            const result: string[] = []
-            result.push(NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE)
+        protected override doGeneratePage(): HMICommand | null {
+            const result: HMICommandParameters = []
 
-            result.push(this.entitiesPageNodeConfig.title ?? '')
             const titleNav = this.generateTitleNav()
-            result.push(titleNav)
-
-            result.push(this.config?.name ?? '') // TODO: should be configurable entityId?
-
             const currTemp =
                 this.data.currentTemperature == null || Number.isNaN(this.data.currentTemperature)
                     ? ''
@@ -91,6 +87,11 @@ module.exports = (RED) => {
             const minHeatSetPoint: number = (this.config?.minHeatSetpointLimit ?? 0) * TEMPERATURE_RESOLUTION_FACTOR
             const maxHeatSetPoint: number = (this.config?.maxHeatSetpointLimit ?? 0) * TEMPERATURE_RESOLUTION_FACTOR
             const tempStep = Number(this.config?.temperatureSteps) * TEMPERATURE_RESOLUTION_FACTOR // TODO: NaN check
+            const actions = this.generateActions()
+
+            result.push(this.entitiesPageNodeConfig.title ?? '')
+            result.push(titleNav)
+            result.push(this.config?.name ?? '') // TODO: should be configurable entityId?
 
             result.push(currTemp)
             result.push(targetTemp.toString())
@@ -99,7 +100,6 @@ module.exports = (RED) => {
             result.push(maxHeatSetPoint.toString())
             result.push(tempStep.toString())
 
-            const actions = this.generateActions()
             result.push(actions)
 
             result.push(this.config?.currentTemperatureLabel ?? NSPanelConstants.STR_EMPTY)
@@ -114,8 +114,11 @@ module.exports = (RED) => {
 
             result.push(this.config?.showDetailsPopup ? NSPanelConstants.STR_EMPTY : '1')
 
-            const pageData = result.join(NSPanelConstants.STR_LUI_DELIMITER)
-            return pageData
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE,
+                params: result,
+            }
+            return hmiCmd
         }
 
         protected isUseOwnSensorData(): boolean {
@@ -151,7 +154,7 @@ module.exports = (RED) => {
                 }
             }
 
-            return resultActions.join(NSPanelConstants.STR_LUI_DELIMITER)
+            return resultActions.join(NSPanelConstants.STR_LUI_DELIMITER) // FIXME: HMICommandParamters
         }
 
         private _renderAction(

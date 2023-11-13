@@ -1,17 +1,17 @@
-import { IPageCache } from '../types/types'
+import { HMICommand, IPageCache } from '../types/types'
 
 export class SimplePageCache implements IPageCache {
-    private _data: string | string[] | null
+    private _data: HMICommand | HMICommand[] | null
 
     public clear(): void {
         this._data = null
     }
 
-    public put(data: string | string[] | null): void {
+    public put(data: HMICommand | HMICommand[] | null): void {
         this._data = data
     }
 
-    public get(): string | string[] | null {
+    public get(): HMICommand | HMICommand[] | null {
         return this._data
     }
 

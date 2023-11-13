@@ -30,9 +30,11 @@ import {
     StatusLevel,
     NodeStatus,
     PanelControllerConfig,
+    HMICommand,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 import { IPanelNodeEx } from '../types/panel'
+import { NSPanelUtils } from './nspanel-utils'
 
 const log = Logger('NSPanelController')
 
@@ -134,7 +136,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this._cache.addPage(page.id, page)
 
         page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
-        page.on('page:send', (pageOfSend: IPageNode, data: string) => this.onPageSendRequest(pageOfSend, data))
+        page.on('page:send', (pageOfSend: IPageNode, cmds: HMICommand | HMICommand[]) =>
+            this.onPageSendRequest(pageOfSend, cmds)
+        )
         page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
         page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
     }
@@ -368,10 +372,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private onPageSendRequest(page: IPageNode, data: string | string[]): void {
+    private onPageSendRequest(page: IPageNode, cmds: HMICommand | HMICommand[]): void {
         if (page == null || !this._cache.isPageKnown(page.id)) return
 
-        this.sendToPanel(data)
+        this.sendToPanel(cmds)
     }
 
     private delayPanelStartupFlag = true
@@ -476,7 +480,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             case 'page':
                 if (pageNode != null) {
                     if (fullUpdate) {
-                        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_PAGETYPE + pageNode.getPageType())
+                        const hmiCmd: HMICommand = {
+                            cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
+                            params: pageNode.getPageType(),
+                        }
+                        this.sendToPanel(hmiCmd)
                         this.sendTimeoutToPanel(pageNode.getTimeout())
                     }
 
@@ -587,17 +595,27 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.setNodeStatus('warn', this._i18n('common.status.noScreenSaverPage'))
             log.warn('No screensaver found.')
 
-            this.sendToPanel(NSPanelConstants.STR_LUI_CMD_ACTIVATE_SCREENSAVER)
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
+                params: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER,
+            }
+            this.sendToPanel(hmiCmd)
         }
     }
 
     private activateStartupPage() {
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_ACTIVATE_STARTUP_PAGE)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
+            params: NSPanelConstants.STR_PAGE_TYPE_CARD_STARTUP,
+        }
+        this.sendToPanel(hmiCmd)
     }
 
     private updatePage(page: IPageNode) {
-        const data: string[] = []
-        if (page.isForceRedraw()) data.push(NSPanelConstants.STR_LUI_CMD_PAGETYPE + page.getPageType())
+        const data: HMICommand[] = []
+        if (page.isForceRedraw()) {
+            data.push({ cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: page.getPageType() })
+        }
 
         const pageData = page.generatePage()
         if (Array.isArray(pageData)) {
@@ -623,9 +641,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const notifyPageData = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
 
         if (notifyPageData !== null) {
-            let pageData: string[] = [NSPanelConstants.STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY]
-            pageData = pageData.concat(notifyPageData)
-            this.sendToPanel(pageData)
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY,
+                params: notifyPageData,
+            }
+            this.sendToPanel(hmiCmd)
 
             if (this._ctrlConfig.beepOnNotifications || history.notifyData.beep) {
                 this.sendBuzzerCommand(3, 2, 1)
@@ -633,16 +653,17 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private sendToPanel(data: string[] | string | null) {
-        if (data == null || this._panelMqttHandler === null) return
+    private sendToPanel(cmds: HMICommand | HMICommand[] | null) {
+        if (cmds == null || this._panelMqttHandler === null) return
 
-        if (typeof data === 'object') {
+        if (Array.isArray(cmds)) {
             // eslint-disable-next-line prefer-const
-            for (let d in data) {
-                const dStr: string = data[d] as string
-                this._panelMqttHandler.sendToPanel(dStr)
+            for (let d in cmds) {
+                const data: string = NSPanelUtils.transformHmiCommand(cmds[d])
+                this._panelMqttHandler.sendToPanel(data)
             }
         } else {
+            const data = NSPanelUtils.transformHmiCommand(cmds)
             this._panelMqttHandler.sendToPanel(data)
         }
     }
@@ -657,12 +678,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         const timeStr = `${timeHours.toString().padStart(2, '0')}:${timeMinutes.toString().padStart(2, '0')}`
 
-        const cmds = [
-            NSPanelConstants.STR_LUI_CMD_ACTIVATE_SCREENSAVER,
-            'statusUpdate',
-            NSPanelConstants.STR_LUI_CMD_TIME + offline,
-            NSPanelConstants.STR_LUI_CMD_DATE + stopped,
-            `notify~~${timeStr}`,
+        const cmds: HMICommand[] = [
+            { cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER },
+            { cmd: 'statusUpdate', params: null },
+            { cmd: NSPanelConstants.STR_LUI_CMD_TIME, params: offline },
+            { cmd: NSPanelConstants.STR_LUI_CMD_DATE, params: stopped },
+            { cmd: NSPanelConstants.STR_LUI_CMD_NOTIFY, params: timeStr },
         ] // TODO: reattach relays?
         this.sendToPanel(cmds)
     }
@@ -700,7 +721,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             timeStr = date.toLocaleTimeString(undefined, DEFAULT_TIME_OPTIONS)
         }
 
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_TIME + timeStr)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_TIME,
+            params: timeStr,
+        }
+        this.sendToPanel(hmiCmd)
     }
 
     private sendDateToPanel() {
@@ -723,7 +748,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             dateStr = date.toLocaleDateString(undefined, DEFAULT_DATE_OPTIONS)
         }
 
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_DATE + dateStr)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_DATE,
+            params: dateStr,
+        }
+        this.sendToPanel(hmiCmd)
     }
 
     private sendDimModeToPanel() {
@@ -735,12 +764,21 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             ? this._panelConfig.panel.panelDimHighNight
             : this._panelConfig.panel.panelDimHigh
 
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_DIMMODE + dimLow + NSPanelConstants.STR_LUI_DELIMITER + dimHigh)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_DIMMODE,
+            params: [dimLow, dimHigh],
+        }
+
+        this.sendToPanel(hmiCmd)
     }
 
     private sendTimeoutToPanel(timeout: number | null = null) {
         const tempTimeout = timeout === null ? this._panelConfig.panel.panelTimeout : timeout
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_TIMEOUT + tempTimeout)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_TIMEOUT,
+            params: tempTimeout,
+        }
+        this.sendToPanel(hmiCmd)
     }
     // #endregion basic panel commands
 

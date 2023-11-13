@@ -1,6 +1,6 @@
 /* eslint-disable import/no-import-module-exports */
 import { EntitiesPageNode } from '../lib/entities-page-node'
-import { EntityBasedPageConfig, PanelEntity } from '../types/types'
+import { EntityBasedPageConfig, HMICommand, HMICommandParameters, PanelEntity } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
 interface PageQRConfig extends EntityBasedPageConfig {
@@ -33,19 +33,23 @@ module.exports = (RED) => {
             this.config = { ...config }
         }
 
-        protected override doGeneratePage(): string | string[] | null {
-            const result: string[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
-            result.push(this.config.title ?? '')
+        protected override doGeneratePage(): HMICommand | null {
+            const hmiCmdParams: HMICommandParameters = []
+
             const titleNav = this.generateTitleNav()
-            result.push(titleNav)
-
             const qrText: string = this.config.qrCode ?? ''
-            result.push(qrText)
-
             const entitites = this.generateEntities()
-            result.push(entitites)
 
-            return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+            hmiCmdParams.push(this.config.title ?? '')
+            hmiCmdParams.push(titleNav)
+            hmiCmdParams.push(qrText)
+            hmiCmdParams.push(entitites)
+
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE,
+                params: hmiCmdParams,
+            }
+            return hmiCmd
         }
     }
 

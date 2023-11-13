@@ -1,7 +1,14 @@
 /* eslint-disable import/no-import-module-exports */
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-import { EntityBasedPageConfig, EventArgs, NodeRedSendCallback, PanelColor } from '../types/types'
+import {
+    EntityBasedPageConfig,
+    EventArgs,
+    HMICommand,
+    HMICommandParameters,
+    NodeRedSendCallback,
+    PanelColor,
+} from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 import { PageNodeBase } from '../lib/page-node-base'
 
@@ -42,8 +49,8 @@ module.exports = (RED) => {
             return false
         }
 
-        protected override doGeneratePage(): string | string[] | null {
-            const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
+        protected override doGeneratePage(): HMICommand | null {
+            const hmiCmdParams: HMICommandParameters = []
 
             const titleNav = this.generateTitleNav()
             const entitites = this.generateActionButtons()
@@ -53,22 +60,26 @@ module.exports = (RED) => {
             const numpadStatus = NSPanelConstants.STR_ENABLE
             const flashingStatus = NSPanelConstants.STR_DISABLE
 
-            result.push(this.config.title ?? NSPanelConstants.STR_EMPTY)
-            result.push(titleNav)
-            result.push(this.config?.name ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(this.config.title ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(titleNav)
+            hmiCmdParams.push(this.config?.name ?? NSPanelConstants.STR_EMPTY)
 
-            result.push(entitites)
-            result.push(NSPanelUtils.getIcon(statusIcon))
-            result.push(NSPanelColorUtils.toHmiColor(statusIconColor))
-            result.push(numpadStatus)
-            result.push(flashingStatus)
+            hmiCmdParams.push(entitites)
+            hmiCmdParams.push(NSPanelUtils.getIcon(statusIcon))
+            hmiCmdParams.push(NSPanelColorUtils.toHmiColor(statusIconColor))
+            hmiCmdParams.push(numpadStatus)
+            hmiCmdParams.push(flashingStatus)
 
             // extra button
-            result.push(NSPanelConstants.STR_EMPTY)
-            result.push(NSPanelConstants.STR_EMPTY)
-            result.push(NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(NSPanelConstants.STR_EMPTY)
 
-            return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE,
+                params: hmiCmdParams,
+            }
+            return hmiCmd
         }
 
         private generateActionButtons(): string {
