@@ -4,6 +4,7 @@ import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import {
+    InputHandlingResult,
     NodeRedSendCallback,
     PageEntityData,
     PageInputMessage,
@@ -42,28 +43,28 @@ module.exports = (RED) => {
             return result
         }
 
-        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-            if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return false
+        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+            if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return { handled: false }
 
-            let handled: boolean = false
+            let inputHandled: InputHandlingResult = { handled: false }
             switch (msg.topic) {
                 case NSPanelConstants.STR_MSG_TOPIC_STATUS2: {
-                    handled = this.handleStatus2Input(msg)
+                    inputHandled = this.handleStatus2Input(msg)
                     break
                 }
 
                 default:
-                    handled = super.handleInput(msg, send)
+                    inputHandled = super.handleInput(msg, send)
                     break
             }
 
-            return handled
+            return inputHandled
         }
 
-        private handleStatus2Input(msg: PageInputMessage): boolean {
-            if (msg.payload === undefined) return false
+        private handleStatus2Input(msg: PageInputMessage): InputHandlingResult {
+            if (msg.payload === undefined) return { handled: false }
 
-            let handled: boolean = false
+            const inputHandled: InputHandlingResult = { handled: false }
             let dirty: boolean = false
 
             // TODO: take msg.parts into account to allow to set specific status
@@ -94,10 +95,11 @@ module.exports = (RED) => {
 
             if (dirty) {
                 this.status2Data = status2Items
-                handled = true
+                inputHandled.handled = true
+                inputHandled.requestUpdate = true
             }
 
-            return handled
+            return inputHandled
         }
 
         private generateWeatherUpdate(): string {

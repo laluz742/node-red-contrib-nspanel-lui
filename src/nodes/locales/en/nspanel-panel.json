@@ -46,7 +46,8 @@
             "swipeRight": "Swipe right",
             "swipeLeft": "Swipe left",
             "swipeUp": "Swipe up",
-            "swipeDown": "Swipe down"
+            "swipeDown": "Swipe down",
+            "entity": "Entity"
         },
         "template-events": {
             "icon": "Icon",

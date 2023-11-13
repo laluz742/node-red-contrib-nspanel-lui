@@ -2,7 +2,14 @@
 import { PageNodeBase } from '../lib/page-node-base'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
-import { ChartData, ChartDataItem, EntityBasedPageConfig, NodeRedSendCallback, PageInputMessage } from '../types/types'
+import {
+    ChartData,
+    ChartDataItem,
+    EntityBasedPageConfig,
+    InputHandlingResult,
+    NodeRedSendCallback,
+    PageInputMessage,
+} from '../types/types'
 import * as NSPanelPanelConstants from '../lib/nspanel-constants'
 
 type PageChartConfig = EntityBasedPageConfig & {
@@ -28,8 +35,8 @@ module.exports = (RED) => {
             this.config = { ...config }
         }
 
-        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-            let handled = false
+        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+            let inputHandled: InputHandlingResult = { handled: false, requestUpdate: false }
             let dirty = false
 
             switch (msg.topic) {
@@ -90,13 +97,14 @@ module.exports = (RED) => {
             }
 
             if (dirty) {
-                handled = true
+                inputHandled.handled = true
+                inputHandled.requestUpdate = true
                 this.getCache().clear()
             } else {
-                handled = super.handleInput(msg, send)
+                inputHandled = super.handleInput(msg, send)
             }
 
-            return handled
+            return inputHandled
         }
 
         protected override doGeneratePage(): string | string[] | null {

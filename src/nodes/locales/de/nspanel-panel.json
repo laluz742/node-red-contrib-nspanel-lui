@@ -46,7 +46,8 @@
             "swipeRight": "Nach rechts wischen",
             "swipeLeft": "Nach links wischen",
             "swipeUp": "Nach oben wischen",
-            "swipeDown": "Nach unten wischen"
+            "swipeDown": "Nach unten wischen",
+            "entity": "Element"
         },
         "template-events": {
             "icon": "Icon",

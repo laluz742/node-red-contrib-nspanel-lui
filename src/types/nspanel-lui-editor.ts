@@ -15,10 +15,15 @@ export type EventTypeAttrs = {
     isLight?: boolean
     isInputSel?: boolean
     isTimer?: boolean
+    opensPopup?: boolean
+}
+
+export type PanelEntityListItem = PanelEntity & {
+    listId: string
 }
 
 export type PanelEntityContainer = {
-    entry: PanelEntity
+    entry: PanelEntityListItem
     element?: any
 }
 

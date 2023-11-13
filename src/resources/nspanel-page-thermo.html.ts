@@ -150,8 +150,7 @@
                     self,
                     '#node-input-event-control',
                     ALL_VALID_EVENTS_BASE,
-                    self.events,
-                    editableEntitiesList
+                    self.events
                 )
                 NSPanelLui.Interactions.addPanelChangeBehavior(
                     nsPanelInputField,

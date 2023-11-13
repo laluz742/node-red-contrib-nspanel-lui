@@ -11,6 +11,7 @@ import {
     EventArgs,
     NotifyData,
     PanelColor,
+    InputHandlingResult,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 import { NSPanelMessageUtils } from './nspanel-message-utils'
@@ -32,21 +33,21 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         this.config = config
     }
 
-    protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
-        if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return false
+    protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
+        if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return { handled: false }
 
         switch (msg.topic) {
             case NSPanelConstants.STR_MSG_TOPIC_STATUS:
                 this.handleStatusInput(msg)
                 this.requestUpdate()
-                return true
+                return { handled: true, requestUpdate: true }
 
             case NSPanelConstants.STR_MSG_TOPIC_NOTIFY:
                 this.handleNotifyInput(msg)
-                return true
+                return { handled: true, requestUpdate: false }
         }
 
-        return false
+        return { handled: false }
     }
 
     private handleStatusInput(msg: PageInputMessage): void {

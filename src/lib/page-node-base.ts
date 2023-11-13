@@ -20,6 +20,7 @@ import {
     NodeAPI,
     IPageCache,
     IPageNode,
+    InputHandlingResult,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -158,8 +159,10 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return this.panelNode
     }
 
-    protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
-        return false
+    protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
+        return {
+            handled: false,
+        }
     }
 
     protected prePageNavigationEvent(_eventArgs: EventArgs, _eventConfig: EventMapping): boolean {
@@ -241,29 +244,29 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         done()
     }
 
-    private _handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-        let handled = false
+    private _handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+        let inputResult: InputHandlingResult = { handled: false }
 
         try {
-            handled = this.handleInput(msg, send)
+            inputResult = this.handleInput(msg, send)
         } catch (err: unknown) {
             if (err instanceof Error) {
                 this.__log?.error(`Error handling input: ${err.message}`)
             }
         }
 
-        if (handled === false) {
+        if (inputResult.handled === false) {
             switch (msg.topic) {
                 case NSPanelConstants.STR_MSG_TOPIC_DATA:
-                    handled = this._handleDataInputInternal(msg, send)
+                    inputResult = this._handleDataInputInternal(msg, send)
                     break
             }
         }
 
-        return handled
+        return inputResult
     }
 
-    private _handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
+    private _handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
         const result: PageEntityData[] = []
 
         // TODO: take msg.parts or index into account to allow to set specific status
@@ -275,7 +278,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         })
 
         this.pageData.entities = result.slice(0, this.options?.maxEntities ?? 0)
-        return true
+        return { handled: true }
     }
 
     protected getConfiguredEvents(): ConfiguredEventsMap {

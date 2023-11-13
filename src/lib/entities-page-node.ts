@@ -10,6 +10,7 @@ import {
     PageInputMessage,
     NodeRedSendCallback,
     PageEntityData,
+    InputHandlingResult,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -31,7 +32,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         this.entities.set(config.name, { entityId: config.name, type: '@self' })
     }
 
-    protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback) {
+    protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
         switch (msg.topic) {
             case NSPanelConstants.STR_MSG_TOPIC_DATA: {
                 // copy cached data
@@ -53,11 +54,11 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
                     this.entityData = entityData
                     this.getCache().clear()
                 }
-                return true
+                return { handled: true, requestUpdate: true }
             }
         }
 
-        return false
+        return { handled: false }
     }
 
     protected doGeneratePage(): string | string[] | null {

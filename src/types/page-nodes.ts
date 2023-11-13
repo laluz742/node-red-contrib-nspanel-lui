@@ -42,3 +42,8 @@ export type NodeStatus = {
     statusLevel: StatusLevel
     msg: string
 }
+
+export type InputHandlingResult = {
+    handled: boolean
+    requestUpdate?: boolean
+}
