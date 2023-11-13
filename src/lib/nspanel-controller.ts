@@ -134,6 +134,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this._cache.addPage(page.id, page)
 
         page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
+        page.on('page:send', (pageOfSend: IPageNode, data: string) => this.onPageSendRequest(pageOfSend, data))
         page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
         page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
     }
@@ -365,6 +366,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (currentPage != null && currentPageNode?.id === page.id) {
             this.renderPage(currentPage)
         }
+    }
+
+    private onPageSendRequest(page: IPageNode, data: string | string[]): void {
+        if (page == null || !this._cache.isPageKnown(page.id)) return
+
+        this.sendToPanel(data)
     }
 
     private delayPanelStartupFlag = true

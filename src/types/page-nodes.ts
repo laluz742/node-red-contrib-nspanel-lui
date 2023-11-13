@@ -14,6 +14,7 @@ export type PageOnInputCallback = (
 ) => void
 
 export type PageEventCallbackType = (page: IPageNode) => void
+export type PageSendEventCallbackType = (page: IPageNode, data: string | string[]) => void
 export type PageIdEventCallbackType = (pageId: PageId) => void
 
 // FIXME: hierarchy mismatch
@@ -31,6 +32,7 @@ export interface IPageNode extends INodeConfig {
 
     emit(event: string | symbol, ...args: any[]): boolean
     on(event: 'page:update', callback: PageEventCallbackType): void
+    on(event: 'page:send', callback: PageSendEventCallbackType): void
     on(event: 'nav:pageId', listener: PageIdEventCallbackType): void
     on(event: 'nav:page', listener: PageIdEventCallbackType): void
     on(event: 'input', listener: PageOnInputCallback): void

@@ -138,8 +138,8 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         }
     }
 
-    protected sendToPanel(data): void {
-        this.emit('ctrl:send', { page: this, data })
+    protected sendToPanel(data: string | string[]): void {
+        this.emit('page:send', this, data)
     }
 
     public isScreenSaver() {
