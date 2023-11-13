@@ -5,14 +5,15 @@ var NSPanelLui = NSPanelLui || {} // eslint-disable-line
 type EventDescriptor = import('../types/nspanel-lui-editor').EventDescriptor
 type EventMapping = import('../types/nspanel-lui-editor').EventMapping
 type PanelEntity = import('../types/nspanel-lui-editor').PanelEntity
+type PanelEntityListItem = import('../types/nspanel-lui-editor').PanelEntityListItem
 type IPageConfig = import('../types/nspanel-lui-editor').IPageConfig
 type PanelBasedConfig = import('../types/nspanel-lui-editor').PanelBasedConfig
-
 type EventTypeAttrs = import('../types/nspanel-lui-editor').EventTypeAttrs
 type PanelEntityContainer = import('../types/nspanel-lui-editor').PanelEntityContainer
 type TypedInputParams = import('../types/nspanel-lui-editor').TypedInputParams
 type TypedInputTypeParams = import('../types/nspanel-lui-editor').TypedInputTypeParams
 type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingContainer
+
 // #endregion types
 
 // eslint-disable-next-line func-names, @typescript-eslint/no-shadow
@@ -54,7 +55,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
     const PANEL_ENTITY_TYPE_ATTRS: Map<string, EventTypeAttrs> = new Map<string, EventTypeAttrs>([
         ['delete', { hasId: false, hasLabel: false, hasIcon: false, hasOptionalValue: false }],
-        ['shutter', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isShutter: true }],
+        [
+            'shutter',
+            { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isShutter: true, opensPopup: true },
+        ],
         ['light', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isLight: true }],
         ['fan', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isFan: true }],
         ['input_sel', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isInputSel: true }],
@@ -73,6 +77,13 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     })()
 
     const DEFAULT_COLOR = '#ffffff'
+
+    function getRandomId(): string {
+        if (typeof crypto['randomUUID'] === 'function') return crypto.randomUUID()
+
+        // TODO: downward compatibility needed?
+        return new Date().getMilliseconds() + Math.floor(Math.random() * 10000).toString()
+    }
 
     class NSPanelLuiEditorValidate {
         public static numberInRange(v: any, min: number, max: number): boolean {
@@ -177,7 +188,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         },
     }
 
-    class EditableEntitiesListWrapper {
+    class EditableEntitiesListWrapper extends EventTarget {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore TS6133
         private _node: IPageConfig
@@ -192,7 +203,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
         private _editableListAddButton
 
-        private _count: number = 0
+        private _entities: Map<string, PanelEntityListItem> = new Map<string, PanelEntityListItem>()
 
         constructor(
             node: IPageConfig,
@@ -201,6 +212,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             maxEntities: number,
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
         ) {
+            super()
             this._node = node
             this._domControl = domControl
             this._domControlList = domControlList
@@ -212,22 +224,29 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             const self = this // eslint-disable-line
             this._domControlList?.editableList({
                 addItem(container, _i, data: PanelEntityContainer) {
-                    self._count += 1
                     self._updateListAddButton()
 
                     data.element = container
-
-                    if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
-                        data.entry = { type: 'delete', entityId: '', iconColor: DEFAULT_COLOR }
-                    }
-                    const entry = data.entry
-                    if (!Object.prototype.hasOwnProperty.call(entry, 'type')) {
-                        entry.type = 'delete' // TODO: 'delete' might not be a valid entity type
-                    }
                     container.css({
                         overflow: 'hidden',
                         whiteSpace: 'nowrap',
                     })
+
+                    if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
+                        data.entry = {
+                            listId: null,
+                            type: 'delete',
+                            entityId: '',
+                            iconColor: DEFAULT_COLOR,
+                        }
+                    }
+                    const entry = data.entry as PanelEntityListItem
+                    if (!Object.prototype.hasOwnProperty.call(entry, 'type')) {
+                        entry.type = 'delete' // TODO: 'delete' might not be a valid entity type
+                    }
+
+                    entry.listId = getRandomId()
+                    self._entities.set(entry.listId, entry)
 
                     // #region create DOM
                     const template = $('#nspanel-lui-tpl-entitieslist').contents().clone()
@@ -249,6 +268,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const rowTimerLabels = tpl.find('.nlui-row-timer-labels').hide()
 
                     // #region row1
+                    const listIdField = tpl.find('.node-input-entity-listid')
                     const selectTypeField = tpl.find('.node-input-entity-type')
 
                     self._validEntities.forEach((item) => {
@@ -313,8 +333,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #endregion create DOM
 
                     selectTypeField.on('change', () => {
-                        const val = `${selectTypeField.val()}`
-                        const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(val)
+                        const typeValue = `${selectTypeField.val()}`
+                        entry.type = typeValue
+                        const entityTypeAttrs = PANEL_ENTITY_TYPE_ATTRS.get(typeValue)
 
                         if (entityTypeAttrs != null) {
                             ROW1_2.toggle(entityTypeAttrs.hasId)
@@ -337,8 +358,21 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                             }
                             numberMinField.prop('disabled', entityTypeAttrs.isFan)
                         }
+                        self.notifyChange(entry)
                     })
 
+                    // #region attach observer
+                    entityIdField.on('change', () => {
+                        entry.entityId = entityIdField.val().toString()
+                        self.notifyChange(entry)
+                    })
+                    entityTextField.on('change', () => {
+                        entry.text = entityTextField.val().toString()
+                        self.notifyChange(entry)
+                    })
+
+                    // #region update fields with entity data
+                    listIdField.val(entry.listId)
                     entityIdField.val(entry.entityId)
                     entityIconField.val(entry.icon ?? '')
                     entityIconColorField.val(entry.iconColor ?? '')
@@ -384,13 +418,18 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     timerLabel2Field.val(entry.label2 ?? '')
                     timerLabel3Field.val(entry.label3 ?? '')
 
+                    // #endregion update fields with entity data
                     selectTypeField.val(entry.type)
                     selectTypeField.trigger('change')
+
+                    self.notifyChange(entry, 'add')
                 },
 
-                removeItem(_listItem) {
-                    self._count -= 1
+                removeItem(listItem) {
+                    const entity: PanelEntityListItem = listItem.entry
+                    self._entities.delete(entity.listId)
                     self._updateListAddButton()
+                    self.notifyChange(entity, 'remove')
                 },
 
                 sortItems(_events) {
@@ -407,6 +446,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             ).find('.red-ui-editableList-addButton')
         }
 
+        private notifyChange(entry: PanelEntityListItem, type: string = 'change'): void {
+            this.dispatchEvent(new CustomEvent(type, { detail: entry }))
+        }
+
         public addItems(items): void {
             if (items != null && Array.isArray(items)) {
                 items.forEach((item) => {
@@ -415,8 +458,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             }
         }
 
-        getEntities(): PanelEntity[] {
-            const entities: PanelEntity[] = []
+        public getEntities(): PanelEntityListItem[] {
             const entityItems = this._domControlList?.editableList('items')
 
             entityItems.each((_i, ele) => {
@@ -424,25 +466,21 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 let minStr: string
                 const listItem = $(ele)
 
-                const type = listItem.find('.node-input-entity-type').val().toString()
-                const id = listItem.find('.node-input-entity-id').val().toString()
-                const text = listItem.find('.node-input-entity-text').val().toString()
+                const listId = listItem.find('.node-input-entity-listid').val().toString()
+                const entity = this._entities.get(listId)
+
+                entity.type = listItem.find('.node-input-entity-type').val().toString()
+                entity.entityId = listItem.find('.node-input-entity-id').val().toString()
+                entity.text = listItem.find('.node-input-entity-text').val().toString()
+                entity.icon = listItem.find('.node-input-entity-icon').val().toString()
+                entity.iconColor = listItem.find('.node-input-entity-iconcolor').val().toString()
                 const optionalValue = listItem.find('.node-input-entity-optionalvalue').val().toString()
-                const icon = listItem.find('.node-input-entity-icon').val().toString()
-                const iconColor = listItem.find('.node-input-entity-iconcolor').val().toString()
-                const entity: PanelEntity = {
-                    type,
-                    entityId: id,
-                    text,
-                    icon,
-                    iconColor,
-                }
 
                 if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(optionalValue)) {
                     entity.optionalValue = optionalValue
                 }
 
-                switch (type) {
+                switch (entity.type) {
                     case 'shutter': {
                         const iconDown = listItem.find('.node-input-entity-shutter-icondown').val().toString()
                         const iconUp = listItem.find('.node-input-entity-shutter-iconup').val().toString()
@@ -548,9 +586,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     }
                 }
 
-                entities.push(entity)
+                this._entities.set(listId, entity)
             })
-            return entities
+            return [...this._entities.values()]
         }
 
         public empty(): void {
@@ -558,7 +596,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         }
 
         private _updateListAddButton = () => {
-            this._editableListAddButton?.prop('disabled', this._count >= this._maxEntities)
+            this._editableListAddButton?.prop('disabled', this._entities.size >= this._maxEntities)
         }
     }
 
@@ -577,10 +615,12 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
         private _pageEvents: {
             all: EventDescriptor[]
+            entities: Map<string, PanelEntityListItem>
             available: string[]
             used: string[]
         } = {
             all: [],
+            entities: new Map<string, PanelEntityListItem>(),
             available: [],
             used: [],
         }
@@ -602,6 +642,35 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             this._pageEvents.all = allValidEventsWithHardwareButtons
 
             this._pageEvents.all.forEach((item) => this._pageEvents.available.push(item.event))
+        }
+
+        public attachToEntitiesList(entitiesList: EditableEntitiesListWrapper): void {
+            if (entitiesList == null) return
+
+            this._pageEvents.entities = new Map<string, PanelEntityListItem>()
+            entitiesList.getEntities().forEach((e) => this._pageEvents.entities.set(e.listId, e))
+            this._updateSelectEventFields()
+
+            entitiesList.addEventListener('add', (e: CustomEvent) => this.onEntitiesListChanged(e))
+            entitiesList.addEventListener('remove', (e: CustomEvent) => this.onEntitiesListChanged(e))
+            entitiesList.addEventListener('change', (e: CustomEvent) => this.onEntitiesListChanged(e))
+        }
+
+        private onEntitiesListChanged(e: CustomEvent) {
+            const entity = e.detail as PanelEntityListItem
+
+            switch (e.type) {
+                case 'remove':
+                    this._pageEvents.entities.delete(entity.listId)
+                    break
+
+                case 'add':
+                case 'change':
+                    this._pageEvents.entities.set(entity.listId, entity)
+                    break
+            }
+
+            this._updateSelectEventFields()
         }
 
         private _updateEditableListAddButton() {
@@ -677,8 +746,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 },
 
                 removeItem(_listItem) {
-                    this._updateSelectEventFields()
-                    this._updateEditableListAddButton()
+                    self._updateSelectEventFields()
+                    self._updateEditableListAddButton()
                 },
 
                 sortItems(_events) {
@@ -693,6 +762,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     ? this._domControl.closest('.red-ui-editableList')
                     : this._domControl
             ).find('.red-ui-editableList-addButton')
+
+            // FIXME: load entities from entitiesList
         }
 
         public setAvailableEvents(allValidEventSpecs: EventDescriptor[]): void {
@@ -706,27 +777,39 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             this._updateLock = true
             const usedEvents: string[] = []
             const avaiableEvents: string[] = []
-            const eventInputNode: any[] = []
+            const eventInputNode: JQuery<HTMLElement>[] = []
 
             this._domControl.find('.node-input-event').each((_i, ele) => {
                 const v = $(ele).val() as string
                 if (v) usedEvents.push(v)
                 eventInputNode.push($(ele))
             })
+            const allEvents = this._pageEvents.all.map((x) => x)
+            this._pageEvents.entities.forEach((e) => {
+                if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(e.entityId)) {
+                    const labelPrefix: string = i18n(`${I18N_PREFIX_EVENTS}entity`, I18N_DICT, I18N_GROUP) + ':'
+                    const label: string = NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(e.text) ? e.text : e.entityId
+                    allEvents.push({ event: e.entityId, label: `${labelPrefix} ${label}` })
+                }
+            })
 
-            this._pageEvents.all.forEach((item) => {
+            allEvents.forEach((item) => {
                 if (!usedEvents.includes(item.event)) avaiableEvents.push(item.event)
             })
+
+            // FIXME: add entity events / update event items on removed entities
+            // FIXME: update icons
 
             eventInputNode.forEach((inputNode) => {
                 const usedVal = inputNode.val()
                 inputNode.empty()
-                this._pageEvents.all.forEach((item) => {
+                allEvents.forEach((item) => {
                     if (!usedEvents.includes(item.event) || item.event === usedVal) {
                         $('<option/>').val(item.event).text(item.label).appendTo(inputNode)
                     }
                     inputNode.val(usedVal != null ? usedVal : inputNode.children().first().val())
                 })
+
             })
 
             this._pageEvents.used = usedEvents
@@ -781,7 +864,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             node: IPageConfig,
             controlDomSelector: string,
             maxEntities: number,
-            initialData: PanelEntity[],
+            initialData: PanelEntityListItem[],
             validEntities: string[] = ALL_PANEL_ENTITY_TYPES
         ): EditableEntitiesListWrapper | null {
             const domControl = $(controlDomSelector)
@@ -798,7 +881,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             node: IPageConfig,
             controlDomSelector: string,
             allValidEvents: EventDescriptor[],
-            initialData: PanelEntity[]
+            initialData: PanelEntityListItem[],
+            entitiesList?: EditableEntitiesListWrapper
         ): EditableEventListWrapper | null {
             const domControl = $(controlDomSelector)
             const domControlList = domControl.prop('tagName') === 'ol' ? domControl : domControl.find('ol')
@@ -806,6 +890,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
             const el = new EditableEventListWrapper(node, domControl, domControlList, allValidEvents)
             el.makeControl()
+            if (entitiesList != null) {
+                el.attachToEntitiesList(entitiesList)
+            }
             el.addItems(initialData)
             return el
         },

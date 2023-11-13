@@ -9,9 +9,13 @@ import {
     NodeRedSendCallback,
     ScreenSaverBaseConfig,
     EventArgs,
+    NotifyData,
+    PanelColor,
+    InputHandlingResult,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 import { NSPanelMessageUtils } from './nspanel-message-utils'
+import { NSPanelColorUtils } from './nspanel-colorutils'
 
 const CMD_STATUSUPDATE: string = 'statusUpdate'
 
@@ -29,17 +33,21 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         this.config = config
     }
 
-    protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
-        if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return false
+    protected override handleInput(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
+        if (!NSPanelMessageUtils.hasProperty(msg, 'topic')) return { handled: false }
 
         switch (msg.topic) {
             case NSPanelConstants.STR_MSG_TOPIC_STATUS:
                 this.handleStatusInput(msg)
                 this.requestUpdate()
-                return true
+                return { handled: true, requestUpdate: true }
+
+            case NSPanelConstants.STR_MSG_TOPIC_NOTIFY:
+                this.handleNotifyInput(msg)
+                return { handled: true, requestUpdate: false }
         }
 
-        return false
+        return { handled: false }
     }
 
     private handleStatusInput(msg: PageInputMessage): void {
@@ -68,6 +76,24 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         }
 
         this.statusData = statusItems
+    }
+
+    private handleNotifyInput(msg: PageInputMessage): void {
+        // notify~head~text~1234~5432
+        const data: NotifyData = msg.payload as NotifyData
+
+        const heading: string = data?.heading
+        const headingColor: PanelColor = NSPanelColorUtils.toHmiColor(data?.headingColor)
+        const text: string = data?.text
+        const textColor: PanelColor = NSPanelColorUtils.toHmiColor(data?.textColor)
+
+        if (NSPanelUtils.stringIsNullOrEmpty(heading) && NSPanelUtils.stringIsNullOrEmpty(text)) return
+
+        let cmd = `${NSPanelConstants.STR_LUI_CMD_NOTIFY}${NSPanelConstants.STR_LUI_DELIMITER}`
+        cmd += `${heading}${NSPanelConstants.STR_LUI_DELIMITER}`
+        cmd += `${text}${NSPanelConstants.STR_LUI_DELIMITER}${headingColor}`
+        cmd += `${NSPanelConstants.STR_LUI_DELIMITER}${textColor}`
+        this.sendToPanel(cmd)
     }
 
     protected generateStatusUpdate(): string | null {

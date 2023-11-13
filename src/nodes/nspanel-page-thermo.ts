@@ -14,6 +14,7 @@ import {
     EventArgs,
     SensorEventArgs,
     PageEntityData,
+    InputHandlingResult,
 } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
@@ -167,8 +168,8 @@ module.exports = (RED) => {
             }${state ?? ''}${NSPanelConstants.STR_LUI_DELIMITER}${entityId ?? ''}`
         }
 
-        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-            let handled = false
+        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+            let inputHandled: InputHandlingResult = { handled: false }
             let dirty = false
 
             switch (msg.topic) {
@@ -196,7 +197,7 @@ module.exports = (RED) => {
                         for (let key in msg.payload) {
                             if (Object.prototype.hasOwnProperty.call(this.data, key)) {
                                 this.data[key] = msg.payload[key]
-                                handled = true // TODO: there might be undhandled data
+                                inputHandled.handled = true // TODO: there might be undhandled data
                                 dirty = true
                             }
                         }
@@ -221,11 +222,12 @@ module.exports = (RED) => {
             }
             if (dirty) {
                 this.getCache().clear()
+                inputHandled.requestUpdate = true
             } else {
-                handled = super.handleInput(msg, send)
+                inputHandled = super.handleInput(msg, send)
             }
 
-            return handled
+            return inputHandled
         }
     }
 

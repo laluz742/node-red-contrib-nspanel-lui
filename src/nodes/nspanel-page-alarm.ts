@@ -2,7 +2,14 @@
 import { EntitiesPageNode } from '../lib/entities-page-node'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-import { AlarmData, EntityBasedPageConfig, NodeRedSendCallback, PageInputMessage, PanelColor } from '../types/types'
+import {
+    AlarmData,
+    EntityBasedPageConfig,
+    InputHandlingResult,
+    NodeRedSendCallback,
+    PageInputMessage,
+    PanelColor,
+} from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
 type PageAlarmConfig = EntityBasedPageConfig & {
@@ -15,7 +22,8 @@ type PageAlarmConfig = EntityBasedPageConfig & {
 }
 
 const MAX_ENTITIES = 4
-const EMPTY_ENTITY: PanelEntity = {
+const EMPTY_ENTITY: PanelEntityListItem = {
+    listId: null,
     type: 'delete',
     entityId: 'none.',
 }
@@ -41,8 +49,8 @@ module.exports = (RED) => {
             this.config = { ...config }
         }
 
-        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-            let handled = false
+        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+            let handled: InputHandlingResult = { handled: false, requestUpdate: false }
             let dirty = false
 
             switch (msg.topic) {
@@ -73,7 +81,7 @@ module.exports = (RED) => {
             }
 
             if (dirty) {
-                handled = true
+                handled.handled = true
                 this.getCache().clear()
             } else {
                 handled = super.handleInput(msg, send)

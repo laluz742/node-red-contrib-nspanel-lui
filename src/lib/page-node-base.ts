@@ -20,6 +20,7 @@ import {
     NodeAPI,
     IPageCache,
     IPageNode,
+    InputHandlingResult,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -65,8 +66,8 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
             this.registerAtPanel()
         }
 
-        this.on('close', (done: () => void) => this._onClose(done))
-        this.on('input', (msg, send, done) => this._onInput(msg, send, done))
+        this.on('close', (done: () => void) => this.onClose(done))
+        this.on('input', (msg, send, done) => this.onInput(msg, send, done))
     }
 
     public getTimeout() {
@@ -137,8 +138,8 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         }
     }
 
-    protected sendToPanel(data): void {
-        this.emit('ctrl:send', { page: this, data })
+    protected sendToPanel(data: string | string[]): void {
+        this.emit('page:send', this, data)
     }
 
     public isScreenSaver() {
@@ -158,8 +159,10 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return this.panelNode
     }
 
-    protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
-        return false
+    protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
+        return {
+            handled: false,
+        }
     }
 
     protected prePageNavigationEvent(_eventArgs: EventArgs, _eventConfig: EventMapping): boolean {
@@ -213,7 +216,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         this.configuredEvents = cfgEvents
     }
 
-    private _onInput(msg: PageInputMessage, send: NodeRedSendCallback, done: NodeRedOnErrorCallback): void {
+    private onInput(msg: PageInputMessage, send: NodeRedSendCallback, done: NodeRedOnErrorCallback): void {
         // forward message to node output
         send(msg) // TODO: really? or just consume?
 
@@ -221,15 +224,15 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
             switch (msg.topic) {
                 case NSPanelConstants.STR_MSG_TOPIC_EVENT: {
                     const eventArgs = <EventArgs>msg.payload
-                    const uiEventHandled = this._handleUiEvent(eventArgs, send)
+                    const uiEventHandled = this.handleUiEventInternal(eventArgs, send)
                     if (!uiEventHandled) {
-                        this._handleInput(msg, send)
+                        this.handleInputInternal(msg, send)
                     }
                     break
                 }
 
                 default: {
-                    const handled = this._handleInput(msg, send)
+                    const handled = this.handleInputInternal(msg, send)
                     if (handled) {
                         this.requestUpdate()
                     }
@@ -241,29 +244,29 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         done()
     }
 
-    private _handleInput(msg: PageInputMessage, send: NodeRedSendCallback): boolean {
-        let handled = false
+    private handleInputInternal(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+        let inputResult: InputHandlingResult = { handled: false }
 
         try {
-            handled = this.handleInput(msg, send)
+            inputResult = this.handleInput(msg, send)
         } catch (err: unknown) {
             if (err instanceof Error) {
                 this.__log?.error(`Error handling input: ${err.message}`)
             }
         }
 
-        if (handled === false) {
+        if (inputResult.handled === false) {
             switch (msg.topic) {
                 case NSPanelConstants.STR_MSG_TOPIC_DATA:
-                    handled = this._handleDataInputInternal(msg, send)
+                    inputResult = this.handleDataInputInternal(msg, send)
                     break
             }
         }
 
-        return handled
+        return inputResult
     }
 
-    private _handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): boolean {
+    private handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
         const result: PageEntityData[] = []
 
         // TODO: take msg.parts or index into account to allow to set specific status
@@ -275,7 +278,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         })
 
         this.pageData.entities = result.slice(0, this.options?.maxEntities ?? 0)
-        return true
+        return { handled: true }
     }
 
     protected getConfiguredEvents(): ConfiguredEventsMap {
@@ -286,7 +289,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return false
     }
 
-    private _handleUiEvent(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
+    private handleUiEventInternal(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
         let handled = false
 
         const preHandleUiEventResult = this.preHandleUiEvent(eventArgs, send)
@@ -337,7 +340,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         this.panelNode?.registerPage(this)
     }
 
-    private _onClose(done: () => void) {
+    private onClose(done: () => void) {
         this.panelNode?.deregisterPage(this)
         done()
     }
