@@ -777,7 +777,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             this._updateLock = true
             const usedEvents: string[] = []
             const avaiableEvents: string[] = []
-            const eventInputNode: any[] = []
+            const eventInputNode: JQuery<HTMLElement>[] = []
 
             this._domControl.find('.node-input-event').each((_i, ele) => {
                 const v = $(ele).val() as string
@@ -798,6 +798,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             })
 
             // FIXME: add entity events / update event items on removed entities
+            // FIXME: update icons
 
             eventInputNode.forEach((inputNode) => {
                 const usedVal = inputNode.val()
@@ -808,6 +809,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     }
                     inputNode.val(usedVal != null ? usedVal : inputNode.children().first().val())
                 })
+
             })
 
             this._pageEvents.used = usedEvents

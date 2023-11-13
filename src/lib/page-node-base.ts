@@ -66,8 +66,8 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
             this.registerAtPanel()
         }
 
-        this.on('close', (done: () => void) => this._onClose(done))
-        this.on('input', (msg, send, done) => this._onInput(msg, send, done))
+        this.on('close', (done: () => void) => this.onClose(done))
+        this.on('input', (msg, send, done) => this.onInput(msg, send, done))
     }
 
     public getTimeout() {
@@ -216,7 +216,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         this.configuredEvents = cfgEvents
     }
 
-    private _onInput(msg: PageInputMessage, send: NodeRedSendCallback, done: NodeRedOnErrorCallback): void {
+    private onInput(msg: PageInputMessage, send: NodeRedSendCallback, done: NodeRedOnErrorCallback): void {
         // forward message to node output
         send(msg) // TODO: really? or just consume?
 
@@ -224,15 +224,15 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
             switch (msg.topic) {
                 case NSPanelConstants.STR_MSG_TOPIC_EVENT: {
                     const eventArgs = <EventArgs>msg.payload
-                    const uiEventHandled = this._handleUiEvent(eventArgs, send)
+                    const uiEventHandled = this.handleUiEventInternal(eventArgs, send)
                     if (!uiEventHandled) {
-                        this._handleInput(msg, send)
+                        this.handleInputInternal(msg, send)
                     }
                     break
                 }
 
                 default: {
-                    const handled = this._handleInput(msg, send)
+                    const handled = this.handleInputInternal(msg, send)
                     if (handled) {
                         this.requestUpdate()
                     }
@@ -244,7 +244,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         done()
     }
 
-    private _handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+    private handleInputInternal(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
         let inputResult: InputHandlingResult = { handled: false }
 
         try {
@@ -258,7 +258,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         if (inputResult.handled === false) {
             switch (msg.topic) {
                 case NSPanelConstants.STR_MSG_TOPIC_DATA:
-                    inputResult = this._handleDataInputInternal(msg, send)
+                    inputResult = this.handleDataInputInternal(msg, send)
                     break
             }
         }
@@ -266,7 +266,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return inputResult
     }
 
-    private _handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
+    private handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
         const result: PageEntityData[] = []
 
         // TODO: take msg.parts or index into account to allow to set specific status
@@ -289,7 +289,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return false
     }
 
-    private _handleUiEvent(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
+    private handleUiEventInternal(eventArgs: EventArgs, send: NodeRedSendCallback): boolean {
         let handled = false
 
         const preHandleUiEventResult = this.preHandleUiEvent(eventArgs, send)
@@ -340,7 +340,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         this.panelNode?.registerPage(this)
     }
 
-    private _onClose(done: () => void) {
+    private onClose(done: () => void) {
         this.panelNode?.deregisterPage(this)
         done()
     }
