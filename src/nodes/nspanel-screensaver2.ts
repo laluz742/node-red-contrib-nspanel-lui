@@ -6,6 +6,7 @@ import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import {
     InputHandlingResult,
     NodeRedSendCallback,
+    PageData,
     PageEntityData,
     PageInputMessage,
     ScreenSaverBaseConfig,
@@ -103,7 +104,8 @@ module.exports = (RED) => {
         }
 
         private generateWeatherUpdate(): string {
-            if (this.pageData.entities.length === 0) {
+            const pageData: PageData = this.getPageData()
+            if (pageData.entities.length === 0) {
                 return null
             }
 
@@ -121,7 +123,7 @@ module.exports = (RED) => {
             }
 
             // 6 bottom entities
-            const entityData: PageEntityData[] = this.pageData.entities
+            const entityData: PageEntityData[] = pageData.entities
             // eslint-disable-next-line prefer-const
             for (let i = 0; i < MAX_ENTITIES; i += 1) {
                 const item = entityData[i]

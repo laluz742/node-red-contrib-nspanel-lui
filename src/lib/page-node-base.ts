@@ -35,7 +35,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
 
     private _cache: IPageCache = null
 
-    protected pageData: PageData = {
+    private pageData: PageData = {
         entities: [],
     }
 
@@ -103,45 +103,6 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return null
     }
 
-    protected generateTitleNav() {
-        // TODO: feature-request: retrieve icons from nav target
-        let navPrev = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
-        let navNext = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
-
-        this.pageNodeConfig.events.forEach((item) => {
-            switch (item.event) {
-                case NSPanelConstants.STR_NAV_ID_PREVIOUS:
-                    navPrev = NSPanelUtils.makeEntity(
-                        NSPanelConstants.STR_LUI_ENTITY_BUTTON,
-                        NSPanelConstants.STR_NAV_ID_PREVIOUS,
-                        NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
-                    )
-                    break
-                case NSPanelConstants.STR_NAV_ID_NEXT:
-                    navNext = NSPanelUtils.makeEntity(
-                        NSPanelConstants.STR_LUI_ENTITY_BUTTON,
-                        NSPanelConstants.STR_NAV_ID_NEXT,
-                        NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
-                    )
-                    break
-            }
-        })
-
-        return navPrev + STR_LUI_DELIMITER + navNext
-    }
-
-    protected requestUpdate(): void {
-        if (this.isActive) {
-            this.emit('page:update', this)
-        }
-    }
-
-    protected sendToPanel(data: string | string[]): void {
-        this.emit('page:send', this, data)
-    }
-
     public isScreenSaver() {
         return false
     }
@@ -157,6 +118,59 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
 
     public getPanel() {
         return this.panelNode
+    }
+
+    protected generateTitleNav() {
+        // TODO: feature-request: retrieve icons from nav target
+        let navPrev: string
+        let navNext: string
+
+        const navPrevEventMappings: EventMapping[] = this.pageNodeConfig.events.filter(
+            (item) => item.event == NSPanelConstants.STR_NAV_ID_PREVIOUS
+        )
+        const navNextEventMappings: EventMapping[] = this.pageNodeConfig.events.filter(
+            (item) => item.event == NSPanelConstants.STR_NAV_ID_NEXT
+        )
+
+        if (navPrevEventMappings[0] != null) {
+            const item = navPrevEventMappings[0]
+            navPrev = NSPanelUtils.makeEntity(
+                NSPanelConstants.STR_LUI_ENTITY_BUTTON,
+                NSPanelConstants.STR_NAV_ID_PREVIOUS,
+                NSPanelUtils.getIcon(item.icon ?? ''),
+                NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+            )
+        } else {
+            navPrev = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
+        }
+
+        if (navNextEventMappings[0] != null) {
+            const item = navNextEventMappings[0]
+            navNext = NSPanelUtils.makeEntity(
+                NSPanelConstants.STR_LUI_ENTITY_BUTTON,
+                NSPanelConstants.STR_NAV_ID_PREVIOUS,
+                NSPanelUtils.getIcon(item.icon ?? ''),
+                NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+            )
+        } else {
+            navNext = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
+        }
+
+        return navPrev + STR_LUI_DELIMITER + navNext
+    }
+
+    protected getPageData(): PageData {
+        return this.pageData
+    }
+
+    protected requestUpdate(): void {
+        if (this.isActive) {
+            this.emit('page:update', this)
+        }
+    }
+
+    protected sendToPanel(data: string | string[]): void {
+        this.emit('page:send', this, data)
     }
 
     protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {

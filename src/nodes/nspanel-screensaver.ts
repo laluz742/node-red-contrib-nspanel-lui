@@ -2,7 +2,7 @@
 import { ScreenSaverNodeBase } from '../lib/screensaver-node-base'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
-import { PanelColor, ScreenSaverBaseConfig } from '../types/types'
+import { PageData, PanelColor, ScreenSaverBaseConfig } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
 type ScreenSaverConfig = ScreenSaverBaseConfig & {
@@ -53,13 +53,14 @@ module.exports = (RED) => {
         }
 
         private generateWeatherUpdate() {
-            if (this.pageData.entities.length === 0) {
+            const pageData: PageData = this.getPageData()
+            if (pageData.entities.length === 0) {
                 return null
             }
 
             let result = `${CMD_WEATHERUPDATE}${NSPanelConstants.STR_LUI_DELIMITER}`
             const resultEntities: string[] = []
-            const data = this.pageData.entities
+            const data = pageData.entities
 
             // eslint-disable-next-line prefer-const
             for (let i in data) {
