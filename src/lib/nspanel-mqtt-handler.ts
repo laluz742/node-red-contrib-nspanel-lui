@@ -12,8 +12,11 @@ import {
     SensorEventArgs,
     FirmwareEventArgs,
     TasmotaEventArgs,
+    HMICommand,
+    TasmotaCommand,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
+import { NSPanelUtils } from './nspanel-utils'
 
 const log = Logger('NSPanelMqttHandler')
 
@@ -48,11 +51,11 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         this.mqttClient?.end()
     }
 
-    public sendCommandToPanel(cmd: string, data: string) {
-        if (cmd == null) return
+    public sendCommandToPanel(tCmd: TasmotaCommand) {
+        if (tCmd == null && tCmd.cmd != null && tCmd.data != null) return
 
         try {
-            this.mqttClient?.publish(this.panelMqttCommandTopic + cmd, data)
+            this.mqttClient?.publish(this.panelMqttCommandTopic + tCmd.cmd, tCmd.data)
         } catch (err: unknown) {
             if (err instanceof Error) {
                 log.error(`Could not publish on command topic. Error: ${err.message}`)
@@ -60,18 +63,20 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
         }
     }
 
-    public sendToPanel(data: any) {
-        if (data == null) return
+    public sendToPanel(cmds: HMICommand | HMICommand[]) {
+        if (cmds == null) return
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this
         try {
-            if (Array.isArray(data)) {
-                data.forEach((item) => {
-                    if (item != null) {
-                        self.mqttClient?.publish(self.panelMqttCustomCommandTopic, item)
+            if (Array.isArray(cmds)) {
+                cmds.forEach((cmd) => {
+                    if (cmd != null) {
+                        const data: string = NSPanelUtils.transformHmiCommand(cmd)
+                        self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data)
                     }
                 })
-            } else if (data != null) {
+            } else {
+                const data = NSPanelUtils.transformHmiCommand(cmds)
                 self.mqttClient?.publish(self.panelMqttCustomCommandTopic, data) // TODO: fix issue, when client was disconnecting
             }
         } catch (err: unknown) {

@@ -63,12 +63,12 @@ export class NSPanelPopupHelpers {
         return result
     }
 
-    public static generatePopupNotify(notifyData?: NotifyData): string | string[] | null {
+    public static generatePopupNotify(notifyData?: NotifyData): HMICommand | null {
         if (notifyData == null || typeof notifyData !== 'object') {
             return null
         }
 
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+        const result: (string | number)[] = []
 
         result.push(notifyData.notifyId ?? NSPanelConstants.STR_EMPTY)
         result.push(notifyData.heading ?? NSPanelConstants.STR_EMPTY)
@@ -84,7 +84,11 @@ export class NSPanelPopupHelpers {
         result.push(NSPanelUtils.getIcon(notifyData.icon ?? NSPanelConstants.STR_EMPTY))
         result.push(NSPanelColorUtils.toHmiColor(notifyData.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL,
+            params: result,
+        }
+        return hmiCmd
     }
 
     private static generatePopupFan(

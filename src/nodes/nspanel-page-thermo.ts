@@ -154,7 +154,7 @@ module.exports = (RED) => {
                 }
             }
 
-            return resultActions.join(NSPanelConstants.STR_LUI_DELIMITER) // FIXME: HMICommandParamters
+            return resultActions.join(NSPanelConstants.STR_LUI_DELIMITER) // FIXME: HMICommandParameters
         }
 
         private _renderAction(

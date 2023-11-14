@@ -36,7 +36,6 @@ export const STR_LUI_CMD_DATE: string = `date`
 export const STR_LUI_CMD_DIMMODE: string = `dimmode`
 export const STR_LUI_CMD_TIMEOUT: string = `timeout`
 export const STR_LUI_CMD_NOTIFY: string = 'notify'
-export const STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY: string = `${STR_LUI_CMD_PAGETYPE}popupNotify`
 export const STR_LUI_CMD_ACTIVATE_SCREENSAVER: string = `${STR_LUI_CMD_PAGETYPE}screensaver`
 export const STR_LUI_EVENT_BEXIT: string = 'bExit'
 export const STR_LUI_EVENT_NOTIFY_ACTION: string = 'notifyAction'
@@ -92,6 +91,7 @@ export const STR_PAGE_TYPE_CARD_SCREENSAVER: string = 'screensaver'
 export const STR_PAGE_TYPE_CARD_SCREENSAVER2: string = 'screensaver2'
 export const STR_PAGE_TYPE_CARD_STARTUP: string = `pageStartup`
 export const STR_PAGE_TYPE_CARD_THERMO: string = 'cardThermo'
+export const STR_PAGE_TYPE_POPUP_NOTIFY: string = 'popupNotify'
 
 // update process
 export const FIRMWARE_TASMOTA: FirmwareType = 'tasmota'

@@ -1,5 +1,5 @@
 import { PageId, StatusLevel } from './base'
-import { HMICommand } from './hmi'
+import { HMICommand } from './commands'
 import { PageInputMessage } from './messages'
 import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './nodered'
 

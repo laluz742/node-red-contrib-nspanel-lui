@@ -244,7 +244,7 @@ var notifyMsg = {
         heading: 'Warning',
         headingColor: '#fcae1e',
         text: 'Fan alarm of the ventilation system',
-        textColor: '#ff22ff'
+        textColor: '#ff22ff',
     },
 }
 ```

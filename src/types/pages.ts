@@ -1,6 +1,6 @@
 import { PanelEntity } from './entities'
 import { EventArgs, EventMapping } from './events'
-import { HMICommand } from './hmi'
+import { HMICommand } from './commands'
 import { PageEntityData } from './messages'
 import { INodeConfig } from './nodered'
 

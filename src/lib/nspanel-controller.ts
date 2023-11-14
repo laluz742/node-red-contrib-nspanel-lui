@@ -31,10 +31,10 @@ import {
     NodeStatus,
     PanelControllerConfig,
     HMICommand,
+    TasmotaCommand,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 import { IPanelNodeEx } from '../types/panel'
-import { NSPanelUtils } from './nspanel-utils'
 
 const log = Logger('NSPanelController')
 
@@ -164,7 +164,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 case 'switch': {
                     const switchParams = cmdData.params as SwitchCommandParams
                     const switchRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (switchParams.id + 1)
-                    this.sendCommandToPanel(switchRelayCmd, switchParams.active?.toString() ?? '')
+                    this.sendCommandToPanel({ cmd: switchRelayCmd, data: switchParams.active?.toString() ?? '' })
 
                     break
                 }
@@ -172,7 +172,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 case 'toggle': {
                     const toggleParams = cmdData.params as SwitchCommandParams
                     const toggleRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (toggleParams.id + 1)
-                    this.sendCommandToPanel(toggleRelayCmd, NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE)
+                    this.sendCommandToPanel({
+                        cmd: toggleRelayCmd,
+                        data: NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE,
+                    })
                     break
                 }
 
@@ -218,7 +221,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (silenceDuration != null) params.push(silenceDuration)
         if (tune != null) params.push(tune)
 
-        this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_BUZZER, params.join(','))
+        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_BUZZER, data: params.join(',') })
     }
 
     public dispose() {
@@ -638,14 +641,14 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private updateNotification(history: IPageHistory) {
-        const notifyPageData = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
+        const notifyHmiCmd = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
 
-        if (notifyPageData !== null) {
-            const hmiCmd: HMICommand = {
-                cmd: NSPanelConstants.STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY,
-                params: notifyPageData,
-            }
-            this.sendToPanel(hmiCmd)
+        if (notifyHmiCmd !== null) {
+            const cmds: HMICommand[] = [
+                { cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: NSPanelConstants.STR_PAGE_TYPE_POPUP_NOTIFY },
+                notifyHmiCmd,
+            ]
+            this.sendToPanel(cmds)
 
             if (this._ctrlConfig.beepOnNotifications || history.notifyData.beep) {
                 this.sendBuzzerCommand(3, 2, 1)
@@ -656,16 +659,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private sendToPanel(cmds: HMICommand | HMICommand[] | null) {
         if (cmds == null || this._panelMqttHandler === null) return
 
-        if (Array.isArray(cmds)) {
-            // eslint-disable-next-line prefer-const
-            for (let d in cmds) {
-                const data: string = NSPanelUtils.transformHmiCommand(cmds[d])
-                this._panelMqttHandler.sendToPanel(data)
-            }
-        } else {
-            const data = NSPanelUtils.transformHmiCommand(cmds)
-            this._panelMqttHandler.sendToPanel(data)
-        }
+        this._panelMqttHandler.sendToPanel(cmds)
     }
 
     private sendLWTToPanel() {
@@ -688,20 +682,20 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.sendToPanel(cmds)
     }
 
-    private sendCommandToPanel(cmd: string, data: string) {
-        this._panelMqttHandler?.sendCommandToPanel(cmd, data)
+    private sendCommandToPanel(cmd: TasmotaCommand) {
+        this._panelMqttHandler?.sendCommandToPanel(cmd)
     }
 
     // #region basic panel commands
     private sendDetachRelays(detach: boolean = false) {
         const state = detach ? '1' : '0'
 
-        this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS, state)
+        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS, data: state })
     }
 
     private sendTelePeriod(telePeriod: number = 1) {
         const telePeriodStr = `${telePeriod}`
-        this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD, telePeriodStr)
+        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD, data: telePeriodStr })
     }
 
     private sendTimeToPanel() {
