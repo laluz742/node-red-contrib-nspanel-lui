@@ -4,6 +4,8 @@ import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 import {
     EntityBasedPageConfig,
+    HMICommand,
+    HMICommandParameters,
     InputHandlingResult,
     NodeRedSendCallback,
     PageInputMessage,
@@ -83,8 +85,8 @@ module.exports = (RED) => {
             return inputHandled
         }
 
-        protected doGeneratePage(): string | string[] | null {
-            const result: string[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
+        protected doGeneratePage(): HMICommand | null {
+            const hmiCmdParams: HMICommandParameters = []
 
             const titleNav = this.generateTitleNav()
 
@@ -107,27 +109,30 @@ module.exports = (RED) => {
                 ? this.config.shuffleIcon ?? NSPanelConstants.STR_DISABLE
                 : NSPanelConstants.STR_DISABLE
 
-            result.push(this.entitiesPageNodeConfig.title ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(this.entitiesPageNodeConfig.title ?? NSPanelConstants.STR_EMPTY)
 
-            result.push(titleNav)
+            hmiCmdParams.push(titleNav)
 
-            result.push(this.config?.id)
+            hmiCmdParams.push(this.config?.id)
 
-            result.push(dTitle)
-            result.push(dTitleColor)
-            result.push(dArtist)
-            result.push(dArtistColor)
-            result.push(dVolume)
+            hmiCmdParams.push(dTitle)
+            hmiCmdParams.push(dTitleColor)
+            hmiCmdParams.push(dArtist)
+            hmiCmdParams.push(dArtistColor)
+            hmiCmdParams.push(dVolume)
 
-            result.push(NSPanelUtils.getIcon(dIconPlayPause ?? DEFAULT_ICON_PLAY_PAUSE))
-            result.push(dOnOffButton) // onOffBtn, "disable" or color
-            result.push(NSPanelUtils.getIcon(dIconShuffle)) // iconShuffle, "disable" or icon
+            hmiCmdParams.push(NSPanelUtils.getIcon(dIconPlayPause ?? DEFAULT_ICON_PLAY_PAUSE))
+            hmiCmdParams.push(dOnOffButton) // onOffBtn, "disable" or color
+            hmiCmdParams.push(NSPanelUtils.getIcon(dIconShuffle)) // iconShuffle, "disable" or icon
 
             const entitites = this.generateEntities()
-            result.push(entitites)
+            hmiCmdParams.push(entitites)
 
-            const pageData: string = result.join(NSPanelConstants.STR_LUI_DELIMITER)
-            return pageData
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE,
+                params: hmiCmdParams,
+            }
+            return hmiCmd
         }
     }
 

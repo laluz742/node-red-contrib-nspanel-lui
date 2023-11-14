@@ -12,6 +12,8 @@ import {
     NotifyData,
     PanelColor,
     InputHandlingResult,
+    HMICommand,
+    HMICommandParameters,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 import { NSPanelMessageUtils } from './nspanel-message-utils'
@@ -89,20 +91,26 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
 
         if (NSPanelUtils.stringIsNullOrEmpty(heading) && NSPanelUtils.stringIsNullOrEmpty(text)) return
 
-        let cmd = `${NSPanelConstants.STR_LUI_CMD_NOTIFY}${NSPanelConstants.STR_LUI_DELIMITER}`
-        cmd += `${heading}${NSPanelConstants.STR_LUI_DELIMITER}`
-        cmd += `${text}${NSPanelConstants.STR_LUI_DELIMITER}${headingColor}`
-        cmd += `${NSPanelConstants.STR_LUI_DELIMITER}${textColor}`
-        this.sendToPanel(cmd)
+        const hmiCmdParams: HMICommandParameters = []
+        hmiCmdParams.push(heading)
+        hmiCmdParams.push(text)
+        hmiCmdParams.push(headingColor)
+        hmiCmdParams.push(textColor)
+
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_NOTIFY,
+            params: hmiCmdParams,
+        }
+
+        this.sendToPanel(hmiCmd)
     }
 
-    protected generateStatusUpdate(): string | null {
+    protected generateStatusUpdate(): HMICommand | null {
         if (this.statusData.length === 0) {
             return null
         }
 
-        let cmd = `${CMD_STATUSUPDATE}${NSPanelConstants.STR_LUI_DELIMITER}`
-        const cmdParams: string[] = []
+        const hmiCmdParams: HMICommandParameters = []
 
         for (let idx = 0; idx < 2; idx += 1) {
             const item = this.statusData[idx]
@@ -113,10 +121,15 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
                           item.iconColor
                       )
                     : NSPanelUtils.makeIcon(null, null)
-            cmdParams.push(tmp)
+            hmiCmdParams.push(tmp)
         }
-        cmd += cmdParams.join(NSPanelConstants.STR_LUI_DELIMITER)
-        return cmd
+
+        const hmiCmd: HMICommand = {
+            cmd: CMD_STATUSUPDATE,
+            params: hmiCmdParams,
+        }
+
+        return hmiCmd
     }
 
     public override isScreenSaver(): boolean {

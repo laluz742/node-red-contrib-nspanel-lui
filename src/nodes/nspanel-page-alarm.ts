@@ -5,6 +5,8 @@ import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import {
     AlarmData,
     EntityBasedPageConfig,
+    HMICommand,
+    HMICommandParameters,
     InputHandlingResult,
     NodeRedSendCallback,
     PageInputMessage,
@@ -90,8 +92,8 @@ module.exports = (RED) => {
             return handled
         }
 
-        protected override doGeneratePage(): string | string[] | null {
-            const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
+        protected override doGeneratePage(): HMICommand | null {
+            const hmiCmdParams: HMICommandParameters = []
 
             const titleNav = this.generateTitleNav()
             const entitites = this.generateEntities()
@@ -105,21 +107,25 @@ module.exports = (RED) => {
             const flashingStatus =
                 this.data?.statusIconFlashing ?? false ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE
 
-            result.push(this.config.title ?? NSPanelConstants.STR_EMPTY)
-            result.push(titleNav)
-            result.push(this.config?.name ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(this.config.title ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(titleNav)
+            hmiCmdParams.push(this.config?.name ?? NSPanelConstants.STR_EMPTY)
 
-            result.push(entitites)
-            result.push(NSPanelUtils.getIcon(statusIcon))
-            result.push(NSPanelColorUtils.toHmiColor(statusIconColor))
-            result.push(numpadStatus)
-            result.push(flashingStatus)
+            hmiCmdParams.push(entitites)
+            hmiCmdParams.push(NSPanelUtils.getIcon(statusIcon))
+            hmiCmdParams.push(NSPanelColorUtils.toHmiColor(statusIconColor))
+            hmiCmdParams.push(numpadStatus)
+            hmiCmdParams.push(flashingStatus)
 
-            result.push(NSPanelUtils.getIcon(this.config?.extraButtonIcon))
-            result.push(NSPanelColorUtils.toHmiColor(this.config?.extraButtonIconColor))
-            result.push(this.config?.extraButtonId ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(NSPanelUtils.getIcon(this.config?.extraButtonIcon))
+            hmiCmdParams.push(NSPanelColorUtils.toHmiColor(this.config?.extraButtonIconColor))
+            hmiCmdParams.push(this.config?.extraButtonId ?? NSPanelConstants.STR_EMPTY)
 
-            return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE,
+                params: hmiCmdParams,
+            }
+            return hmiCmd
         }
 
         protected override generateEntities(): string {

@@ -21,6 +21,7 @@ import {
     IPageCache,
     IPageNode,
     InputHandlingResult,
+    HMICommand,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -35,7 +36,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
 
     private _cache: IPageCache = null
 
-    protected pageData: PageData = {
+    private pageData: PageData = {
         entities: [],
     }
 
@@ -86,7 +87,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return this.options?.forceRedraw ?? false
     }
 
-    public generatePage(): string | string[] | null {
+    public generatePage(): HMICommand | HMICommand[] | null {
         if (this.getCache().containsData()) return this.getCache().get()
 
         const pageData = this.doGeneratePage()
@@ -95,51 +96,12 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return pageData
     }
 
-    protected doGeneratePage(): string | string[] | null {
+    protected doGeneratePage(): HMICommand | HMICommand[] | null {
         return null
     }
 
-    public generatePopupDetails(_type: string, _entityId: string): string | string[] | null {
+    public generatePopupDetails(_type: string, _entityId: string): HMICommand | HMICommand[] | null {
         return null
-    }
-
-    protected generateTitleNav() {
-        // TODO: feature-request: retrieve icons from nav target
-        let navPrev = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
-        let navNext = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
-
-        this.pageNodeConfig.events.forEach((item) => {
-            switch (item.event) {
-                case NSPanelConstants.STR_NAV_ID_PREVIOUS:
-                    navPrev = NSPanelUtils.makeEntity(
-                        NSPanelConstants.STR_LUI_ENTITY_BUTTON,
-                        NSPanelConstants.STR_NAV_ID_PREVIOUS,
-                        NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
-                    )
-                    break
-                case NSPanelConstants.STR_NAV_ID_NEXT:
-                    navNext = NSPanelUtils.makeEntity(
-                        NSPanelConstants.STR_LUI_ENTITY_BUTTON,
-                        NSPanelConstants.STR_NAV_ID_NEXT,
-                        NSPanelUtils.getIcon(item.icon ?? ''),
-                        NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
-                    )
-                    break
-            }
-        })
-
-        return navPrev + STR_LUI_DELIMITER + navNext
-    }
-
-    protected requestUpdate(): void {
-        if (this.isActive) {
-            this.emit('page:update', this)
-        }
-    }
-
-    protected sendToPanel(data: string | string[]): void {
-        this.emit('page:send', this, data)
     }
 
     public isScreenSaver() {
@@ -159,10 +121,57 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return this.panelNode
     }
 
-    protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
-        return {
-            handled: false,
+    protected generateTitleNav() {
+        // TODO: feature-request: retrieve icons from nav target
+        let navPrev: string
+        let navNext: string
+
+        const navPrevEventMappings: EventMapping[] = this.pageNodeConfig.events.filter(
+            (item) => item.event == NSPanelConstants.STR_NAV_ID_PREVIOUS
+        )
+        const navNextEventMappings: EventMapping[] = this.pageNodeConfig.events.filter(
+            (item) => item.event == NSPanelConstants.STR_NAV_ID_NEXT
+        )
+
+        if (navPrevEventMappings[0] != null) {
+            const item = navPrevEventMappings[0]
+            navPrev = NSPanelUtils.makeEntity(
+                NSPanelConstants.STR_LUI_ENTITY_BUTTON,
+                NSPanelConstants.STR_NAV_ID_PREVIOUS,
+                NSPanelUtils.getIcon(item.icon ?? ''),
+                NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+            )
+        } else {
+            navPrev = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
         }
+
+        if (navNextEventMappings[0] != null) {
+            const item = navNextEventMappings[0]
+            navNext = NSPanelUtils.makeEntity(
+                NSPanelConstants.STR_LUI_ENTITY_BUTTON,
+                NSPanelConstants.STR_NAV_ID_PREVIOUS,
+                NSPanelUtils.getIcon(item.icon ?? ''),
+                NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
+            )
+        } else {
+            navNext = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
+        }
+
+        return navPrev + STR_LUI_DELIMITER + navNext
+    }
+
+    protected getPageData(): PageData {
+        return this.pageData
+    }
+
+    protected requestUpdate(): void {
+        if (this.isActive) {
+            this.emit('page:update', this)
+        }
+    }
+
+    protected sendToPanel(data: HMICommand | HMICommand[]): void {
+        this.emit('page:send', this, data)
     }
 
     protected prePageNavigationEvent(_eventArgs: EventArgs, _eventConfig: EventMapping): boolean {
@@ -214,6 +223,12 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         })
 
         this.configuredEvents = cfgEvents
+    }
+
+    protected handleInput(_msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
+        return {
+            handled: false,
+        }
     }
 
     private onInput(msg: PageInputMessage, send: NodeRedSendCallback, done: NodeRedOnErrorCallback): void {

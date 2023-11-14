@@ -4,8 +4,11 @@ import { NSPanelUtils } from '../lib/nspanel-utils'
 import { NSPanelColorUtils } from '../lib/nspanel-colorutils'
 import { NSPanelMessageUtils } from '../lib/nspanel-message-utils'
 import {
+    HMICommand,
+    HMICommandParameters,
     InputHandlingResult,
     NodeRedSendCallback,
+    PageData,
     PageEntityData,
     PageInputMessage,
     ScreenSaverBaseConfig,
@@ -31,8 +34,8 @@ module.exports = (RED) => {
             })
         }
 
-        public override generatePage(): string | string[] | null {
-            const result: string[] = []
+        public override generatePage(): HMICommand | HMICommand[] | null {
+            const result: HMICommand[] = []
 
             const statusUpdate = this.generateStatusUpdate()
             if (statusUpdate) result.push(statusUpdate)
@@ -102,26 +105,26 @@ module.exports = (RED) => {
             return inputHandled
         }
 
-        private generateWeatherUpdate(): string {
-            if (this.pageData.entities.length === 0) {
+        private generateWeatherUpdate(): HMICommand {
+            const pageData: PageData = this.getPageData()
+            if (pageData.entities.length === 0) {
                 return null
             }
 
-            const result: (string | number)[] = []
-            result.push(CMD_WEATHERUPDATE)
+            const hmiCmdParams: HMICommandParameters = []
 
             const mainStatusEntity = this.makeStatusItem(this.status2Data[0])
-            result.push(mainStatusEntity)
+            hmiCmdParams.push(mainStatusEntity)
 
             // eslint-disable-next-line prefer-const
             for (let idx = 6; idx < 9; idx += 1) {
                 const item = this.status2Data[idx]
                 const entity = this.makeStatusItem(item)
-                result.push(entity)
+                hmiCmdParams.push(entity)
             }
 
             // 6 bottom entities
-            const entityData: PageEntityData[] = this.pageData.entities
+            const entityData: PageEntityData[] = pageData.entities
             // eslint-disable-next-line prefer-const
             for (let i = 0; i < MAX_ENTITIES; i += 1) {
                 const item = entityData[i]
@@ -136,7 +139,7 @@ module.exports = (RED) => {
                               item.value
                           )
                         : BLANK_ENTITY
-                result.push(entity)
+                hmiCmdParams.push(entity)
             }
 
             // 5 right icons
@@ -144,11 +147,15 @@ module.exports = (RED) => {
             for (let idx = 1; idx < 6; idx += 1) {
                 const item = this.status2Data[idx]
                 const entity = this.makeStatusItem(item)
-                result.push(entity)
+                hmiCmdParams.push(entity)
             }
 
-            const resultStr: string = result.join(NSPanelConstants.STR_LUI_DELIMITER)
-            return resultStr
+            const hmiCmd: HMICommand = {
+                cmd: CMD_WEATHERUPDATE,
+                params: hmiCmdParams,
+            }
+
+            return hmiCmd
         }
 
         private makeStatusItem(item: StatusItemData): string {

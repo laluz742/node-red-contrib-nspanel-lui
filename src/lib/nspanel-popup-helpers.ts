@@ -4,6 +4,8 @@ import { NSPanelUtils } from './nspanel-utils'
 import { Logger } from './logger'
 import {
     FanEntityData,
+    HMICommand,
+    HMICommandParameters,
     INodeConfig,
     InputSelectEntityData,
     LightEntityData,
@@ -24,8 +26,8 @@ export class NSPanelPopupHelpers {
         node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
-    ): string | string[] | null {
-        let result: string | string[] | null
+    ): HMICommand | null {
+        let result: HMICommand | null
 
         switch (type) {
             case 'popupFan':
@@ -61,12 +63,12 @@ export class NSPanelPopupHelpers {
         return result
     }
 
-    public static generatePopupNotify(notifyData?: NotifyData): string | string[] | null {
+    public static generatePopupNotify(notifyData?: NotifyData): HMICommand | null {
         if (notifyData == null || typeof notifyData !== 'object') {
             return null
         }
 
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+        const result: (string | number)[] = []
 
         result.push(notifyData.notifyId ?? NSPanelConstants.STR_EMPTY)
         result.push(notifyData.heading ?? NSPanelConstants.STR_EMPTY)
@@ -82,18 +84,20 @@ export class NSPanelPopupHelpers {
         result.push(NSPanelUtils.getIcon(notifyData.icon ?? NSPanelConstants.STR_EMPTY))
         result.push(NSPanelColorUtils.toHmiColor(notifyData.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL,
+            params: result,
+        }
+        return hmiCmd
     }
 
     private static generatePopupFan(
         _node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
-    ): string | string[] | null {
-        // if (entityData == null) return null
-
+    ): HMICommand | null {
         const fanEntityData: FanEntityData = <FanEntityData>entityData
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+        const result: HMICommandParameters = []
 
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
@@ -105,23 +109,23 @@ export class NSPanelPopupHelpers {
         result.push(fanEntityData?.mode ?? NSPanelConstants.STR_EMPTY) // current mode value
         result.push(`${entity.fanMode1}?${entity.fanMode2}?${entity.fanMode3}`)
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL,
+            params: result,
+        }
+        return hmiCmd
     }
 
     private static generatePopupLight(
         node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
-    ): string | string[] | null {
+    ): HMICommand | null {
         // entity data might be undefined, if nothing received yet
         // if (entityData == null) return null
 
         const lightEntityData: LightEntityData = <LightEntityData>entityData
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
-
-        result.push(entity.entityId)
-        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        const result: HMICommandParameters = []
 
         const brightness = entity.dimmable ? lightEntityData?.brightness : NSPanelConstants.STR_DISABLE
         const colorTemp = entity.hasColorTemperature ? lightEntityData?.colorTemperature : NSPanelConstants.STR_DISABLE
@@ -129,6 +133,10 @@ export class NSPanelPopupHelpers {
         const strColor = NSPanelUtils.i18n(node, 'light.color', 'nspanel-panel', 'common')
         const strColorTemp = NSPanelUtils.i18n(node, 'light.temperature', 'nspanel-panel', 'common')
         const strBrightness = NSPanelUtils.i18n(node, 'light.brightness', 'nspanel-panel', 'common')
+
+        result.push(entity.entityId)
+        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
+        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
         result.push(NSPanelUtils.toHmiState(lightEntityData?.active ?? 0))
         result.push(brightness ?? NSPanelConstants.STR_EMPTY)
         result.push(colorTemp ?? NSPanelConstants.STR_EMPTY)
@@ -137,84 +145,94 @@ export class NSPanelPopupHelpers {
         result.push(entity.hasColorTemperature ? strColorTemp : NSPanelConstants.STR_EMPTY)
         result.push(entity.dimmable ? strBrightness : NSPanelConstants.STR_EMPTY)
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL,
+            params: result,
+        }
+        return hmiCmd
     }
 
     private static generatePopupShutter(
         node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
-    ): string | string[] | null {
+    ): HMICommand | null {
         // entity data might be undefined, if nothing received yet
-        // if (entityData == null) return null
-
         const shutterEntityData: ShutterEntityData = entityData as ShutterEntityData // TODO: type guard
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+        const hmiCmdParams: HMICommandParameters = []
 
         const hasTilt: boolean = entity.hasTilt ?? false
         const posValue: number = Number(shutterEntityData?.value ?? 0)
         const tiltValue: number = Number(shutterEntityData?.tilt ?? 0)
 
-        result.push(entity.entityId)
-        result.push(posValue ?? NSPanelConstants.STR_EMPTY)
-        result.push(shutterEntityData?.text ?? NSPanelConstants.STR_EMPTY)
-        result.push(NSPanelUtils.i18n(node, 'shutter.position', 'nspanel-panel', 'common'))
-        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(NSPanelUtils.getIcon(entity.iconUp ?? NSPanelConstants.STR_EMPTY))
-        result.push(NSPanelUtils.getIcon(entity.iconStop ?? NSPanelConstants.STR_EMPTY))
-        result.push(NSPanelUtils.getIcon(entity.iconDown ?? NSPanelConstants.STR_EMPTY))
-        result.push(posValue < 100 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE)
-        result.push(NSPanelConstants.STR_ENABLE) // icon_stop_status
-        result.push(posValue > 0 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE)
+        hmiCmdParams.push(entity.entityId)
+        hmiCmdParams.push(posValue ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(shutterEntityData?.text ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(NSPanelUtils.i18n(node, 'shutter.position', 'nspanel-panel', 'common'))
+        hmiCmdParams.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
+        hmiCmdParams.push(NSPanelUtils.getIcon(entity.iconUp ?? NSPanelConstants.STR_EMPTY))
+        hmiCmdParams.push(NSPanelUtils.getIcon(entity.iconStop ?? NSPanelConstants.STR_EMPTY))
+        hmiCmdParams.push(NSPanelUtils.getIcon(entity.iconDown ?? NSPanelConstants.STR_EMPTY))
+        hmiCmdParams.push(posValue < 100 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE)
+        hmiCmdParams.push(NSPanelConstants.STR_ENABLE) // icon_stop_status
+        hmiCmdParams.push(posValue > 0 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE)
 
         if (hasTilt) {
-            result.push(NSPanelUtils.i18n(node, 'shutter.tilt', 'nspanel-panel', 'common'))
-            result.push(NSPanelUtils.getIcon(entity.iconTiltLeft ?? NSPanelConstants.STR_EMPTY))
-            result.push(NSPanelUtils.getIcon(entity.iconTiltStop ?? NSPanelConstants.STR_EMPTY))
-            result.push(NSPanelUtils.getIcon(entity.iconTiltRight ?? NSPanelConstants.STR_EMPTY))
-            result.push(tiltValue < 100 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE) // iconTiltLeftStatus
-            result.push(NSPanelConstants.STR_ENABLE) // iconTiltStopStatus
-            result.push(tiltValue > 0 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE) // iconTiltRightStatus
-            result.push(shutterEntityData?.tilt ?? 0)
+            hmiCmdParams.push(NSPanelUtils.i18n(node, 'shutter.tilt', 'nspanel-panel', 'common'))
+            hmiCmdParams.push(NSPanelUtils.getIcon(entity.iconTiltLeft ?? NSPanelConstants.STR_EMPTY))
+            hmiCmdParams.push(NSPanelUtils.getIcon(entity.iconTiltStop ?? NSPanelConstants.STR_EMPTY))
+            hmiCmdParams.push(NSPanelUtils.getIcon(entity.iconTiltRight ?? NSPanelConstants.STR_EMPTY))
+            hmiCmdParams.push(tiltValue < 100 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE) // iconTiltLeftStatus
+            hmiCmdParams.push(NSPanelConstants.STR_ENABLE) // iconTiltStopStatus
+            hmiCmdParams.push(tiltValue > 0 ? NSPanelConstants.STR_ENABLE : NSPanelConstants.STR_DISABLE) // iconTiltRightStatus
+            hmiCmdParams.push(shutterEntityData?.tilt ?? 0)
         } else {
-            result.push(NSPanelConstants.STR_LUI_DELIMITER.repeat(7) + NSPanelConstants.STR_DISABLE)
+            hmiCmdParams.push(NSPanelConstants.STR_LUI_DELIMITER.repeat(7) + NSPanelConstants.STR_DISABLE)
         }
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL,
+            params: hmiCmdParams,
+        }
+        return hmiCmd
     }
 
     private static generatePopupInputSelect(
         _node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
-    ): string | string[] | null {
+    ): HMICommand | null {
         const inputSelectEntityData: InputSelectEntityData = entityData as InputSelectEntityData // TODO: type guard
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL2]
+        const hmiCmdParams: HMICommandParameters = []
 
-        result.push(entity.entityId)
-        result.push(NSPanelConstants.STR_EMPTY) // icon ignored
-        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        hmiCmdParams.push(entity.entityId)
+        hmiCmdParams.push(NSPanelConstants.STR_EMPTY) // icon ignored
+        hmiCmdParams.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
 
         if (inputSelectEntityData != null) {
             const optionsString: string = Array.isArray(inputSelectEntityData?.options)
                 ? inputSelectEntityData?.options?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
                 : inputSelectEntityData?.options
 
-            result.push(inputSelectEntityData?.mode ?? NSPanelConstants.STR_EMPTY)
-            result.push(inputSelectEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY) // TODO: text like 'no data'??
-            result.push(optionsString ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(inputSelectEntityData?.mode ?? NSPanelConstants.STR_EMPTY)
+            hmiCmdParams.push(inputSelectEntityData?.selectedOption ?? NSPanelConstants.STR_EMPTY) // TODO: text like 'no data'??
+            hmiCmdParams.push(optionsString ?? NSPanelConstants.STR_EMPTY)
         }
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL2,
+            params: hmiCmdParams,
+        }
+        return hmiCmd
     }
 
     private static generatePopupThermo(
         _node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
-    ): string | string[] | null {
+    ): HMICommand | null {
         const thermoEntityData: ThermoEntityData = entityData as ThermoEntityData // TODO: type guard
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
+        const hmiCmdParams: HMICommandParameters = []
 
         const heading: string = thermoEntityData?.heading ?? NSPanelConstants.STR_EMPTY
         const mode: string = thermoEntityData?.mode ?? NSPanelConstants.STR_EMPTY
@@ -240,33 +258,37 @@ export class NSPanelPopupHelpers {
                 ? thermoEntityData?.options2?.join(NSPanelConstants.STR_LUI_LIST_DELIMITER)
                 : thermoEntityData?.options2) ?? NSPanelConstants.STR_EMPTY
 
-        result.push(entity.entityId)
-        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        hmiCmdParams.push(entity.entityId)
+        hmiCmdParams.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
+        hmiCmdParams.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
 
-        result.push(heading)
-        result.push(mode)
-        result.push(selectedMode)
-        result.push(modeList)
+        hmiCmdParams.push(heading)
+        hmiCmdParams.push(mode)
+        hmiCmdParams.push(selectedMode)
+        hmiCmdParams.push(modeList)
 
-        result.push(heading1)
-        result.push(mode1)
-        result.push(selectedMode1)
-        result.push(modeList1)
+        hmiCmdParams.push(heading1)
+        hmiCmdParams.push(mode1)
+        hmiCmdParams.push(selectedMode1)
+        hmiCmdParams.push(modeList1)
 
-        result.push(heading2)
-        result.push(mode2)
-        result.push(selectedMode2)
-        result.push(modeList2)
+        hmiCmdParams.push(heading2)
+        hmiCmdParams.push(mode2)
+        hmiCmdParams.push(selectedMode2)
+        hmiCmdParams.push(modeList2)
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL,
+            params: hmiCmdParams,
+        }
+        return hmiCmd
     }
 
     private static generatePopupTimer(
         _node: NodeBase<INodeConfig>,
         entity: PanelEntity,
         entityData: PageEntityData | null
-    ): string | string[] | null {
+    ): HMICommand | null {
         const timerEntityData: TimerEntityData = entityData as TimerEntityData
         const dAdjustable: string = entity?.adjustable ? '1' : '0' ?? '0'
         const dAction1: string = timerEntityData?.action1 ?? entity?.action1
@@ -279,24 +301,28 @@ export class NSPanelPopupHelpers {
         const dTimerMins: number = Number.isNaN(dTimer) ? 0 : Math.floor(dTimer / 60)
         const dTimerSecs: number = Number.isNaN(dTimer) ? 0 : dTimer % 60
 
-        const result: (string | number)[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL]
-        result.push(entity.entityId)
-        result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
-        result.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
-        result.push(entity.entityId)
+        const hmiCmdParams: HMICommandParameters = []
+        hmiCmdParams.push(entity.entityId)
+        hmiCmdParams.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
+        hmiCmdParams.push(`${NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR)}`)
+        hmiCmdParams.push(entity.entityId)
 
-        result.push(dTimerMins)
-        result.push(dTimerSecs)
+        hmiCmdParams.push(dTimerMins)
+        hmiCmdParams.push(dTimerSecs)
 
-        result.push(dAdjustable)
+        hmiCmdParams.push(dAdjustable)
 
-        result.push(dAction1 ?? NSPanelConstants.STR_EMPTY)
-        result.push(dAction2 ?? NSPanelConstants.STR_EMPTY)
-        result.push(dAction3 ?? NSPanelConstants.STR_EMPTY)
-        result.push(dLabel1 ?? NSPanelConstants.STR_EMPTY)
-        result.push(dLabel2 ?? NSPanelConstants.STR_EMPTY)
-        result.push(dLabel3 ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(dAction1 ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(dAction2 ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(dAction3 ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(dLabel1 ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(dLabel2 ?? NSPanelConstants.STR_EMPTY)
+        hmiCmdParams.push(dLabel3 ?? NSPanelConstants.STR_EMPTY)
 
-        return result.join(NSPanelConstants.STR_LUI_DELIMITER)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATEDETAIL,
+            params: hmiCmdParams,
+        }
+        return hmiCmd
     }
 }

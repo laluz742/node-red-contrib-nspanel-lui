@@ -1,4 +1,5 @@
 import { PageId, StatusLevel } from './base'
+import { HMICommand } from './commands'
 import { PageInputMessage } from './messages'
 import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './nodered'
 
@@ -14,14 +15,14 @@ export type PageOnInputCallback = (
 ) => void
 
 export type PageEventCallbackType = (page: IPageNode) => void
-export type PageSendEventCallbackType = (page: IPageNode, data: string | string[]) => void
+export type PageSendEventCallbackType = (page: IPageNode, data: HMICommand | HMICommand[]) => void
 export type PageIdEventCallbackType = (pageId: PageId) => void
 
 // FIXME: hierarchy mismatch
 export interface IPageNode extends INodeConfig {
     getPageType(): string
-    generatePage(): string | string[] | null
-    generatePopupDetails(type: string, entityId: string): string | string[] | null
+    generatePage(): HMICommand | HMICommand[] | null
+    generatePopupDetails(type: string, entityId: string): HMICommand | HMICommand[] | null
     isScreenSaver(): boolean
     isForceRedraw(): boolean
     setActive(state: boolean): void

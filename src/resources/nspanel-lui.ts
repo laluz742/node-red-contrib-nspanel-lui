@@ -809,7 +809,6 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     }
                     inputNode.val(usedVal != null ? usedVal : inputNode.children().first().val())
                 })
-
             })
 
             this._pageEvents.used = usedEvents

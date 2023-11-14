@@ -1,4 +1,5 @@
 import { IDisposable } from './base'
+import { HMICommand, TasmotaCommand } from './commands'
 import { OnEventCallback, OnSensorDataCallback } from './pages'
 
 export type OnMqttConnectCallback = () => void
@@ -6,8 +7,8 @@ export type OnMqttCloseCallback = (error?: Error) => void
 export type OnMqttErrorCallback = (error: Error) => void
 
 export interface IPanelMqttHandler extends IDisposable {
-    sendCommandToPanel(cmd: string, data: string): void
-    sendToPanel(data: string[] | string): void
+    sendCommandToPanel(cmd: TasmotaCommand): void
+    sendToPanel(data: HMICommand[] | HMICommand): void
 
     on(event: 'mqtt:connect', listener: OnMqttConnectCallback): void
     on(event: 'mqtt:reconnect', listener: OnMqttConnectCallback): void

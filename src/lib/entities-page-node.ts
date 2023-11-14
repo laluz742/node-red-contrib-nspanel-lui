@@ -11,6 +11,8 @@ import {
     NodeRedSendCallback,
     PageEntityData,
     InputHandlingResult,
+    HMICommand,
+    HMICommandParameters,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -61,20 +63,23 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         return { handled: false }
     }
 
-    protected doGeneratePage(): string | string[] | null {
-        const result: string[] = [NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE]
-        result.push(this.entitiesPageNodeConfig.title ?? '')
+    protected doGeneratePage(): HMICommand | null {
         const titleNav = this.generateTitleNav()
-        result.push(titleNav)
-
         const entitites = this.generateEntities()
-        result.push(entitites)
 
-        const pageData: string = result.join(NSPanelConstants.STR_LUI_DELIMITER)
-        return pageData
+        const hmiCmdParams: HMICommandParameters = []
+        hmiCmdParams.push(this.entitiesPageNodeConfig.title ?? '')
+        hmiCmdParams.push(titleNav)
+        hmiCmdParams.push(entitites)
+
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_ENTITYUPDATE,
+            params: hmiCmdParams,
+        }
+        return hmiCmd
     }
 
-    public generatePopupDetails(type: string, entityId: string): string | string[] | null {
+    public generatePopupDetails(type: string, entityId: string): HMICommand | null {
         const entities = [...this.entities.values()] ?? []
 
         // generate popup only, if related to a known entity or the page itself
@@ -83,8 +88,8 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
             const entityData = this.entityData.get(entity.entityId)
 
             // if (entityData != null) { // entity data might be undefined, if nothing received yet
-            const result = NSPanelPopupHelpers.generatePopup(type, this, entity, entityData)
-            return result
+            const hmiCmd: HMICommand = NSPanelPopupHelpers.generatePopup(type, this, entity, entityData)
+            return hmiCmd
             // }
         }
 

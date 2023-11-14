@@ -30,6 +30,8 @@ import {
     StatusLevel,
     NodeStatus,
     PanelControllerConfig,
+    HMICommand,
+    TasmotaCommand,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 import { IPanelNodeEx } from '../types/panel'
@@ -134,7 +136,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this._cache.addPage(page.id, page)
 
         page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
-        page.on('page:send', (pageOfSend: IPageNode, data: string) => this.onPageSendRequest(pageOfSend, data))
+        page.on('page:send', (pageOfSend: IPageNode, cmds: HMICommand | HMICommand[]) =>
+            this.onPageSendRequest(pageOfSend, cmds)
+        )
         page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
         page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
     }
@@ -160,7 +164,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 case 'switch': {
                     const switchParams = cmdData.params as SwitchCommandParams
                     const switchRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (switchParams.id + 1)
-                    this.sendCommandToPanel(switchRelayCmd, switchParams.active?.toString() ?? '')
+                    this.sendCommandToPanel({ cmd: switchRelayCmd, data: switchParams.active?.toString() ?? '' })
 
                     break
                 }
@@ -168,7 +172,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 case 'toggle': {
                     const toggleParams = cmdData.params as SwitchCommandParams
                     const toggleRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (toggleParams.id + 1)
-                    this.sendCommandToPanel(toggleRelayCmd, NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE)
+                    this.sendCommandToPanel({
+                        cmd: toggleRelayCmd,
+                        data: NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE,
+                    })
                     break
                 }
 
@@ -214,7 +221,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (silenceDuration != null) params.push(silenceDuration)
         if (tune != null) params.push(tune)
 
-        this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_BUZZER, params.join(','))
+        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_BUZZER, data: params.join(',') })
     }
 
     public dispose() {
@@ -368,10 +375,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private onPageSendRequest(page: IPageNode, data: string | string[]): void {
+    private onPageSendRequest(page: IPageNode, cmds: HMICommand | HMICommand[]): void {
         if (page == null || !this._cache.isPageKnown(page.id)) return
 
-        this.sendToPanel(data)
+        this.sendToPanel(cmds)
     }
 
     private delayPanelStartupFlag = true
@@ -476,7 +483,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             case 'page':
                 if (pageNode != null) {
                     if (fullUpdate) {
-                        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_PAGETYPE + pageNode.getPageType())
+                        const hmiCmd: HMICommand = {
+                            cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
+                            params: pageNode.getPageType(),
+                        }
+                        this.sendToPanel(hmiCmd)
                         this.sendTimeoutToPanel(pageNode.getTimeout())
                     }
 
@@ -587,17 +598,27 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.setNodeStatus('warn', this._i18n('common.status.noScreenSaverPage'))
             log.warn('No screensaver found.')
 
-            this.sendToPanel(NSPanelConstants.STR_LUI_CMD_ACTIVATE_SCREENSAVER)
+            const hmiCmd: HMICommand = {
+                cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
+                params: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER,
+            }
+            this.sendToPanel(hmiCmd)
         }
     }
 
     private activateStartupPage() {
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_ACTIVATE_STARTUP_PAGE)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
+            params: NSPanelConstants.STR_PAGE_TYPE_CARD_STARTUP,
+        }
+        this.sendToPanel(hmiCmd)
     }
 
     private updatePage(page: IPageNode) {
-        const data: string[] = []
-        if (page.isForceRedraw()) data.push(NSPanelConstants.STR_LUI_CMD_PAGETYPE + page.getPageType())
+        const data: HMICommand[] = []
+        if (page.isForceRedraw()) {
+            data.push({ cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: page.getPageType() })
+        }
 
         const pageData = page.generatePage()
         if (Array.isArray(pageData)) {
@@ -620,12 +641,14 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private updateNotification(history: IPageHistory) {
-        const notifyPageData = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
+        const notifyHmiCmd = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
 
-        if (notifyPageData !== null) {
-            let pageData: string[] = [NSPanelConstants.STR_LUI_CMD_ACTIVATE_POPUP_NOTIFY]
-            pageData = pageData.concat(notifyPageData)
-            this.sendToPanel(pageData)
+        if (notifyHmiCmd !== null) {
+            const cmds: HMICommand[] = [
+                { cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: NSPanelConstants.STR_PAGE_TYPE_POPUP_NOTIFY },
+                notifyHmiCmd,
+            ]
+            this.sendToPanel(cmds)
 
             if (this._ctrlConfig.beepOnNotifications || history.notifyData.beep) {
                 this.sendBuzzerCommand(3, 2, 1)
@@ -633,18 +656,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private sendToPanel(data: string[] | string | null) {
-        if (data == null || this._panelMqttHandler === null) return
+    private sendToPanel(cmds: HMICommand | HMICommand[] | null) {
+        if (cmds == null || this._panelMqttHandler === null) return
 
-        if (typeof data === 'object') {
-            // eslint-disable-next-line prefer-const
-            for (let d in data) {
-                const dStr: string = data[d] as string
-                this._panelMqttHandler.sendToPanel(dStr)
-            }
-        } else {
-            this._panelMqttHandler.sendToPanel(data)
-        }
+        this._panelMqttHandler.sendToPanel(cmds)
     }
 
     private sendLWTToPanel() {
@@ -657,30 +672,30 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         const timeStr = `${timeHours.toString().padStart(2, '0')}:${timeMinutes.toString().padStart(2, '0')}`
 
-        const cmds = [
-            NSPanelConstants.STR_LUI_CMD_ACTIVATE_SCREENSAVER,
-            'statusUpdate',
-            NSPanelConstants.STR_LUI_CMD_TIME + offline,
-            NSPanelConstants.STR_LUI_CMD_DATE + stopped,
-            `notify~~${timeStr}`,
+        const cmds: HMICommand[] = [
+            { cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER },
+            { cmd: 'statusUpdate', params: null },
+            { cmd: NSPanelConstants.STR_LUI_CMD_TIME, params: offline },
+            { cmd: NSPanelConstants.STR_LUI_CMD_DATE, params: stopped },
+            { cmd: NSPanelConstants.STR_LUI_CMD_NOTIFY, params: timeStr },
         ] // TODO: reattach relays?
         this.sendToPanel(cmds)
     }
 
-    private sendCommandToPanel(cmd: string, data: string) {
-        this._panelMqttHandler?.sendCommandToPanel(cmd, data)
+    private sendCommandToPanel(cmd: TasmotaCommand) {
+        this._panelMqttHandler?.sendCommandToPanel(cmd)
     }
 
     // #region basic panel commands
     private sendDetachRelays(detach: boolean = false) {
         const state = detach ? '1' : '0'
 
-        this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS, state)
+        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS, data: state })
     }
 
     private sendTelePeriod(telePeriod: number = 1) {
         const telePeriodStr = `${telePeriod}`
-        this.sendCommandToPanel(NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD, telePeriodStr)
+        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD, data: telePeriodStr })
     }
 
     private sendTimeToPanel() {
@@ -700,7 +715,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             timeStr = date.toLocaleTimeString(undefined, DEFAULT_TIME_OPTIONS)
         }
 
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_TIME + timeStr)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_TIME,
+            params: timeStr,
+        }
+        this.sendToPanel(hmiCmd)
     }
 
     private sendDateToPanel() {
@@ -723,7 +742,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             dateStr = date.toLocaleDateString(undefined, DEFAULT_DATE_OPTIONS)
         }
 
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_DATE + dateStr)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_DATE,
+            params: dateStr,
+        }
+        this.sendToPanel(hmiCmd)
     }
 
     private sendDimModeToPanel() {
@@ -735,12 +758,21 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             ? this._panelConfig.panel.panelDimHighNight
             : this._panelConfig.panel.panelDimHigh
 
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_DIMMODE + dimLow + NSPanelConstants.STR_LUI_DELIMITER + dimHigh)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_DIMMODE,
+            params: [dimLow, dimHigh],
+        }
+
+        this.sendToPanel(hmiCmd)
     }
 
     private sendTimeoutToPanel(timeout: number | null = null) {
         const tempTimeout = timeout === null ? this._panelConfig.panel.panelTimeout : timeout
-        this.sendToPanel(NSPanelConstants.STR_LUI_CMD_TIMEOUT + tempTimeout)
+        const hmiCmd: HMICommand = {
+            cmd: NSPanelConstants.STR_LUI_CMD_TIMEOUT,
+            params: tempTimeout,
+        }
+        this.sendToPanel(hmiCmd)
     }
     // #endregion basic panel commands
 

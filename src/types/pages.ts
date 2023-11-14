@@ -1,13 +1,14 @@
 import { PanelEntity } from './entities'
 import { EventArgs, EventMapping } from './events'
+import { HMICommand } from './commands'
 import { PageEntityData } from './messages'
 import { INodeConfig } from './nodered'
 
 export type ConfiguredEventsMap = Map<string, EventMapping>
 
 export interface IPageCache {
-    get(): string | string[] | null
-    put(data: string | string[] | null): void
+    get(): HMICommand | HMICommand[] | null
+    put(data: HMICommand | HMICommand[] | null): void
     containsData(): boolean
     clear()
 }
