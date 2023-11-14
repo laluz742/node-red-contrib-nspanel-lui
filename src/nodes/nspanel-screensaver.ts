@@ -58,7 +58,7 @@ module.exports = (RED) => {
                 return null
             }
 
-            let hmiCmdParams: HMICommandParameters = []
+            const hmiCmdParams: HMICommandParameters = []
             const data = pageData.entities
 
             // eslint-disable-next-line prefer-const

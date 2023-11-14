@@ -127,10 +127,10 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         let navNext: string
 
         const navPrevEventMappings: EventMapping[] = this.pageNodeConfig.events.filter(
-            (item) => item.event == NSPanelConstants.STR_NAV_ID_PREVIOUS
+            (item) => item.event === NSPanelConstants.STR_NAV_ID_PREVIOUS
         )
         const navNextEventMappings: EventMapping[] = this.pageNodeConfig.events.filter(
-            (item) => item.event == NSPanelConstants.STR_NAV_ID_NEXT
+            (item) => item.event === NSPanelConstants.STR_NAV_ID_NEXT
         )
 
         if (navPrevEventMappings[0] != null) {
