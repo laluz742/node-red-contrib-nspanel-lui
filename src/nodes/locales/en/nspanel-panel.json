@@ -47,7 +47,8 @@
             "swipeLeft": "Swipe left",
             "swipeUp": "Swipe up",
             "swipeDown": "Swipe down",
-            "entity": "Entity"
+            "entity": "Entity",
+            "id": "Id"
         },
         "template-events": {
             "icon": "Icon",
@@ -73,7 +74,7 @@
             "mode3": "Mode 3",
             "dimmable": "Dimmable",
             "temperature": "Temperature",
-            "inputsel-notice": "The options are set via messages.",
+            "inputsel-notice": "The select options are set via messages.",
             "adjustable": "Adjustable",
             "action1": "Action 1",
             "action2": "Action 2",
