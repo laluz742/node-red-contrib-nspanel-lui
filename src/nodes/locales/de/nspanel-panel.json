@@ -49,7 +49,12 @@
             "swipeDown": "Nach unten wischen",
             "entity": "Element",
             "id": "Id",
-            "page": "Seite"
+            "page": "Seite",
+            "relay1": "Relais 1",
+            "relay2": "Relais 2",
+            "on": "An",
+            "off": "Aus",
+            "toggle": "Umschalten"
         },
         "template-events": {
             "icon": "Icon",

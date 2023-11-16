@@ -49,7 +49,12 @@
             "swipeDown": "Swipe down",
             "entity": "Entity",
             "id": "Id",
-            "page": "Page"
+            "page": "Page",
+            "relay1": "Relay 1",
+            "relay2": "Relay 2",
+            "on": "On",
+            "off": "Off",
+            "toggle": "Toggle"
         },
         "template-events": {
             "icon": "Icon",
