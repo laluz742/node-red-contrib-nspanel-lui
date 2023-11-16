@@ -48,7 +48,8 @@
             "swipeUp": "Nach oben wischen",
             "swipeDown": "Nach unten wischen",
             "entity": "Element",
-            "id": "Id"
+            "id": "Id",
+            "page": "Seite"
         },
         "template-events": {
             "icon": "Icon",

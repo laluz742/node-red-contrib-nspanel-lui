@@ -163,7 +163,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     value: 'page',
                     icon: 'fa fa-desktop',
                     type: 'page',
-                    label: 'Page',
+                    label: i18n(`${I18N_PREFIX_EVENTS}page`, I18N_DICT, I18N_GROUP),
                     options: [],
                 }
 

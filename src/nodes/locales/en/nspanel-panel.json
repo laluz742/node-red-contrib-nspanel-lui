@@ -48,7 +48,8 @@
             "swipeUp": "Swipe up",
             "swipeDown": "Swipe down",
             "entity": "Entity",
-            "id": "Id"
+            "id": "Id",
+            "page": "Page"
         },
         "template-events": {
             "icon": "Icon",
