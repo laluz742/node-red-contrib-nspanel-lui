@@ -47,7 +47,8 @@
             "swipeLeft": "Nach links wischen",
             "swipeUp": "Nach oben wischen",
             "swipeDown": "Nach unten wischen",
-            "entity": "Element"
+            "entity": "Element",
+            "id": "Id"
         },
         "template-events": {
             "icon": "Icon",
@@ -73,7 +74,7 @@
             "mode3": "Modus 3",
             "dimmable": "Dimmbar",
             "temperature": "Temperatur",
-            "inputsel-notice": "Die Optionen werden über Nachrichten festegelegt.",
+            "inputsel-notice": "Die Auswahl-Optionen werden über Nachrichten festegelegt.",
             "adjustable": "Einstellbar",
             "action1": "Aktion 1",
             "action2": "Aktion 2",

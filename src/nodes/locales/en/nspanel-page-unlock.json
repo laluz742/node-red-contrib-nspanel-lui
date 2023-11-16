@@ -6,7 +6,7 @@
             "title": "Title",
             "unassigned": "not assiged",
             "panelTimeout": "Stand-by timeout override",
-            "panelTimeoutSeconds": "seconds"
+            "seconds": "seconds"
         },
         "placeholder": {
             "name": "Name"
@@ -22,7 +22,7 @@
             "iconStatus": "Icon",
             "iconStatusColor": "Color",
             "pinCode": "PIN",
-            "unlockLabel": "Text Eingabetaste"
+            "unlockLabel": "Label confirm button"
         },
         "events": {
             "unlock": "Unlock"
