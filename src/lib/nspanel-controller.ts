@@ -139,6 +139,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         page.on('page:send', (pageOfSend: IPageNode, cmds: HMICommand | HMICommand[]) =>
             this.onPageSendRequest(pageOfSend, cmds)
         )
+        page.on('page:cmd', (_pageOfCmd: IPageNode, cmds: CommandData | CommandData[]) => this.executeCommand(cmds))
         page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
         page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
     }

@@ -1,6 +1,6 @@
 import { PageId, StatusLevel } from './base'
 import { HMICommand } from './commands'
-import { PageInputMessage } from './messages'
+import { CommandData, PageInputMessage } from './messages'
 import { INodeConfig, NodeRedOnErrorCallback, NodeRedSendCallback } from './nodered'
 
 export interface IPanelNode extends INodeConfig {
@@ -17,6 +17,7 @@ export type PageOnInputCallback = (
 export type PageEventCallbackType = (page: IPageNode) => void
 export type PageSendEventCallbackType = (page: IPageNode, data: HMICommand | HMICommand[]) => void
 export type PageIdEventCallbackType = (pageId: PageId) => void
+export type PageCommandCallbackType = (page: IPageNode, data: CommandData | CommandData[]) => void
 
 // FIXME: hierarchy mismatch
 export interface IPageNode extends INodeConfig {
@@ -34,6 +35,7 @@ export interface IPageNode extends INodeConfig {
     emit(event: string | symbol, ...args: any[]): boolean
     on(event: 'page:update', callback: PageEventCallbackType): void
     on(event: 'page:send', callback: PageSendEventCallbackType): void
+    on(event: 'page:cmd', listener: PageCommandCallbackType): void
     on(event: 'nav:pageId', listener: PageIdEventCallbackType): void
     on(event: 'nav:page', listener: PageIdEventCallbackType): void
     on(event: 'input', listener: PageOnInputCallback): void

@@ -22,7 +22,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
     const I18N_DICT: string = 'nspanel-panel'
     const I18N_GROUP: string = 'editor'
-    const I18N_PREFIX_EVENTS: string = 'events.'
+    const I18N_PREFIX_EVENTS: string = 'events'
 
     // #region events
     const ALL_VALID_NAVIGATION_EVENTS: EventDescriptor[] = [
@@ -111,6 +111,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
     }
 
+    const i18nEditor = (key: string) => {
+        return RED._(`node-red-contrib-nspanel-lui/${I18N_DICT}:${I18N_GROUP}.${key}`)
+    }
+
     const i18nTpl = (rel: JQuery<HTMLElement>, dict: string, group?: string) => {
         rel.find('[data-i18n]').each((_i, el) => {
             const attr = $(el).attr('data-i18n')
@@ -163,10 +167,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     value: 'page',
                     icon: 'fa fa-desktop',
                     type: 'page',
-                    label: 'Page',
+                    label: i18nEditor(`${I18N_PREFIX_EVENTS}.page`),
                     options: [],
                 }
-
                 // TODO: update on panel changed
                 // eslint-disable-next-line prefer-const
                 for (let i in knownPages) {
@@ -179,8 +182,35 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         })
                     }
                 }
-
                 typedInputParams.types.push(pageNodeType)
+
+                const relay1Str = i18nEditor(`${I18N_PREFIX_EVENTS}.relay1`)
+                const relay1EventType: TypedInputTypeParams = {
+                    value: 'relay1',
+                    icon: 'fa fa-toggle-on',
+                    type: 'relay1',
+                    label: relay1Str,
+                    options: [
+                        { value: 'on', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.on`)} (${relay1Str})` },
+                        { value: 'off', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.off`)} (${relay1Str})` },
+                        { value: 'toggle', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.toggle`)} (${relay1Str})` },
+                    ],
+                }
+                const relay2Str = i18nEditor(`${I18N_PREFIX_EVENTS}.relay2`)
+                const relay2EventType: TypedInputTypeParams = {
+                    value: 'relay2',
+                    icon: 'fa fa-toggle-on',
+                    type: 'relay2',
+                    label: relay2Str,
+                    options: [
+                        { value: 'on', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.on`)} (${relay2Str})` },
+                        { value: 'off', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.off`)} (${relay2Str})` },
+                        { value: 'toggle', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.toggle`)} (${relay2Str})` },
+                    ],
+                }
+                typedInputParams.types.push(relay1EventType)
+                typedInputParams.types.push(relay2EventType)
+
                 typedInputParams.default = defaultType || 'page'
             }
 
@@ -787,10 +817,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             const allEvents = this._pageEvents.all.map((x) => x)
             this._pageEvents.entities.forEach((e) => {
                 if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(e.entityId)) {
-                    const labelPrefix: string = i18n(`${I18N_PREFIX_EVENTS}entity`, I18N_DICT, I18N_GROUP)
-                    const idPrefix: string = i18n(`${I18N_PREFIX_EVENTS}id`, I18N_DICT, I18N_GROUP)
+                    const labelPrefix: string = i18nEditor(`${I18N_PREFIX_EVENTS}.entity`)
+                    const idPrefix: string = i18nEditor(`${I18N_PREFIX_EVENTS}.id`)
                     const label: string = NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(e.text)
-                        ? `${e.text} (${idPrefix}: ${e.entityId})`
+                        ? `${e.text}(${idPrefix}: ${e.entityId})`
                         : e.entityId
                     allEvents.push({ event: e.entityId, label: `${labelPrefix}: ${label}` })
                 }
@@ -955,7 +985,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     // eslint-disable-next-line prefer-const
     for (let i in ALL_VALID_NAVIGATION_EVENTS) {
         ALL_VALID_NAVIGATION_EVENTS[i].label = i18n(
-            `${I18N_PREFIX_EVENTS}${ALL_VALID_NAVIGATION_EVENTS[i].event}`,
+            `${I18N_PREFIX_EVENTS}.${ALL_VALID_NAVIGATION_EVENTS[i].event}`,
             I18N_DICT,
             I18N_GROUP
         )
@@ -963,7 +993,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     // eslint-disable-next-line prefer-const
     for (let i in ALL_VALID_BUTTON_EVENTS) {
         ALL_VALID_BUTTON_EVENTS[i].label = i18n(
-            `${I18N_PREFIX_EVENTS}${ALL_VALID_BUTTON_EVENTS[i].event}`,
+            `${I18N_PREFIX_EVENTS}.${ALL_VALID_BUTTON_EVENTS[i].event}`,
             I18N_DICT,
             I18N_GROUP
         )
