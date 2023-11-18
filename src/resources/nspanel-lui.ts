@@ -820,7 +820,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const labelPrefix: string = i18nEditor(`${I18N_PREFIX_EVENTS}.entity`)
                     const idPrefix: string = i18nEditor(`${I18N_PREFIX_EVENTS}.id`)
                     const label: string = NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(e.text)
-                        ? `${e.text}(${idPrefix}: ${e.entityId})`
+                        ? `${e.text} (${idPrefix}: ${e.entityId})`
                         : e.entityId
                     allEvents.push({ event: e.entityId, label: `${labelPrefix}: ${label}` })
                 }

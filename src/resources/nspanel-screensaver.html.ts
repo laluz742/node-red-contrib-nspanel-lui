@@ -40,6 +40,8 @@
                 events: { value: [] },
 
                 doubleTapToExit: { value: false },
+
+                colorPaletteEnabled: { value: false },
                 colorBackground: { value: '#000000' },
                 colorTime: { value: '#ffffff' },
                 colorTimeAmPm: { value: '#ffffff' },
@@ -105,6 +107,13 @@
                     id: 'nspanel-page-tab-colors',
                     iconClass: 'fa fa-paint-brush',
                     label: NSPanelLui._('label.tabColors', 'nspanel-screensaver'),
+                })
+
+                // attach color behavior
+                const enableColorPaletteField = $('#node-input-colorPaletteEnabled')
+                enableColorPaletteField.on('change', () => {
+                    const disable = enableColorPaletteField.is(':checked') === false
+                    $('#colorPaletteSettings input').prop('disabled', disable)
                 })
             },
             oneditsave() {

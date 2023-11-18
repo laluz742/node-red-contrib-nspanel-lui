@@ -343,13 +343,13 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
 
                 case 'relay1':
                 case 'relay2': {
-                    const relayNum = cfgEvent.t == 'relay1' ? 0 : 1
-                    const relayCmd = cfgEvent.value == 'toggle' ? 'toggle' : 'switch'
+                    const relayNum = cfgEvent.t === 'relay1' ? 0 : 1
+                    const relayCmd = cfgEvent.value === 'toggle' ? 'toggle' : 'switch'
                     const relayCmdParams: SwitchCommandParams = {
                         id: relayNum,
                     }
                     if (relayCmd === 'switch') {
-                        relayCmdParams.active = cfgEvent.value == 'on'
+                        relayCmdParams.active = cfgEvent.value === 'on'
                     }
 
                     const cmdData: CommandData = {

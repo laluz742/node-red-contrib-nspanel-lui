@@ -13,9 +13,43 @@
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
-### General
+### Page Node Configuration
 
-The icon set, that can be used in node configuration or in messages is based on the Material Design Icons. All supported icons are listed in the [Lovelace UI Icon Cheatsheet](https://docs.nspanel.pky.eu/icon-cheatsheet.html).
+#### General Settings
+
+![image](img/page-node-config-general.png)
+
+Each node can be assigned a name that is displayed in the flow. Furthermore, this name may be used for explicit activation using messages sent to the HMI Control node.
+
+The assignment to a panel activates the node so that it can be used on the specified panel.
+After the assignment, the name of the assigned panel is placed in front of the name of the node:
+
+![image](img/page-node-in-flow.png)
+
+The specified title will be used ons panel screen.
+
+The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of ```0`` means that the screen saver is not activated.
+
+#### Entities
+
+Entities can be added to a page and configured accordingly. The number and types depend on the node type. 
+
+![image](img/page-node-config-entities.png)
+
+The icons that can be used in node configuration is based on the Material Design Icons. All supported icons are listed in the [Lovelace UI Icon Cheatsheet](https://docs.nspanel.pky.eu/icon-cheatsheet.html).
+
+
+#### Events
+
+The Events tab can be used to set up the behavior of the page for certain events. 
+
+![image](img/page-node-config-events.png)
+
+Using the events _Back_ and _Next_
+
+
+The entities can be linked to actions on the _Events_ tab.
+
 
 #### Messages
 

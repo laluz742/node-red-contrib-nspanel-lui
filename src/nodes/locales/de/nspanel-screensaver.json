@@ -18,6 +18,7 @@
             "palette": "ScreenSaver",
             "doubleTapToExit": "Zum Verlassen doppelt tippen",
             "tabColors": "Farben",
+            "colorPaletteEnabled": "Farbpalette aktiveren",
             "colorBackground": "Hintergrund",
             "colorTime": "Uhrzeit",
             "colorTimeAmPm": "Uhrzeit-Bezeichner (am/pm)",

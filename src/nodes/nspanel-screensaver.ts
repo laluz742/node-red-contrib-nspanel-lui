@@ -6,6 +6,7 @@ import { HMICommand, HMICommandParameters, PageData, PanelColor, ScreenSaverBase
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
 type ScreenSaverConfig = ScreenSaverBaseConfig & {
+    colorPaletteEnabled: boolean
     colorBackground?: PanelColor
     colorTime?: PanelColor
     colorTimeAmPm?: PanelColor
@@ -46,8 +47,10 @@ module.exports = (RED) => {
             const weatherUpdate: HMICommand = this.generateWeatherUpdate()
             if (weatherUpdate) result.push(weatherUpdate)
 
-            const colorSet: HMICommand = this.generateColorCommand()
-            if (colorSet) result.push(colorSet)
+            if (this.getConfig()?.colorPaletteEnabled) {
+                const colorSet: HMICommand = this.generateColorCommand()
+                if (colorSet) result.push(colorSet)
+            }
 
             return result
         }

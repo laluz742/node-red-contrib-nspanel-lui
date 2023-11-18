@@ -18,6 +18,7 @@
             "palette": "ScreenSaver",
             "doubleTapToExit": "double tap to exit",
             "tabColors": "Colors",
+            "colorPaletteEnabled": "Enable color palette",
             "colorBackground": "Background",
             "colorTime": "Time",
             "colorTimeAmPm": "Time designator (am/pm)",
