@@ -42,14 +42,16 @@ The icons that can be used in node configuration is based on the Material Design
 #### Events
 
 The Events tab can be used to set up the behavior of the page for certain events. 
+There are various actions that can be assigned:
+- Sending messages
+- Activating other page nodes
+- Controling relay states.
+
+The _Back_ and _Next_ events can be used to customize the navigation at the top of the page.
+The configured entities can also be used to trigger certain actions.
+If the "Decouple buttons from relays" option is set in the NSPanel configuration node, actions can be assigned to the hardware buttons.
 
 ![image](img/page-node-config-events.png)
-
-Using the events _Back_ and _Next_
-
-
-The entities can be linked to actions on the _Events_ tab.
-
 
 #### Messages
 
