@@ -79,6 +79,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     const DEFAULT_COLOR = '#ffffff'
 
     function getRandomId(): string {
+        // TODO: use RED.util.generateId()
         if (typeof crypto['randomUUID'] === 'function') return crypto.randomUUID()
 
         // TODO: downward compatibility needed?

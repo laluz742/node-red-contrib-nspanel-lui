@@ -86,6 +86,10 @@
                 dateFormatYear: { value: 'numeric' },
                 timeFormatHour: { value: 'numeric' },
                 timeFormatMinute: { value: '2-digit' },
+
+                useCustomDateTimeFormat: { value: false },
+                dateCustomFormat: { value: '' },
+                timeCustomFormat: { value: 'HH:mm' },
             },
 
             label() {
@@ -102,6 +106,14 @@
                     const disable = enableUpdatesField.is(':checked') === false
                     $('#updateSettings input').prop('disabled', disable)
                 })
+
+                const useCustomDateTimeFormat = $('#node-config-input-useCustomDateTimeFormat')
+                useCustomDateTimeFormat.on('change', () => {
+                    const useCustom = useCustomDateTimeFormat.is(':checked') === true
+                    $('#nspanel-page-tab-date-standard select').prop('disabled', useCustom)
+                    $('#nspanel-page-tab-date-custom input').prop('disabled', !useCustom)
+                })
+                useCustomDateTimeFormat.trigger('change')
 
                 const tabs = RED.tabs.create({
                     id: 'nspanel-page-tabs',
