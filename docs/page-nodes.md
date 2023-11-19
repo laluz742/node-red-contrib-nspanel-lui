@@ -32,7 +32,7 @@ The standby timeout configured in the panel settings (NSPanel config node) can b
 
 #### Entities
 
-Entities can be added to a page and configured accordingly. The number and types depend on the node type. 
+Entities can be added to a page and configured accordingly. The quantity and types depend on the node type. 
 
 ![image](img/page-node-config-entities.png)
 
