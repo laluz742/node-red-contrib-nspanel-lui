@@ -63,6 +63,10 @@ export interface PanelParameters {
 
     timeFormatHour: 'numeric' | '2-digit'
     timeFormatMinute: 'numeric' | '2-digit'
+
+    useCustomDateTimeFormat: boolean
+    dateCustomFormat: string
+    timeCustomFormat: string
 }
 
 export interface IPanelConfigNode {

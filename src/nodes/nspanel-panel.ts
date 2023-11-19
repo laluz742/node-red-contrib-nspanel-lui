@@ -41,6 +41,10 @@ interface NSPanelConfig extends INodeConfig {
 
     timeFormatHour: 'numeric' | '2-digit'
     timeFormatMinute: 'numeric' | '2-digit'
+
+    useCustomDateTimeFormat: boolean
+    dateCustomFormat: string
+    timeCustomFormat: string
 }
 
 module.exports = (RED) => {
@@ -101,6 +105,10 @@ module.exports = (RED) => {
 
                     timeFormatHour: this.config.timeFormatHour,
                     timeFormatMinute: this.config.timeFormatMinute,
+
+                    useCustomDateTimeFormat: this.config.useCustomDateTimeFormat,
+                    dateCustomFormat: this.config.dateCustomFormat,
+                    timeCustomFormat: this.config.timeCustomFormat,
                 },
 
                 mqtt: this.nsPanelConfigNode.getMqttConfig(),
