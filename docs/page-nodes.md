@@ -28,11 +28,7 @@ The assignment to a panel activates the node so that it can be used on the speci
 
 The specified title will be used ons panel screen.
 
-<<<<<<< HEAD
 The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of `0` means that the page remains active.
-=======
-The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of ```0``` means that the page remains active.
->>>>>>> dcd2963 (fixed timeout desc)
 
 #### Entities
 
@@ -233,6 +229,22 @@ Example Message:
 | `iconColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
 | `selectedOption` | selected option, must be included in `options` |
 | `options` | available options to choose from |
+
+### Lockscreen Page Node
+
+The lock screen node can be used to control access to other pages via PIN code.
+
+It offers the _Unlock_ event, which can be assigned to actions such as page navigation on the _Events_ configuration tab. The unlock event is triggered when the configured PIN is entered on the display. ![image](img/page-node-lockscreen_events_unlock.png)
+
+#### Configuration
+
+![image](img/page-node-lockscreen_config.png)
+
+| Option                 | Description                                                     |
+| ---------------------- | --------------------------------------------------------------- |
+| `PIN`                  | PIN code to be entered on NSPanel                               |
+| `Label confirm button` | Label for button, which submits entered PIN code to the backend |
+| `Icon`                 | Icon displayed next to PIN code input field                     |
 
 ### Lockscreen Page Node
 
