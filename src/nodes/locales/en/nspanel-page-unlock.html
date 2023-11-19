@@ -1,3 +1,35 @@
-<script type="text/html" data-help-name="nspanel-page-alarm">
-    <p>NSPanel Lovelace UI Unlock page node</p>
+<script type="text/html" data-help-name="nspanel-page-unlock">
+    <p>The lock screen node can be used to control access to other pages via PIN code.</p>
+
+    <h2>Configuration</h2>
+    <h3>General</h3>
+    <ul>
+        <li><b>NSPanel</b>: Specifies the panel to which the lockscreen node is assigned.</li>
+        <li><b>Title</b>: The title that is displayed on the NSPanel screen.</li>
+        <li>
+            <b>Stand-by timeout override</b>: The timeout in seconds which overrides the setting configured on the
+            NSPanel configuration node.
+        </li>
+        <li><b>PIN</b>: The PIN code for unlocking the lock screen page.</li>
+        <li><b>Label confirm button</b>: The label displayed on the enter button on panel screen.</li>
+        <li><b>Icon</b>: Icon that is displayed next to the input screen.</li>
+        <li><b>Color</b>: Color to be used for the icon.</li>
+    </ul>
+
+    <h3>Events</h3>
+    Using events the behaviour of the page can be set up.
+    <ul>
+        <li><b>Back</b>: Navigation element displayed in the left-hand corner of the page title bar.</li>
+        <li><b>Next</b>: Navigation element displayed in the right-hand corner of the page title bar.</li>
+        <li><b>Unlock</b>: Defines the action when the correct PIN code is submitted.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+    </ul>
+    <p>* Only available if the <i>Decouple buttons from relays</i> set on the nspanel-panel configuration node.</p>
 </script>

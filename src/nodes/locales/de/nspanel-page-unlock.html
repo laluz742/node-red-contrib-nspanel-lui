@@ -1,3 +1,34 @@
-<script type="text/html" data-help-name="nspanel-page-alarm">
-    <p>NSPanel Lovelace UI Unlock page node</p>
+<script type="text/html" data-help-name="nspanel-page-unlock">
+    <p>Die Codesperre kann verwendet werden, um den Zugriff auf andere Seiten über eine PIN zu beschränken.</p>
+
+    <h2>Konfiguration</h2>
+    <h3>Allgemein</h3>
+    <ul>
+        <li><b>NSPanel</b>: Ordnet die Seite einem Panel zu.</li>
+        <li><b>Überschrift</b>: Die Überschrift wird in der Titelzeile des Bildschirms angezeigt.</li>
+        <li><b>Stand-by Überschreibung</b>: Überschreibt die in der NSPanel-Konfiguration angegebene Zeitspanne.</li>
+        <li><b>PIN</b>: Die benötigte PIN, um die Zeite zu entsperren.</li>
+        <li><b>Beschriftung Eingabetaste</b>: Die Beschriftung, welche auf der Eingabetaste angezeigt wird.</li>
+        <li><b>Icon</b>: Das Icon, welches neben dem Eingabefeld angezeigt wird.</li>
+        <li><b>Color</b>: Die Farbe in welcher das Icon dargestellt wird.</li>
+    </ul>
+
+    <h3>Ereignisse</h3>
+    Über Ereignisse kann das Verhalten der Seite angepasst werden.
+    <ul>
+        <li><b>Zurück</b>: Navigationselement, welches links in der Titelzeile des Panels angezeigt wird.</li>
+        <li><b>Vor</b>: Navigationselement, welches rechts in der Titelzeile des Panels angezeigt wird.</li>
+        <li><b>Entsperrung</b>: Definiert die Aktion, welche nach erfolgreicher PIN-Eingabe ausgeführt wird.</li>
+        <li>
+            <b><i>Taste 1*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die linke Hardware-Taste gedrückt wird.
+        </li>
+        <li>
+            <b><i>Taste 2*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die rechte Hardware-Taste gedrückt wird.
+        </li>
+    </ul>
+    <p>
+        * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
+    </p>
 </script>
