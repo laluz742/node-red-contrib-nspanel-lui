@@ -11,11 +11,7 @@ Further details about the page-specific nodes representing the different types o
 
 ## Panel Controller
 
-The controller is the basis for managing cards for the NSPanel. It integrates communication with the panel and controls the page flow.
-
-### Configuration
-
-_to be added later_
+The controller is the base node for controlling the panel. It integrates the communication with the panel and controls the page flow.
 
 ### Messages
 
