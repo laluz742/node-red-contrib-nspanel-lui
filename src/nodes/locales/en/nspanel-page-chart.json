@@ -8,6 +8,9 @@
             "panelTimeout": "Stand-by timeout override",
             "seconds": "seconds"
         },
+        "notes": {
+            "timeoutLimitNote": "(0 disable timeout, max 65 seconds)"
+        },
         "placeholder": {
             "name": "Name"
         },

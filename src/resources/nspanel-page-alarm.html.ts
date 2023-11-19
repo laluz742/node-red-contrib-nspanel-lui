@@ -3,6 +3,9 @@
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
     const ALL_VALID_ENTITIES = ['delete', 'alarm_action']
 
+    const PANEL_TIMEOUT_MIN = 0
+    const PANEL_TIMEOUT_MAX = 65
+
     const MAX_ENTITIES = 4
     let editableEventList
     let editableEntitiesList
@@ -22,7 +25,14 @@
                 name: { value: NSPanelLui._('defaults.name', 'nspanel-page-alarm') },
                 title: { value: '' },
                 nsPanel: { type: 'nspanel-panel', required: true },
-                timeout: { value: null },
+                timeout: {
+                    value: null,
+                    required: false,
+                    validate: function (v) {
+                        if (v == '') return true
+                        return NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TIMEOUT_MIN, PANEL_TIMEOUT_MAX)
+                    },
+                },
                 events: { value: [] },
                 entities: { value: [] },
                 numPadDisabled: { value: false },
