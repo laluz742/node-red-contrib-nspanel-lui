@@ -28,11 +28,15 @@ The assignment to a panel activates the node so that it can be used on the speci
 
 The specified title will be used ons panel screen.
 
+<<<<<<< HEAD
 The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of `0` means that the page remains active.
+=======
+The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of ```0``` means that the page remains active.
+>>>>>>> dcd2963 (fixed timeout desc)
 
 #### Entities
 
-Entities can be added to a page and configured accordingly. The quantity and types depend on the node type. 
+Entities can be added to a page and configured accordingly. The number and types depend on the node type.
 
 ![image](img/page-node-config-entities.png)
 
