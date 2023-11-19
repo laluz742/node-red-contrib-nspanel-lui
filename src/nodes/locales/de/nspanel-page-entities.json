@@ -8,6 +8,9 @@
             "panelTimeout": "Stand-by Überschreibung",
             "seconds": "Sekunden"
         },
+        "notes": {
+            "timeoutLimitNote": "(0 Timeout deaktivieren, max. 65 Sekunden)"
+        },
         "placeholder": {
             "name": "Name"
         },
