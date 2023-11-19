@@ -25,7 +25,7 @@
             "iconStatus": "Icon",
             "iconStatusColor": "Color",
             "pinCode": "PIN",
-            "unlockLabel": "Label confirm button"
+            "unlockLabel": "Beschriftung Eingabetaste"
         },
         "events": {
             "unlock": "Entsperrung"
