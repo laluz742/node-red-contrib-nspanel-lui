@@ -16,7 +16,7 @@
     "nspanel-screensaver": {
         "label": {
             "palette": "ScreenSaver",
-            "doubleTapToExit": "double tap to exit",
+            "doubleTapToExit": "Double tap to exit",
             "tabColors": "Colors",
             "colorPaletteEnabled": "Enable color palette",
             "colorBackground": "Background",

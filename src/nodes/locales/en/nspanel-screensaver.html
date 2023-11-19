@@ -1,3 +1,37 @@
 <script type="text/html" data-help-name="nspanel-screensaver">
-    <p>NSPanel Lovelace UI Screensaver node</p>
+    <p>
+        The screen saver node is used as the default screen on the NSPanel and is automatically activated after
+        the time period specified in the panel configuration node.
+    </p>
+
+    <h2>Configuration</h2>
+    <h3>General</h3>
+    <ul>
+        <li>
+            <b>Double tap to exit</b>: Execution of action mapped to <code>Exit page</code> event needs double tap on
+            the screen.
+        </li>
+    </ul>
+
+    <h3>Events</h3>
+    Using events the behaviour of the screensaver can be customized.
+    <ul>
+        <li><b>Exit page</b>: Action is executed when leaving the screen saver.</li>
+        <li><b>Swipe right</b>: Swiping to the right of the screen.</li>
+        <li><b>Swipe left</b>: Swiping to the left of the screen.</li>
+        <li><b>Swipe up</b>: Swiping to the top of the screen.</li>
+        <li><b>Swipe down</b>: Swiping to the bottom of the screen.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+    </ul>
+    <p>* Only available if the <i>Decouple buttons from relays</i> set on the nspanel-panel configuration node.</p>
+
+    <h3>Colors</h3>
+    The default color palette is used on the screensaver.
 </script>
