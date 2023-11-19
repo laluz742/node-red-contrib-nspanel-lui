@@ -2,7 +2,7 @@
 
 ## Contents
 
--   [General](#general)
+-   [General Configuration](#general)
 -   [Entities Node](#2ntities-node)
 -   [Grid Node](#grid-node)
 -   [Thermo Node](#thermo-node)
@@ -14,7 +14,7 @@
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
-### Page Node Configuration
+### General Page Node Configuration
 
 #### General Settings
 
