@@ -4,6 +4,9 @@
     const ALLOWED_ENTITIES = ['delete', 'hvac_action']
     const ALL_VALID_EVENTS_BASE: EventDescriptor[] = NSPanelLui.Events.allNavigationEvents
 
+    const PANEL_TIMEOUT_MIN = 0
+    const PANEL_TIMEOUT_MAX = 65
+
     let editableEventList = null
     let editableEntitiesList = null
 
@@ -22,7 +25,14 @@
                 name: { value: '' },
                 title: { value: '' },
                 nsPanel: { type: 'nspanel-panel', required: true },
-                timeout: { value: null },
+                timeout: {
+                    value: null,
+                    required: false,
+                    validate: function (v) {
+                        if (v == '') return true
+                        return NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TIMEOUT_MIN, PANEL_TIMEOUT_MAX)
+                    },
+                },
                 events: { value: [] },
                 entities: { value: [] },
                 useOwnTempSensor: { value: true },

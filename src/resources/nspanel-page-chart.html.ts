@@ -2,6 +2,9 @@
 ;(function ($) {
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
 
+    const PANEL_TIMEOUT_MIN = 0
+    const PANEL_TIMEOUT_MAX = 65
+
     let editableEventList
 
     const registerType = () =>
@@ -19,7 +22,14 @@
                 name: { value: NSPanelLui._('defaults.name', 'nspanel-page-chart') },
                 title: { value: '' },
                 nsPanel: { type: 'nspanel-panel', required: true },
-                timeout: { value: null },
+                timeout: {
+                    value: null,
+                    required: false,
+                    validate: function (v) {
+                        if (v == '') return true
+                        return NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TIMEOUT_MIN, PANEL_TIMEOUT_MAX)
+                    },
+                },
                 events: { value: [] },
                 entities: { value: [] },
                 lineChart: { value: false },

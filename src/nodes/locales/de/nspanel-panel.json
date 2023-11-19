@@ -19,6 +19,9 @@
             "hvac_action": "Aktion",
             "alarm_action": "Taste"
         },
+        "notes": {
+            "timeoutLimitNote": "(0 Timeout deaktivieren, max. 65 Sekunden)"
+        },
         "date": {
             "none": "-",
             "short": "Kurz",
