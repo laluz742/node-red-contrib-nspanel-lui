@@ -25,7 +25,7 @@
         "label": {
             "palette": "Panel Controller",
             "screenSaverOnStartup": "Activate screensaver after startup",
-            "beepOnNotifications": "Beep for notifications"
+            "beepOnNotifications": "Beep on notifications"
         },
         "defaults": {
             "name": "Controller"
