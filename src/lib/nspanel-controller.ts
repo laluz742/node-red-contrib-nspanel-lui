@@ -1,6 +1,9 @@
 import * as nEvents from 'events'
 import { v4 as uuidv4 } from 'uuid'
 import { scheduleTask, CronosTask } from 'cronosjs'
+import dayjs from 'dayjs'
+import 'dayjs/locale/de'
+import 'dayjs/locale/en'
 
 import { Logger } from './logger'
 import { NSPanelMqttHandler } from './nspanel-mqtt-handler'
@@ -241,6 +244,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         log.info(`Starting panel controller for panel ${panelConfig.panel.topic}`)
 
+        this.initLocale(this._ctrlConfig.lang)
+
         // preparing dim modes
         let tempStartTime = panelConfig.panel.panelDimLowStartTime
         if (panelConfig.panel.panelDimLowStartTime != null) {
@@ -276,6 +281,18 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         // notify controller node about state
         this.setNodeStatus('info', this._i18n('common.status.waitForPages'))
         this.activateStartupPage()
+    }
+
+    private initLocale(locale: string): void {
+        switch (String.prototype.toLowerCase.apply(locale)) {
+            case 'de':
+                dayjs.locale('de')
+                break
+
+            default:
+                dayjs.locale('en')
+                break
+        }
     }
 
     private onEvent(eventArgs: EventArgs) {
@@ -700,20 +717,26 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private sendTimeToPanel() {
-        const date = new Date()
-        const timeOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_TIME_OPTIONS }
+        const useCustomDate = this._panelConfig.panel.useCustomDateTimeFormat
         let timeStr: string
 
-        try {
-            if (this._panelConfig.panel.timeFormatHour != null)
-                timeOptions.hour = this._panelConfig.panel.timeFormatHour
-            if (this._panelConfig.panel.dateFormatMonth != null)
-                timeOptions.minute = this._panelConfig.panel.timeFormatMinute
+        if (useCustomDate === true) {
+            timeStr = dayjs().format(this._panelConfig.panel.timeCustomFormat)
+        } else {
+            const timeOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_TIME_OPTIONS }
+            const date = new Date()
 
-            timeStr = date.toLocaleTimeString(undefined, timeOptions)
-        } catch {
-            log.error('Invalid time format configuration, using default settings')
-            timeStr = date.toLocaleTimeString(undefined, DEFAULT_TIME_OPTIONS)
+            try {
+                if (this._panelConfig.panel.timeFormatHour != null)
+                    timeOptions.hour = this._panelConfig.panel.timeFormatHour
+                if (this._panelConfig.panel.dateFormatMonth != null)
+                    timeOptions.minute = this._panelConfig.panel.timeFormatMinute
+
+                timeStr = date.toLocaleTimeString(undefined, timeOptions)
+            } catch {
+                log.error('Invalid time format configuration, using default settings')
+                timeStr = date.toLocaleTimeString(undefined, DEFAULT_TIME_OPTIONS)
+            }
         }
 
         const hmiCmd: HMICommand = {
@@ -724,23 +747,30 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private sendDateToPanel() {
-        const date = new Date()
-        const dateOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_DATE_OPTIONS }
+        const useCustomDate = this._panelConfig.panel.useCustomDateTimeFormat
         let dateStr: string
 
-        try {
-            if (this._panelConfig.panel.dateFormatYear != null)
-                dateOptions.year = this._panelConfig.panel.dateFormatYear
-            if (this._panelConfig.panel.dateFormatMonth != null)
-                dateOptions.month = this._panelConfig.panel.dateFormatMonth
-            if (this._panelConfig.panel.dateFormatDay != null) dateOptions.day = this._panelConfig.panel.dateFormatDay
-            if (this._panelConfig.panel.dateFormatWeekday != null)
-                dateOptions.weekday = this._panelConfig.panel.dateFormatWeekday
+        if (useCustomDate === true) {
+            dateStr = dayjs().format(this._panelConfig.panel.dateCustomFormat)
+        } else {
+            const dateOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_DATE_OPTIONS }
+            const date = new Date()
 
-            dateStr = date.toLocaleDateString(undefined, dateOptions)
-        } catch {
-            log.error('Invalid date format configuration, using default settings')
-            dateStr = date.toLocaleDateString(undefined, DEFAULT_DATE_OPTIONS)
+            try {
+                if (this._panelConfig.panel.dateFormatYear != null)
+                    dateOptions.year = this._panelConfig.panel.dateFormatYear
+                if (this._panelConfig.panel.dateFormatMonth != null)
+                    dateOptions.month = this._panelConfig.panel.dateFormatMonth
+                if (this._panelConfig.panel.dateFormatDay != null)
+                    dateOptions.day = this._panelConfig.panel.dateFormatDay
+                if (this._panelConfig.panel.dateFormatWeekday != null)
+                    dateOptions.weekday = this._panelConfig.panel.dateFormatWeekday
+
+                dateStr = date.toLocaleDateString(undefined, dateOptions)
+            } catch {
+                log.error('Invalid date format configuration, using default settings')
+                dateStr = date.toLocaleDateString(undefined, DEFAULT_DATE_OPTIONS)
+            }
         }
 
         const hmiCmd: HMICommand = {

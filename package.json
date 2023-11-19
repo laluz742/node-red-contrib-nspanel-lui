@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-nspanel-lui",
-    "version": "0.0.1-alpha.41",
+    "version": "0.0.1-alpha.42",
     "description": "Node-RED based backend for NSPanel Lovelace UI custom firmware.",
     "license": "Apache-2.0",
     "keywords": [
@@ -73,6 +73,7 @@
     "dependencies": {
         "axios": "^1.5.1",
         "cronosjs": "^1.7.1",
+        "dayjs": "^1.11.10",
         "mqtt": "^4.3.7",
         "semver": "7.5.4",
         "uuid": "9.0.1"

@@ -125,13 +125,18 @@
             "dateFormatWeekday": "Weekday",
             "timeFormat": "Time format",
             "timeFormatHour": "Hour",
-            "timeFormatMinute": "Minute"
+            "timeFormatMinute": "Minute",
+            "useCustomDateTimeFormat": "Use custom date and time format",
+            "dateCustomFormat": "Date format",
+            "timeCustomFormat": "Time format"
         },
         "placeholder": {
             "name": "Name",
             "device-topic": "Device Topic",
             "full-topic": "e.g. panels/%topic%/%prefix%/",
-            "tasmotaOtaUrl": "http://ota.tasmota.com/tasmota32/release/tasmota32.bin"
+            "tasmotaOtaUrl": "http://ota.tasmota.com/tasmota32/release/tasmota32.bin",
+            "dateCustomFormat": "dddd, D MMMM YYYY",
+            "timeCustomFormat": "HH:mm"
         },
         "defaults": {
             "name": "NSPanel"
