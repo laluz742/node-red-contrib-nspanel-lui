@@ -19,6 +19,9 @@
             "hvac_action": "Action",
             "alarm_action": "Button"
         },
+        "notes": {
+            "timeoutLimitNote": "(0 disable timeout, max 65 seconds)"
+        },
         "date": {
             "none": "-",
             "short": "short",
