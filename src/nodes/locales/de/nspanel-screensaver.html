@@ -4,8 +4,8 @@
         in der Konfiguration des Panels angegebenen Zeitspanne aktiviert.
     </p>
 
-    <h2>Konfiguration</h2>
-    <h3>Allgemein</h3>
+    <h3>Konfiguration</h3>
+    <h4><b>Allgemein</b></h4>
     <ul>
         <li>
             <b>Zum Verlassen doppelt tippen</b>: Die Aktion, welche dem Ereignis <code>Seite verlassen</code> zugeordnet
@@ -13,7 +13,7 @@
         </li>
     </ul>
 
-    <h3>Ereignisse</h3>
+    <h4><b>Ereignisse</b></h4>
     Mittels der Ereignisse kann das Verhalten des Bildschirmschoners angepasst werden.
     <ul>
         <li><b>Exit page</b>: Action is executed when leaving the screen saver.</li>
@@ -34,13 +34,13 @@
         * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
     </p>
 
-    <h3>Farben</h3>
+    <h4><b>Farben</b></h4>
     Die eingstellte Farbpalette wird als Standard für den Bildschirmschoner verwendet. Die Farben können in den
     Nachrichten überschrieben werden.
 
-    <h2>Eingangsdaten</h2>
+    <h3>Eingangsdaten</h3>
 
-    <h3>Status-Icons</h3>
+    <h4><b>Status-Icons</b></h4>
     Statusdaten, die mit dem Topic <code>status</code> gesendet werden, werden in den oberen Ecken des Bildschirms
     angezeigt. Die Payload kann ein Objekt oder ein Array von zwei Objekten sein, welche folgendem Schema entsprechen:
     <ul>
@@ -58,7 +58,7 @@
     <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Locelace UI Icon Cheatsheet</a>
     dargestellt.
 
-    <h3>Wetterdaten</h3>
+    <h4><b>Wetterdaten</b></h4>
     Daten, die mit dem Topic <code>data</code> gesendet werden, werden am unteren Rand des Bildschirmschoners angezeigt
     Die Payload muss ein Array von bis zu sechs Objekten sein, welche dem Schema entsprechen:
     <ul>
@@ -70,7 +70,7 @@
         <li><b>value</b>: Der anzuzeigende Wert</li>
     </ul>
 
-    <h3>Benachrichtigungen</h3>
+    <h4><b>Benachrichtigungen</b></h4>
     Auf dem Display können Benachrichtigungen angezeigt werden, welche anstelle der Wetterdaten angezeigt werden.
     Nachrichten müssen dazu das Topic <code>notify</code> verwenden, und die Payload ein Objekt mit dem folgenden Schema
     sein:
