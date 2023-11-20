@@ -106,6 +106,10 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         return entityData ?? null
     }
 
+    protected setEntityData(entityId: string, data: PageEntityData): void {
+        this.entityData.set(entityId, data)
+    }
+
     protected generateEntities(): string {
         const resultEntities: string[] = []
 

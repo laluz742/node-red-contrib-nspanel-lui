@@ -59,4 +59,8 @@ export type PanelEntity = {
     label1?: string
     label2?: string
     label3?: string
+
+    // relay mapping
+    mappedToRelayEnabled?: boolean
+    mappedRelay?: string | number
 }

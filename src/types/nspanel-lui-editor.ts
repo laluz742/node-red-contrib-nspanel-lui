@@ -8,7 +8,7 @@ export type EventTypeAttrs = {
     hasId: boolean
     hasLabel: boolean
     hasIcon: boolean
-    hasOptionalValue: boolean
+    hasOptionalValue?: boolean
     isShutter?: boolean
     isNumber?: boolean
     isFan?: boolean
@@ -16,6 +16,7 @@ export type EventTypeAttrs = {
     isInputSel?: boolean
     isTimer?: boolean
     opensPopup?: boolean
+    mappableToRelay?: boolean
 }
 
 export type PanelEntityListItem = PanelEntity & {
