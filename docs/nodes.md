@@ -81,19 +81,19 @@ var notifyMsg = {
 }
 ```
 
-| Key | Description |
-| --- | --- | --- | --- |
-| `notifyId` | Identifier for notification (used in history) |
-| `heading` | title |
-| `headingColor` | color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `okText` | Text for confirmation button |
-| `text` | the message to show |
-| `textColor` | color for message text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `fontSize` | the font size |
-| `timeout` | the timeout in seconds after which the notification will disappear, 0 for no timeout |
-| `icon` | optional, icon to show |
-| `iconColor` | optional, the color to be used for the icon encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `beep` | plays sound on panel, when [true | 1 | '1'] |
+| Key            | Description                                                                            |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `notifyId`     | Identifier for notification (used in history)                                          |
+| `heading`      | title                                                                                  |
+| `headingColor` | color for title text (`#rrggbb`, or `rgb(r,g,b)`)                                      |
+| `okText`       | Text for confirmation button                                                           |
+| `text`         | the message to show                                                                    |
+| `textColor`    | color for message text (`#rrggbb`, or `rgb(r,g,b)`)                                    |
+| `fontSize`     | the font size                                                                          |
+| `timeout`      | the timeout in seconds after which the notification will disappear, `0` for no timeout |
+| `icon`         | optional, icon to show                                                                 |
+| `iconColor`    | optional, the color to be used for the icon (`#rrggbb`, or `rgb(r,g,b)`)               |
+| `beep`         | plays sound on panel, when [`true` \| `1` \| `'1'`]                                    |
 
 #### Buzzer
 
@@ -136,7 +136,7 @@ var checkForUpdatesMsg = {
 }
 ```
 
-### ScreenSaver Node
+## ScreenSaver Node
 
 The screensaver node serves as a standby screen for your panel and is automatically activated after startup when the _Activate screensaver after startup_ option is checked in your controller node.
 
@@ -144,12 +144,13 @@ It can process input messages with the topic
 
 -   _status_ for status icons and
 -   _data_ for wheater data
+-   _notify_ for notifications
 
-#### Configuration
+### Configuration
 
-#### Messages
+### Messages
 
-##### Status Icons
+#### Status Icons
 
 Status data sent using topic _status_ will be displayed in the upper corners of the screen.
 
@@ -170,17 +171,17 @@ var statusMsg = {
 
 The message payload can be either a single object or an array of objects each providing the following data
 
-| Key | Description |
-| --- | --- |
-| `icon` | The icon to be shown |
-| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `text` | the text to show |
-| `index` | position (0=left, 1=right) |
-| `prefix` | optional, `prefix` is displayed left to the icon |
+| Key         | Description                                                    |
+| ----------- | -------------------------------------------------------------- |
+| `icon`      | The icon to be shown                                           |
+| `iconColor` | the color to be used for the icon (`#rrggbb`, or `rgb(r,g,b)`) |
+| `text`      | the text to show                                               |
+| `index`     | position (0=left, 1=right)                                     |
+| `prefix`    | optional, `prefix` is displayed left to the icon               |
 
-##### Weather Data
+#### Weather Data
 
-Messages with the topic _data_ will be handled to show entities at the bottom of the screensaver screen
+Data sent with the topic _data_ will be displayed at the bottom of the screensaver.
 
 ```javascript
 var weatherDataMsg = {
@@ -222,14 +223,14 @@ var weatherDataMsg = {
 
 The message payload can be an array of up to six object
 
-| Key | Description |
-| --- | --- |
-| `text` | the text to show |
-| `value` | the value to be displays |
-| `icon` | optional, the icon to be shown |
-| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| Key         | Description                                                    |
+| ----------- | -------------------------------------------------------------- |
+| `text`      | the text to show                                               |
+| `value`     | the value to be displays                                       |
+| `icon`      | optional, the icon to be shown                                 |
+| `iconColor` | the color to be used for the icon (`#rrggbb`, or `rgb(r,g,b)`) |
 
-##### Notifications
+#### Notifications
 
 The screensaver can display notifications instead of weather data. Messages must use the _notify_ topic for this. Notifications will not be stored in the history, so after being closed, wheather data will be shown again.
 
@@ -245,14 +246,14 @@ var notifyMsg = {
 }
 ```
 
-| Key | Description |
-| --- | --- |
-| `heading` | title |
-| `headingColor` | optional, color for title text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `text` | optional, the message to show |
-| `textColor` | optional, color for message text encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
+| Key            | Description                                                   |
+| -------------- | ------------------------------------------------------------- |
+| `heading`      | title                                                         |
+| `headingColor` | optional, color for title text (`#rrggbb`, or `rgb(r,g,b)`)   |
+| `text`         | optional, the message to show                                 |
+| `textColor`    | optional, color for message text (`#rrggbb`, or `rgb(r,g,b)`) |
 
-### ScreenSaver Extended Node
+## ScreenSaver Extended Node
 
 The ScreenSaver Extended node behaves is screensaver and its behaviour similiar to [ScreenSaver Node](#screensaver-node).
 
@@ -262,11 +263,11 @@ It can process input messages with the topic
 -   _status2_ for extended status data
 -   _data_ for wheater data
 
-#### Configuration
+### Configuration
 
-#### Messages
+### Messages
 
-##### Status Icons
+#### Status Icons
 
 Status data sent using topic _status_ will be displayed at the bottom of the screen.
 
@@ -287,15 +288,15 @@ var statusMsg = {
 
 The message payload can be either a single object or an array of objects each providing the following data
 
-| Key | Description |
-| --- | --- |
-| `icon` | The icon to be shown |
-| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `text` | the text to show |
-| `index` | position (0=left, 1=right) |
-| `prefix` | optional, `prefix` is displayed left to the icon |
+| Key         | Description                                                    |
+| ----------- | -------------------------------------------------------------- |
+| `icon`      | The icon to be shown                                           |
+| `iconColor` | the color to be used for the icon (`#rrggbb`, or `rgb(r,g,b)`) |
+| `text`      | the text to show                                               |
+| `index`     | position (0=left, 1=right)                                     |
+| `prefix`    | optional, `prefix` is displayed left to the icon               |
 
-##### Extended Status Icons
+#### Extended Status Icons
 
 Status data sent using topic _status2_ will be displayed at different positions on the screen:
 
@@ -316,13 +317,13 @@ var statusMsg = {
 
 The message payload can be either a single object or an array of objects each providing the following data
 
-| Key | Description |
-| --- | --- |
-| `icon` | The icon to be shown |
-| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`) |
-| `text` | the text to show |
-| `index` | position (0=left, 1=right) |
-| `prefix` | optional, `prefix` is displayed left to the icon |
+| Key         | Description                                                    |
+| ----------- | -------------------------------------------------------------- |
+| `icon`      | The icon to be shown                                           |
+| `iconColor` | the color to be used for the icon (`#rrggbb`, or `rgb(r,g,b)`) |
+| `text`      | the text to show                                               |
+| `index`     | position (0=left, 1=right)                                     |
+| `prefix`    | optional, `prefix` is displayed left to the icon               |
 
 | Index      | Position                              |
 | ---------- | ------------------------------------- |
@@ -330,7 +331,7 @@ The message payload can be either a single object or an array of objects each pr
 | `1` to `5` | below time and date                   |
 | `6` to `8` | left side of screen below main status |
 
-##### Weather Data
+#### Weather Data
 
 Messages with the topic _data_ will be handled to show up to six entities at the bottom of the screensaver screen
 
@@ -380,20 +381,20 @@ var weatherDataMsg = {
 
 The message payload can be an array of up to six object
 
-| Key | Description |
-| --- | --- |
-| `text` | the text to show |
-| `value` | the value to be displays |
-| `icon` | optional, the icon to be shown |
-| `iconColor` | the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| Key         | Description                                                    |
+| ----------- | -------------------------------------------------------------- |
+| `text`      | the text to show                                               |
+| `value`     | the value to be displays                                       |
+| `icon`      | optional, the icon to be shown                                 |
+| `iconColor` | the color to be used for the icon (`#rrggbb`, or `rgb(r,g,b)`) |
 
-### HMI Control Node
+## HMI Control Node
 
 The HMI control node can be used to activate the page defined by a page nodes like _Entities_, _Grid_, or _Thermo_ by messages in the flow.
 
-#### Configuration
+### Configuration
 
-#### Messages
+### Messages
 
 ```javascript
 var hmiControlMsg = {

@@ -16,7 +16,7 @@
     "nspanel-screensaver2": {
         "label": {
             "palette": "ScreenSaver Extended",
-            "doubleTapToExit": "double tap to exit"
+            "doubleTapToExit": "Double tap to exit"
         },
         "placeholder": {},
         "defaults": {

@@ -1,3 +1,36 @@
-<script type="text/html" data-help-name="nspanel-screensaver2">
-    <p>NSPanel Lovelace UI Screensaver2 node</p>
+<script type="text/html" data-help-name="nspanel-screensaver">
+    <p>
+        Der Bildschirmschoner-Knoten wird als Standardbildschirm auf dem Panel verwendet und wird automatisch nach der
+        in der Konfiguration des Panels angegebenen Zeitspanne aktiviert.
+    </p>
+
+    <h2>Konfiguration</h2>
+    <h3>Allgemein</h3>
+    <ul>
+        <li>
+            <b>Zum Verlassen doppelt tippen</b>: Die Aktion, welche dem Ereignis <code>Seite verlassen</code> zugeordnet
+            ist, wird nach doppeltem Tippen ausgeführt.
+        </li>
+    </ul>
+
+    <h3>Ereignisse</h3>
+    Mittels der Ereignisse kann das Verhalten des Bildschirmschoners angepasst werden.
+    <ul>
+        <li><b>Exit page</b>: Action is executed when leaving the screen saver.</li>
+        <li><b>Nach rechts wischen</b>: Wischen zum rechten Bildschirmrand.</li>
+        <li><b>Nach links wischen</b>: Wischen zum linken Bildschirmrand.</li>
+        <li><b>Nach oben wischen</b>: Wischen zum oberen Bildschirmrand.</li>
+        <li><b>Nach unten wischen</b>: Wischen zum unteren Bildschirmrand.</li>
+        <li>
+            <b><i>Taste 1*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die linke Hardware-Taste gedrückt wird.
+        </li>
+        <li>
+            <b><i>Taste 2*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die rechte Hardware-Taste gedrückt wird.
+        </li>
+    </ul>
+    <p>
+        * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
+    </p>
 </script>
