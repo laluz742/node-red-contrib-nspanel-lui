@@ -4,8 +4,8 @@
         period specified in the panel configuration node.
     </p>
 
-    <h2>Configuration</h2>
-    <h3>General</h3>
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
     <ul>
         <li>
             <b>Double tap to exit</b>: Execution of action mapped to <code>Exit page</code> event needs double tap on
@@ -13,7 +13,7 @@
         </li>
     </ul>
 
-    <h3>Events</h3>
+    <h4><b>Events</b></h4>
     Using events the behaviour of the screensaver can be customized.
     <ul>
         <li><b>Exit page</b>: Action is executed when leaving the screen saver.</li>
@@ -30,8 +30,52 @@
             >: Action to execute when the left hardware button is pressed.
         </li>
     </ul>
-    <p>* Only available if the <i>Decouple buttons from relays</i> set on the nspanel-panel configuration node.</p>
+    <p>
+        * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
+        node.
+    </p>
 
-    <h3>Colors</h3>
+    <h4><b>Colors</b></h4>
     The default color palette is used on the screensaver.
+
+    <h3>Inputs</h3>
+
+    <h4><b>Status Icons</b></h4>
+    Status data sent with the <i>status</i> topic is displayed in the upper corners of the screen. The payload can be an
+    object or an array of two objects that correspond to the following schema:
+    <ul>
+        <li><b>icon</b>: icon to display</li>
+        <li><b>iconColor</b>: color for icon to be used</li>
+        <li><b>text</b>: text to be shown</li>
+        <li><b>prefix</b>: optional, text that precedes the icon</li>
+        <li><b>index</b>: optional, position (<code>0</code>=left, <code>1</code>=right)</li>
+    </ul>
+
+    If the index is not specified, the status data is displayed at the top left or in the order of the array,
+    respectively. All supported icons are shown in the
+    <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Locelace UI Icon Cheatsheet</a>.
+
+    <h4><b>Weather data</b></h4>
+    Data sent with the topic <i>data</i> will be displayed at the bottom of the screensaver. The payload must be an
+    array of up to six objects that correspond to the schema:
+    <ul>
+        <li><b>icon</b>: icon to display</li>
+        <li><b>iconColor</b>: color for icon to be used (<code>#rrggbb</code>, or <code>rgb(r,g,b)</code>)</li>
+        <li><b>text</b>: text to display</li>
+        <li><b>value</b>: value to display</li>
+    </ul>
+
+    <h4><b>Notifications</b></h4>
+    Notifications can be shown on the display, which are shown instead of the weather data. Messages must use the topic
+    <code>notify</code> and the payload must be an object with the following schema:
+
+    <ul>
+        <li><b>heading</b>: title to display</li>
+        <li><b>headingColor</b>: optional, color for title text (<code>#rrggbb</code>, or <code>rgb(r,g,b)</code>)</li>
+        <li><b>text</b>: optional, message to display</li>
+        <li>
+            <b>textColor</b>: optional, color to be used for message text (<code>#rrggbb</code>, or
+            <code>rgb(r,g,b)</code>)
+        </li>
+    </ul>
 </script>
