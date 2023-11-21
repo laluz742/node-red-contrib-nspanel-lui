@@ -30,14 +30,6 @@
                 <input type="text" id="node-input-title" />
             </div>
 
-            <div class="form-row">
-                <label for="node-input-qrCode" style="vertical-align: middle">
-                    <i class="fa fa-qrcode"></i>
-                    <span data-i18n="nspanel-page-qr.label.qrCode"></span>
-                </label>
-                <input type="text" id="node-input-qrCode" />
-            </div>
-
             <br />
             <div class="form-row">
                 <label for="node-input-timeout" style="vertical-align: middle">
@@ -47,6 +39,48 @@
                 <input type="number" id="node-input-timeout" style="width: 7em;" />
                 <span for="node-input-timeout" data-i18n="common.label.seconds"></span>
                 <span data-i18n="common.notes.timeoutLimitNote" style="margin-left: .5em"></span>
+            </div>
+
+            <br />
+            <div id="qrCodeWifi" class="form-row" style="display: none;">
+                <label for="node-input-qrCode" style="vertical-align: middle">
+                    <i class="fa fa-wifi"></i>
+                    <span data-i18n="nspanel-page-qr.label.wifi"></span>
+                </label>
+
+                <div class="form-row">
+                    <label><span data-i18n="nspanel-page-qr.label.wifiSSID" style="margin-left: 14px"></span></label>
+                    <input type="text" id="nspanel-input-qrCode-ssid" style="width: 10em;" />
+                </div>
+                <div class="form-row">
+                    <label
+                        ><span data-i18n="nspanel-page-qr.label.wifiPassword" style="margin-left: 14px"></span
+                    ></label>
+                    <input type="text" id="nspanel-input-qrCode-password" style="width: 10em;" />
+                </div>
+                <div class="form-row">
+                    <label>
+                        <span data-i18n="nspanel-page-qr.label.wifiAuthType" style="margin-left: 14px;"></span
+                    ></label>
+                    <select id="nspanel-input-qrCode-type" style="width: 6em">
+                        <option value="nopass">None</option>
+                        <option value="WEP">WEP</option>
+                        <option value="WPA">WPA / WPA2 / WPA3</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="checkbox" id="nspanel-input-qrCode-hidden" style="margin-left: 14px; width: 1em;" />
+                    <span data-i18n="nspanel-page-qr.label.wifiHidden" style="width: auto;"></span>
+                </div>
+            </div>
+
+            <br />
+            <div class="form-row">
+                <label for="node-input-qrCode" style="vertical-align: middle">
+                    <i class="fa fa-qrcode"></i>
+                    <span data-i18n="nspanel-page-qr.label.qrCode"></span>
+                </label>
+                <input type="text" id="node-input-qrCode" data-i18n="[placeholder]nspanel-page-qr.placeholder.qrCode" />
             </div>
         </div>
 

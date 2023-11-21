@@ -522,7 +522,6 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
         currentVersion: string,
         latestVersion: string
     ) {
-        
         const instruction: string =
             notifyTextMain +
             NSPanelConstants.STR_LUI_LINEBREAK +
