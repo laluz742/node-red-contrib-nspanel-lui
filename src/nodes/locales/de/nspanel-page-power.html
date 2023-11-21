@@ -1,3 +1,53 @@
 <script type="text/html" data-help-name="nspanel-page-power">
-    <p>NSPanel Lovelace UI power page node</p>
+    <p>Die Power-Seite dient der grafischen Darstellung von Stromverbrauch bzw. -erzeugung.</p>
+
+    <h3>Konfiguration</h3>
+    <h4><b>Allgemein</b></h4>
+    <ul>
+        <li><b>NSPanel</b>: Ordnet die Seite einem Panel zu.</li>
+        <li><b>Überschrift</b>: Die Überschrift wird in der Titelzeile des Bildschirms angezeigt.</li>
+        <li><b>Stand-by Überschreibung</b>: Überschreibt die in der NSPanel-Konfiguration angegebene Zeitspanne.</li>
+    </ul>
+
+    <h4><b>Ereignisse</b></h4>
+    Mittels der Ereignisse kann das Verhalten des Bildschirmschoners angepasst werden.
+    <ul>
+        <li><b>Zurück</b>: Navigationselement, welches links in der Titelzeile des Panels angezeigt wird.</li>
+        <li><b>Vor</b>: Navigationselement, welches rechts in der Titelzeile des Panels angezeigt wird.</li>
+        <li>
+            <b><i>Taste 1*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die linke Hardware-Taste gedrückt wird.
+        </li>
+        <li>
+            <b><i>Taste 2*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die rechte Hardware-Taste gedrückt wird.
+        </li>
+        <li><b>Elemente</b>: Zusätzlich können Elemente mit Aktionen verbunden werden.</li>
+    </ul>
+    <p>
+        * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
+    </p>
+
+    <h3>Eingangsdaten</h3>
+
+    <h4><b>Daten</b></h4>
+    Daten, die mit dem Topic <code>data</code> gesendet werden, werden entsprechend den eingerichteten Elementen
+    dargestellt. Die Payload kann ein Objekt oder ein Array von Objekten sein, welche folgendem Schema entsprechen:
+    <ul>
+        <li><b>entityId</b>: Die Id des Elements, für das die Daten bestimmt sind</li>
+        <li><b>icon</b>: optional, das anzuzeigende Icon</li>
+        <li>
+            <b>iconColor</b>: optional, die zu verwendende Farbe für das Icon (<code>#rrggbb</code>, oder
+            <code>rgb(r,g,b)</code>)
+        </li>
+        <li><b>text</b>: optional, der anzuzeigende Text</li>
+        <li>
+            <b>speed</b>: optional, die Geschwindigkeit des Flusses (Wert zwischen <code>-120</code> und
+            <code>120</code>)
+        </li>
+    </ul>
+
+    Alle unterstützten Icons sind in dem
+    <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Locelace UI Icon Cheatsheet</a>
+    dargestellt.
 </script>
