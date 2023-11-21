@@ -4,8 +4,8 @@
         und steuert die Navigation.
     </p>
 
-    <h2>Konfiguration</h2>
-
+    <h3>Konfiguration</h3>
+    <h4><b>Eigenschaften</b></h4>
     <ul>
         <li>
             <b>Bildschirmschoner nach Start aktivieren</b>: Aktiviert den Bildschirmschoner nachdem das Panel
@@ -13,5 +13,91 @@
         </li>
 
         <li><b>Signalton bei Benachrichtigungen</b>: Das NSPanel piept, wenn Benachrichtigungen angezeigt werden.</li>
+    </ul>
+
+    <h3>Eingangsdaten</h3>
+    <h4><b>Relais-Steuerung</b></h4>
+    Die Relais können über Nachrichten mit dem Topic <i>cmd</i> gesteuert werden. Die Payload entspricht folgendem
+    Schema:
+    <ul>
+        <li><b>cmd</b>: <code>switch</code></li>
+        <li>
+            <b>params</b>:
+            <ul>
+                <li><b>id</b>: Relais Id (<code>0</code> or <code>1</code>)</li>
+                <li>
+                    <b>on</b>: <code>false</code>|<code>0</code>|<code>"0"</code>|<code>"off"</code> to switch off;
+                    <code>true</code>|<code>1</code>|<code>"1"</code>|<code>"on"</code> to switch on
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <h4><b>Relais umschalten</b></h4>
+    Der Relais-Zustand kann mit dem Befehl <code>toggle</code> umgeschaltet werden, der mit dem Topic
+    <code>cmd</code> gesendet wird. Die Payload entspricht dem folgenden Schema:
+    <ul>
+        <li><b>cmd</b>: <code>toggle</code></li>
+        <li>
+            <b>params</b>:
+            <ul>
+                <li><b>id</b>: Relais Id(<code>0</code> or <code>1</code>)</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h4><b>Benachrichtigungen</b></h4>
+    Um den Benutzer über besondere Ereignisse zu informieren, können Benachrichtigungen mit der folgenden Befehlssyntax
+    unter Verwendung des Topics <code>notify</code> angezeigt werden. Benachrichtigungen werden im Seitenverlauf
+    gespeichert, so dass nach dem Schließen der Seite die letzte Seite angezeigt wird. Die Payload entspricht folgendem
+    Schema:
+    <ul>
+        <li><b>notifyId</b>: Id für Benachrichtigung</li>
+        <li><b>heading</b>:optional, Überschrift</li>
+        <li>
+            <b>headingColor</b>: optional, Farbe für die Überschrift (<code>#rrggbb</code>, oder
+            <code>rgb(r,g,b)</code>)
+        </li>
+        <li><b>okText</b>: optional, Text for Bestätigungs-Taste</li>
+        <li><b>text</b>: optional, Text der Benachrichtigung</li>
+        <li><b>textColor</b>: optional, Farbe für Text (<code>#rrggbb</code>, oder <code>rgb(r,g,b)</code>)</li>
+        <li><b>fontSize</b>: optional, die Schriftgröße</li>
+        <li>
+            <b>timeout</b>: optional, Zeitspanne in Sekunden nach welcher die Benachrichtigung ausgeblendet wird,
+            <code>0</code> für keine automatische Ausblendung
+        </li>
+        <li><b>icon</b>: optional, Icon</li>
+        <li><b>iconColor</b>: optional, Farbe für das Icon (<code>#rrggbb</code>, oder <code>rgb(r,g,b)</code>)</li>
+        <li>
+            <b>beep</b>:optional, spielt einen Signalton am Panel ab, wenn
+            [<code>true</code>|<code>1</code>|<code>"1"</code>]
+        </li>
+    </ul>
+
+    <h4><b>Buzzer</b></h4>
+    To output sound patterns on the NSPanel, the command <code>beep</code> command can be used under the
+    <code>cmd</code> topic with following payload:
+    <ul>
+        <li><b>cmd</b>: <code>beep</code></li>
+        <li>
+            <b>params</b>:
+            <ul>
+                <li><b>count</b>: Anzahl der Signaltöne, Standardwert ist <code>1</code></li>
+                <li><b>beepDuration</b>: Dauer eines Signaltons in 100ms, Standardwert ist <code>1</code></li>
+                <li><b>silenceDuration</b>: Dauer der Stille in 100ms, Standardwert ist <code>1</code></li>
+                <li>
+                    <b>tune</b>: 32-Bit-Bitmaske für Signalton und Stille entsprechend der zuvor eingestellten Dauer
+                </li>
+            </ul>
+        </li>
+    </ul>
+    Weitere Einzelheiten in der Tasmota-Dokumentation zum
+    <a target="_blank" href="https://tasmota.github.io/docs/Buzzer/#buzzer-command">Tasmota Buzzer Command</a>.
+
+    <h4><b>Prüfung auf Updates</b></h4>
+    Um die Prüfung auf Firmware- oder Treiber-Updates zu initiieren, ist unter dem Topic <code>cmd</code> der Befehl
+    <code>checkForUpdates</code> zu verwenden. Die Payload muss diesem Schema folgen:
+    <ul>
+        <li><b>cmd</b>: <code>checkForUpdates</code></li>
     </ul>
 </script>

@@ -4,8 +4,8 @@
         controls the page flow.
     </p>
 
-    <h2>Configuration</h2>
-
+    <h3>Configuration</h3>
+    <h4><b>Properties</b></h4>
     <ul>
         <li>
             <b>Activate screensaver after startup</b>: Activates the screensaver node associated to the panel after
@@ -13,5 +13,86 @@
         </li>
 
         <li><b>Beep on notifications</b>: The NSPanel beeps when notifications are displayed</li>
+    </ul>
+
+    <h3>Input</h3>
+    <h4><b>Relay control</b></h4>
+    The relays can be controlled via messages with the topic <i>cmd</i>. The payload corresponds to the following
+    schema:
+    <ul>
+        <li><b>cmd</b>: <code>switch</code></li>
+        <li>
+            <b>params</b>:
+            <ul>
+                <li><b>id</b>: relay id (<code>0</code> or <code>1</code>)</li>
+                <li>
+                    <b>on</b>: <code>false</code>|<code>0</code>|<code>"0"</code>|<code>"off"</code> to switch off;
+                    <code>true</code>|<code>1</code>|<code>"1"</code>|<code>"on"</code> to switch on
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <h4><b>Toggle relay</b></h4>
+    The relay state can be toggled using the <code>toggle</code> command sent using the topic <i>cmd</i>. The payload
+    corresponds to the following schema:
+    <ul>
+        <li><b>cmd</b>: <code>toggle</code></li>
+        <li>
+            <b>params</b>:
+            <ul>
+                <li><b>id</b>: relay id (<code>0</code> or <code>1</code>)</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h4><b>Notifications</b></h4>
+    To notify the user about special events, notifications can be displayed using the following command syntax using the
+    <code>notify</code> topic. Notifications will be stored in the page history, so after being closed, the last page is
+    shown. The payload corresponds to the following schema:
+    <ul>
+        <li><b>notifyId</b>: Identifier for notification</li>
+        <li><b>heading</b>:optional, title</li>
+        <li><b>headingColor</b>: optional, color for title text (<code>#rrggbb</code>, or <code>rgb(r,g,b)</code>)</li>
+        <li><b>okText</b>: optional, Text for confirmation button</li>
+        <li><b>text</b>: optional, the message to show</li>
+        <li><b>textColor</b>: optional, color for message text (<code>#rrggbb</code>, or <code>rgb(r,g,b)</code>)</li>
+        <li><b>fontSize</b>: optional, the font size</li>
+        <li>
+            <b>timeout</b>: optional, the timeout in seconds after which the notification will disappear,
+            <code>0</code> for no timeout
+        </li>
+        <li><b>icon</b>: optional, icon to show</li>
+        <li>
+            <b>iconColor</b>: optional, the color to be used for the icon (<code>#rrggbb</code>, or
+            <code>rgb(r,g,b)</code>)
+        </li>
+        <li><b>beep</b>:optional, plays sound on panel, when [<code>true</code>|<code>1</code>|<code>"1"</code>]</li>
+    </ul>
+
+    <h4><b>Buzzer</b></h4>
+    To output sound patterns on the NSPanel, the command <code>beep</code> command can be used under the
+    <code>cmd</code> topic with following payload:
+    <ul>
+        <li><b>cmd</b>: <code>beep</code></li>
+        <li>
+            <b>params</b>:
+            <ul>
+                <li><b>count</b>: number of beeps, defaults to <code>1</code></li>
+                <li><b>beepDuration</b>: duration of one beep in 100ms, defaults to <code>1</code></li>
+                <li><b>silenceDuration</b>: duration of silence in 100ms, defaults to <code>1</code></li>
+                <li><b>tune</b>: 32bit bitmask of beep and silence according to previous duration settings</li>
+            </ul>
+        </li>
+    </ul>
+    For further details, see
+    <a target="_blank" href="https://tasmota.github.io/docs/Buzzer/#buzzer-command">Tasmota Buzzer Command</a>
+    description.
+
+    <h4><b>Check for updates</b></h4>
+    To initiate the check for firmware or driver updates, send a message under the topic <code>cmd</code> use the
+    command <code>checkForUpdates</code>. The payload must follow this schema:
+    <ul>
+        <li><b>cmd</b>: <code>checkForUpdates</code></li>
     </ul>
 </script>
