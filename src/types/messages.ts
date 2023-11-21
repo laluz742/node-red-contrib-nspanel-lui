@@ -89,6 +89,10 @@ export type FanEntityData = SwitchEntityData & {
     text: string
 }
 
+export type PowerEntityData = PageEntityData & {
+    speed: number
+}
+
 export type ShutterEntityData = PageEntityData & {
     tilt?: number
 }
