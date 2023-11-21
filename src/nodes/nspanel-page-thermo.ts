@@ -17,6 +17,7 @@ import {
     InputHandlingResult,
     HMICommand,
     HMICommandParameters,
+    HardwareEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
@@ -42,6 +43,7 @@ type PageThermoData = {
     targetTemperature2: number
     currentTemperature?: number | null
     status?: string | null
+    relayMapping: Map<string, PageEntityData[]>
 }
 
 const MAX_ENTITIES = 8
@@ -57,6 +59,10 @@ module.exports = (RED) => {
             targetTemperature2: NaN,
             currentTemperature: null,
             status: null,
+            relayMapping: new Map<string, PageEntityData[]>([
+                ['power1', []],
+                ['power2', []],
+            ]),
         }
 
         constructor(config: PageThermoConfig) {
@@ -70,6 +76,19 @@ module.exports = (RED) => {
 
             this.data.targetTemperature = this.config.targetTemperature
             this.data.targetTemperature2 = this.config.targetTemperature2
+
+            this.data.relayMapping.set('power1', [])
+            this.data.relayMapping.set('power2', [])
+
+            this.getEntities()?.forEach((entity) => {
+                if (entity.mappedToRelayEnabled === true) {
+                    const mappedRelay = Number(entity.mappedRelay)
+                    if (!Number.isNaN(mappedRelay)) {
+                        const mappedEntities = this.data.relayMapping.get(`power${mappedRelay + 1}`)
+                        mappedEntities?.push(entity)
+                    }
+                }
+            })
         }
 
         protected override doGeneratePage(): HMICommand | null {
@@ -176,6 +195,20 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
+                case NSPanelConstants.STR_MSG_TOPIC_HARDWARE: {
+                    const hwEventArgs: HardwareEventArgs = msg.payload as HardwareEventArgs
+                    const triggeredRelay = hwEventArgs.source
+                    const triggeredRelayActive = hwEventArgs.active
+                    const mappedEntities = this.data.relayMapping.get(triggeredRelay)
+                    mappedEntities?.forEach((entity) => {
+                        const entityData: PageEntityData = this.getEntityData(entity.entityId) ?? {}
+                        entityData.value = triggeredRelayActive ? '1' : '0'
+                        this.setEntityData(entity.entityId, entityData)
+                        dirty = true
+                    })
+                    break
+                }
+
                 case NSPanelConstants.STR_MSG_TOPIC_SENSOR: {
                     if (this.isUseOwnSensorData()) {
                         const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs

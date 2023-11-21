@@ -526,10 +526,10 @@ onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","sourc
             notifyTextMain +
             NSPanelConstants.STR_LUI_LINEBREAK +
             NSPanelConstants.STR_LUI_LINEBREAK +
-            this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') +
+            this._i18n('nspanel-controller.panel.currentFirmwareVersionPrefix') + // TODO: use util.format
             currentVersion +
             NSPanelConstants.STR_LUI_LINEBREAK +
-            this._i18n('nspanel-controller.panel.newFirmwareVersionPrefix') +
+            this._i18n('nspanel-controller.panel.newFirmwareVersionPrefix') + // TODO: use util.format
             latestVersion +
             NSPanelConstants.STR_LUI_LINEBREAK +
             NSPanelConstants.STR_LUI_LINEBREAK +

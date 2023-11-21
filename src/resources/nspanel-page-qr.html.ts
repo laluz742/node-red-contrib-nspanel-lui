@@ -72,6 +72,36 @@
                     nsPanelInputFieldLastVal
                 )
 
+                const qrCodeField = $('#node-input-qrCode')
+                const wifiSSIDField = $('#nspanel-input-qrCode-ssid')
+                const wifiPasswordField = $('#nspanel-input-qrCode-password')
+                const wifiAuthTypeField = $('#nspanel-input-qrCode-type')
+                const wifiHiddenField = $('#nspanel-input-qrCode-hidden')
+
+                function buildWifiQrCode(): void {
+                    let res = 'WIFI:'
+
+                    const wifiSSID = wifiSSIDField.val()
+                    const wifiPassword = wifiPasswordField.val()
+                    const wifiAuthType = wifiAuthTypeField.val()
+                    const wifiHidden = wifiHiddenField.is(':checked')
+
+                    res += `S:${wifiSSID};`
+                    res += `T:${wifiAuthType};`
+                    res += `P:${wifiPassword};`
+                    if (wifiHidden) {
+                        res += 'H:true'
+                    }
+
+                    res += ';;'
+                    qrCodeField.val(res)
+                }
+
+                wifiSSIDField.on('change', () => buildWifiQrCode())
+                wifiPasswordField.on('change', () => buildWifiQrCode())
+                wifiAuthTypeField.on('change', () => buildWifiQrCode())
+                wifiHiddenField.on('change', () => buildWifiQrCode())
+
                 const tabs = RED.tabs.create({
                     id: 'nspanel-page-tabs',
                     onchange(tab) {

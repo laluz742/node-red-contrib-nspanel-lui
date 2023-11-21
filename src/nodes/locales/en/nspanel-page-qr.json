@@ -22,7 +22,12 @@
     "nspanel-page-qr": {
         "label": {
             "palette": "QR",
-            "qrCode": "QR Code"
+            "qrCode": "QR Code",
+            "wifi": "Wi-Fi",
+            "wifiSSID": "SSID",
+            "wifiPassword": "Password",
+            "wifiAuthType": "Authentication",
+            "wifiHidden": "Hidden"
         },
         "placeholder": {},
         "defaults": {

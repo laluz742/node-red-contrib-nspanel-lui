@@ -54,21 +54,18 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     // #endregion events
 
     const PANEL_ENTITY_TYPE_ATTRS: Map<string, EventTypeAttrs> = new Map<string, EventTypeAttrs>([
-        ['delete', { hasId: false, hasLabel: false, hasIcon: false, hasOptionalValue: false }],
-        [
-            'shutter',
-            { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isShutter: true, opensPopup: true },
-        ],
-        ['light', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isLight: true }],
-        ['fan', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isFan: true }],
-        ['input_sel', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isInputSel: true }],
-        ['timer', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isTimer: true }],
-        ['switch', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
-        ['number', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false, isNumber: true }],
-        ['button', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
-        ['text', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: false }],
-        ['hvac_action', { hasId: true, hasLabel: false, hasIcon: true, hasOptionalValue: false }],
-        ['alarm_action', { hasId: true, hasLabel: true, hasIcon: false, hasOptionalValue: false }],
+        ['delete', { hasId: false, hasLabel: false, hasIcon: false }],
+        ['shutter', { hasId: true, hasLabel: true, hasIcon: true, isShutter: true, opensPopup: true }],
+        ['light', { hasId: true, hasLabel: true, hasIcon: true, isLight: true }],
+        ['fan', { hasId: true, hasLabel: true, hasIcon: true, isFan: true }],
+        ['input_sel', { hasId: true, hasLabel: true, hasIcon: true, isInputSel: true }],
+        ['timer', { hasId: true, hasLabel: true, hasIcon: true, isTimer: true }],
+        ['switch', { hasId: true, hasLabel: true, hasIcon: true }],
+        ['number', { hasId: true, hasLabel: true, hasIcon: true, isNumber: true }],
+        ['button', { hasId: true, hasLabel: true, hasIcon: true }],
+        ['text', { hasId: true, hasLabel: true, hasIcon: true }],
+        ['hvac_action', { hasId: true, hasLabel: false, hasIcon: true, mappableToRelay: true }],
+        ['alarm_action', { hasId: true, hasLabel: true, hasIcon: false }],
     ])
 
     const ALL_PANEL_ENTITY_TYPES = (() => {
@@ -297,6 +294,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const rowTimer = tpl.find('.nlui-row-timer').hide()
                     const rowTimerActions = tpl.find('.nlui-row-timer-actions').hide()
                     const rowTimerLabels = tpl.find('.nlui-row-timer-labels').hide()
+                    const rowRelayMapping = tpl.find('.nlui-row-relay-mapping ').hide()
 
                     // #region row1
                     const listIdField = tpl.find('.node-input-entity-listid')
@@ -358,8 +356,18 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const timerLabel1Field = tpl.find('.node-input-entity-timer-label1')
                     const timerLabel2Field = tpl.find('.node-input-entity-timer-label2')
                     const timerLabel3Field = tpl.find('.node-input-entity-timer-label3')
-
                     // #endregion timer
+
+                    // #region relay mapping
+                    const relayMappingEnabledField = tpl.find('.node-input-entity-relay-mapping-enabled')
+                    const relayMappingRelayIdField = tpl.find('.node-input-entity-relay-mapping')
+
+                    relayMappingEnabledField.on('change', () => {
+                        const enabled = relayMappingEnabledField.is(':checked') === true
+                        relayMappingRelayIdField.prop('disabled', !enabled)
+                    })
+                    relayMappingEnabledField.trigger('change')
+                    // #endregion relay mapping
 
                     // #endregion create DOM
 
@@ -382,6 +390,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                             rowTimer.toggle(entityTypeAttrs.isTimer ?? false)
                             rowTimerActions.toggle(entityTypeAttrs.isTimer ?? false)
                             rowTimerLabels.toggle(entityTypeAttrs.isTimer ?? false)
+                            rowRelayMapping.toggle(entityTypeAttrs.mappableToRelay ?? false)
 
                             // fan min/max number handling
                             if (entityTypeAttrs.isFan) {
@@ -401,6 +410,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         entry.text = entityTextField.val().toString()
                         self.notifyChange(entry)
                     })
+                    // #endregion attach observer
 
                     // #region update fields with entity data
                     listIdField.val(entry.listId)
@@ -448,6 +458,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     timerLabel1Field.val(entry.label1 ?? '')
                     timerLabel2Field.val(entry.label2 ?? '')
                     timerLabel3Field.val(entry.label3 ?? '')
+
+                    // relay mapping
+                    relayMappingEnabledField.prop('checked', entry.mappedToRelayEnabled ?? false)
+                    relayMappingRelayIdField.val(entry.mappedRelay)
 
                     // #endregion update fields with entity data
                     selectTypeField.val(entry.type)
@@ -613,6 +627,17 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         entity.label1 = label1
                         entity.label2 = label2
                         entity.label3 = label3
+                        break
+                    }
+
+                    case 'hvac_action': {
+                        const relayMappingEnabled: boolean = listItem
+                            .find('.node-input-entity-relay-mapping-enabled')
+                            .is(':checked')
+                        const relayMappingRelayId = listItem.find('.node-input-entity-relay-mapping').val().toString()
+
+                        entity.mappedToRelayEnabled = relayMappingEnabled
+                        entity.mappedRelay = relayMappingRelayId
                         break
                     }
                 }

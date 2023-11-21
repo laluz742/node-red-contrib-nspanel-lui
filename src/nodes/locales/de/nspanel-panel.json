@@ -92,7 +92,10 @@
             "label2": "Text 2",
             "label3": "Text 3",
             "timerDefault": "Timer",
-            "seconds": "Sekunden"
+            "seconds": "Sekunden",
+            "linkToRelayState": "Mit Zustand von Relay verknüpfen",
+            "relay1": "Relais 1",
+            "relay2": "Relais 2"
         }
     },
     "nspanel-panel": {

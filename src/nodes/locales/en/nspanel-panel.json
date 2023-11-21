@@ -92,7 +92,10 @@
             "label2": "Label 2",
             "label3": "Label 3",
             "timerDefault": "Default timer",
-            "seconds": "seconds"
+            "seconds": "seconds",
+            "linkToRelayState": "Link to relay state",
+            "relay1": "Relay 1",
+            "relay2": "Relay 2"
         }
     },
     "nspanel-panel": {
