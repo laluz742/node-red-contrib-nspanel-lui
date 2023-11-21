@@ -7,6 +7,7 @@
 -   [Grid Node](#grid-node)
 -   [Thermo Node](#thermo-node)
 -   [QR Node](#qr-page-node)
+-   [Power Node](#power-page-node)
 -   [Media Node](#media-page-node)
 -   [Chart Node](#chart-page-node)
 -   [Alarm Node](#alarm-page-node)
@@ -87,6 +88,35 @@ Additional data must be specified depending on the entity type.
 ## QR Page Node
 
 ### Configuration
+
+## Power Page Node
+
+### Configuration
+
+### Messages
+
+```json
+{
+    "topic": "data",
+    "payload": [
+        {
+            "entityId": "<id of configured entity>",
+            "icon": "<icon>",
+            "iconColor": "<color>",
+            "text": "<label>",
+            "speed": 0
+        }
+    ]
+}
+```
+
+| Key         | Description                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------- |
+| `entityId`  | id of the entity as configured in node settings                                                   |
+| `icon`      | icon to display                                                                                   |
+| `iconColor` | optional, the color to be used for the icon (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `text`      | optional, the color to be used for the icon, encoded as hex rgb string                            |
+| `speed`     | optional, speed of the flow (value between `-120` and `120`)                                      |
 
 ## Media Page Node
 
