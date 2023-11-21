@@ -28,6 +28,7 @@ Currently following features are supported:
 -   thermo card
 -   media card
 -   chart card
+-   power card
 -   alarm card
 -   simple navigation between cards using screen and hardware buttons
 -   input data handling
