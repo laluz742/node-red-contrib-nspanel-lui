@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { scheduleTask, CronosTask } from 'cronosjs'
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
+import 'dayjs/locale/fr'
 import 'dayjs/locale/en'
 
 import { Logger } from './logger'
@@ -287,6 +288,10 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         switch (String.prototype.toLowerCase.apply(locale)) {
             case 'de':
                 dayjs.locale('de')
+                break
+
+            case 'fr':
+                dayjs.locale('fr')
                 break
 
             default:
