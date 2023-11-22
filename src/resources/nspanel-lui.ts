@@ -26,8 +26,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
     // #region events
     const ALL_VALID_NAVIGATION_EVENTS: EventDescriptor[] = [
-        { event: 'nav.prev', label: '' },
-        { event: 'nav.next', label: '' },
+        { event: 'nav.prev', label: '', hasIcon: true },
+        { event: 'nav.next', label: '', hasIcon: true },
     ]
     const ALL_VALID_BUTTON_EVENTS: EventDescriptor[] = [
         { event: 'hw.button1', label: '' },
@@ -758,6 +758,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const tpl = $(container[0]).append($(template))
                     i18nTpl(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
 
+                    const iconContainer = tpl.find('.nlui-event-icon')
+                    iconContainer.hide()
+
                     const eventRow2 = tpl.find('.nlui-row-2')
                     eventRow2.show()
                     const eventRow3 = tpl.find('.nlui-row-3').hide()
@@ -765,6 +768,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                     const selectEventField = tpl.find('.node-input-event')
                     const iconField = tpl.find('.node-input-event-icon')
+                    const iconColorField = tpl.find('.node-input-event-iconColor')
                     const valueField = tpl.find('.node-input-event-value')
                     const valueDataField = tpl.find('.node-input-event-data')
                     const msgTopicField = tpl.find('.node-input-event-msgTopic')
@@ -778,6 +782,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     selectEventField.append($('<option />').val(entry.event ?? self._pageEvents.available[0]))
 
                     selectEventField.on('change', () => {
+                        iconContainer.toggle(selectEventField.val().toString().startsWith('nav.')) // FIXME: use event descriptor.hasIcon....
                         self._updateSelectEventFields()
                     })
                     valueField.on('change', (_event, type, _value) => {
@@ -788,6 +793,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                     selectEventField.val(entry.event)
                     iconField.val(entry.icon)
+                    iconColorField.val(entry.iconColor)
                     valueField.typedInput('value', entry.value)
                     valueField.typedInput('type', entry.t)
 
@@ -897,10 +903,11 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 const listItem = $(ele)
                 const eventName = listItem?.find('select')?.val()?.toString() ?? ''
                 const icon = listItem?.find('.node-input-event-icon')?.val()?.toString() ?? ''
+                const iconColor = listItem?.find('.node-input-event-iconColor')?.val()?.toString()
                 const entryT = listItem.find('.node-input-event-value').typedInput('type').toString()
                 const entryValue = listItem.find('.node-input-event-value').typedInput('value').toString()
 
-                const entry: EventMapping = { event: eventName, t: entryT, value: entryValue, icon }
+                const entry: EventMapping = { event: eventName, t: entryT, value: entryValue, icon, iconColor }
 
                 if (entry.t === 'msg') {
                     entry.data = listItem.find('.node-input-event-data').typedInput('value')

@@ -4,6 +4,7 @@ import { ActiveCharacteristic } from './base'
 export type EventDescriptor = {
     event: string
     label: string
+    hasIcon?: boolean
 }
 
 export declare type EventMapping = {
