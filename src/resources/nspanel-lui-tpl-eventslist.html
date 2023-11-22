@@ -1,40 +1,37 @@
 <template id="nspanel-lui-tpl-eventslist">
-    <div class="nlui-row-1" style="display: flex">
-        <div style="display: flex">
-            <select class="node-input-event" style="width: 180px; margin-right: 10px"></select>
-        </div>
+    <div class="nlui-row-1">
+        <select class="node-input-event" style="width: 180px; margin-right: 10px"></select>
 
-        <div style="display: flex; padding-right: 10px">
-            <label style="margin-left: 14px; vertical-align: middle; width: 50px">
-                <span data-i18n="template-events.icon"></span>
-            </label>
+        <span class="nlui-event-icon" style="padding-right: 10px">
+            <span data-i18n="template-events.icon" style="margin-left: 14px"></span>
             <input type="text" class="node-input-event-icon" style="width: 10em" />
-        </div>
+
+            <span data-i18n="template-events.iconColor" style="margin-left: 14px"></span>
+            <input type="color" class="node-input-event-iconColor" style="width: 4em" />
+        </span>
     </div>
 
-    <div class="nlui-row-2" style="display: flex; margin-top: 8px">
-        <div style="flex-grow: 1">
-            <input type="text" class="node-input-event-value" style="width: 100%" />
-        </div>
+    <div class="nlui-row-2" style="margin-top: 8px">
+        <input type="text" class="node-input-event-value" style="width: 100%" />
     </div>
 
-    <div class="nlui-row-3" style="display: flex; margin-top: 8px">
+    <div class="nlui-row-3" style="margin-top: 8px">
         <label style="margin-left: 14px; vertical-align: middle; width: 50px">
             <span data-i18n="template-events.msgContent"></span>
         </label>
 
-        <div style="flex-grow: 1; margin-top: 8px">
+        <div style="margin-top: 8px">
             <input class="node-input-event-data" style="width: 100%" />
         </div>
     </div>
 
-    <div class="nlui-row-4" style="display: flex; margin-top: 8px">
+    <div class="nlui-row-4" style="margin-top: 8px">
         <label style="margin-left: 14px; vertical-align: middle; width: 50px">
             <i class="fa fa-tasks"></i>
             <span data-i18n="template-events.msgTopic"></span>
         </label>
 
-        <div style="flex-grow: 1; margin-top: 8px">
+        <div style="margin-top: 8px">
             <input type="text" class="node-input-event-msgTopic" style="width: 100%" />
         </div>
     </div>

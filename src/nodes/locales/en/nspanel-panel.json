@@ -61,6 +61,7 @@
         },
         "template-events": {
             "icon": "Icon",
+            "iconColor": "Color",
             "msgContent": "Content",
             "msgTopic": "Topic"
         },
