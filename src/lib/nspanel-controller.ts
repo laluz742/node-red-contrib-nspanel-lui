@@ -2,8 +2,7 @@ import * as nEvents from 'events'
 import { v4 as uuidv4 } from 'uuid'
 import { scheduleTask, CronosTask } from 'cronosjs'
 import dayjs from 'dayjs'
-import 'dayjs/locale/de'
-import 'dayjs/locale/en'
+import('dayjs/locale/en')
 
 import { Logger } from './logger'
 import { NSPanelMqttHandler } from './nspanel-mqtt-handler'
@@ -283,15 +282,17 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.activateStartupPage()
     }
 
-    private initLocale(locale: string): void {
-        switch (String.prototype.toLowerCase.apply(locale)) {
-            case 'de':
-                dayjs.locale('de')
-                break
+    private async initLocale(locale: string): Promise<void> {
+        if (locale == null) return
 
-            default:
-                dayjs.locale('en')
-                break
+        let localeShort = locale.indexOf('-') > 0 ? locale.substring(0, locale.indexOf('-')) : locale
+        localeShort = String.prototype.toLowerCase.apply(localeShort)
+
+        try {
+            await import(`dayjs/locale/${localeShort}`)
+            dayjs.locale(localeShort)
+        } catch {
+            dayjs.locale('en')
         }
     }
 

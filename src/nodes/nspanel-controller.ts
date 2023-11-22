@@ -81,11 +81,7 @@ module.exports = (RED) => {
 
         private init(ctrlConfig: PanelControllerConfig) {
             // get node-red/system/default locale
-            const redLocaleOrDefault = RED.settings.lang ?? Intl.DateTimeFormat().resolvedOptions().locale ?? 'en'
-            ctrlConfig.lang =
-                redLocaleOrDefault.indexOf('-') > 0
-                    ? redLocaleOrDefault.substring(0, redLocaleOrDefault.indexOf('-'))
-                    : redLocaleOrDefault.lang
+            ctrlConfig.lang = RED.settings.lang ?? Intl.DateTimeFormat().resolvedOptions().locale ?? 'en'
 
             // build panel config
             if (this.panelNode === null) {
