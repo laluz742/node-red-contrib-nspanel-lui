@@ -2,7 +2,7 @@ import * as nEvents from 'events'
 import { v4 as uuidv4 } from 'uuid'
 import { scheduleTask, CronosTask } from 'cronosjs'
 import dayjs from 'dayjs'
-import('dayjs/locale/en')
+import 'dayjs/locale/en'
 
 import { Logger } from './logger'
 import { NSPanelMqttHandler } from './nspanel-mqtt-handler'
@@ -289,6 +289,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         localeShort = String.prototype.toLowerCase.apply(localeShort)
 
         try {
+            // eslint-disable-next-line
             await import(`dayjs/locale/${localeShort}`)
             dayjs.locale(localeShort)
         } catch {
