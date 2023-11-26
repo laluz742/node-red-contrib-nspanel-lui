@@ -1,8 +1,12 @@
 # Power Page Node
 
+The power page is used to graphically display power consumption and generation.
+
 General information on configuration and input messages can be found in the documentation on the [page nodes](./page-nodes.md).
 
 ## Configuration
+
+For information on node configuration, please see section [Configuration](./page-nodes.md#configuration) for page nodes.
 
 ## Input Messages
 
