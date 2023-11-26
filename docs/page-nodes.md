@@ -23,7 +23,7 @@
     -   [Media Page](./page-node-media.md)
     -   [Power Page](./page-node-power.md)
     -   [QR Page](./page-node-qr.md)
-    -   [Thermo Page](page-node-thermo.md)
+    -   [Thermo Page](./page-node-thermo.md)
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
