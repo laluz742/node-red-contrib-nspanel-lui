@@ -59,14 +59,21 @@ Page item related data must be sent using the _data_ topic.
 {
     "topic": "data",
     "payload": {
-        "entityId": "<id of entity specified in configuration>",
-        "icon": "<optional, icon to display>",
-        "iconColor": "<optional, #rrggbb or rgb(r,g,b)>",
-        "text": "<optional, text to be shown>"
+        "entityId": "string",
+        "icon": "string",
+        "iconColor": "string",
+        "text": "string"
         // <... further entity-specific data ...>
     }
 }
 ```
+
+| Key         | Description                                                    |
+| ----------- | -------------------------------------------------------------- |
+| `entityId`  | id of entity specified in configuration                        |
+| `icon`      | optional, icon to display                                      |
+| `iconColor` | optional, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
+| `text`      | optional, text to be shown                                     |
 
 Additional data must be specified depending on the entity type.
 
@@ -77,18 +84,76 @@ Additional data must be specified depending on the entity type.
     "topic": "data",
     "payload": {
         // <... general entity data ...>
-        "speed": "<fanSpeedLevel as configured for entity>",
-        "active": "<active>",
-        "mode": "<name of configured mode>"
+        "active": "<active state>",
+        "speed": "number",
+        "mode": "string"
     }
 }
 ```
 
 | Key      | Description                                                                          |
 | -------- | ------------------------------------------------------------------------------------ |
-| `speed`  | speed level in range as configured for entity                                        |
 | `active` | [ `false` \| `0` \| `'0'`] for off, and [`true` \| `1` \| `'1'`] for on respectively |
+| `speed`  | speed level in range as configured for entity                                        |
 | `mode`   | name of active mode as configured for entity                                         |
+
+#### Light-specific payload data
+
+```json
+{
+    "topic": "data",
+    "payload": {
+        // <... general entity data ...>
+        "active": "<light on/off state>",
+        "brightness": "number",
+        "colorTemperature": "number",
+        "hue": "number",
+        "saturation": "number"
+    }
+}
+```
+
+| Key                | Description                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| `active`           | [ `false` \| `0` \| `'0'`] for off, and [`true` \| `1` \| `'1'`] for on respectively |
+| `brightness`       | level of brightness [ `0` to `100`]                                                  |
+| `colorTemperature` | color temperatur within range from `0` (cold) to `100` warm                          |
+| `hue`              | color tone (hue) according to the HSV color model                                    |
+| `saturation`       | saturation according to the HSV color model                                          |
+
+#### Shutter-specific payload data
+
+```json
+{
+    "topic": "data",
+    "payload": {
+        // <... general entity data ...>
+        "value": "number",
+        "tilt": "number"
+    }
+}
+```
+
+| Key     | Description                       |
+| ------- | --------------------------------- |
+| `value` | shutter position [ `0` to `100` ] |
+| `tilt`  | tilt position [ `0` to `100` ]    |
+
+#### Switch-specific payload data
+
+```json
+{
+    "topic": "data",
+    "payload": {
+        // <... general entity data ...>
+        "value": "<switch state>"
+    }
+}
+```
+
+| Key     | Description                                                                          |
+| ------- | ------------------------------------------------------------------------------------ |
+| `value` | [ `false` \| `0` \| `'0'`] for off, and [`true` \| `1` \| `'1'`] for on respectively |
 
 ## Entities Node
 
