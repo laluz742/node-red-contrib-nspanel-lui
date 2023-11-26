@@ -2,22 +2,21 @@
 
 ## Contents
 
--   [General Configuration](#general)
--   [Entities Node](#2ntities-node)
--   [Grid Node](#grid-node)
--   [Thermo Node](#thermo-node)
--   [QR Node](#qr-page-node)
--   [Power Node](#power-page-node)
--   [Media Node](#media-page-node)
--   [Chart Node](#chart-page-node)
--   [Alarm Node](#alarm-page-node)
--   [Lockscreen Node](#lockscreen-page-node)
+-   [General Information](#general-information)
+    -   [Configuration](#configuration)
+    -   [Entities](#entities)
+    -   [Events](#events)
+-   [Input Messages](#input-messages)
+    -   [Data Messages](#data-messages)
+    -   [Popup Data Messages](#popup-data-messages)
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
-## General Page Node Configuration
+## General Information
 
-### General Settings
+### Configuration
+
+#### General Settings
 
 ![image](img/page-node-config-general.png)
 
@@ -31,7 +30,7 @@ The specified title will be used ons panel screen.
 
 The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of `0` means that the page remains active.
 
-### Entities
+#### Entities
 
 Entities can be added to a page and configured accordingly. The number and types depend on the node type.
 
@@ -39,7 +38,7 @@ Entities can be added to a page and configured accordingly. The number and types
 
 The icons that can be used in node configuration is based on the Material Design Icons. All supported icons are listed in the [Lovelace UI Icon Cheatsheet](https://docs.nspanel.pky.eu/icon-cheatsheet.html).
 
-### Events
+#### Events
 
 The Events tab can be used to set up the behavior of the page for certain events. There are various actions that can be assigned:
 
@@ -51,7 +50,9 @@ The _Back_ and _Next_ events can be used to customize the navigation at the top 
 
 ![image](img/page-node-config-events.png)
 
-### Messages
+## Input Messages
+
+### Data Messages
 
 Page item related data must be sent using the _data_ topic.
 
@@ -155,154 +156,9 @@ Additional data must be specified depending on the entity type.
 | ------- | ------------------------------------------------------------------------------------ |
 | `value` | [ `false` \| `0` \| `'0'`] for off, and [`true` \| `1` \| `'1'`] for on respectively |
 
-## Entities Node
+### Popup Data Messages
 
-### Configuration
-
-### Messages
-
-## Grid Node
-
-### Configuration
-
-### Messages
-
-## Thermo Node
-
-### Configuration
-
-### Messages
-
-## QR Page Node
-
-### Configuration
-
-## Power Page Node
-
-### Configuration
-
-### Messages
-
-```json
-{
-    "topic": "data",
-    "payload": [
-        {
-            "entityId": "string",
-            "icon": "string",
-            "iconColor": "string",
-            "text": "string",
-            "speed": "number"
-        }
-    ]
-}
-```
-
-| Key         | Description                                                                                         |
-| ----------- | --------------------------------------------------------------------------------------------------- |
-| `entityId`  | id of the entity as configured in node settings                                                     |
-| `icon`      | icon to display                                                                                     |
-| `iconColor` | optional, the color to be used for the icon in hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
-| `text`      | optional, label                                                                                     |
-| `speed`     | optional, speed of the flow (value between `-120` and `120`)                                        |
-
-## Media Page Node
-
-### Configuration
-
-### Messages
-
-```json
-{
-    "topic": "media",
-    "payload": {
-        "title": "string",
-        "titleColor": "string",
-        "artist": "string",
-        "artistColor": "string",
-        "volume": "number",
-        "iconPlayPause": "string"
-    }
-}
-```
-
-| Key             | Description                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------------- |
-| `title`         | optional, the text to show                                                                        |
-| `titleColor`    | optional, the color to be used for the icon, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
-| `artist`        | optional, the icon to be shown                                                                    |
-| `artistColor`   | optional, the color to be used for the icon, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
-| `volume`        | optional, number between `0` and `100` for volume level                                           |
-| `iconPlayPause` | optional, the icon to use for play/pause                                                          |
-
-## Chart Page Node
-
-### Configuration
-
-### Messages
-
-Example Message:
-
-```json
-{
-    "topic": "data",
-    "payload": {
-        "values": [
-            {
-                "value": 10,
-                "label": "Jul"
-            },
-            {
-                "value": 20,
-                "label": "Aug"
-            },
-            {
-                "value": 30,
-                "label": "Sep"
-            },
-            {
-                "value": 40,
-                "label": "Oct"
-            },
-            {
-                "value": 50,
-                "label": "Nov"
-            }
-        ],
-        "yAxisTicks": [10, 50, 100],
-        "yAxisLabel": "Amount"
-    }
-}
-```
-
-## Alarm Page Node
-
-### Configuration
-
-### Messages
-
-```json
-{
-    "topic": "data",
-    "payload": {
-        "statusIcon": "string",
-        "statusIconColor": "string",
-        "statusIconFlashing": "boolean",
-        "numPadDisabled": "boolean"
-    }
-}
-```
-
-| Key | Description |
-| --- | --- |
-| `statusIcon` | optional, icon to show |
-| `statusIconColor` | optional, the color to be used for the icon, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
-| `statusIconFlashing` | `true` for flashing status icon, otherwise `false` |
-| `numPadDisabled` | `true` to hide num-pad, otherwise `false` |
-
-## Popups
-
-### Input Selection (_selection_ entity)
+#### Input Selection (_selection_ entity)
 
 ```json
 {
@@ -323,7 +179,7 @@ Example Message:
 | `selectedOption` | selected option, must be included in `options`                                                    |
 | `options`        | available options to choose from                                                                  |
 
-### Timer (_timer_ entity)
+#### Timer (_timer_ entity)
 
 ```json
 {
@@ -353,17 +209,3 @@ Example Message:
 | `label3`                | label to show for action 3 button               |
 
 ## Lockscreen Page Node
-
-The lock screen node can be used to control access to other pages via PIN code.
-
-It offers the _Unlock_ event, which can be assigned to actions such as page navigation on the _Events_ configuration tab. The unlock event is triggered when the configured PIN is entered on the display. ![image](img/page-node-lockscreen_events_unlock.png)
-
-### Configuration
-
-![image](img/page-node-lockscreen_config.png)
-
-| Option                 | Description                                                     |
-| ---------------------- | --------------------------------------------------------------- |
-| `PIN`                  | PIN code to be entered on NSPanel                               |
-| `Label confirm button` | Label for button, which submits entered PIN code to the backend |
-| `Icon`                 | Icon displayed next to PIN code input field                     |
