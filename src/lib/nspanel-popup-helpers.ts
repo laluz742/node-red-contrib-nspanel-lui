@@ -99,11 +99,19 @@ export class NSPanelPopupHelpers {
         const fanEntityData: FanEntityData = <FanEntityData>entityData
         const result: HMICommandParameters = []
 
+        const fanSpeedNum = NSPanelUtils.limitNumberToRange(
+            fanEntityData?.speed ?? entity.min,
+            entity.min,
+            entity.max,
+            0
+        )
+        const fanSpeed = fanEntityData?.speed != null ? fanSpeedNum : NSPanelConstants.STR_EMPTY
+
         result.push(entity.entityId)
         result.push(NSPanelUtils.getIcon(entity.icon ?? NSPanelConstants.STR_EMPTY))
         result.push(NSPanelColorUtils.toHmiColor(entity.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR))
         result.push(NSPanelUtils.toHmiState(fanEntityData?.active ?? 0))
-        result.push(fanEntityData?.speed ?? NSPanelConstants.STR_EMPTY)
+        result.push(fanSpeed)
         result.push(entity.max ?? NSPanelConstants.STR_EMPTY)
         result.push(fanEntityData?.text ?? NSPanelConstants.STR_EMPTY)
         result.push(fanEntityData?.mode ?? NSPanelConstants.STR_EMPTY) // current mode value

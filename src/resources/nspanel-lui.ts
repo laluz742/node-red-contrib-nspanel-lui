@@ -478,8 +478,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     self.notifyChange(entity, 'remove')
                 },
 
-                sortItems(_events) {
-                },
+                sortItems(_events) {},
 
                 sortable: true,
                 removable: true,
