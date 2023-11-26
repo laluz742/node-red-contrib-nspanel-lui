@@ -1,6 +1,6 @@
 # Entities Page Nodes
 
-Like the [Grid Page](./page-node-grid.md) node, the Entities Page Node offers a list view for the up to 6 configured elements.
+Like the [Grid Page](./page-node-grid.md) node, the Entities Page Node offers a view for the up to 6 configured elements, but in list view providing additonal information about the state.
 
 ## Configuration
 
