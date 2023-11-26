@@ -25,6 +25,7 @@ type PageAlarmConfig = EntityBasedPageConfig & {
 
 const MAX_ENTITIES = 4
 const EMPTY_ENTITY: PanelEntityListItem = {
+    listIndex: null,
     listId: null,
     type: 'delete',
     entityId: 'none.',
