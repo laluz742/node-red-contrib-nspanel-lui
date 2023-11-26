@@ -1,6 +1,6 @@
-# Grid and Grid Extended Page Nodes
+# Entities Page Nodes
 
-The grid page offers a view of 6 or 8 elements in two rows.
+Like the [Grid Page](./page-node-grid.md) node, the Entities Page Node offers a list view for the up to 6 configured elements.
 
 ## Configuration
 

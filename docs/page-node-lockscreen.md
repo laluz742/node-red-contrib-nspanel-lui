@@ -6,7 +6,7 @@ General information on configuration and input messages can be found in the docu
 
 ## Configuration
 
-For information on node configuration, please see section [Configuration](./page-nodes.md#configuration) for page nodes.
+For information on general node configuration, please see section [Configuration](./page-nodes.md#configuration) for page nodes.
 
 ![image](img/page-node-lockscreen_config.png)
 
