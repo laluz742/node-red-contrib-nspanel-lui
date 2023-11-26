@@ -76,7 +76,6 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     const DEFAULT_COLOR = '#ffffff'
 
     function getRandomId(): string {
-        // TODO: use RED.util.generateId()
         if (typeof crypto['randomUUID'] === 'function') return crypto.randomUUID()
 
         // TODO: downward compatibility needed?
@@ -251,7 +250,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         public makeControl() {
             const self = this // eslint-disable-line
             this._domControlList?.editableList({
-                addItem(container, _i, data: PanelEntityContainer) {
+                addItem(container, listIndex, data: PanelEntityContainer) {
                     self._updateListAddButton()
 
                     data.element = container
@@ -262,6 +261,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                     if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
                         data.entry = {
+                            listIndex: listIndex,
                             listId: null,
                             type: 'delete',
                             entityId: '',
@@ -273,6 +273,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         entry.type = 'delete' // TODO: 'delete' might not be a valid entity type
                     }
 
+                    entry.listIndex = listIndex
                     entry.listId = getRandomId()
                     self._entities.set(entry.listId, entry)
 
@@ -478,7 +479,6 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 },
 
                 sortItems(_events) {
-                    // TODO
                 },
 
                 sortable: true,
@@ -506,7 +506,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         public getEntities(): PanelEntityListItem[] {
             const entityItems = this._domControlList?.editableList('items')
 
-            entityItems.each((_i, ele) => {
+            entityItems.each((listIndex, ele) => {
                 let maxStr: string
                 let minStr: string
                 const listItem = $(ele)
@@ -514,6 +514,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 const listId = listItem.find('.node-input-entity-listid').val().toString()
                 const entity = this._entities.get(listId)
 
+                entity.listIndex = listIndex
                 entity.type = listItem.find('.node-input-entity-type').val().toString()
                 entity.entityId = listItem.find('.node-input-entity-id').val().toString()
                 entity.text = listItem.find('.node-input-entity-text').val().toString()
@@ -644,7 +645,9 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                 this._entities.set(listId, entity)
             })
-            return [...this._entities.values()]
+            return [...this._entities.values()].sort((a, b) => {
+                return a.listIndex < b.listIndex ? -1 : 1
+            })
         }
 
         public empty(): void {
@@ -652,7 +655,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         }
 
         private _updateListAddButton = () => {
-            this._editableListAddButton?.prop('disabled', this._entities.size >= this._maxEntities)
+            this._editableListAddButton?.prop('disabled', this._entities.size >= this._maxEntities - 1)
         }
     }
 
