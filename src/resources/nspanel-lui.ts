@@ -479,6 +479,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                 sortItems(_events) {
                     // TODO
+                    console.log('sortItems', _events)
                 },
 
                 sortable: true,
@@ -652,7 +653,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         }
 
         private _updateListAddButton = () => {
-            this._editableListAddButton?.prop('disabled', this._entities.size >= this._maxEntities)
+            this._editableListAddButton?.prop('disabled', this._entities.size >= this._maxEntities - 1)
         }
     }
 
