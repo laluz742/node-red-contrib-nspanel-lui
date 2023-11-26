@@ -188,23 +188,23 @@ Additional data must be specified depending on the entity type.
     "topic": "data",
     "payload": [
         {
-            "entityId": "<id of configured entity>",
-            "icon": "<icon>",
-            "iconColor": "<color>",
-            "text": "<label>",
-            "speed": 0
+            "entityId": "string",
+            "icon": "string",
+            "iconColor": "string",
+            "text": "string",
+            "speed": "number"
         }
     ]
 }
 ```
 
-| Key         | Description                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------- |
-| `entityId`  | id of the entity as configured in node settings                                                   |
-| `icon`      | icon to display                                                                                   |
-| `iconColor` | optional, the color to be used for the icon (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `text`      | optional, the color to be used for the icon, encoded as hex rgb string                            |
-| `speed`     | optional, speed of the flow (value between `-120` and `120`)                                      |
+| Key         | Description                                                                                         |
+| ----------- | --------------------------------------------------------------------------------------------------- |
+| `entityId`  | id of the entity as configured in node settings                                                     |
+| `icon`      | icon to display                                                                                     |
+| `iconColor` | optional, the color to be used for the icon in hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
+| `text`      | optional, label                                                                                     |
+| `speed`     | optional, speed of the flow (value between `-120` and `120`)                                        |
 
 ## Media Page Node
 
@@ -216,24 +216,24 @@ Additional data must be specified depending on the entity type.
 {
     "topic": "media",
     "payload": {
-        "title": "<name of title>",
-        "titleColor": "<color>",
-        "artist": "<name of artist>",
-        "artistColor": "<color>",
-        "volume": 75,
-        "iconPlayPause": "pause"
+        "title": "string",
+        "titleColor": "string",
+        "artist": "string",
+        "artistColor": "string",
+        "volume": "number",
+        "iconPlayPause": "string"
     }
 }
 ```
 
-| Key | Description |
-| --- | --- |
-| `title` | optional, the text to show |
-| `titleColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `artist` | optional, the icon to be shown |
-| `artistColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `volume` | optional, number between 0 and 100, volume |
-| `iconPlayPause` | optional, the icon to use for play/pause |
+| Key             | Description                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------- |
+| `title`         | optional, the text to show                                                                        |
+| `titleColor`    | optional, the color to be used for the icon, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
+| `artist`        | optional, the icon to be shown                                                                    |
+| `artistColor`   | optional, the color to be used for the icon, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
+| `volume`        | optional, number between `0` and `100` for volume level                                           |
+| `iconPlayPause` | optional, the icon to use for play/pause                                                          |
 
 ## Chart Page Node
 
@@ -285,10 +285,10 @@ Example Message:
 {
     "topic": "data",
     "payload": {
-        "statusIcon": "home",
-        "statusIconColor": "<color>",
-        "statusIconFlashing": true,
-        "numPadDisabled": true
+        "statusIcon": "string",
+        "statusIconColor": "string",
+        "statusIconFlashing": "boolean",
+        "numPadDisabled": "boolean"
     }
 }
 ```
@@ -296,7 +296,7 @@ Example Message:
 | Key | Description |
 | --- | --- |
 | `statusIcon` | optional, icon to show |
-| `statusIconColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
+| `statusIconColor` | optional, the color to be used for the icon, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
 | `statusIconFlashing` | `true` for flashing status icon, otherwise `false` |
 | `numPadDisabled` | `true` to hide num-pad, otherwise `false` |
 
@@ -308,20 +308,20 @@ Example Message:
 {
     "topic": "data",
     "payload": {
-        "entityId": "<entityId>",
-        "iconColor": "<color>",
-        "selectedOption": "<name of selected option>",
+        "entityId": "string",
+        "iconColor": "string",
+        "selectedOption": "string",
         "options": ["<array of strings>"]
     }
 }
 ```
 
-| Key | Description |
-| --- | --- |
-| `entityId` | id of the entity as configured in node settings |
-| `iconColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `selectedOption` | selected option, must be included in `options` |
-| `options` | available options to choose from |
+| Key              | Description                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| `entityId`       | id of the entity as configured in node settings                                                   |
+| `iconColor`      | optional, the color to be used for the icon, hex rgb (`#rrggbb`) or integer format (`rgb(R,G,B)`) |
+| `selectedOption` | selected option, must be included in `options`                                                    |
+| `options`        | available options to choose from                                                                  |
 
 ### Timer (_timer_ entity)
 
@@ -329,24 +329,28 @@ Example Message:
 {
     "topic": "data",
     "payload": {
-        "entityId": "<entityId>",
-        "timerRemainingSeconds": "<remaining time in seconds>",
-        "action1": "<action1>",
-        "action2": "<action2>",
-        "action3": "<action3>",
-        "label1": "<label for action1>",
-        "label2": "<label for action2>",
-        "label3": "<label for action3>"
+        "entityId": "string",
+        "timerRemainingSeconds": "number",
+        "action1": "string",
+        "action2": "string",
+        "action3": "string",
+        "label1": "string",
+        "label2": "string",
+        "label3": "string"
     }
 }
 ```
 
-| Key | Description |
-| --- | --- |
-| `entityId` | id of the entity as configured in node settings |
-| `iconColor` | optional, the color to be used for the icon, encoded as hex rgb string (e.g. `#rrggbb`), or rgb color string (`rgb(r,g,b)`). |
-| `selectedOption` | selected option, must be included in `options` |
-| `options` | available options to choose from |
+| Key                     | Description                                     |
+| ----------------------- | ----------------------------------------------- |
+| `entityId`              | id of the entity as configured in node settings |
+| `timerRemainingSeconds` | remaining time in seconds                       |
+| `action1`               | string to send for action 1                     |
+| `action2`               | string to send for action 2                     |
+| `action3`               | string to send for action 3                     |
+| `label1`                | label to show for action 1 button               |
+| `label3`                | label to show for action 2 button               |
+| `label3`                | label to show for action 3 button               |
 
 ## Lockscreen Page Node
 
