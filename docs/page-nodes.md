@@ -1,14 +1,26 @@
 # Page Nodes
 
-## Contents
-
 -   [General Information](#general-information)
     -   [Configuration](#configuration)
-    -   [Entities](#entities)
-    -   [Events](#events)
+        -   [General Settings](#general-settings)
+        -   [Entities](#entities)
+        -   [Events](#events)
 -   [Input Messages](#input-messages)
     -   [Data Messages](#data-messages)
+        -   [Fan-specific payload data](#fan-specific-payload-data)
+        -   [Light-specific payload data](#light-specific-payload-data)
+        -   [Shutter-specific payload data](#shutter-specific-payload-data)
+        -   [Switch-specific payload data](#switch-specific-payload-data)
     -   [Popup Data Messages](#popup-data-messages)
+        -   [Input Selection (_selection_ entity)](#input-selection-selection-entity)
+        -   [Timer (_timer_ entity)](#timer-timer-entity)
+-   Page Nodes
+    -   [Alarm Page](./page-node-alarm.md)
+    -   [Chart Page](./page-node-chart.md)
+    -   [Grid / Grid Extended](./page-node-grid.md)
+    -   [Lockscreen Page](./page-node-lockscreen.md)
+    -   [Media Page](./page-node-media.md)
+    -   [Power Page](./page-node-power.md)
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
@@ -20,15 +32,10 @@ Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Cont
 
 ![image](img/page-node-config-general.png)
 
-Each node can be assigned a name that is displayed in the flow. Furthermore, this name may be used for explicit activation using messages sent to the HMI Control node.
-
-The assignment to a panel activates the node so that it can be used on the specified panel. After the assignment, the name of the assigned panel is placed in front of the name of the node:
-
-![image](img/page-node-in-flow.png)
-
-The specified title will be used ons panel screen.
-
-The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of `0` means that the page remains active.
+-   **Name**: Each node can be assigned a name that is displayed in the flow. Furthermore, this name may be used for explicit activation using messages sent to the HMI Control node.<br/><br/>
+-   **NSPanel**: The assignment to a panel activates the node so that it can be used on the specified panel. After the assignment, the name of the assigned panel is placed in front of the name of the node: ![image](img/page-node-in-flow.png)<br/><br/>
+-   **Title**: The specified title will be used ons panel screen.<br/><br/>
+-   **Stand-by timeout override**: The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of `0` means that the page remains active.<br/><br/>
 
 #### Entities
 
@@ -207,5 +214,3 @@ Additional data must be specified depending on the entity type.
 | `label1`                | label to show for action 1 button               |
 | `label3`                | label to show for action 2 button               |
 | `label3`                | label to show for action 3 button               |
-
-## Lockscreen Page Node

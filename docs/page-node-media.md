@@ -4,6 +4,8 @@ General information on configuration and input messages can be found in the docu
 
 ## Configuration
 
+For information on node configuration, please see section [Configuration](./page-nodes.md#configuration) for page nodes.
+
 ## Input Messages
 
 ### Media Data Message
