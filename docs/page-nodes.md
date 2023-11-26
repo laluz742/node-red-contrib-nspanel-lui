@@ -39,11 +39,9 @@ Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Cont
 
 #### Entities
 
-Entities can be added to a page and configured accordingly. The number and types depend on the node type.
+Entities can be added to a page and configured accordingly. The number and types depend on the node type. The icons that can be used in node configuration is based on the Material Design Icons. All supported icons are listed in the [Lovelace UI Icon Cheatsheet](https://docs.nspanel.pky.eu/icon-cheatsheet.html).
 
 ![image](img/page-node-config-entities.png)
-
-The icons that can be used in node configuration is based on the Material Design Icons. All supported icons are listed in the [Lovelace UI Icon Cheatsheet](https://docs.nspanel.pky.eu/icon-cheatsheet.html).
 
 #### Events
 
