@@ -29,7 +29,9 @@
             "wifiAuthType": "Authentication",
             "wifiHidden": "Hidden"
         },
-        "placeholder": {},
+        "placeholder": {
+            "qrCode": "WIFI:S:<SSID>;T:<WEP|WPA|blank>;P:<PASSWORD>;H:<true|false|blank>;;"
+        },
         "defaults": {
             "name": "QR"
         }
