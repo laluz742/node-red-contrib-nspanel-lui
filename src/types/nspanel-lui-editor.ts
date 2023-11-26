@@ -20,6 +20,7 @@ export type EventTypeAttrs = {
 }
 
 export type PanelEntityListItem = PanelEntity & {
+    listIndex: number
     listId: string
 }
 
