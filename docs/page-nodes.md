@@ -1,14 +1,26 @@
 # Page Nodes
 
-## Contents
-
 -   [General Information](#general-information)
     -   [Configuration](#configuration)
-    -   [Entities](#entities)
-    -   [Events](#events)
+        -   [General Settings](#general-settings)
+        -   [Entities](#entities)
+        -   [Events](#events)
 -   [Input Messages](#input-messages)
     -   [Data Messages](#data-messages)
+        -   [Fan-specific payload data](#fan-specific-payload-data)
+        -   [Light-specific payload data](#light-specific-payload-data)
+        -   [Shutter-specific payload data](#shutter-specific-payload-data)
+        -   [Switch-specific payload data](#switch-specific-payload-data)
     -   [Popup Data Messages](#popup-data-messages)
+        -   [Input Selection (_selection_ entity)](#input-selection-selection-entity)
+        -   [Timer (_timer_ entity)](#timer-timer-entity)
+-   Page Nodes
+    -   [Alarm Page](./page-node-alarm.md)
+    -   [Chart Page](./page-node-chart.md)
+    -   [Grid / Grid Extended](./page-node-grid.md)
+    -   [Lockscreen Page](./page-node-lockscreen.md)
+    -   [Media Page](./page-node-media.md)
+    -   [Power Page](./page-node-power.md)
 
 Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Control_ please see the [main nodes docs](./nodes.md)
 
@@ -207,5 +219,3 @@ Additional data must be specified depending on the entity type.
 | `label1`                | label to show for action 1 button               |
 | `label3`                | label to show for action 2 button               |
 | `label3`                | label to show for action 3 button               |
-
-## Lockscreen Page Node
