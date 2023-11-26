@@ -121,16 +121,17 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         for (let i = 0; i < maxEntities; i += 1) {
             const entityConfig = entities[i]
             const entityData = this.getEntityData(entityConfig.entityId)
-            const optionalValue = entityData?.value ?? entityConfig.optionalValue
 
             const icon = entityData?.icon ?? entityConfig.icon
+            const iconColor = entityData?.iconColor ?? entityConfig.icon
             const text = entityData?.text ?? entityConfig.text
+            const optionalValue = entityData?.value ?? entityConfig.optionalValue
 
             const entity = NSPanelUtils.makeEntity(
                 entityConfig.type,
                 entityConfig.entityId,
                 NSPanelUtils.getIcon(icon ?? ''),
-                NSPanelColorUtils.toHmiColor(entityConfig.iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR),
+                NSPanelColorUtils.toHmiColor(iconColor),
                 text ?? '',
                 optionalValue
             )

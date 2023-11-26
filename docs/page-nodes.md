@@ -59,13 +59,36 @@ Page item related data must be sent using the _data_ topic.
 {
     "topic": "data",
     "payload": {
-        "entityId": "<id of entity specified in configuration>"
-        // <... further data ...>
+        "entityId": "<id of entity specified in configuration>",
+        "icon": "<optional, icon to display>",
+        "iconColor": "<optional, #rrggbb or rgb(r,g,b)>",
+        "text": "<optional, text to be shown>"
+        // <... further entity-specific data ...>
     }
 }
 ```
 
 Additional data must be specified depending on the entity type.
+
+#### Fan-specific payload data
+
+```json
+{
+    "topic": "data",
+    "payload": {
+        // <... general entity data ...>
+        "speed": "<fanSpeedLevel as configured for entity>",
+        "active": "<active>",
+        "mode": "<name of configured mode>"
+    }
+}
+```
+
+| Key      | Description                                                                          |
+| -------- | ------------------------------------------------------------------------------------ |
+| `speed`  | speed level in range as configured for entity                                        |
+| `active` | [ `false` \| `0` \| `'0'`] for off, and [`true` \| `1` \| `'1'`] for on respectively |
+| `mode`   | name of active mode as configured for entity                                         |
 
 ## Entities Node
 
