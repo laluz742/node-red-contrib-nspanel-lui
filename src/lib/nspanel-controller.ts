@@ -730,11 +730,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const date = new Date()
         const amPmStr: string = date.getHours() >= 12 ? 'PM' : 'AM'
         let timeStr: string
-        let amPmStr: string
-
+        
         if (useCustomDate === true) {
             timeStr = dayjs().format(this._panelConfig.panel.timeCustomFormat)
-            amPmStr = dayjs().format('A')
         } else {
             const timeOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_TIME_OPTIONS }
 
