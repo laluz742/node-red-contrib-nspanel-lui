@@ -65,6 +65,7 @@ export interface PanelParameters {
     timeFormatHour: 'numeric' | '2-digit'
     timeFormatMinute: 'numeric' | '2-digit'
     timeFormatTimeNotation: '12' | '24'
+    timeFormatShowAmPm: boolean
 
     useCustomDateTimeFormat: boolean
     dateCustomFormat: string

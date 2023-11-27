@@ -136,6 +136,7 @@
             "timeFormatTimeNotation": "Stundenzählung",
             "timeFormatHour": "Stunde",
             "timeFormatMinute": "Minute",
+            "timeFormatShowAmPm": "AM/PM anzeigen",
             "useCustomDateTimeFormat": "Benutzerdefiniertes Datums- und Zeitformat verwenden",
             "dateCustomFormat": "Datumsformat",
             "timeCustomFormat": "Zeitformat"

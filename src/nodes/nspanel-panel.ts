@@ -42,6 +42,7 @@ interface NSPanelConfig extends INodeConfig {
     timeFormatHour: 'numeric' | '2-digit'
     timeFormatMinute: 'numeric' | '2-digit'
     timeFormatTimeNotation: '12' | '24'
+    timeFormatShowAmPm: boolean
 
     useCustomDateTimeFormat: boolean
     dateCustomFormat: string
@@ -110,6 +111,7 @@ module.exports = (RED) => {
                     timeFormatHour: this.config.timeFormatHour,
                     timeFormatMinute: this.config.timeFormatMinute,
                     timeFormatTimeNotation: this.config.timeFormatTimeNotation,
+                    timeFormatShowAmPm: this.config.timeFormatShowAmPm,
 
                     useCustomDateTimeFormat: this.config.useCustomDateTimeFormat,
                     dateCustomFormat: this.config.dateCustomFormat,

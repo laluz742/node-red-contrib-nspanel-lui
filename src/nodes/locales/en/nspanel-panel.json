@@ -136,6 +136,7 @@
             "timeFormat": "Time format",
             "timeFormatHour": "Hour",
             "timeFormatMinute": "Minute",
+            "timeFormatShowAmPm": "Show AM/PM",
             "useCustomDateTimeFormat": "Use custom date and time format",
             "dateCustomFormat": "Date format",
             "timeCustomFormat": "Time format"
