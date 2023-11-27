@@ -26,8 +26,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
     // #region events
     const ALL_VALID_NAVIGATION_EVENTS: EventDescriptor[] = [
-        { event: 'nav.prev', label: '', hasIcon: true },
-        { event: 'nav.next', label: '', hasIcon: true },
+        { event: 'nav.prev', label: '', defaultIcon: 'arrow-left', hasIcon: true, isNavigation: true },
+        { event: 'nav.next', label: '', defaultIcon: 'arrow-right', hasIcon: true, isNavigation: true },
     ]
     const ALL_VALID_BUTTON_EVENTS: EventDescriptor[] = [
         { event: 'hw.button1', label: '' },
@@ -781,10 +781,31 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #endregion create DOM
 
                     // placeholder for following call to update event select fields
+                    let lastSelectedEvent: string = entry.event
+                    let lastEventDescriptor: EventDescriptor = self._pageEvents.all.filter(
+                        (ed) => ed.event == lastSelectedEvent
+                    )[0]
+
                     selectEventField.append($('<option />').val(entry.event ?? self._pageEvents.available[0]))
 
                     selectEventField.on('change', () => {
-                        iconContainer.toggle(selectEventField.val().toString().startsWith('nav.')) // FIXME: use event descriptor.hasIcon....
+                        const selectedEvent: string = selectEventField.val().toString()
+                        const eventDescriptor: EventDescriptor = self._pageEvents.all.filter(
+                            (ed) => ed.event == selectedEvent
+                        )[0]
+
+                        const currentIcon = iconField.val()
+                        if (
+                            !NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(currentIcon) ||
+                            currentIcon === lastEventDescriptor?.defaultIcon
+                        ) {
+                            iconField.val(eventDescriptor?.defaultIcon ?? '')
+                        }
+
+                        lastSelectedEvent = selectedEvent
+                        lastEventDescriptor = eventDescriptor
+                        iconContainer.toggle(eventDescriptor?.hasIcon ?? false)
+
                         self._updateSelectEventFields()
                     })
                     valueField.on('change', (_event, type, _value) => {
@@ -792,10 +813,11 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         eventRow3.toggle(isMsgType)
                         eventRow4.toggle(isMsgType)
                     })
+                    iconField.on('change', () => {})
 
                     selectEventField.val(entry.event)
                     iconField.val(entry.icon)
-                    iconColorField.val(entry.iconColor)
+                    iconColorField.val(entry.iconColor ?? DEFAULT_COLOR)
                     valueField.typedInput('value', entry.value)
                     valueField.typedInput('type', entry.t)
 
