@@ -225,6 +225,16 @@
                     <option value="ru" data-i18n="nspanel-panel.i18n.ru">Russian</option>
                 </select>
             </div>
+            <div class="form-row">
+                <label style="flex-grow: 1;">
+                    <i class="fa fa-clock-o"></i>
+                    <span data-i18n="nspanel-panel.label.timeFormatTimeNotation"></span>
+                </label>
+                <select id="node-config-input-timeFormatTimeNotation">
+                    <option value="12" data-i18n="common.time.timeFormatTimeNotation12">12h</option>
+                    <option value="24" data-i18n="common.time.timeFormatTimeNotation24">24h</option>
+                </select>
+            </div>
 
             <br />
             <div id="nspanel-page-tab-date-standard" class="form-row" style="display: flex;">
@@ -281,7 +291,7 @@
                 <div style="flex-grow: 1;">
                     <div class="form-row" style="display: flex;">
                         <label style="flex-grow: 1;">
-                            <i class="fa fa-calendar"></i>
+                            <i class="fa fa-clock-o"></i>
                             <span data-i18n="nspanel-panel.label.timeFormat"></span>
                         </label>
                     </div>

@@ -29,6 +29,10 @@
             "2-digit": "2-digit",
             "numeric": "numeric"
         },
+        "time": {
+            "timeFormatTimeNotation12": "12-hour clock",
+            "timeFormatTimeNotation24": "24-hour clock"
+        },
         "shutter": {
             "position": "Position",
             "tilt": "Tilt"
@@ -128,6 +132,7 @@
             "dateFormatMonth": "Month",
             "dateFormatDay": "Day",
             "dateFormatWeekday": "Weekday",
+            "timeFormatTimeNotation": "Clock notation",
             "timeFormat": "Time format",
             "timeFormatHour": "Hour",
             "timeFormatMinute": "Minute",

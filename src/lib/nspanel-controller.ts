@@ -726,10 +726,13 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     private sendTimeToPanel() {
         const useCustomDate = this._panelConfig.panel.useCustomDateTimeFormat
+        const use12HourClock = this._panelConfig.panel.timeFormatTimeNotation === '12'
         let timeStr: string
+        let amPmStr: string
 
         if (useCustomDate === true) {
             timeStr = dayjs().format(this._panelConfig.panel.timeCustomFormat)
+            amPmStr = dayjs().format('A')
         } else {
             const timeOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_TIME_OPTIONS }
             const date = new Date()
@@ -740,11 +743,16 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 if (this._panelConfig.panel.dateFormatMonth != null)
                     timeOptions.minute = this._panelConfig.panel.timeFormatMinute
 
-                timeStr = date.toLocaleTimeString(undefined, timeOptions)
+                timeStr = date.toLocaleTimeString(this._dateLocale, timeOptions).replace(/ AM| PM| am| pm/, '')
+                amPmStr = date.getHours() >= 12 ? 'PM' : 'AM'
             } catch {
                 log.error('Invalid time format configuration, using default settings')
                 timeStr = date.toLocaleTimeString(undefined, DEFAULT_TIME_OPTIONS)
             }
+        }
+
+        if (use12HourClock) {
+            timeStr += `?${amPmStr}`
         }
 
         const hmiCmd: HMICommand = {
