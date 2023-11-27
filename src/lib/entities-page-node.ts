@@ -123,7 +123,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
             const entityData = this.getEntityData(entityConfig.entityId)
 
             const icon = entityData?.icon ?? entityConfig.icon
-            const iconColor = entityData?.iconColor ?? entityConfig.icon
+            const iconColor = entityData?.iconColor ?? entityConfig.iconColor
             const text = entityData?.text ?? entityConfig.text
             const optionalValue = entityData?.value ?? entityConfig.optionalValue
 
