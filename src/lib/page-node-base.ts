@@ -151,7 +151,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
             const item = navNextEventMappings[0]
             navNext = NSPanelUtils.makeEntity(
                 NSPanelConstants.STR_LUI_ENTITY_BUTTON,
-                NSPanelConstants.STR_NAV_ID_PREVIOUS,
+                NSPanelConstants.STR_NAV_ID_NEXT,
                 NSPanelUtils.getIcon(item.icon ?? ''),
                 NSPanelColorUtils.toHmiColor(item.iconColor ?? DEFAULT_LUI_COLOR)
             )
