@@ -4,12 +4,12 @@ import { scheduleTask, CronosTask } from 'cronosjs'
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import 'dayjs/locale/en'
-import 'dayjs/locale/zh-CN'
-import 'dayjs/locale/zh-TW'
+import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/zh-tw'
 import 'dayjs/locale/fr'
 import 'dayjs/locale/ja'
 import 'dayjs/locale/ko'
-import 'dayjs/locale/pt-BR'
+import 'dayjs/locale/pt-br'
 import 'dayjs/locale/ru'
 
 import { Logger } from './logger'
@@ -299,8 +299,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         const sysLocale = Intl.DateTimeFormat().resolvedOptions().locale
         const dateLocale = NSPanelUtils.stringIsNullOrEmpty(locale) ? sysLocale : locale
 
-        dayjs.locale(dateLocale ?? DEFAULT_DATE_LOCALE)
-        this._dateLocale = dateLocale ?? DEFAULT_DATE_LOCALE
+        dayjs.locale(dateLocale?.toLowerCase() ?? DEFAULT_DATE_LOCALE)
+        this._dateLocale = dateLocale?.toLowerCase() ?? DEFAULT_DATE_LOCALE
     }
 
     private onEvent(eventArgs: EventArgs) {
