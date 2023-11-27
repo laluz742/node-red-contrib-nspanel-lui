@@ -781,17 +781,17 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #endregion create DOM
 
                     // placeholder for following call to update event select fields
-                    let lastSelectedEvent: string = entry.event
-                    let lastEventDescriptor: EventDescriptor = self._pageEvents.all.filter(
-                        (ed) => ed.event == lastSelectedEvent
-                    )[0]
-
                     selectEventField.append($('<option />').val(entry.event ?? self._pageEvents.available[0]))
 
+                    // TODO: introduce rowState
+                    let lastSelectedEvent: string = entry.event
+                    let lastEventDescriptor: EventDescriptor = self._pageEvents.all.filter(
+                        (ed) => ed.event === lastSelectedEvent
+                    )[0]
                     selectEventField.on('change', () => {
                         const selectedEvent: string = selectEventField.val().toString()
                         const eventDescriptor: EventDescriptor = self._pageEvents.all.filter(
-                            (ed) => ed.event == selectedEvent
+                            (ed) => ed.event === selectedEvent
                         )[0]
 
                         const currentIcon = iconField.val()
