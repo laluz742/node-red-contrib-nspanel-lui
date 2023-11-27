@@ -28,7 +28,7 @@
                 timeout: {
                     value: null,
                     required: false,
-                    validate: function (v) {
+                    validate: (v) => {
                         if (v === '') return true
                         return NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TIMEOUT_MIN, PANEL_TIMEOUT_MAX)
                     },
@@ -38,7 +38,7 @@
                 pinCode: {
                     value: '0000',
                     required: true,
-                    validate(v: string) {
+                    validate: (v: string) => {
                         const pinCodeNum = Number(v)
 
                         return Number.isNaN(pinCodeNum) !== true
