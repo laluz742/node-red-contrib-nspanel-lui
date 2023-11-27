@@ -36,7 +36,12 @@ export class NSPanelMessageParser {
                 }
             }
         } catch (err: unknown) {
-            result.data = payloadStr
+            result = {
+                type: 'unknown',
+                source: '',
+                event: '',
+                data: payloadStr
+            }
         }
 
         return result
