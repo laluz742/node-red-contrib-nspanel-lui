@@ -244,7 +244,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         log.info(`Starting panel controller for panel ${panelConfig.panel.topic}`)
 
-        this.initLocale(this._ctrlConfig.lang)
+        this.initLocale(
+            panelConfig.panel.dateLanguage === 'sys' ? this._ctrlConfig.systemLanguage : panelConfig.panel.dateLanguage
+        )
 
         // preparing dim modes
         let tempStartTime = panelConfig.panel.panelDimLowStartTime

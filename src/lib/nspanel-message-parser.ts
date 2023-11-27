@@ -40,7 +40,7 @@ export class NSPanelMessageParser {
                 type: 'unknown',
                 source: '',
                 event: '',
-                data: payloadStr
+                data: payloadStr,
             }
         }
 

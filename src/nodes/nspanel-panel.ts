@@ -45,6 +45,8 @@ interface NSPanelConfig extends INodeConfig {
     useCustomDateTimeFormat: boolean
     dateCustomFormat: string
     timeCustomFormat: string
+
+    dateLanguage: string
 }
 
 module.exports = (RED) => {
@@ -98,6 +100,7 @@ module.exports = (RED) => {
                     panelDimLowStartTime: NSPanelUtils.splitTime(this.config.panelDimLowStartTime),
                     panelDimLowNightStartTime: NSPanelUtils.splitTime(this.config.panelDimLowNightStartTime),
 
+                    dateLanguage: this.config.dateLanguage,
                     dateFormatWeekday: this.config.dateFormatWeekday,
                     dateFormatDay: this.config.dateFormatDay,
                     dateFormatMonth: this.config.dateFormatMonth,

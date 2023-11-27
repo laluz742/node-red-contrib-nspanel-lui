@@ -17,7 +17,7 @@ export interface IPageHistory {
 }
 
 export type PanelControllerConfig = PanelBasedConfig & {
-    lang: string
+    systemLanguage: string
     screenSaverOnStartup: boolean
     beepOnNotifications: boolean
 }
