@@ -86,8 +86,10 @@
                 dateFormatDay: { value: 'numeric' },
                 dateFormatMonth: { value: 'long' },
                 dateFormatYear: { value: 'numeric' },
+                timeFormatTimeNotation: { value: '24', required: true },
                 timeFormatHour: { value: 'numeric' },
                 timeFormatMinute: { value: '2-digit' },
+                timeFormatShowAmPm: { value: false },
 
                 useCustomDateTimeFormat: { value: false },
                 dateCustomFormat: { value: '' },
@@ -117,6 +119,11 @@
                 })
                 useCustomDateTimeFormat.trigger('change')
                 // FIXME: sort lang options by text
+
+                const timeFormatTimeNotationField = $('#node-config-input-timeFormatTimeNotation')
+                timeFormatTimeNotationField.on('change', () => {
+                    $('#timeFormatShowAmPmOption').toggle(timeFormatTimeNotationField.val() === '12')
+                })
 
                 const tabs = RED.tabs.create({
                     id: 'nspanel-page-tabs',

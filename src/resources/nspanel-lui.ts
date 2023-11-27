@@ -339,7 +339,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #region rowFanModes
                     const fanMode1Field = tpl.find('.node-input-entity-fan-mode1')
                     const fanMode2Field = tpl.find('.node-input-entity-fan-mode2')
-                    const fanMode3Field = tpl.find('node-input-entity-fan-mode3')
+                    const fanMode3Field = tpl.find('.node-input-entity-fan-mode3')
                     // #endregion rowFanModes
 
                     // #region rowLight

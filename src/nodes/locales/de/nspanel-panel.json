@@ -29,6 +29,10 @@
             "2-digit": "Zweistellig",
             "numeric": "Numerisch"
         },
+        "time": {
+            "timeFormatTimeNotation12": "12 Stunden",
+            "timeFormatTimeNotation24": "24 Stunden"
+        },
         "shutter": {
             "position": "Position",
             "tilt": "Neigung"
@@ -129,8 +133,10 @@
             "dateFormatDay": "Tag",
             "dateFormatWeekday": "Wochentag",
             "timeFormat": "Zeitformat",
+            "timeFormatTimeNotation": "Stundenzählung",
             "timeFormatHour": "Stunde",
             "timeFormatMinute": "Minute",
+            "timeFormatShowAmPm": "AM/PM anzeigen",
             "useCustomDateTimeFormat": "Benutzerdefiniertes Datums- und Zeitformat verwenden",
             "dateCustomFormat": "Datumsformat",
             "timeCustomFormat": "Zeitformat"
