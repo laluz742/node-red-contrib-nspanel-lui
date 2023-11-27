@@ -122,6 +122,7 @@
             "autoUpdate": "Install new firmware automatically",
             "timeToCheckForUpdates": "Time to check for updates",
             "tasmotaOtaUrl": "Tasmota OTA Url",
+            "dateLanguage": "Language for date display",
             "dateFormat": "Date format",
             "dateFormatYear": "Year",
             "dateFormatMonth": "Month",
@@ -141,6 +142,18 @@
             "tasmotaOtaUrl": "http://ota.tasmota.com/tasmota32/release/tasmota32.bin",
             "dateCustomFormat": "dddd, D MMMM YYYY",
             "timeCustomFormat": "HH:mm"
+        },
+        "i18n": {
+            "sys": "System default",
+            "zh-CN": "Chinese (Simplified)",
+            "zh-TW": "Chinese (Traditional)",
+            "en-US": "English",
+            "fr": "French",
+            "de": "German",
+            "ja": "Japanese",
+            "ko": "Korean",
+            "pt-BR": "Portuguese",
+            "ru": "Russian"
         },
         "defaults": {
             "name": "NSPanel"

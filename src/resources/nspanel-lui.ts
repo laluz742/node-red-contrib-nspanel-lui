@@ -261,7 +261,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                     if (!Object.prototype.hasOwnProperty.call(data, 'entry')) {
                         data.entry = {
-                            listIndex: listIndex,
+                            listIndex,
                             listId: null,
                             type: 'delete',
                             entityId: '',

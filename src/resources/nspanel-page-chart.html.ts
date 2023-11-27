@@ -25,7 +25,7 @@
                 timeout: {
                     value: null,
                     required: false,
-                    validate: function (v) {
+                    validate: (v) => {
                         if (v === '') return true
                         return NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_TIMEOUT_MIN, PANEL_TIMEOUT_MAX)
                     },

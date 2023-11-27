@@ -56,6 +56,7 @@ export interface PanelParameters {
     panelDimLowStartTime: SplitTime
     panelDimLowNightStartTime: SplitTime
 
+    dateLanguage: string
     dateFormatWeekday: 'short' | 'long'
     dateFormatDay: 'numeric' | '2-digit'
     dateFormatMonth: 'numeric' | '2-digit' | 'short' | 'long'

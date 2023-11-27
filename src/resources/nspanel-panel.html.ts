@@ -80,6 +80,8 @@
                     validate: (v) =>
                         NSPanelLui.Editor.validate.isNumberInRange(v, PANEL_DIMVALUE_MIN, PANEL_DIMVALUE_MAX),
                 },
+
+                dateLanguage: { value: '' },
                 dateFormatWeekday: { value: 'long' },
                 dateFormatDay: { value: 'numeric' },
                 dateFormatMonth: { value: 'long' },
@@ -114,6 +116,7 @@
                     $('#nspanel-page-tab-date-custom input').prop('disabled', !useCustom)
                 })
                 useCustomDateTimeFormat.trigger('change')
+                // FIXME: sort lang options by text
 
                 const tabs = RED.tabs.create({
                     id: 'nspanel-page-tabs',
