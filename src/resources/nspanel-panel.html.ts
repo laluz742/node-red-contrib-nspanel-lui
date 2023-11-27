@@ -86,6 +86,7 @@
                 dateFormatDay: { value: 'numeric' },
                 dateFormatMonth: { value: 'long' },
                 dateFormatYear: { value: 'numeric' },
+                timeFormatTimeNotation: { value: '24', required: true },
                 timeFormatHour: { value: 'numeric' },
                 timeFormatMinute: { value: '2-digit' },
 
