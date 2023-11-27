@@ -80,13 +80,6 @@ module.exports = (RED) => {
         }
 
         private init(ctrlConfig: PanelControllerConfig) {
-            // get node-red/system/default locale
-            const redLocaleOrDefault = RED.settings.lang ?? Intl.DateTimeFormat().resolvedOptions().locale ?? 'en'
-            ctrlConfig.systemLanguage =
-                redLocaleOrDefault.indexOf('-') > 0
-                    ? redLocaleOrDefault.substring(0, redLocaleOrDefault.indexOf('-'))
-                    : redLocaleOrDefault.lang
-
             // build panel config
             if (this.panelNode === null) {
                 this.setNodeStatus('error', RED._('common.status.notAssignedToAPanel'))

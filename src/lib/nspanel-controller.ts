@@ -4,6 +4,13 @@ import { scheduleTask, CronosTask } from 'cronosjs'
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import 'dayjs/locale/en'
+import 'dayjs/locale/zh-CN'
+import 'dayjs/locale/zh-TW'
+import 'dayjs/locale/fr'
+import 'dayjs/locale/ja'
+import 'dayjs/locale/ko'
+import 'dayjs/locale/pt-BR'
+import 'dayjs/locale/ru'
 
 import { Logger } from './logger'
 import { NSPanelMqttHandler } from './nspanel-mqtt-handler'
@@ -38,8 +45,11 @@ import {
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 import { IPanelNodeEx } from '../types/panel'
+import { NSPanelUtils } from './nspanel-utils'
 
 const log = Logger('NSPanelController')
+
+const DEFAULT_DATE_LOCALE: string = 'en'
 
 const DEFAULT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
     weekday: 'long', // short
@@ -75,6 +85,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     private _panelConfig: PanelConfig
 
     private _i18n: NodeRedI18nResolver
+
+    private _dateLocale: string
 
     private _cache: IControllerCache
 
@@ -244,9 +256,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         log.info(`Starting panel controller for panel ${panelConfig.panel.topic}`)
 
-        this.initLocale(
-            panelConfig.panel.dateLanguage === 'sys' ? this._ctrlConfig.systemLanguage : panelConfig.panel.dateLanguage
-        )
+        this.initLocale(panelConfig.panel.dateLanguage)
 
         // preparing dim modes
         let tempStartTime = panelConfig.panel.panelDimLowStartTime
@@ -286,15 +296,11 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private initLocale(locale: string): void {
-        switch (String.prototype.toLowerCase.apply(locale)) {
-            case 'de':
-                dayjs.locale('de')
-                break
+        const sysLocale = Intl.DateTimeFormat().resolvedOptions().locale
+        const dateLocale = NSPanelUtils.stringIsNullOrEmpty(locale) ? sysLocale : locale
 
-            default:
-                dayjs.locale('en')
-                break
-        }
+        dayjs.locale(dateLocale ?? DEFAULT_DATE_LOCALE)
+        this._dateLocale = dateLocale ?? DEFAULT_DATE_LOCALE
     }
 
     private onEvent(eventArgs: EventArgs) {
@@ -768,8 +774,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 if (this._panelConfig.panel.dateFormatWeekday != null)
                     dateOptions.weekday = this._panelConfig.panel.dateFormatWeekday
 
-                dateStr = date.toLocaleDateString(undefined, dateOptions)
-            } catch {
+                dateStr = date.toLocaleDateString(this._dateLocale, dateOptions)
+            } catch (error) {
                 log.error('Invalid date format configuration, using default settings')
                 dateStr = date.toLocaleDateString(undefined, DEFAULT_DATE_OPTIONS)
             }
