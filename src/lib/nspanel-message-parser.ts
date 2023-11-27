@@ -18,7 +18,7 @@ const log = Logger('NSPanelMessageParser')
 
 export class NSPanelMessageParser {
     public static parse(payloadStr: string): EventArgs {
-        let result: EventArgs = null
+        let result: EventArgs
 
         try {
             const temp = JSON.parse(payloadStr)
