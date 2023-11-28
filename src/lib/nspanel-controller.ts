@@ -740,8 +740,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             try {
                 if (this._panelConfig.panel.timeFormatHour != null)
                     timeOptions.hour = this._panelConfig.panel.timeFormatHour
-                if (this._panelConfig.panel.dateFormatMonth != null)
+                if (this._panelConfig.panel.timeFormatMinute != null)
                     timeOptions.minute = this._panelConfig.panel.timeFormatMinute
+                if (use12HourClock) timeOptions.hour12 = use12HourClock
 
                 timeStr = date.toLocaleTimeString(this._dateLocale, timeOptions).replace(/ AM| PM| am| pm/, '')
             } catch {
