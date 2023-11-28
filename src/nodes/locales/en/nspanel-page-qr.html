@@ -1,3 +1,43 @@
 <script type="text/html" data-help-name="nspanel-page-qr">
-    <p>NSPanel Lovelace UI QR page node</p>
+    <p>The QR page nodes shows a QR code and, if configured, additional two text entities.</p>
+
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
+    <ul>
+        <li><b>Name</b>: Specifies the node name.</li>
+        <li><b>NSPanel</b>: Specifies the panel to which the lockscreen node is assigned.</li>
+        <li><b>Title</b>: The title that is displayed on the NSPanel screen.</li>
+        <li>
+            <b>Stand-by timeout override</b>: The timeout in seconds which overrides the setting configured on the
+            NSPanel configuration node.
+        </li>
+        <li><b>QR Code</b>: The text encoded QR code.</li>
+    </ul>
+
+    The semantics for WiFi QR code is: <code>WIFI:S:SSID;T:WEP|WPA|leer;P:PASSWORD;H:true|false|blank;;</code>
+    <ul>
+        <li><b>S</b>: SSID` of the network</li>
+        <li><b>T</b>: Authentication type (WPA means WPA/WPA2/WPA3)</li>
+        <li><b>P</b>: password</li>
+        <li><b>H</b>: optional, true if network is hidden</li>
+    </ul>
+
+    <h4><b>Events</b></h4>
+    Using events the behaviour of the page can be set up.
+    <ul>
+        <li><b>Back</b>: Navigation element displayed in the left-hand corner of the page title bar.</li>
+        <li><b>Next</b>: Navigation element displayed in the right-hand corner of the page title bar.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+    </ul>
+    <p>
+        * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
+        node.
+    </p>
 </script>
