@@ -1,3 +1,55 @@
 <script type="text/html" data-help-name="nspanel-page-thermo">
-    <p>NSPanel Lovelace UI thermo page node</p>
+    <p>The Thermo page node represents a thermostat control panel.</p>
+
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
+    <ul>
+        <li><b>Name</b>: Specifies the node name.</li>
+        <li><b>NSPanel</b>: Specifies the panel to which the lockscreen node is assigned.</li>
+        <li><b>Title</b>: The title that is displayed on the NSPanel screen.</li>
+        <li>
+            <b>Stand-by timeout override</b>: The timeout in seconds which overrides the setting configured on the
+            NSPanel configuration node.
+        </li>
+
+        <li><b>Current Temperature Label</b>: Label used for current temperature reading</li>
+        <li><b>Status Label</b>: Label for current status</li>
+        <li><b>Show details popup</b>: Enables the button to show further details in a pop-up</li>
+        <li>
+            <b>Use panel temperature sensor</b>: Uses the NSPanel's internal sensor to display the current temperature
+        </li>
+        <li><b>Enable second target temperature</b>: Shows a second setpoint temperature control</li>
+
+        <li><b>Target Temperature</b>: Target temperature</li>
+        <li><b>Target Temperature 2</b>: Second target temperature</li>
+        <li><b>Minimum Heating Setpoint</b>: Minimum temperature that can be entered</li>
+        <li><b>Maximum Heating Setpoint</b>: Maximum temperature that can be entered</li>
+        <li><b>Temperature Steps</b>: Interval used for upward and downward control of target temperature</li>
+        <li><b>Temperature Unit</b>: Either Fahrenheit or Celsius</li>
+    </ul>
+
+    <h4><b>Actions</b></h4>
+    Unlike to other pages, the Thermo page configures up to 8 actions instead of entities. The specified ID is used for
+    the outgoing message in the <code>data</code> property of the payload when the action button is pressed. The action
+    can also be linked to the status of a relay of the panel.
+
+    <h4><b>Events</b></h4>
+    Using events the behaviour of the page can be set up.
+    <ul>
+        <li><b>Back</b>: Navigation element displayed in the left-hand corner of the page title bar.</li>
+        <li><b>Next</b>: Navigation element displayed in the right-hand corner of the page title bar.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li><b>Entities</b>: Actions can be assigned to configured elements.</li>
+    </ul>
+    <p>
+        * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
+        node.
+    </p>
 </script>

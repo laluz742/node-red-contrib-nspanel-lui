@@ -1,6 +1,6 @@
 # Thermo Page Nodes
 
-The Thermo page node represents a thermostat.
+The Thermo page node represents a thermostat control panel.
 
 ## Configuration
 
