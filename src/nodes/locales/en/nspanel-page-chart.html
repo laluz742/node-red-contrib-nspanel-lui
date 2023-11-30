@@ -1,3 +1,48 @@
 <script type="text/html" data-help-name="nspanel-page-chart">
-    <p>NSPanel Lovelace UI chart page node</p>
+    <p>The Chart Page node displays a bar chart.</p>
+
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
+    <ul>
+        <li><b>Name</b>: Specifies the node name.</li>
+        <li><b>NSPanel</b>: Specifies the panel to which the lockscreen node is assigned.</li>
+        <li><b>Title</b>: The title that is displayed on the NSPanel screen.</li>
+        <li>
+            <b>Stand-by timeout override</b>: The timeout in seconds which overrides the setting configured on the
+            NSPanel configuration node.
+        </li>
+        <li><b>Label y-axis</b>: Labeling of the Y-axis.</li>
+        <li><b>Color</b>: Color for the label</li>
+    </ul>
+
+    <h4><b>Events</b></h4>
+    Using events the behaviour of the page can be set up.
+    <ul>
+        <li><b>Back</b>: Navigation element displayed in the left-hand corner of the page title bar.</li>
+        <li><b>Next</b>: Navigation element displayed in the right-hand corner of the page title bar.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li><b>Entities</b>: Actions can be assigned to configured elements.</li>
+    </ul>
+    <p>
+        * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
+        node.
+    </p>
+
+    <h3>Inputs</h3>
+
+    <h4><b>Data</b></h4>
+    Data that is sent with the <code>data</code> topic is displayed as bars in order of their occurence. Example
+    message:
+    <code>
+        { "topic": "data", "payload": { "values": [ { "value": 10, "label": "Jul" }, { "value": 20, "label": "Aug" }, {
+        "value": 30, "label": "Sep" }, { "value": 40, "label": "Oct" }, { "value": 50, "label": "Nov" } ], "yAxisTicks":
+        [10, 50, 100], "yAxisLabel": "Amount" } }
+    </code>
 </script>
