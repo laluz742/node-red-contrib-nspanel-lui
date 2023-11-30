@@ -12,7 +12,7 @@
                     <i class="fa fa-tag"></i>
                     <span data-i18n="common.label.name"></span>
                 </label>
-                <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name"/>
+                <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
             </div>
             <div class="form-row">
                 <label for="node-input-nsPanel">
@@ -68,7 +68,7 @@
                     id="node-input-showDetailsPopup"
                     style="display:inline-block; width:auto; vertical-align:top;"
                 />
-                 <span data-i18n="nspanel-page-thermo.label.showDetailsPopup" style="width:auto"></span>
+                <span data-i18n="nspanel-page-thermo.label.showDetailsPopup" style="width:auto"></span>
             </div>
             <div class="form-row">
                 <input
@@ -90,81 +90,108 @@
             <br />
             <div class="form-row">
                 <label>
-                    <i class="fa fa-cog"></i>
+                    <i class="fa fa-sliders"></i>
                     <span data-i18n="nspanel-page-thermo.label.setpoints"></span>
                 </label>
             </div>
-
-            <div class="form-row">
-                <div id="nsPanel-targetTemperature" style="display: inline-flex">
-                   <label for="node-input-targetTemperature">
-                        <i class="fa fa-thermometer-half"></i>
-                        <span data-i18n="nspanel-page-thermo.label.targetTemperature"></span>
+            <div class="form-row" style="display: flex;">
+                <div style="flex-grow: 1;">
+                    <label for="node-input-minHeatSetpointLimit">
+                        <i class="fa fa-thermometer-empty"></i>
+                        <span data-i18n="nspanel-page-thermo.label.minHeatSetpointLimit"></span>
                     </label>
-                    <input type="number" id="node-input-targetTemperature" style="width: 7em;" />
+                    <input type="number" id="node-input-minHeatSetpointLimit" style="width: 7em;" />
                 </div>
-                <div id="nsPanel-targetTemperature2" style="display: inline-flex; margin-left: 10px">
-                    <label for="node-input-targetTemperature2">
-                        <i class="fa fa-thermometer-half"></i>
-                        <span data-i18n="nspanel-page-thermo.label.targetTemperature2"></span>
-                    </label>
-                    <input type="number" id="node-input-targetTemperature2" style="width: 7em;" />
-                </div>
-            </div>
-            <div class="form-row">
-                <label for="node-input-minHeatSetpointLimit">
-                    <i class="fa fa-thermometer-empty"></i>
-                    <span data-i18n="nspanel-page-thermo.label.minHeatSetpointLimit"></span>
-                </label>
-                <input type="number" id="node-input-minHeatSetpointLimit" style="width: 7em;" />
-            </div>
-            <div class="form-row">
+                <div style="flex-grow: 1;">
                     <label for="node-input-maxHeatSetpointLimit">
                         <i class="fa fa-thermometer-full"></i>
                         <span data-i18n="nspanel-page-thermo.label.maxHeatSetpointLimit"></span>
                     </label>
                     <input type="number" id="node-input-maxHeatSetpointLimit" style="width: 7em;" />
-               </div>
-
-            <div class="form-row">
-                    <label for="node-input-temperatureSteps">
-                        <i class="fa fa-sliders"></i>
-                        <span data-i18n="nspanel-page-thermo.label.temperatureSteps"></span>
-                    </label>
-                    <input type="text" id="node-input-temperatureSteps" autocomplete="off" style="width: 7em;" />
-            </div>
-            <div class="form-row">
-                    <label for="node-input-temperatureUnit">
-                        <i class="fa"></i>
-                        <span data-i18n="nspanel-page-thermo.label.temperatureUnit"></span>
-                    </label>
-                    <select id="node-input-temperatureUnit" style="width: 7em;" >
-                        <option value="C" data-i18n="nspanel-page-thermo.label.unitCelsius"></option>
-                        <option value="F" data-i18n="nspanel-page-thermo.label.unitFahrenheit"></option>
-                        </select>
-            </div>
-        </div>
-
-            <div id="nspanel-page-tab-entities" style="display:none">
-                <div
-                    class="form-row node-input-entities-control"
-                    id="node-input-entities-control"
-                    style="min-height: calc(100% - 100px);"
-                >
-                    <div class="form-row node-input-entities-container-row">
-                        <ol id="node-input-entities-container" style="min-width: 580px"></ol>
-                    </div>
                 </div>
             </div>
 
-            <div id="nspanel-page-tab-events" style="display:none">
-                <div
-                    class="form-row node-input-event-control"
-                    style="min-height: calc(100% - 100px);"
-                    id="node-input-event-control"
-                >
-                    <div class="form-row node-input-event-container-row">
-                        <ol id="node-input-event-container" style="min-width: 520px"></ol>
+            <div class="form-row">
+                <label for="node-input-temperatureSteps">
+                    <i class="fa fa-sliders"></i>
+                    <span data-i18n="nspanel-page-thermo.label.temperatureSteps"></span>
+                </label>
+                <input type="text" id="node-input-temperatureSteps" autocomplete="off" style="width: 7em;" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-temperatureUnit">
+                    <i class="fa"></i>
+                    <span data-i18n="nspanel-page-thermo.label.temperatureUnit"></span>
+                </label>
+                <select id="node-input-temperatureUnit" style="width: 7em;">
+                    <option value="C" data-i18n="nspanel-page-thermo.label.unitCelsius"></option>
+                    <option value="F" data-i18n="nspanel-page-thermo.label.unitFahrenheit"></option>
+                </select>
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-entities" style="display:none">
+            <div
+                class="form-row node-input-entities-control"
+                id="node-input-entities-control"
+                style="min-height: calc(100% - 100px);"
+            >
+                <div class="form-row node-input-entities-container-row">
+                    <ol id="node-input-entities-container" style="min-width: 580px"></ol>
+                </div>
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-events" style="display:none">
+            <div
+                class="form-row node-input-event-control"
+                style="min-height: calc(100% - 100px);"
+                id="node-input-event-control"
+            >
+                <div class="form-row node-input-event-container-row">
+                    <ol id="node-input-event-container" style="min-width: 520px"></ol>
+                </div>
+            </div>
+        </div>
+
+        <div id="nspanel-page-tab-thermostat" style="display:none">
+            <div class="form-row">
+                <label>
+                    <i class="fa fa-cog"></i>
+                    <span data-i18n="nspanel-page-thermo.label.temperature"></span>
+                </label>
+            </div>
+            <div class="form-row" style="display: flex;">
+                <div class="form-row" style="flex-grow: 1;">
+                    <div class="form-row">
+                        <label for="node-input-targetTemperature">
+                            <i class="fa fa-thermometer-half"></i>
+                            <span data-i18n="nspanel-page-thermo.label.targetTemperature"></span>
+                        </label>
+                        <input type="number" id="node-input-targetTemperature" style="width: 7em;" />
+                    </div>
+                    <div class="form-row">
+                        <label for="node-input-targetTemperature">
+                            <i class="fa fa-expand"></i>
+                            <span data-i18n="nspanel-page-thermo.label.hysteris"></span>
+                        </label>
+                        <input type="number" id="node-input-hysteris" style="width: 7em;" />
+                    </div>
+                </div>
+                <div id="nsPanel-targetTemperature2" class="form-row" style="flex-grow: 1;">
+                    <div class="form-row">
+                        <label for="node-input-targetTemperature2">
+                            <i class="fa fa-thermometer-half"></i>
+                            <span data-i18n="nspanel-page-thermo.label.targetTemperature2"></span>
+                        </label>
+                        <input type="number" id="node-input-targetTemperature2" style="width: 7em;" />
+                    </div>
+                    <div class="form-row">
+                        <label for="node-input-hysteris2">
+                            <i class="fa fa-expand"></i>
+                            <span data-i18n="nspanel-page-thermo.label.hysteris2"></span>
+                        </label>
+                        <input type="number" id="node-input-hysteris2" style="width: 7em;" />
                     </div>
                 </div>
             </div>

@@ -91,6 +91,25 @@
                         return result
                     },
                 },
+                hysteris: {
+                    value: 3,
+                    validate(v) {
+                        const vNum = Number(v)
+
+                        return !Number.isNaN(vNum) && vNum > 0
+                    },
+                },
+                hysteris2: {
+                    value: 3,
+                    validate(v) {
+                        const has2ndTemp = $('#node-input-hasSecondTargetTemperature').is(':checked')
+                        if (has2ndTemp === false) return true
+
+                        const vNum = Number(v)
+
+                        return !Number.isNaN(vNum) && vNum > 0
+                    },
+                },
                 minHeatSetpointLimit: {
                     value: 7,
                     required: true,
@@ -183,11 +202,15 @@
                     label: NSPanelLui._('label.general', 'nspanel-panel', 'common'),
                 })
                 tabs.addTab({
+                    id: 'nspanel-page-tab-thermostat',
+                    iconClass: 'fa fa-thermometer-half',
+                    label: NSPanelLui._('label.thermostat', 'nspanel-page-thermo'),
+                })
+                tabs.addTab({
                     id: 'nspanel-page-tab-entities',
                     iconClass: 'fa fa-list',
                     label: NSPanelLui._('label.actions', 'nspanel-page-thermo'),
                 })
-
                 tabs.addTab({
                     id: 'nspanel-page-tab-events',
                     iconClass: 'fa fa-list',

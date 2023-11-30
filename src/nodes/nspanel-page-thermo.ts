@@ -18,6 +18,8 @@ import {
     HMICommand,
     HMICommandParameters,
     HardwareEventArgs,
+    ThermostatEventArgs,
+    PageOutputMessage,
 } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
@@ -36,12 +38,18 @@ type PageThermoConfig = EntityBasedPageConfig & {
     maxHeatSetpointLimit: number
     temperatureSteps: number
     temperatureUnit: string
+
+    /* thermostat */
+    useThermostat: boolean
+    hysteris: number
+    hysteris2: number
 }
 
 type PageThermoData = {
     targetTemperature: number
     targetTemperature2: number
-    currentTemperature?: number | null
+    currentTemperature?: number
+    currentTemperature2?: number
     status?: string | null
     relayMapping: Map<string, PageEntityData[]>
 }
@@ -58,6 +66,7 @@ module.exports = (RED) => {
             targetTemperature: NaN,
             targetTemperature2: NaN,
             currentTemperature: null,
+            currentTemperature2: null,
             status: null,
             relayMapping: new Map<string, PageEntityData[]>([
                 ['power1', []],
@@ -89,6 +98,54 @@ module.exports = (RED) => {
                     }
                 }
             })
+        }
+
+        protected isUseOwnSensorData(): boolean {
+            return this.config?.useOwnTempSensor ?? false
+        }
+
+        protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number): void {
+            const eventArgs: ThermostatEventArgs = {
+                type: 'thermostat',
+                source: this.config.name,
+                event: 'measurement',
+                tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+
+                temperature: this.data.currentTemperature,
+                targetTemperature: this.data.targetTemperature ?? this.config.targetTemperature,
+            }
+
+            if (tempMeasurement != null) {
+                this.data.currentTemperature = tempMeasurement
+
+                const hysteris = this.config.hysteris / 2
+
+                if (tempMeasurement >= eventArgs.targetTemperature + hysteris) {
+                    eventArgs.setpointLimitReached = 'max'
+                } else if (tempMeasurement <= eventArgs.targetTemperature - hysteris) {
+                    eventArgs.setpointLimitReached = 'min'
+                }
+            }
+
+            if (this.config.hasSecondTargetTemperature === true && tempMeasurement2 != null) {
+                this.data.currentTemperature2 = tempMeasurement2
+
+                eventArgs.targetTemperature2 = this.data.targetTemperature2 ?? this.config.targetTemperature2
+                const hysteris = this.config.hysteris2 / 2
+
+                if (tempMeasurement >= eventArgs.targetTemperature2 + hysteris) {
+                    eventArgs.setpointLimit2Reached = 'max'
+                } else if (tempMeasurement <= eventArgs.targetTemperature2 - hysteris) {
+                    eventArgs.setpointLimit2Reached = 'min'
+                }
+            }
+
+            const outMsg: PageOutputMessage = {
+                topic: 'event',
+                payload: eventArgs,
+            }
+
+            this.send(outMsg)
         }
 
         protected override doGeneratePage(): HMICommand | null {
@@ -138,10 +195,6 @@ module.exports = (RED) => {
                 params: result,
             }
             return hmiCmd
-        }
-
-        protected isUseOwnSensorData(): boolean {
-            return this.config?.useOwnTempSensor ?? false
         }
 
         protected generateActions(): string {
@@ -219,9 +272,9 @@ module.exports = (RED) => {
                                 this.config.temperatureUnit
                             )
                             if (tempMeasurement !== this.data.currentTemperature) {
-                                this.data.currentTemperature = tempMeasurement
                                 dirty = true
                             }
+                            this.onNewTemperatureReading(tempMeasurement)
                         }
                     }
                     break

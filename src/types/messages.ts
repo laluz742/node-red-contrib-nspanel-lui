@@ -31,6 +31,7 @@ export type BuzzerCommandParams = {
 }
 // #region page input data messages
 export type PageInputTopic = 'data' | 'status' | 'notify' | 'event' | 'sensor' | 'media'
+export type PageOutputTopic = 'data' | 'event'
 
 export type NotifyData = {
     notifyId?: string
@@ -163,4 +164,10 @@ export type AlarmData = {
     statusIconColor?: PanelColor
     statusIconFlashing?: boolean
     numPadDisabled?: boolean
+}
+
+export type PageOutputMessage = {
+    topic: PageInputTopic | undefined
+
+    payload?: PageEntityData | PageEntityData[] | EventArgs | StatusItemData | StatusItemData[]
 }
