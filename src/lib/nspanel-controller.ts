@@ -438,8 +438,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.sendDimModeToPanel()
         this.sendTimeToPanel()
         this.sendDateToPanel()
-        this.sendDetachRelays(this._panelConfig.panel.detachRelays)
         this.sendTelePeriod(this._panelConfig.panel.telePeriod)
+        this.configureRelays(this._panelConfig.panel.detachRelays)
 
         if (this.cronTaskHourly === null) {
             this.cronTaskHourly = scheduleTask('@hourly', () => this.onCronHourly(), {})
@@ -476,12 +476,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 {}
             )
         }
-
-        // query relay states
-        this.executeCommand([
-            { cmd: 'switch', params: { id: 0 } },
-            { cmd: 'switch', params: { id: 1 } },
-        ])
 
         if (this._ctrlConfig.screenSaverOnStartup) {
             this.activateScreenSaver()
@@ -713,13 +707,18 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this._panelMqttHandler?.sendCommandToPanel(cmd)
     }
 
-    // #region basic panel commands
-    private sendDetachRelays(detach: boolean = false) {
+    private configureRelays(detach: boolean = false) {
         const state = detach ? '1' : '0'
-
         this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS, data: state })
+
+        // query relay states
+        this.executeCommand([
+            { cmd: 'switch', params: { id: 0 } },
+            { cmd: 'switch', params: { id: 1 } },
+        ])
     }
 
+    // #region basic panel commands
     private sendTelePeriod(telePeriod: number = 1) {
         const telePeriodStr = `${telePeriod}`
         this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD, data: telePeriodStr })
