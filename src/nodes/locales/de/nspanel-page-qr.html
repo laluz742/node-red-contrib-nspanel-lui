@@ -1,3 +1,40 @@
 <script type="text/html" data-help-name="nspanel-page-qr">
-    <p>NSPanel Lovelace UI QR page node</p>
+    <p>Die QR-Seite zeigt einen QR-Code und, falls konfiguriert, zusätzlich zwei Textelemente.</p>
+
+    <h3>Konfiguration</h3>
+    <h4><b>Allgemein</b></h4>
+    <ul>
+        <li><b>Name</b>: Der Name des Nodes.</li>
+        <li><b>NSPanel</b>: Ordnet die Seite einem Panel zu.</li>
+        <li><b>Überschrift</b>: Die Überschrift wird in der Titelzeile des Bildschirms angezeigt.</li>
+        <li><b>Stand-by Überschreibung</b>: Überschreibt die in der NSPanel-Konfiguration angegebene Zeitspanne.</li>
+        <li><b>QR-Code</b>:Der textkodierte QR-Code.</li>
+    </ul>
+
+    Die Semantik für den WiFi-QR-Code ist:<code>WIFI:S:SSID;T:WEP|WPA|blank;P:PASSWORD;H:true|false|leer;;</code>
+    <ul>
+        <li><b>S</b>: SSID des WLANs</li>
+        <li><b>T</b>: Authentifizierungstyp (WPA bedeutet WPA/WPA2/WPA3)</li>
+        <li><b>P</b>: Passwort</li>
+        <li><b>H</b>: optional, true, wenn das Netzwerk versteckt ist</li>
+    </ul>
+
+    <h4><b>Ereignisse</b></h4>
+    Über Ereignisse kann das Verhalten der Seite angepasst werden.
+    <ul>
+        <li><b>Zurück</b>: Navigationselement, welches links in der Titelzeile des Panels angezeigt wird.</li>
+        <li><b>Vor</b>: Navigationselement, welches rechts in der Titelzeile des Panels angezeigt wird.</li>
+        <li><b>Entsperrung</b>: Definiert die Aktion, welche nach erfolgreicher PIN-Eingabe ausgeführt wird.</li>
+        <li>
+            <b><i>Taste 1*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die linke Hardware-Taste gedrückt wird.
+        </li>
+        <li>
+            <b><i>Taste 2*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die rechte Hardware-Taste gedrückt wird.
+        </li>
+    </ul>
+    <p>
+        * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
+    </p>
 </script>

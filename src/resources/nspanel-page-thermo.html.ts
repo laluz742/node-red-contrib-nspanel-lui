@@ -2,7 +2,14 @@
 ;(function ($) {
     const MAX_ENTITIES = 8
     const ALLOWED_ENTITIES = ['delete', 'hvac_action']
-    const ALL_VALID_EVENTS_BASE: EventDescriptor[] = NSPanelLui.Events.allNavigationEvents
+    const ALL_VALID_EVENTS_BASE: EventDescriptor[] = NSPanelLui.Events.allNavigationEvents.concat(
+        { event: 'thermo.belowTarget', label: NSPanelLui._('events.belowTarget', 'nspanel-page-thermo') },
+        { event: 'thermo.onTarget', label: NSPanelLui._('events.onTarget', 'nspanel-page-thermo') },
+        { event: 'thermo.aboveTarget', label: NSPanelLui._('events.aboveTarget', 'nspanel-page-thermo') },
+        { event: 'thermo.belowTarget2', label: NSPanelLui._('events.belowTarget2', 'nspanel-page-thermo') },
+        { event: 'thermo.onTarget2', label: NSPanelLui._('events.onTarget2', 'nspanel-page-thermo') },
+        { event: 'thermo.aboveTarget2', label: NSPanelLui._('events.aboveTarget2', 'nspanel-page-thermo') }
+    )
 
     const PANEL_TIMEOUT_MIN = 0
     const PANEL_TIMEOUT_MAX = 65
@@ -89,6 +96,24 @@
                         }
 
                         return result
+                    },
+                },
+                hysteris: {
+                    value: 3,
+                    validate(v) {
+                        const vNum = Number(v)
+
+                        return !Number.isNaN(vNum) && vNum > 0
+                    },
+                },
+                hysteris2: {
+                    value: 3,
+                    validate(v) {
+                        const has2ndTemp = $('#node-input-hasSecondTargetTemperature').is(':checked')
+                        if (has2ndTemp === false) return true
+
+                        const vNum = Number(v)
+                        return !Number.isNaN(vNum) && vNum > 0
                     },
                 },
                 minHeatSetpointLimit: {
@@ -183,11 +208,15 @@
                     label: NSPanelLui._('label.general', 'nspanel-panel', 'common'),
                 })
                 tabs.addTab({
+                    id: 'nspanel-page-tab-thermostat',
+                    iconClass: 'fa fa-thermometer-half',
+                    label: NSPanelLui._('label.thermostat', 'nspanel-page-thermo'),
+                })
+                tabs.addTab({
                     id: 'nspanel-page-tab-entities',
                     iconClass: 'fa fa-list',
                     label: NSPanelLui._('label.actions', 'nspanel-page-thermo'),
                 })
-
                 tabs.addTab({
                     id: 'nspanel-page-tab-events',
                     iconClass: 'fa fa-list',

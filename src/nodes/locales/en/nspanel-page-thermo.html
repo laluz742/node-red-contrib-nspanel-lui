@@ -1,3 +1,104 @@
 <script type="text/html" data-help-name="nspanel-page-thermo">
-    <p>NSPanel Lovelace UI thermo page node</p>
+    <p>The Thermo page node represents a thermostat control panel.</p>
+
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
+    <ul>
+        <li><b>Name</b>: Specifies the node name.</li>
+        <li><b>NSPanel</b>: Specifies the panel to which the lockscreen node is assigned.</li>
+        <li><b>Title</b>: The title that is displayed on the NSPanel screen.</li>
+        <li>
+            <b>Stand-by timeout override</b>: The timeout in seconds which overrides the setting configured on the
+            NSPanel configuration node.
+        </li>
+
+        <li><b>Current Temperature Label</b>: Label used for current temperature reading</li>
+        <li><b>Status Label</b>: Label for current status</li>
+        <li><b>Show details popup</b>: Enables the button to show further details in a pop-up</li>
+        <li>
+            <b>Use panel temperature sensor</b>: Uses the NSPanel's internal sensor to display the current temperature
+        </li>
+        <li><b>Enable second target temperature</b>: Shows a second setpoint temperature control</li>
+
+        <li><b>Minimum Heating Setpoint</b>: Minimum temperature that can be entered</li>
+        <li><b>Maximum Heating Setpoint</b>: Maximum temperature that can be entered</li>
+        <li><b>Temperature Steps</b>: Interval used for upward and downward control of target temperature</li>
+        <li><b>Temperature Unit</b>: Either Fahrenheit or Celsius</li>
+    </ul>
+
+    <h4><b>Thermostat</b></h4>
+    <ul>
+        <li><b>Target Temperature</b>: Target temperature</li>
+        <li><b>Hysteris</b> The deadband to be used for two-point control</li>
+        <li><b>Target Temperature 2</b>: Second target temperature</li>
+        <li><b>Hysteris 2</b>: The deadband to be used for the second two-point control</li>
+    </ul>
+
+    <h4><b>Actions</b></h4>
+    Unlike to other pages, the Thermo page configures up to 8 actions instead of entities. The specified ID is used for
+    the outgoing message in the <code>data</code> property of the payload when the action button is pressed. The action
+    can also be linked to the status of a relay of the panel.
+
+    <h4><b>Events</b></h4>
+    Using events the behaviour of the page can be set up.
+    <ul>
+        <li><b>Back</b>: Navigation element displayed in the left-hand corner of the page title bar.</li>
+        <li><b>Next</b>: Navigation element displayed in the right-hand corner of the page title bar.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li><b>Actions</b>: Actions can be assigned to configured actions.</li>
+        <li><b>Temperature below target</b>: Current temperature is below target temperature</li>
+        <li>
+            <b>Temperature on target</b>: Target temperature was reached and is within the range of the configured
+            hysteresis
+        </li>
+        <li><b>Temperature above target</b>: Current temperature is above target temperature</li>
+        <li><b>Temperature below target 2</b>:Current temperature 2 is below second target temperature</li>
+        <li>
+            <b>Temperature on target 2</b>: Second target temperature was reached and is within the range of the
+            configured hysteresis
+        </li>
+        <li><b>Temperature above target 2</b>: Current temperature 2 is above second target temperature</li>
+    </ul>
+    <p>
+        * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
+        node.
+    </p>
+
+    <h3>Inputs</h3>
+
+    <h4><b>Data</b></h4>
+    Data that is sent with the <code>data</code> topic is displayed according to the elements set up. are displayed. The
+    payload can be an object or an array of objects that correspond to the following schema:
+    <ul>
+        <li><b>entityId</b>: optional, Id of entitity the data relate to</li>
+        <li><b>icon</b>: optional, icon to display</li>
+        <li><b>iconColor</b>: optional, color for icon to be used</li>
+        <li><b>text</b>: optional, text to be shown</li>
+        <li><b>value</b>: state for the action (<code>1</code> for active, <code>0</code> for inactive)</li>
+    </ul>
+
+    All supported icons are shown in the
+    <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Locelace UI Icon Cheatsheet</a>.
+
+    <h4><b>Measurements</b></h4>
+    The current measured temperature values are received with the topic <code>thermo</code> and are used for the
+    two-point control:
+    <ul>
+        <li><b>temperature</b>: optional, temperature reading</li>
+        <li><b>temperature2</b>: optional, second temperature reading</li>
+        <li>
+            <b>tempUnit</b>: optional, Unit of the measured value (either <code>C</code> for Celsius, or
+            <code>F</code> for Fahrenheit)
+        </li>
+    </ul>
+
+    If the unit is not specified, the default unit is assumed. If the specified unit differs from the configured unit,
+    it is converted to the configured unit.
 </script>

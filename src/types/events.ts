@@ -1,5 +1,5 @@
 import { HSVColor, RGBColor } from './colors'
-import { ActiveCharacteristic } from './base'
+import { ActiveCharacteristic, TargetTemperatureState as TargetTemperatureMode } from './base'
 
 export type EventDescriptor = {
     event: string
@@ -63,7 +63,21 @@ export type HardwareEventArgs = EventArgs & {
 export type SensorEventArgs = EventArgs & {
     type: 'sensor'
     temp?: number
-    tempUnit?: ['C', 'F']
+    tempUnit?: 'C' | 'F'
+}
+
+export type ThermostatEventArgs = EventArgs & {
+    type: 'thermostat'
+
+    temperature?: number
+    temperature2?: number
+    tempUnit?: 'C' | 'F'
+
+    targetTemperature?: number
+    targetTemperatureMode?: TargetTemperatureMode
+
+    targetTemperature2?: number
+    targetTemperatureMode2?: TargetTemperatureMode
 }
 
 export type FirmwareType = 'tasmota' | 'nlui' | 'hmi'

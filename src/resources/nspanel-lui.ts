@@ -367,7 +367,6 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         const enabled = relayMappingEnabledField.is(':checked') === true
                         relayMappingRelayIdField.prop('disabled', !enabled)
                     })
-                    relayMappingEnabledField.trigger('change')
                     // #endregion relay mapping
 
                     // #endregion create DOM
@@ -463,6 +462,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // relay mapping
                     relayMappingEnabledField.prop('checked', entry.mappedToRelayEnabled ?? false)
                     relayMappingRelayIdField.val(entry.mappedRelay)
+                    relayMappingEnabledField.trigger('change')
 
                     // #endregion update fields with entity data
                     selectTypeField.val(entry.type)
