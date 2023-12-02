@@ -63,6 +63,8 @@ module.exports = (RED) => {
     class PageThermoNode extends EntitiesPageNode<PageThermoConfig> {
         private config: PageThermoConfig | null = null
 
+        private nodeNeedsRelayStates: boolean = false
+
         private data: PageThermoData = {
             targetTemperature: NaN,
             targetTemperature2: NaN,
@@ -81,6 +83,14 @@ module.exports = (RED) => {
             this.init(config)
         }
 
+        public override needsSensorData(): boolean {
+            return this.isUseOwnSensorData()
+        }
+
+        public override needsRelayStates(): boolean {
+            return this.nodeNeedsRelayStates
+        }
+
         private init(config: PageThermoConfig) {
             this.config = config
 
@@ -92,6 +102,7 @@ module.exports = (RED) => {
 
             this.getEntities()?.forEach((entity) => {
                 if (entity.mappedToRelayEnabled === true) {
+                    this.nodeNeedsRelayStates = true
                     const mappedRelay = Number(entity.mappedRelay)
                     if (!Number.isNaN(mappedRelay)) {
                         const mappedEntities = this.data.relayMapping.get(`power${mappedRelay}`)
@@ -107,6 +118,7 @@ module.exports = (RED) => {
 
         protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number): void {
             const hysteris = this.config.hysteris / 2
+            const tempUnit = this.config.temperatureUnit === 'C' ? 'C' : 'F'
 
             if (tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
                 this.data.currentTemperature = Number(tempMeasurement)
@@ -114,7 +126,7 @@ module.exports = (RED) => {
                     type: 'thermostat',
                     source: this.config.name,
                     event: 'measurement',
-                    tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+                    tempUnit,
                     targetTemperature: this.data.targetTemperature ?? this.config.targetTemperature,
                     temperature: this.data.currentTemperature,
                 }
@@ -145,7 +157,7 @@ module.exports = (RED) => {
                     type: 'thermostat',
                     source: this.config.name,
                     event: 'measurement',
-                    tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+                    tempUnit,
                     targetTemperature2: tempMeasurement2 ?? this.config.targetTemperature2,
                     temperature2: this.data.currentTemperature2,
                 }
@@ -178,6 +190,7 @@ module.exports = (RED) => {
                         const triggeredRelay = hwEventArgs?.source
                         const triggeredRelayActive = hwEventArgs?.active
                         const mappedEntities = this.data.relayMapping.get(triggeredRelay)
+
                         mappedEntities?.forEach((entity) => {
                             const entityData: PageEntityData = this.getEntityData(entity.entityId) ?? {}
                             entityData.value = triggeredRelayActive ? '1' : '0'
