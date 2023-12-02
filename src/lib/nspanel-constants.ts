@@ -18,6 +18,7 @@ export const STR_MSG_TOPIC_NOTIFY: string = 'notify'
 export const STR_MSG_TOPIC_SENSOR: string = 'sensor'
 export const STR_MSG_TOPIC_STATUS: string = 'status'
 export const STR_MSG_TOPIC_STATUS2: string = 'status2'
+export const STR_MSG_TOPIC_THERMO: string = 'thermo'
 
 // nspanel lovelace ui / HMI
 export const STR_LUI_LINEBREAK: string = '\r\n'

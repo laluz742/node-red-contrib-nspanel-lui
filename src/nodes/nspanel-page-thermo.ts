@@ -20,6 +20,7 @@ import {
     HardwareEventArgs,
     ThermostatEventArgs,
     PageOutputMessage,
+    ThermostatData,
 } from '../types/types'
 import * as NSPanelConstants from '../lib/nspanel-constants'
 
@@ -83,8 +84,8 @@ module.exports = (RED) => {
         private init(config: PageThermoConfig) {
             this.config = config
 
-            this.data.targetTemperature = this.config.targetTemperature
-            this.data.targetTemperature2 = this.config.targetTemperature2
+            this.data.targetTemperature = Number(this.config.targetTemperature)
+            this.data.targetTemperature2 = Number(this.config.targetTemperature2)
 
             this.data.relayMapping.set('power1', [])
             this.data.relayMapping.set('power2', [])
@@ -93,7 +94,7 @@ module.exports = (RED) => {
                 if (entity.mappedToRelayEnabled === true) {
                     const mappedRelay = Number(entity.mappedRelay)
                     if (!Number.isNaN(mappedRelay)) {
-                        const mappedEntities = this.data.relayMapping.get(`power${mappedRelay + 1}`)
+                        const mappedEntities = this.data.relayMapping.get(`power${mappedRelay}`)
                         mappedEntities?.push(entity)
                     }
                 }
@@ -105,49 +106,185 @@ module.exports = (RED) => {
         }
 
         protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number): void {
-            const eventArgs: ThermostatEventArgs = {
-                type: 'thermostat',
-                source: this.config.name,
-                event: 'measurement',
-                tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+            const hysteris = this.config.hysteris / 2
 
-                temperature: this.data.currentTemperature,
-                targetTemperature: this.data.targetTemperature ?? this.config.targetTemperature,
-            }
-
-            if (tempMeasurement != null) {
-                this.data.currentTemperature = tempMeasurement
-
-                const hysteris = this.config.hysteris / 2
-
-                if (tempMeasurement >= eventArgs.targetTemperature + hysteris) {
-                    eventArgs.setpointLimitReached = 'max'
-                } else if (tempMeasurement <= eventArgs.targetTemperature - hysteris) {
-                    eventArgs.setpointLimitReached = 'min'
+            if (tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
+                this.data.currentTemperature = Number(tempMeasurement)
+                const thermoEventArgs: ThermostatEventArgs = {
+                    type: 'thermostat',
+                    source: this.config.name,
+                    event: 'measurement',
+                    tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+                    targetTemperature: this.data.targetTemperature ?? this.config.targetTemperature,
+                    temperature: this.data.currentTemperature,
                 }
-            }
 
-            if (this.config.hasSecondTargetTemperature === true && tempMeasurement2 != null) {
-                this.data.currentTemperature2 = tempMeasurement2
-
-                eventArgs.targetTemperature2 = this.data.targetTemperature2 ?? this.config.targetTemperature2
-                const hysteris = this.config.hysteris2 / 2
-
-                if (tempMeasurement >= eventArgs.targetTemperature2 + hysteris) {
-                    eventArgs.setpointLimit2Reached = 'max'
-                } else if (tempMeasurement <= eventArgs.targetTemperature2 - hysteris) {
-                    eventArgs.setpointLimit2Reached = 'min'
+                if (tempMeasurement > thermoEventArgs.targetTemperature + hysteris) {
+                    thermoEventArgs.targetTemperatureMode = 'above'
+                } else if (tempMeasurement < thermoEventArgs.targetTemperature - hysteris) {
+                    thermoEventArgs.targetTemperatureMode = 'below'
+                } else {
+                    thermoEventArgs.targetTemperatureMode = 'on'
                 }
+                thermoEventArgs.event2 = `thermo.${thermoEventArgs.targetTemperatureMode}Target`
+
+                const outMsg: PageOutputMessage = {
+                    topic: 'event',
+                    payload: thermoEventArgs,
+                }
+                this.emit('input', outMsg)
             }
 
-            const outMsg: PageOutputMessage = {
-                topic: 'event',
-                payload: eventArgs,
-            }
+            if (
+                this.config.hasSecondTargetTemperature === true &&
+                tempMeasurement2 != null &&
+                !Number.isNaN(tempMeasurement2)
+            ) {
+                this.data.currentTemperature2 = Number(tempMeasurement2)
+                const thermoEventArgs: ThermostatEventArgs = {
+                    type: 'thermostat',
+                    source: this.config.name,
+                    event: 'measurement',
+                    tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+                    targetTemperature2: tempMeasurement2 ?? this.config.targetTemperature2,
+                    temperature2: this.data.currentTemperature2,
+                }
 
-            this.send(outMsg)
+                if (tempMeasurement2 > thermoEventArgs.targetTemperature2 + hysteris) {
+                    thermoEventArgs.targetTemperatureMode2 = 'above'
+                } else if (tempMeasurement2 < thermoEventArgs.targetTemperature2 - hysteris) {
+                    thermoEventArgs.targetTemperatureMode2 = 'below'
+                } else {
+                    thermoEventArgs.targetTemperatureMode2 = 'on'
+                }
+
+                thermoEventArgs.event2 = `thermo.${thermoEventArgs.targetTemperatureMode2}Target2`
+                const outMsg: PageOutputMessage = {
+                    topic: 'event',
+                    payload: thermoEventArgs,
+                }
+                this.emit('input', outMsg)
+            }
         }
 
+        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
+            let inputHandled: InputHandlingResult = { handled: false }
+            let dirty = false
+
+            if (msg?.payload != null) {
+                switch (msg.topic) {
+                    case NSPanelConstants.STR_MSG_TOPIC_HARDWARE: {
+                        const hwEventArgs: HardwareEventArgs = msg.payload as HardwareEventArgs
+                        const triggeredRelay = hwEventArgs?.source
+                        const triggeredRelayActive = hwEventArgs?.active
+                        const mappedEntities = this.data.relayMapping.get(triggeredRelay)
+                        mappedEntities?.forEach((entity) => {
+                            const entityData: PageEntityData = this.getEntityData(entity.entityId) ?? {}
+                            entityData.value = triggeredRelayActive ? '1' : '0'
+                            this.setEntityData(entity.entityId, entityData)
+                            dirty = true
+                        })
+                        break
+                    }
+
+                    case NSPanelConstants.STR_MSG_TOPIC_SENSOR: {
+                        if (this.isUseOwnSensorData()) {
+                            const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
+                            if (sensorEventArgs.temp) {
+                                const tempMeasurement = NSPanelUtils.convertTemperature(
+                                    sensorEventArgs.temp,
+                                    sensorEventArgs.tempUnit?.toString() ?? '',
+                                    this.config.temperatureUnit
+                                )
+                                if (tempMeasurement !== this.data.currentTemperature) {
+                                    dirty = true
+                                }
+                                this.onNewTemperatureReading(tempMeasurement)
+                            }
+                        }
+                        break
+                    }
+
+                    case NSPanelConstants.STR_MSG_TOPIC_THERMO: {
+                        if (!Array.isArray(msg.payload)) {
+                            const thermoData: ThermostatData = msg.payload as ThermostatData
+
+                            const currentTemperature: number = Number(thermoData?.temperature ?? Number.NaN)
+                            const currentTemperature2: number = Number(thermoData?.temperature2 ?? Number.NaN)
+                            const tempUnit = thermoData?.tempUnit
+
+                            let temp
+                            let temp2
+
+                            if (!Number.isNaN(currentTemperature)) {
+                                temp = NSPanelUtils.convertTemperature(
+                                    currentTemperature,
+                                    tempUnit ?? this.config.temperatureUnit,
+                                    this.config.temperatureUnit
+                                )
+                                if (temp !== this.data.currentTemperature) {
+                                    dirty = true
+                                }
+                            }
+
+                            if (!Number.isNaN(currentTemperature2)) {
+                                temp2 = NSPanelUtils.convertTemperature(
+                                    currentTemperature2,
+                                    tempUnit ?? this.config.temperatureUnit,
+                                    this.config.temperatureUnit
+                                )
+                                if (temp2 !== this.data.currentTemperature2) {
+                                    dirty = true
+                                }
+                            }
+
+                            this.onNewTemperatureReading(temp, temp2)
+                        }
+                        break
+                    }
+
+                    case NSPanelConstants.STR_MSG_TOPIC_DATA: {
+                        if (!Array.isArray(msg.payload)) {
+                            // eslint-disable-next-line prefer-const
+                            for (let key in msg.payload) {
+                                if (Object.prototype.hasOwnProperty.call(this.data, key)) {
+                                    this.data[key] = msg.payload[key]
+                                    inputHandled.handled = true // TODO: there might be undhandled data
+                                    dirty = true
+                                }
+                            }
+                        }
+                        break
+                    }
+
+                    case NSPanelConstants.STR_MSG_TOPIC_EVENT: {
+                        const eventArgs: EventArgs = msg.payload as EventArgs
+
+                        if (
+                            eventArgs.event === NSPanelConstants.STR_LUI_EVENT_BUTTONPRESS2 &&
+                            eventArgs.event2 === 'tempUpd'
+                        ) {
+                            const tempNum = Number(eventArgs.value)
+                            if (!Number.isNaN(tempNum)) {
+                                this.data.targetTemperature = tempNum / TEMPERATURE_RESOLUTION_FACTOR
+                                dirty = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (dirty) {
+                this.getCache().clear()
+                inputHandled.requestUpdate = true
+            } else {
+                inputHandled = super.handleInput(msg, send)
+            }
+
+            return inputHandled
+        }
+
+        // #region page generation
         protected override doGeneratePage(): HMICommand | null {
             const result: HMICommandParameters = []
 
@@ -214,7 +351,7 @@ module.exports = (RED) => {
                     entityConfig.type,
                     entityConfig.entityId,
                     NSPanelUtils.getIcon(icon ?? ''),
-                    NSPanelColorUtils.toHmiColor(iconColor ?? NSPanelConstants.DEFAULT_LUI_COLOR),
+                    NSPanelColorUtils.toHmiColor(iconColor),
                     value
                 )
 
@@ -243,81 +380,7 @@ module.exports = (RED) => {
             }${state ?? ''}${NSPanelConstants.STR_LUI_DELIMITER}${entityId ?? ''}`
         }
 
-        protected override handleInput(msg: PageInputMessage, send: NodeRedSendCallback): InputHandlingResult {
-            let inputHandled: InputHandlingResult = { handled: false }
-            let dirty = false
-
-            switch (msg.topic) {
-                case NSPanelConstants.STR_MSG_TOPIC_HARDWARE: {
-                    const hwEventArgs: HardwareEventArgs = msg.payload as HardwareEventArgs
-                    const triggeredRelay = hwEventArgs.source
-                    const triggeredRelayActive = hwEventArgs.active
-                    const mappedEntities = this.data.relayMapping.get(triggeredRelay)
-                    mappedEntities?.forEach((entity) => {
-                        const entityData: PageEntityData = this.getEntityData(entity.entityId) ?? {}
-                        entityData.value = triggeredRelayActive ? '1' : '0'
-                        this.setEntityData(entity.entityId, entityData)
-                        dirty = true
-                    })
-                    break
-                }
-
-                case NSPanelConstants.STR_MSG_TOPIC_SENSOR: {
-                    if (this.isUseOwnSensorData()) {
-                        const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
-                        if (sensorEventArgs.temp) {
-                            const tempMeasurement = NSPanelUtils.convertTemperature(
-                                sensorEventArgs.temp,
-                                sensorEventArgs.tempUnit?.toString() ?? '',
-                                this.config.temperatureUnit
-                            )
-                            if (tempMeasurement !== this.data.currentTemperature) {
-                                dirty = true
-                            }
-                            this.onNewTemperatureReading(tempMeasurement)
-                        }
-                    }
-                    break
-                }
-
-                case NSPanelConstants.STR_MSG_TOPIC_DATA: {
-                    if (!Array.isArray(msg.payload)) {
-                        // eslint-disable-next-line prefer-const
-                        for (let key in msg.payload) {
-                            if (Object.prototype.hasOwnProperty.call(this.data, key)) {
-                                this.data[key] = msg.payload[key]
-                                inputHandled.handled = true // TODO: there might be undhandled data
-                                dirty = true
-                            }
-                        }
-                    }
-                    break
-                }
-
-                case NSPanelConstants.STR_MSG_TOPIC_EVENT: {
-                    const eventArgs: EventArgs = msg.payload as EventArgs
-
-                    if (
-                        eventArgs.event === NSPanelConstants.STR_LUI_EVENT_BUTTONPRESS2 &&
-                        eventArgs.event2 === 'tempUpd'
-                    ) {
-                        const tempNum = Number(eventArgs.value)
-                        if (!Number.isNaN(tempNum)) {
-                            this.data.targetTemperature = tempNum / TEMPERATURE_RESOLUTION_FACTOR
-                            dirty = true
-                        }
-                    }
-                }
-            }
-            if (dirty) {
-                this.getCache().clear()
-                inputHandled.requestUpdate = true
-            } else {
-                inputHandled = super.handleInput(msg, send)
-            }
-
-            return inputHandled
-        }
+        // #endregion page generation
     }
 
     RED.nodes.registerType('nspanel-page-thermo', PageThermoNode)

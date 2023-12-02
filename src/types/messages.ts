@@ -65,8 +65,17 @@ export type NotifyMessage = PanelMessage & {
 export type PageInputMessage = PanelMessage & {
     topic: PageInputTopic | undefined
 
-    payload?: PageEntityData | PageEntityData[] | EventArgs | StatusItemData | StatusItemData[]
+    payload?:
+        | PageEntityData
+        | PageEntityData[]
+        | EventArgs
+        | StatusItemData
+        | StatusItemData[]
+        | ThermostatData
+        | ChartData
 }
+
+export type PageDataBase = {}
 
 export type PageEntityDataBase = {
     icon?: string
@@ -148,18 +157,24 @@ export type StatusItemData = PageEntityDataBase & {
     index?: number
 }
 
+export type ThermostatData = PageDataBase & {
+    temperature?: number
+    temperature2?: number
+    tempUnit?: 'C' | 'F'
+}
+
 export type ChartDataItem = {
     value: number
     label?: string
 }
 
-export type ChartData = {
+export type ChartData = PageDataBase & {
     values: ChartDataItem[]
     yAxisLabel?: string
     yAxisTicks?: number[]
 }
 
-export type AlarmData = {
+export type AlarmData = PageDataBase & {
     statusIcon?: string
     statusIconColor?: PanelColor
     statusIconFlashing?: boolean

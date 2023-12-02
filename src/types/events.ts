@@ -1,5 +1,5 @@
 import { HSVColor, RGBColor } from './colors'
-import { ActiveCharacteristic, SetPointLimitState } from './base'
+import { ActiveCharacteristic, TargetTemperatureState as TargetTemperatureMode } from './base'
 
 export type EventDescriptor = {
     event: string
@@ -73,11 +73,11 @@ export type ThermostatEventArgs = EventArgs & {
     temperature2?: number
     tempUnit?: 'C' | 'F'
 
-    targetTemperature: number
-    setpointLimitReached?: SetPointLimitState
+    targetTemperature?: number
+    targetTemperatureMode?: TargetTemperatureMode
 
     targetTemperature2?: number
-    setpointLimit2Reached?: SetPointLimitState
+    targetTemperatureMode2?: TargetTemperatureMode
 }
 
 export type FirmwareType = 'tasmota' | 'nlui' | 'hmi'

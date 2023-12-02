@@ -11,6 +11,6 @@ export type StatusLevel = 'error' | 'warn' | 'info' | 'success' | null
 
 export type ActiveCharacteristic = boolean | 0 | 1 | '0' | '1'
 
-export type SetPointLimitState = 'min' | 'max' | 'target'
+export type TargetTemperatureState = 'below' | 'on' | 'above'
 
 export type PageId = string

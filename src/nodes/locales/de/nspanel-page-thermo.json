@@ -43,6 +43,14 @@
             "unitCelsius": "Celsius",
             "unitFahrenheit": "Fahrenheit"
         },
+        "events": {
+            "belowTarget": "Temperatur unter Zielwert",
+            "onTarget": "Temperatur im Zielbereich",
+            "aboveTarget": "Temperatur über Zielwert",
+            "belowTarget2": "Temperatur unter Zielwert 2",
+            "onTarget2": "Temperatur im Zielbereich 2",
+            "aboveTarget2": "Temperatur über Zielwert 2"
+        },
         "placeholder": {},
         "defaults": {
             "name": "Page Thermo"

@@ -43,6 +43,14 @@
             "unitCelsius": "Celsius",
             "unitFahrenheit": "Fahrenheit"
         },
+        "events": {
+            "belowTarget": "Temperature below target",
+            "onTarget": "Temperature on target",
+            "aboveTarget": "Temperature above target",
+            "belowTarget2": "Temperature below target 2",
+            "onTarget2": "Temperature on target 2",
+            "aboveTarget2": "Temperature above target 2"
+        },
         "placeholder": {},
         "defaults": {
             "name": "Page Thermo"
