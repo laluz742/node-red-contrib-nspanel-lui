@@ -31,12 +31,16 @@ The specified ID is used for the outgoing message in the `data` property of the 
 
 ### Thermostat settings
 
+![image](img/page-node-thermo_thermostat.png)
+
 -   **Target Temperature**: Target temperature<br/><br/>
 -   **Hysteris**: The deadband to be used for two-point control<br/><br/>
 -   **Target Temperature 2**: Second target temperature<br/><br/>
 -   **Hysteris 2**: The deadband to be used for the second two-point control<br/><br/>
 
 ### Events
+
+![image](img/page-node-thermo_thermo-events.png)
 
 The thermo page node offers a basic two-point controller for the target temperature, which will emit the thermostat specific events, which can be assigned to actions:
 
