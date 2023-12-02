@@ -34,9 +34,11 @@ The specified ID is used for the outgoing message in the `data` property of the 
 ![image](img/page-node-thermo_thermostat.png)
 
 -   **Target Temperature**: Target temperature<br/><br/>
--   **Hysteris**: The deadband to be used for two-point control<br/><br/>
+-   **Enable two-point controller**: Enables the two-point controller<br/><br/>
+-   **Hysteresis**: The deadband to be used for two-point control<br/><br/>
 -   **Target Temperature 2**: Second target temperature<br/><br/>
--   **Hysteris 2**: The deadband to be used for the second two-point control<br/><br/>
+-   **Enable two-point controller 2**: Enables the two-point controller 2<br/><br/>
+-   **Hysteresis 2**: The deadband to be used for the second two-point control<br/><br/>
 
 ### Events
 

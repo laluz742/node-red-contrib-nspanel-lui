@@ -29,9 +29,11 @@
     <h4><b>Thermostat</b></h4>
     <ul>
         <li><b>Target Temperature</b>: Target temperature</li>
-        <li><b>Hysteris</b> The deadband to be used for two-point control</li>
+        <li><b>Enable two-point controller</b>: Enables the two-point controller</li>
+        <li><b>Hysteresis</b> The deadband to be used for two-point control</li>
         <li><b>Target Temperature 2</b>: Second target temperature</li>
-        <li><b>Hysteris 2</b>: The deadband to be used for the second two-point control</li>
+        <li><b>Enable two-point controller 2</b>: Enables the second two-point controller</li>
+        <li><b>Hysteresis 2</b>: The deadband to be used for the second two-point control</li>
     </ul>
 
     <h4><b>Actions</b></h4>
@@ -53,22 +55,23 @@
             >: Action to execute when the left hardware button is pressed.
         </li>
         <li><b>Actions</b>: Actions can be assigned to configured actions.</li>
-        <li><b>Temperature below target</b>: Current temperature is below target temperature</li>
+        <li><b>Temperature below target**</b>: Current temperature is below target temperature</li>
         <li>
-            <b>Temperature on target</b>: Target temperature was reached and is within the range of the configured
+            <b>Temperature on target**</b>: Target temperature was reached and is within the range of the configured
             hysteresis
         </li>
-        <li><b>Temperature above target</b>: Current temperature is above target temperature</li>
-        <li><b>Temperature below target 2</b>:Current temperature 2 is below second target temperature</li>
+        <li><b>Temperature above target**</b>: Current temperature is above target temperature</li>
+        <li><b>Temperature below target 2**</b>:Current temperature 2 is below second target temperature</li>
         <li>
-            <b>Temperature on target 2</b>: Second target temperature was reached and is within the range of the
+            <b>Temperature on target 2**</b>: Second target temperature was reached and is within the range of the
             configured hysteresis
         </li>
-        <li><b>Temperature above target 2</b>: Current temperature 2 is above second target temperature</li>
+        <li><b>Temperature above target 2**</b>: Current temperature 2 is above second target temperature</li>
     </ul>
     <p>
         * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
-        node.
+        node.<br />
+        ** Only triggered, if <i>Enable two-point controller</i> or <i>Enable two-point controller 2</i> is checked.
     </p>
 
     <h3>Inputs</h3>

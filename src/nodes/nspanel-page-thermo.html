@@ -170,12 +170,22 @@
                         </label>
                         <input type="number" id="node-input-targetTemperature" style="width: 7em;" />
                     </div>
+
+                    <br />
+                    <div class="form-row">
+                        <input
+                            type="checkbox"
+                            id="node-input-enableTwoPointController"
+                            style="display:inline-block; width:auto; vertical-align:top;"
+                        />
+                        <span data-i18n="nspanel-page-thermo.label.enableTwoPointController" style="width:auto"></span>
+                    </div>
                     <div class="form-row">
                         <label for="node-input-targetTemperature">
                             <i class="fa fa-expand"></i>
-                            <span data-i18n="nspanel-page-thermo.label.hysteris"></span>
+                            <span data-i18n="nspanel-page-thermo.label.hysteresis"></span>
                         </label>
-                        <input type="number" id="node-input-hysteris" style="width: 7em;" />
+                        <input type="number" id="node-input-hysteresis" style="width: 7em;" />
                     </div>
                 </div>
                 <div id="nsPanel-targetTemperature2" class="form-row" style="flex-grow: 1;">
@@ -186,12 +196,22 @@
                         </label>
                         <input type="number" id="node-input-targetTemperature2" style="width: 7em;" />
                     </div>
+
+                    <br />
                     <div class="form-row">
-                        <label for="node-input-hysteris2">
+                        <input
+                            type="checkbox"
+                            id="node-input-enableTwoPointController2"
+                            style="display:inline-block; width:auto; vertical-align:top;"
+                        />
+                        <span data-i18n="nspanel-page-thermo.label.enableTwoPointController2" style="width:auto"></span>
+                    </div>
+                    <div class="form-row">
+                        <label for="node-input-hysteresis2">
                             <i class="fa fa-expand"></i>
-                            <span data-i18n="nspanel-page-thermo.label.hysteris2"></span>
+                            <span data-i18n="nspanel-page-thermo.label.hysteresis2"></span>
                         </label>
-                        <input type="number" id="node-input-hysteris2" style="width: 7em;" />
+                        <input type="number" id="node-input-hysteresis2" style="width: 7em;" />
                     </div>
                 </div>
             </div>
