@@ -247,6 +247,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.cronTaskDimModeDay?.stop()
         this.cronTaskDimModeNight?.stop()
         this.cronTaskCheckForUpdates?.stop()
+        this._panelUpdater?.dispose()
         this._panelMqttHandler?.dispose()
     }
 
