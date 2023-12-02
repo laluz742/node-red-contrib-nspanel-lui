@@ -29,6 +29,14 @@
         <li><b>Einheit</b>: Fahrenheit oderr Celsius</li>
     </ul>
 
+    <h4><b>Thermostat</b></h4>
+    <ul>
+        <li><b>Zielwert Temperatur</b>: Zieltemperatur</li>
+        <li><b>Hysterese</b> Die Totzone, die für die Zweipunktregelung verwendet wird</li>
+        <li><b>Zielwert Temperatur 2</b>: Zweite Zieltemperatur</li>
+        <li><b>Hysterese 2</b>: Die Totzone, die für die zweite Zweipunktregelung verwendet wird</li>
+    </ul>
+
     <h4><b>Aktionen</b></h4>
     Im Gegensatz zu anderen Seiten können auf der Thermo-Seite bis zu 8 Aktionen anstelle von Elementen konfiguriert
     werden. Die angegebene ID wird für die ausgehende Nachricht in der Dateneigenschaft der Nutzlast verwendet, wenn die
@@ -47,9 +55,51 @@
             <b><i>Taste 2*</i></b
             >: Aktion, welche ausgeführt wird, wenn die rechte Hardware-Taste gedrückt wird.
         </li>
-        <li><b>Elemente</b>: Zusätzlich können Elemente mit Aktionen verbunden werden.</li>
+        <li><b>Aktionen</b>: Zusätzlich können Aktionen mit Aktionen verbunden werden.</li>
+        <li><b>Temperatur unter Zielwert</b>: Zieltemperatur wurde unterschritten</li>
+        <li><b>Temperatur im Zielbereich</b>: Zieltemperatur wurde unter Berücksichtigung der Hysterese erreicht</li>
+        <li><b>Temperatur über Zielwert</b>: Zieltemperatur wurde überschritten</li>
+        <li><b>Temperatur unter Zielwert 2</b>: Zweite Zieltemperatur wurde unterschritten</li>
+        <li>
+            <b>Temperatur im Zielbereich 2</b>: Zweite Zieltemperatur wurde unter Berücksichtigung der Hysterese
+            erreicht
+        </li>
+        <li><b>Temperatur über Zielwert 2</b>: Zweite Zieltemperatur wurde überschritten</li>
     </ul>
     <p>
         * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
     </p>
+
+    <h3>Eingangsdaten</h3>
+    <h4><b>Daten</b></h4>
+    Daten, die mit dem Topic <code>data</code> empfangen werden, werden entsprechend den eingerichteten Aktionen
+    dargestellt. Die Payload kann ein Objekt oder ein Array von Objekten sein, welche folgendem Schema entsprechen:
+    <ul>
+        <li><b>entityId</b>: Die Id des Elements, für das die Daten bestimmt sind</li>
+        <li><b>icon</b>: optional, das anzuzeigende Icon</li>
+        <li>
+            <b>iconColor</b>: optional, die zu verwendende Farbe für das Icon (<code>#rrggbb</code>, oder
+            <code>rgb(r,g,b)</code>)
+        </li>
+        <li><b>text</b>: optional, der anzuzeigende Text</li>
+        <li><b>value</b>: Der Zustand für die Aktion (<code>1</code> für aktiv, <code>0</code> für inaktiv)</li>
+    </ul>
+
+    Alle unterstützten Icons sind in dem
+    <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Locelace UI Icon Cheatsheet</a>
+    dargestellt.
+
+    <h4><b>Messwerte</b></h4>
+    Die aktuellen Temperaturmesswerte werden mit dem Topic <code>thermo</code> empfangen. Die Payload entspricht
+    folgendem Schema und werden für die Zweipunktregelung verwendet:
+    <ul>
+        <li><b>temperature</b>: optional, Messwert für die aktuelle Temperatur</li>
+        <li><b>temperature2</b>: optional, Messwert für die aktuelle zweite Temperatur</li>
+        <li>
+            <b>tempUnit</b>: optional, Einheit des Messwerts (<code>C</code> für Celsius, <code>F</code> für Fahrenheit)
+        </li>
+    </ul>
+
+    Ist die Einheit nicht angegeben, wird die voreingestellten Einheit angenommen. Weicht die angegebene Einheit von der
+    Voreingestellten ab, so wird in die konfigurierte Einheit umgerechnet.
 </script>
