@@ -65,6 +65,14 @@ module.exports = (RED) => {
             return false
         }
 
+        public needsSensorData(): boolean {
+            return false
+        }
+
+        public needsRelayStates(): boolean {
+            return false
+        }
+
         public setActive(_state: boolean) {}
 
         public isScreenSaver(): boolean {
