@@ -35,10 +35,19 @@
 
     <h4><b>Daten</b></h4>
     Daten, die mit dem Topic <code>data</code> gesendet werden, werden als Balken dargestellt; die Beschriftung ist
-    optional. Beispielnachricht:
+    optional. Beispielnachricht:<br/>
     <code>
-        { "topic": "data", "payload": { "values": [ { "value": 10, "label": "Jul" }, { "value": 20, "label": "Aug" }, {
-        "value": 30, "label": "Sep" }, { "value": 40, "label": "Oct" }, { "value": 50, "label": "Nov" } ], "yAxisTicks":
-        [10, 50, 100], "yAxisLabel": "Menge" }}
+        {<br />"topic": "data",<br />
+        "payload": { <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;"values": [ <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ "value": 10, "label": "Jul" }, <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ "value": 20, "label": "Aug" }, <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ "value": 30, "label": "Sep" }, <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ "value": 40, "label": "Oct" }, <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ "value": 50, "label": "Nov" } <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;],<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;"yAxisTicks": [10, 50, 100],<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;"yAxisLabel": "Amount" }<br />
+        }
     </code>
 </script>
