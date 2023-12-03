@@ -12,7 +12,7 @@ For information on general node configuration, please see section [Configuration
 
 ![image](img/page-node-qr_config.png)
 
--   **QR Code**: The text representation for the QR code<br/><br/>
+-   **QR Code**: The text representation for the QR code<br/>
 
 #### WiFi QR Code
 
