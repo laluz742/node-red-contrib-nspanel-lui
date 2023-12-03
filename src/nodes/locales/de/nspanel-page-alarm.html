@@ -1,3 +1,51 @@
 <script type="text/html" data-help-name="nspanel-page-alarm">
-    <p>NSPanel Lovelace UI Alarm page node</p>
+    <p>Bedienfeld für Alarmanlage</p>
+
+    <h3>Konfiguration</h3>
+    <h4><b>Allgemein</b></h4>
+    <ul>
+        <li><b>Name</b>: Der Name des Nodes.</li>
+        <li><b>NSPanel</b>: Ordnet die Seite einem Panel zu.</li>
+        <li><b>Überschrift</b>: Die Überschrift wird in der Titelzeile des Bildschirms angezeigt.</li>
+        <li><b>Stand-by Überschreibung</b>: Überschreibt die in der NSPanel-Konfiguration angegebene Zeitspanne.</li>
+    </ul>
+
+    <h5>Status</h5>
+    <ul>
+        <li><b>Icon</b>: Icon neben dem Eingabefeld.</li>
+        <li><b>Farbe</b>: Die Farbe in welcher das Icon dargestellt wird.</li>
+    </ul>
+    <h5>Eingabe</h5>
+    <ul>
+        <li><b>Tastenfeld deaktivieren</b>: Blendet das Tastenfeld aus</li>
+        <li><b>Extra-Taste Icon</b>: Icon für eine zusätzliche Taste auf dem Nummernpad</li>
+        <li><b>Extra-Taste Farbe</b>: Die Farbe in welcher das Icon der Extra-Taste dargestellt wird.</li>
+    </ul>
+
+    <h4><b>Elemente</b></h4>
+    Bis zu 4 Tasten, welche an der rechten Bildschirmseite dargestellt werden.
+
+    <h4><b>Ereignisse</b></h4>
+    Mittels der Ereignisse kann das Verhalten des Bildschirmschoners angepasst werden.
+    <ul>
+        <li><b>Zurück</b>: Navigationselement, welches links in der Titelzeile des Panels angezeigt wird.</li>
+        <li><b>Vor</b>: Navigationselement, welches rechts in der Titelzeile des Panels angezeigt wird.</li>
+        <li>
+            <b><i>Taste 1*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die linke Hardware-Taste gedrückt wird.
+        </li>
+        <li>
+            <b><i>Taste 2*</i></b
+            >: Aktion, welche ausgeführt wird, wenn die rechte Hardware-Taste gedrückt wird.
+        </li>
+        <li><b>Elemente</b>: Zusätzlich können Elemente mit Aktionen verbunden werden.</li>
+    </ul>
+    <p>
+        * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
+    </p>
+
+    <br />
+    Alle unterstützten Icons sind in dem
+    <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Locelace UI Icon Cheatsheet</a>
+    dargestellt.
 </script>
