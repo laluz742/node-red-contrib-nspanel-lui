@@ -1,3 +1,71 @@
 <script type="text/html" data-help-name="nspanel-page-media">
-    <p>NSPanel Lovelace UI media page node</p>
+    <p>Visualization of a control panel for media playback</p>
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
+    <ul>
+        <li><b>Name</b>: Specifies the node name.</li>
+        <li><b>NSPanel</b>: Specifies the panel to which the lockscreen node is assigned.</li>
+        <li><b>Title</b>: The title that is displayed on the NSPanel screen.</li>
+        <li>
+            <b>Stand-by timeout override</b>: The timeout in seconds which overrides the setting configured on the
+            NSPanel configuration node.
+        </li>
+    </ul>
+
+    <h4><b>Events</b></h4>
+    Using events the behaviour of the page can be set up.
+    <ul>
+        <li><b>Back</b>: Navigation element displayed in the left-hand corner of the page title bar.</li>
+        <li><b>Next</b>: Navigation element displayed in the right-hand corner of the page title bar.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li><b>Entities</b>: Actions can be assigned to configured elements.</li>
+    </ul>
+    <p>
+        * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
+        node.
+    </p>
+
+    <h3>Inputs</h3>
+
+    <h4><b>Data</b></h4>
+    Data that is sent with the <code>data</code> topic is displayed according to the elements set up. are displayed. The
+    payload can be an object or an array of objects that correspond to the following schema:
+    <ul>
+        <li><b>entityId</b>: optional, Id of entitity the data relate to</li>
+        <li><b>icon</b>: optional, icon to display</li>
+        <li><b>iconColor</b>: optional, color for icon to be used</li>
+        <li><b>text</b>: optional, text to be shown</li>
+    </ul>
+
+    Further information on the messages for the entity types can be found in the
+    <a target="_blank" href="https://github.com/laluz742/node-red-contrib-nspanel-lui/blob/main/docs/page-nodes.md"
+        >online documentation</a
+    >. <br />
+
+    <h4><b>Media</b></h4>
+    Media related data must be sent using the topic <code>media</code>. The Payload correspond to the following schema:
+    <ul>
+        <li><b>title</b>: optional, the text to show</li>
+        <li>
+            <b>titleColor</b>: optional, the color to be used for the title, hex rgb (<code>#rrggbb</code>, or
+            <code>rgb(r,g,b)</code>)
+        </li>
+        <li><b>artist</b>: optional, optional, the artist text to be shown</li>
+        <li>
+            <b>artistColor</b>: optional, optional, the color to be used for the artist (<code>#rrggbb</code>, or
+            <code>rgb(r,g,b)</code>)
+        </li>
+        <li><b>volume</b>: optional, volume level from <code>0</code> to <code>100</code></li>
+        <li><b>iconPlayPause</b>: optional, the icon to use for play/pause button</li>
+    </ul>
+
+    All supported icons are shown in the
+    <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Lovelace UI Icon Cheatsheet</a>.
 </script>
