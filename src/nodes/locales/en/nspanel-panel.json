@@ -105,8 +105,8 @@
     },
     "nspanel-panel": {
         "label": {
-            "palette": "NSPanel",
-            "panelConfig": "NSPanel Configuration",
+            "palette": "NSPanel Configuration",
+            "panelConfig": "NSPanel MQTT Config",
             "name": "Name",
             "device-topic": "Device Topic",
             "full-topic": "Full Topic",
@@ -116,9 +116,9 @@
             "brightness": "Brightness",
             "brightnessScreenSaver": "Day",
             "brightnessScreenSaverNight": "Night",
-            "brightnessStartTime": "Starting time:",
-            "brightnessStandBy": "Stand by:",
-            "brightnessActive": "Active:",
+            "brightnessStartTime": "Starting time",
+            "brightnessStandBy": "Stand by",
+            "brightnessActive": "Active",
             "detachRelays": "Decouple buttons from relays",
             "telePeriod": "Telemetry Period",
             "telePeriodDescription": "(0=disabled, 1=firmware default)",
