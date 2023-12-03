@@ -57,7 +57,7 @@ module.exports = (RED) => {
             let dirty = false
 
             switch (msg.topic) {
-                case NSPanelConstants.STR_MSG_TOPIC_DATA: {
+                case NSPanelConstants.STR_MSG_TOPIC_STATUS: {
                     if (msg.payload != null && typeof msg.payload === 'object') {
                         const msgData: AlarmData = msg.payload as AlarmData
 

@@ -16,29 +16,29 @@ The specified ID is used for the outgoing message in the `data` property of the 
 
 #### Options
 
--   **Current Temperature Label**: Label used for current temperature reading<br/><br/>
--   **Status Label**: Label for current status<br/><br/>
--   **Show details popup**: Enables the button to show further details in a pop-up<br/><br/>
--   **Use panel temperature sensor**: Uses the NSPanel's internal sensor to display the current temperature<br/><br/>
--   **Enable second target temperature**: Shows a second setpoint temperature control<br/><br/>
+-   **Current Temperature Label**: Label used for current temperature reading<br/>
+-   **Status Label**: Label for current status<br/>
+-   **Show details popup**: Enables the button to show further details in a pop-up<br/>
+-   **Use panel temperature sensor**: Uses the NSPanel's internal sensor to display the current temperature<br/>
+-   **Enable second target temperature**: Shows a second setpoint temperature control<br/>
 
 #### Set Points
 
--   **Minimum Heating Setpoint**: Minimum temperature that can be entered<br/><br/>
--   **Maximum Heating Setpoint**: Maximum temperature that can be entered<br/><br/>
--   **Temperature Steps**: Interval used for upward and downward control of target temperature<br/><br/>
--   **Temperature Unit**: Either Fahrenheit or Celsius<br/><br/>
+-   **Minimum Heating Setpoint**: Minimum temperature that can be entered<br/>
+-   **Maximum Heating Setpoint**: Maximum temperature that can be entered<br/>
+-   **Temperature Steps**: Interval used for upward and downward control of target temperature<br/>
+-   **Temperature Unit**: Either Fahrenheit or Celsius<br/>
 
 ### Thermostat settings
 
 ![image](img/page-node-thermo_thermostat.png)
 
--   **Target Temperature**: Target temperature<br/><br/>
--   **Enable two-point controller**: Enables the two-point controller<br/><br/>
--   **Hysteresis**: The deadband to be used for two-point control<br/><br/>
--   **Target Temperature 2**: Second target temperature<br/><br/>
--   **Enable two-point controller 2**: Enables the two-point controller 2<br/><br/>
--   **Hysteresis 2**: The deadband to be used for the second two-point control<br/><br/>
+-   **Target Temperature**: Target temperature<br/>
+-   **Enable two-point controller**: Enables the two-point controller<br/>
+-   **Hysteresis**: The deadband to be used for two-point control<br/>
+-   **Target Temperature 2**: Second target temperature<br/>
+-   **Enable two-point controller 2**: Enables the two-point controller 2<br/>
+-   **Hysteresis 2**: The deadband to be used for the second two-point control<br/>
 
 ### Events
 

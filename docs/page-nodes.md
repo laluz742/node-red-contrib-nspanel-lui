@@ -35,10 +35,10 @@ Further details on the main nodes like _Controller_, _ScreenSaver_, or _HMI Cont
 
 ![image](img/page-node-config-general.png)
 
--   **Name**: Each node can be assigned a name that is displayed in the flow. Furthermore, this name may be used for explicit activation using messages sent to the HMI Control node.<br/><br/>
--   **NSPanel**: The assignment to a panel activates the node so that it can be used on the specified panel. After the assignment, the name of the assigned panel is placed in front of the name of the node: <br/> ![image](img/page-node-in-flow.png)<br/><br/>
--   **Title**: The specified title will be used ons panel screen.<br/><br/>
--   **Stand-by timeout override**: The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of `0` means that the page remains active.<br/><br/>
+-   **Name**: Each node can be assigned a name that is displayed in the flow. Furthermore, this name may be used for explicit activation using messages sent to the HMI Control node.<br/>
+-   **NSPanel**: The assignment to a panel activates the node so that it can be used on the specified panel. After the assignment, the name of the assigned panel is placed in front of the name of the node: <br/> ![image](img/page-node-in-flow.png)<br/>
+-   **Title**: The specified title will be used ons panel screen.<br/>
+-   **Stand-by timeout override**: The standby timeout configured in the panel settings (NSPanel config node) can be overwritten on each page node. A timeout of `0` means that the page remains active.<br/>
 
 #### Entities
 

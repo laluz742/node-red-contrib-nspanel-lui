@@ -10,9 +10,9 @@ For information on general node configuration, please see section [Configuration
 
 ![image](img/page-node-lockscreen_config.png)
 
--   **PIN**: PIN code to be entered on NSPanel to unlock the page<br/><br/>
--   **Label confirm button**: Label for button, which submits entered PIN code to the backend<br/><br/>
--   **Icon**:Icon displayed next to PIN code input field<br/><br/>
+-   **PIN**: PIN code to be entered on NSPanel to unlock the page<br/>
+-   **Label confirm button**: Label for button, which submits entered PIN code to the backend<br/>
+-   **Icon**:Icon displayed next to PIN code input field<br/>
 
 ### Events
 

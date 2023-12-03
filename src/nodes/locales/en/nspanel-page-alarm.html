@@ -1,3 +1,81 @@
 <script type="text/html" data-help-name="nspanel-page-alarm">
-    <p>NSPanel Lovelace UI Alarm page node</p>
+    <p>Alarm control panel</p>
+
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
+    <ul>
+        <li><b>Name</b>: Specifies the node name.</li>
+        <li><b>NSPanel</b>: Specifies the panel to which the lockscreen node is assigned.</li>
+        <li><b>Title</b>: The title that is displayed on the NSPanel screen.</li>
+        <li>
+            <b>Stand-by timeout override</b>: The timeout in seconds which overrides the setting configured on the
+            NSPanel configuration node.
+        </li>
+    </ul>
+    <h5>Status</h5>
+    <ul>
+        <li><b>Icon</b>: Icon that is displayed next to the input field.</li>
+        <li><b>Color</b>: Color to be used for the icon.</li>
+    </ul>
+    <h5>Keypad</h5>
+    <ul>
+        <li><b>Disable num pad</b>: Hides the num pad</li>
+        <li><b>Extra button icon</b>: Icon that is used for an extra numpad button.</li>
+        <li><b>Extra button color</b>: Color to use for extra numpad button.</li>
+    </ul>
+
+    <h4><b>Entities</b></h4>
+    Up to 4 buttons, which are displayed at the right of the screen.
+
+    <h4><b>Events</b></h4>
+    Using events the behaviour of the page can be set up.
+    <ul>
+        <li><b>Back</b>: Navigation element displayed in the left-hand corner of the page title bar.</li>
+        <li><b>Next</b>: Navigation element displayed in the right-hand corner of the page title bar.</li>
+        <li>
+            <b><i>Button 1*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li>
+            <b><i>Button 2*</i></b
+            >: Action to execute when the left hardware button is pressed.
+        </li>
+        <li><b>Entities</b>: Actions can be assigned to configured elements.</li>
+    </ul>
+    <p>
+        * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
+        node.
+    </p>
+    <h3>Inputs</h3>
+
+    <h4><b>Data</b></h4>
+    Data that is sent with the <code>data</code> topic is displayed according to the elements set up. are displayed. The
+    payload can be an object or an array of objects that correspond to the following schema:
+    <ul>
+        <li><b>entityId</b>: optional, Id of entitity the data relate to</li>
+        <li><b>icon</b>: optional, icon to display</li>
+        <li><b>iconColor</b>: optional, color for icon to be used</li>
+        <li><b>text</b>: optional, text to be shown</li>
+    </ul>
+
+    Further information on the messages for the entity types can be found in the
+    <a target="_blank" href="https://github.com/laluz742/node-red-contrib-nspanel-lui/blob/main/docs/page-nodes.md"
+        >online documentation</a
+    >. <br />
+
+    <h4><b>Status</b></h4>
+    The current status is received with the topic <code>status</code>. The payload corresponds to the following scheme:
+    <ul>
+        <li><b>statusIcon</b>: optional, icon to show</li>
+        <li>
+            <b>statusIconColor</b>: optional, the color to be used for the icon, hex rgb (<code>#rrggbb</code>) or
+            integer format (<code>rgb(R,G,B)</code>)
+        </li>
+        <li><b>statusIconFlashing</b>: <code>true</code> for flashing status icon, otherwise <code>false</code></li>
+        <li><b>numPadDisabled</b>: <code>true</code> to hide num-pad, otherwise <code>false</code></li>
+    </ul>
+
+    <br />
+    All supported icons are shown in the
+    <a target="_blank" href="https://docs.nspanel.pky.eu/icon-cheatsheet.html">Locelace UI Icon Cheatsheet</a>.
 </script>

@@ -1,6 +1,6 @@
 # Alarm Page Node
 
-General information on configuration and input messages can be found in the documentation on the [page nodes](./page-nodes.md).
+Alarm control panel
 
 ## Configuration
 
@@ -10,20 +10,26 @@ For information on general node configuration, please see section [Configuration
 
 ![image](img/page-node-alarm_config.png)
 
--   **Icon**: The icon will be displayed right to the input field.<br/><br/>
--   **Color**: The color used for the icon.<br/><br/>
--   **Disable num pad**: When set, the numeric input pad is hidden<br/><br/>
--   **Icon**: The numeric keypad has an additional button for which the icon is used<br/><br/>
--   **Id**: When the extra button is pressed, the specified id is sent in the event message<br/><br/>
--   **Color**: The color used for the icon of the extra button.<br/><br/>
+-   **Icon**: The icon will be displayed right to the input field.<br/>
+-   **Color**: The color used for the icon.<br/>
+-   **Disable num pad**: When set, the numeric input pad is hidden<br/>
+-   **Icon**: The numeric keypad has an additional button for which the icon is used<br/>
+-   **Id**: When the extra button is pressed, the specified id is sent in the event message<br/>
+-   **Color**: The color used for the icon of the extra button.<br/>
+
+## Entities
+
+Up to 4 buttons, which are displayed at the right of the screen.
 
 ## Input Messages
 
-### Data Message
+General information on configuration and input messages can be found in the documentation on the [page nodes](./page-nodes.md).
+
+### Status Message
 
 ```json
 {
-    "topic": "data",
+    "topic": "status",
     "payload": {
         "statusIcon": "string",
         "statusIconColor": "string",
