@@ -1,3 +1,17 @@
 <script type="text/html" data-help-name="nspanel-config">
-    <p>NSPanel Lovelace UI Config node</p>
+    <p>Configuration used for all NSPanels to connect to a MQTT broker.</p>
+
+    <h3>Configuration</h3>
+    <h4><b>Properties</b></h4>
+
+    <ul>
+        <li>
+            <b>MQTT Server</b>: the address of the mqtt broker, can be prefixed with `mqtt://`, or `mqtts://` to use tls
+        </li>
+        <li><b>Port</b>: The port the mqtt broker is listening on</li>
+        <li><b>Client Id</b>: Custom client id to use, otherwise auto generated</li>
+        <li><b>Username</b>: the username required by your broker, if any</li>
+        <li><b>Password</b>: the password required by your broker, if any</li>
+        <li><b>Keepalive</b>: 60 seconds or 0 to disable</li>
+    </ul>
 </script>

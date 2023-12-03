@@ -12,7 +12,7 @@
             "tab-mqtt": "MQTT Broker",
             "mqtt-address": "MQTT Adresse",
             "mqtt-port": "Port",
-            "mqtt-clientid": "Client Id",
+            "mqtt-clientid": "Client-Id",
             "mqtt-username": "Benutzername",
             "mqtt-password": "Passwort",
             "mqtt-keepalive": "Keepalive",

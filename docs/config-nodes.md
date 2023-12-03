@@ -46,7 +46,7 @@ Brightness settings for day and night
 ### Updates
 
 -   **Enable check for updates**: Enables checking for updates at the time configured<br/>
--   **Install new firmware automatically**: Install new updates automatically, otherwise notification is displayed on panel<br/>
+-   **Install new firmware automatically**: Install new updates automatically, otherwise a notification is displayed on panel<br/>
 -   **Time to check for updates**: Time of day to perform update check<br/>
 -   **Tasmota OTA Url**: Url to the Tasmota firmware to use<br/>
 

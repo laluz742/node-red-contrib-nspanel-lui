@@ -124,7 +124,7 @@
             "telePeriodDescription": "(0=deaktiviert, 1=Firmware-Vorgabe)",
             "enableUpdates": "Prüfung auf Updates aktivieren",
             "autoUpdate": "Neue Firmware automatisch installieren",
-            "timeToCheckForUpdates": "Time to check for updates",
+            "timeToCheckForUpdates": "Uhrzeit für Update-Prüfung",
             "tasmotaOtaUrl": "Tasmota OTA Url",
             "dateLanguage": "Sprache für Datumsanzeige",
             "dateFormat": "Datumsformat",
