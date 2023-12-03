@@ -46,6 +46,34 @@
         * Only available if the <i>Decouple buttons from relays</i> option is set on the nspanel-panel configuration
         node.
     </p>
+    <h3>Inputs</h3>
+
+    <h4><b>Data</b></h4>
+    Data that is sent with the <code>data</code> topic is displayed according to the elements set up. are displayed. The
+    payload can be an object or an array of objects that correspond to the following schema:
+    <ul>
+        <li><b>entityId</b>: optional, Id of entitity the data relate to</li>
+        <li><b>icon</b>: optional, icon to display</li>
+        <li><b>iconColor</b>: optional, color for icon to be used</li>
+        <li><b>text</b>: optional, text to be shown</li>
+    </ul>
+
+    Further information on the messages for the entity types can be found in the
+    <a target="_blank" href="https://github.com/laluz742/node-red-contrib-nspanel-lui/blob/main/docs/page-nodes.md"
+        >online documentation</a
+    >. <br />
+
+    <h4><b>Status</b></h4>
+    The current status is received with the topic <code>status</code>. The payload corresponds to the following scheme:
+    <ul>
+        <li><b>statusIcon</b>: optional, icon to show</li>
+        <li>
+            <b>statusIconColor</b>: optional, the color to be used for the icon, hex rgb (<code>#rrggbb</code>) or
+            integer format (<code>rgb(R,G,B)</code>)
+        </li>
+        <li><b>statusIconFlashing</b>: <code>true</code> for flashing status icon, otherwise <code>false</code></li>
+        <li><b>numPadDisabled</b>: <code>true</code> to hide num-pad, otherwise <code>false</code></li>
+    </ul>
 
     <br />
     All supported icons are shown in the

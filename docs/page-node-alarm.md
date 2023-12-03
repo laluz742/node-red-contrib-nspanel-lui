@@ -25,11 +25,11 @@ Up to 4 buttons, which are displayed at the right of the screen.
 
 General information on configuration and input messages can be found in the documentation on the [page nodes](./page-nodes.md).
 
-### Data Message
+### Status Message
 
 ```json
 {
-    "topic": "data",
+    "topic": "status",
     "payload": {
         "statusIcon": "string",
         "statusIconColor": "string",
