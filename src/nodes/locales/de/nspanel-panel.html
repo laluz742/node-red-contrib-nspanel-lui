@@ -1,3 +1,58 @@
 <script type="text/html" data-help-name="nspanel-panel">
-    <p>NSPanel Lovelace UI panel node</p>
+    <p>Konfiguration für ein NSPanel</p>
+
+    <h3>Konfiguration</h3>
+    <h4><b>Allgemein</b></h4>
+    <ul>
+        <li><b>Name</b>: Der Name des Nodes</li>
+        <li><b>NSPanel MQTT-Konfiguration</b>: MQTT-Konfiguration für das Panel</li>
+        <li>
+            <b>Geräte-Topic</b>: Device Topic entsprechend der Tasmota-Konfiguration unter <i>Configure MQTT</i> des
+            Panels
+        </li>
+        <li>
+            <b>Vollständiges Topic</b>: Vollständiges Topic entsprechend der Tasmota-Konfiguration unter
+            <i>Configure MQTT</i> des Panels mit den Platzhaltern <i>%prefix%</i> und <i>%topic%</i>
+        </li>
+        <li><b>Stand by nach</b>: Standard-Timeout in Sekunden für die Aktivierung des Bildschirmschoners</li>
+    </ul>
+
+    <b>Display-Helligkeit</b>
+    Helligkeitseinstellungen für Tag und Nacht
+    <ul>
+        <li><b>Stand by</b>: Helligkeit für den Stand-by-Modus</li>
+        <li><b>Aktiv</b>: Helligkeit bei Verwendung des Panels</li>
+        <li><b>ab Uhrzeit</b>: Uhrzeit, ab wann die Einstellungen aktiv sind</li>
+    </ul>
+
+    <b>Weitere Optionen</b>
+    <ul>
+        <li><b>Telemtrie-Intervall</b>: Intervall in Sekunden für die Aktualisierung der Sensordaten</li>
+        <li>
+            <b>Tasten von Relais entkoppeln</b>: Entkoppelt die Hardware-Tasten von der Relaissteuerung, so dass sie in
+            Ereignissen verwendet werden können
+        </li>
+    </ul>
+
+    <h4><b>Updates</b></h4>
+    <ul>
+        <li><b>Prüfung auf Updates aktivieren</b>: Aktiviert die regelmäßige Prüfung auf Updates</li>
+        <li>
+            <b>Neue Firmware automatisch installieren</b>: Installiert automatisch neue Updates, anderenfalls wird eine
+            Benachrichtigung auf dem Panel angezeigt
+        </li>
+        <li><b>Uhrzeit für Update-Prüfung</b>: Uhrzeit zu der auf Updates geprüft wird</li>
+        <li><b>Tasmota OTA Url</b>: Url zu der zu verwendenden Tasmota-Firmware</li>
+    </ul>
+
+    <h4><b>Datum & Uhrzeit</b></h4>
+    <ul>
+        <li><b>Sprache für Datumsanzeige</b>: Die Sprache für die Lokalisierung von Uhrzeit und Datum</li>
+        <li><b>Stundenzählung</b>: Entweder 12-Stunden- oder 24-Stunden-Notation</li>
+        <li><b>Datumsformat und Zeitformat</b>: Konfigurationsoptionen für die Formatierung von Datum und Uhrzeit</li>
+        <li>
+            <b>Benutzerdefiniertes Datums- und Zeitformat verwenden</b>: Ermöglicht erweiterte Optionen zum Anpassen der
+            Formatierung von Datum und Uhrzeit
+        </li>
+    </ul>
 </script>

@@ -32,8 +32,10 @@
     <h4><b>Thermostat</b></h4>
     <ul>
         <li><b>Zielwert Temperatur</b>: Zieltemperatur</li>
+        <li><b>Zweipunktregler aktivieren</b>: Aktiviert den Zweipunktregler</li>
         <li><b>Hysterese</b> Die Totzone, die für die Zweipunktregelung verwendet wird</li>
         <li><b>Zielwert Temperatur 2</b>: Zweite Zieltemperatur</li>
+        <li><b>Zweipunktregler 2 aktivieren</b>: Aktiviert den zweiten Zweipunktregler</li>
         <li><b>Hysterese 2</b>: Die Totzone, die für die zweite Zweipunktregelung verwendet wird</li>
     </ul>
 
@@ -56,18 +58,21 @@
             >: Aktion, welche ausgeführt wird, wenn die rechte Hardware-Taste gedrückt wird.
         </li>
         <li><b>Aktionen</b>: Zusätzlich können Aktionen mit Aktionen verbunden werden.</li>
-        <li><b>Temperatur unter Zielwert</b>: Zieltemperatur wurde unterschritten</li>
-        <li><b>Temperatur im Zielbereich</b>: Zieltemperatur wurde unter Berücksichtigung der Hysterese erreicht</li>
-        <li><b>Temperatur über Zielwert</b>: Zieltemperatur wurde überschritten</li>
-        <li><b>Temperatur unter Zielwert 2</b>: Zweite Zieltemperatur wurde unterschritten</li>
+        <li><b>Temperatur unter Zielwert**</b>: Zieltemperatur wurde unterschritten</li>
+        <li><b>Temperatur im Zielbereich**</b>: Zieltemperatur wurde unter Berücksichtigung der Hysterese erreicht</li>
+        <li><b>Temperatur über Zielwert**</b>: Zieltemperatur wurde überschritten</li>
+        <li><b>Temperatur unter Zielwert 2**</b>: Zweite Zieltemperatur wurde unterschritten</li>
         <li>
-            <b>Temperatur im Zielbereich 2</b>: Zweite Zieltemperatur wurde unter Berücksichtigung der Hysterese
+            <b>Temperatur im Zielbereich 2**</b>: Zweite Zieltemperatur wurde unter Berücksichtigung der Hysterese
             erreicht
         </li>
-        <li><b>Temperatur über Zielwert 2</b>: Zweite Zieltemperatur wurde überschritten</li>
+        <li><b>Temperatur über Zielwert 2**</b>: Zweite Zieltemperatur wurde überschritten</li>
     </ul>
     <p>
-        * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert ist.
+        * Nur verfügbar, wenn die Option <i>Tasten von Relais entkoppeln</i> in der Panel-Konfiguration aktiviert
+        ist.<br />
+        ** Nur ausgelöst, wenn die Option <i>Zweipunktregler aktivieren</i> bzw.
+        <i>Zweipunktregler 2 aktivieren</i> ausgewählt ist.
     </p>
 
     <h3>Eingangsdaten</h3>

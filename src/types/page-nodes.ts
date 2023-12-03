@@ -22,13 +22,17 @@ export type PageCommandCallbackType = (page: IPageNode, data: CommandData | Comm
 // FIXME: hierarchy mismatch
 export interface IPageNode extends INodeConfig {
     getPageType(): string
-    generatePage(): HMICommand | HMICommand[] | null
-    generatePopupDetails(type: string, entityId: string): HMICommand | HMICommand[] | null
+    getPanel(): IPanelNode | null
+    getTimeout(): number | null
     isScreenSaver(): boolean
     isForceRedraw(): boolean
     setActive(state: boolean): void
-    getPanel(): IPanelNode | null
-    getTimeout(): number | null
+
+    needsSensorData(): boolean
+    needsRelayStates(): boolean
+
+    generatePage(): HMICommand | HMICommand[] | null
+    generatePopupDetails(type: string, entityId: string): HMICommand | HMICommand[] | null
 
     setNodeStatus(statusLevel: StatusLevel, msg: string): void
 

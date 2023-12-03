@@ -1,6 +1,7 @@
 {
     "nspanel-config": {
         "label": {
+            "palette": "NSPanel MQTT Config",
             "name": "Name",
             "device-topic": "Device Topic",
             "full-topic": "Full Topic",
@@ -9,7 +10,7 @@
             "timeoutScreenSaver": "Standby Timeout",
             "tab-settings": "Settings",
             "tab-mqtt": "MQTT Broker",
-            "mqtt-address": "Server",
+            "mqtt-address": "MQTT Server",
             "mqtt-port": "Port",
             "mqtt-clientid": "Client Id",
             "mqtt-username": "Username",

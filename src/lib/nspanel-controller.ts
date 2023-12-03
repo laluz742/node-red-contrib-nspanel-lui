@@ -247,6 +247,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.cronTaskDimModeDay?.stop()
         this.cronTaskDimModeNight?.stop()
         this.cronTaskCheckForUpdates?.stop()
+        this._panelUpdater?.dispose()
         this._panelMqttHandler?.dispose()
     }
 
@@ -318,7 +319,30 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 this.notifyControllerNode(eventArgs)
                 break
 
-            case 'relay':
+            case 'relay': {
+                if (eventArgs.type === 'hw') {
+                    this.notifyControllerNode(eventArgs)
+                }
+                const currentPage: IPageHistory | null = this.getCurrentPage()
+                let currentPageIncluded: boolean = false
+
+                // send relay state to page nodes requesting relay states
+                const pageNodesNeedingRelayStates: IPageNode[] =
+                    this._cache.getAllKnownPages()?.filter((pageNode) => pageNode.needsRelayStates() === true) ?? []
+                if (pageNodesNeedingRelayStates.length >= 1) {
+                    for (const pageNode of pageNodesNeedingRelayStates) {
+                        this.notifyPageNode(pageNode, 'input', eventArgs)
+                        if (pageNode.id === currentPage.pageNode?.id) {
+                            currentPageIncluded = true
+                        }
+                    }
+                }
+                if (!currentPageIncluded) {
+                    this.notifyCurrentPageOfEvent('input', eventArgs)
+                }
+                break
+            }
+
             case 'button':
                 if (eventArgs.type === 'hw') {
                     this.notifyControllerNode(eventArgs)
@@ -381,14 +405,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
         this.notifyCurrentPageOfEvent('input', eventArgs)
 
-        // send sensor data to thermo page
-        const thermoPageNodes: IPageNode[] =
-            this._cache
-                .getAllKnownPages()
-                ?.filter((pageNode) => pageNode.getPageType() === NSPanelConstants.STR_PAGE_TYPE_CARD_THERMO) ?? []
-        if (thermoPageNodes.length >= 1) {
-            for (const thermoPageNode of thermoPageNodes) {
-                this.notifyPageNode(thermoPageNode, 'input', eventArgs)
+        // send sensor data to pages requesting sensor data
+        const pageNodesNeedingSensorData: IPageNode[] =
+            this._cache.getAllKnownPages()?.filter((pageNode) => pageNode.needsSensorData() === true) ?? []
+        if (pageNodesNeedingSensorData.length >= 1) {
+            for (const pageNode of pageNodesNeedingSensorData) {
+                this.notifyPageNode(pageNode, 'input', eventArgs)
             }
         }
     }
@@ -437,8 +459,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.sendDimModeToPanel()
         this.sendTimeToPanel()
         this.sendDateToPanel()
-        this.sendDetachRelays(this._panelConfig.panel.detachRelays)
         this.sendTelePeriod(this._panelConfig.panel.telePeriod)
+        this.configureRelays(this._panelConfig.panel.detachRelays)
 
         if (this.cronTaskHourly === null) {
             this.cronTaskHourly = scheduleTask('@hourly', () => this.onCronHourly(), {})
@@ -475,12 +497,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 {}
             )
         }
-
-        // query relay states
-        this.executeCommand([
-            { cmd: 'switch', params: { id: 0 } },
-            { cmd: 'switch', params: { id: 1 } },
-        ])
 
         if (this._ctrlConfig.screenSaverOnStartup) {
             this.activateScreenSaver()
@@ -712,13 +728,18 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this._panelMqttHandler?.sendCommandToPanel(cmd)
     }
 
-    // #region basic panel commands
-    private sendDetachRelays(detach: boolean = false) {
+    private configureRelays(detach: boolean = false) {
         const state = detach ? '1' : '0'
-
         this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS, data: state })
+
+        // query relay states
+        this.executeCommand([
+            { cmd: 'switch', params: { id: 0 } },
+            { cmd: 'switch', params: { id: 1 } },
+        ])
     }
 
+    // #region basic panel commands
     private sendTelePeriod(telePeriod: number = 1) {
         const telePeriodStr = `${telePeriod}`
         this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD, data: telePeriodStr })

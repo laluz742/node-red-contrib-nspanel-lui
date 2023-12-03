@@ -1,3 +1,55 @@
 <script type="text/html" data-help-name="nspanel-panel">
-    <p>NSPanel Lovelace UI panel node</p>
+    <p>Configuration for a specific NSPanel device</p>
+
+    <h3>Configuration</h3>
+    <h4><b>General</b></h4>
+    <ul>
+        <li><b>Name</b>: Specifies the node name</li>
+        <li><b>NSPanel MQTT Config</b>: MQTT configuration for the panel</li>
+        <li><b>Device Topic</b>: device topic as configured in <i>Configure MQTT</i> section of the panel</li>
+        <li>
+            <b>Full Topic</b>: full topic as configured in <i>Configure MQTT</i> section of the panel using the
+            <i>%prefix%</i> and <i>%topic%</i> placeholder
+        </li>
+        <li><b>Stand-by timeout</b>: Default timeout in seconds for activating the screensaver</li>
+    </ul>
+
+    <b>Display Brightness</b>
+    Brightness settings for day and night
+    <ul>
+        <li><b>Stand by</b>: Brightness for stand-by mode</li>
+        <li><b>Active</b>: Brightness when using the panel</li>
+        <li><b>Starting time</b>: Time of day, when to activate the brightness settings</li>
+    </ul>
+
+    <b>Misc options</b>
+    <ul>
+        <li><b>Telemetry Period</b>: Interval in seconds for sensor update</li>
+        <li>
+            <b>Decouple buttons from relays</b>: Detaches the hardware buttons from relay control, so they can be used
+            for event mappings
+        </li>
+    </ul>
+
+    <h4><b>Updates</b></h4>
+    <ul>
+        <li><b>Enable check for updates</b>: Enables checking for updates at the time configured</li>
+        <li>
+            <b>Install new firmware automatically</b>: Install new updates automatically, otherwise a notification is
+            displayed on panel
+        </li>
+        <li><b>Time to check for updates</b>: Time of day to perform update check</li>
+        <li><b>Tasmota OTA Url</b>: Url to the Tasmota firmware to use</li>
+    </ul>
+
+    <h4><b>Date & time</b></h4>
+    <ul>
+        <li><b>Language for date display</b>: The language for time and date localization</li>
+        <li><b>Clock notation</b>: Either 12-hour or 24-hour clock notation</li>
+        <li><b>Date and time format</b>: Configuration options for formatting the date and time</li>
+        <li>
+            <b>Use custom date and time format</b>: Enables advanced options for customizing the formatting of date and
+            time
+        </li>
+    </ul>
 </script>

@@ -145,7 +145,7 @@
 
                 tabs.addTab({
                     id: 'nspanel-page-tab-date',
-                    iconClass: 'fa fa-refresh',
+                    iconClass: 'fa fa-calendar',
                     label: NSPanelLui._('label.date-time', 'nspanel-panel', 'common'),
                 })
             },

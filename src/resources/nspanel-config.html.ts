@@ -3,6 +3,7 @@
     const registerType = () =>
         RED.nodes.registerType('nspanel-config', {
             category: 'config',
+            paletteLabel: NSPanelLui._('label.palette', 'nspanel-config'),
 
             defaults: {
                 name: { value: NSPanelLui._('defaults.name', 'nspanel-config') },

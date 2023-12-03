@@ -89,6 +89,14 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         return this.options?.forceRedraw ?? false
     }
 
+    public needsSensorData(): boolean {
+        return false
+    }
+
+    public needsRelayStates(): boolean {
+        return false
+    }
+
     public generatePage(): HMICommand | HMICommand[] | null {
         if (this.getCache().containsData()) return this.getCache().get()
 

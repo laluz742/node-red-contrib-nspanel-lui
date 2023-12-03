@@ -98,19 +98,25 @@
                         return result
                     },
                 },
-                hysteris: {
-                    value: 3,
+                enableTwoPointController: { value: false },
+                hysteresis: {
+                    value: 2,
                     validate(v) {
+                        const twoPointCtrlDisabled = $('#node-input-enableTwoPointController').is(':checked') === false
+                        if (twoPointCtrlDisabled) return true
+
                         const vNum = Number(v)
 
                         return !Number.isNaN(vNum) && vNum > 0
                     },
                 },
-                hysteris2: {
-                    value: 3,
+                enableTwoPointController2: { value: false },
+                hysteresis2: {
+                    value: 2,
                     validate(v) {
                         const has2ndTemp = $('#node-input-hasSecondTargetTemperature').is(':checked')
-                        if (has2ndTemp === false) return true
+                        const twoPointCtrlDisabled = $('#node-input-enableTwoPointController2').is(':checked') === false
+                        if (has2ndTemp === false || twoPointCtrlDisabled) return true
 
                         const vNum = Number(v)
                         return !Number.isNaN(vNum) && vNum > 0
@@ -221,6 +227,15 @@
                     id: 'nspanel-page-tab-events',
                     iconClass: 'fa fa-list',
                     label: NSPanelLui._('label.events', 'nspanel-panel', 'common'),
+                })
+
+                $('#node-input-enableTwoPointController').on('change', () => {
+                    const enabled = $('#node-input-enableTwoPointController').is(':checked')
+                    $('#node-input-hysteresis').prop('disabled', !enabled)
+                })
+                $('#node-input-enableTwoPointController2').on('change', () => {
+                    const enabled = $('#node-input-enableTwoPointController2').is(':checked')
+                    $('#node-input-hysteresis2').prop('disabled', !enabled)
                 })
             },
             oneditsave() {

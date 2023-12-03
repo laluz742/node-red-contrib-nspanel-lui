@@ -41,9 +41,10 @@ type PageThermoConfig = EntityBasedPageConfig & {
     temperatureUnit: string
 
     /* thermostat */
-    useThermostat: boolean
-    hysteris: number
-    hysteris2: number
+    enableTwoPointController: boolean
+    hysteresis: number
+    enableTwoPointController2: boolean
+    hysteresis2: number
 }
 
 type PageThermoData = {
@@ -58,10 +59,13 @@ type PageThermoData = {
 const MAX_ENTITIES = 8
 const TEMPERATURE_RESOLUTION_FACTOR = 10
 const ACTION_EMPTY = NSPanelConstants.STR_LUI_DELIMITER.repeat(3)
+const DEFAULT_HYSTERESIS = 1
 
 module.exports = (RED) => {
     class PageThermoNode extends EntitiesPageNode<PageThermoConfig> {
         private config: PageThermoConfig | null = null
+
+        private nodeNeedsRelayStates: boolean = false
 
         private data: PageThermoData = {
             targetTemperature: NaN,
@@ -81,6 +85,14 @@ module.exports = (RED) => {
             this.init(config)
         }
 
+        public override needsSensorData(): boolean {
+            return this.isUseOwnSensorData()
+        }
+
+        public override needsRelayStates(): boolean {
+            return this.nodeNeedsRelayStates
+        }
+
         private init(config: PageThermoConfig) {
             this.config = config
 
@@ -92,6 +104,7 @@ module.exports = (RED) => {
 
             this.getEntities()?.forEach((entity) => {
                 if (entity.mappedToRelayEnabled === true) {
+                    this.nodeNeedsRelayStates = true
                     const mappedRelay = Number(entity.mappedRelay)
                     if (!Number.isNaN(mappedRelay)) {
                         const mappedEntities = this.data.relayMapping.get(`power${mappedRelay}`)
@@ -106,22 +119,24 @@ module.exports = (RED) => {
         }
 
         protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number): void {
-            const hysteris = this.config.hysteris / 2
+            const tempUnit = this.config.temperatureUnit === 'C' ? 'C' : 'F'
 
-            if (tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
+            if (this.config.enableTwoPointController && tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
                 this.data.currentTemperature = Number(tempMeasurement)
                 const thermoEventArgs: ThermostatEventArgs = {
                     type: 'thermostat',
                     source: this.config.name,
                     event: 'measurement',
-                    tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+                    tempUnit,
                     targetTemperature: this.data.targetTemperature ?? this.config.targetTemperature,
                     temperature: this.data.currentTemperature,
                 }
 
-                if (tempMeasurement > thermoEventArgs.targetTemperature + hysteris) {
+                const hysteresisNum = Number(this.config.hysteresis ?? DEFAULT_HYSTERESIS)
+                const hysteresis = (Number.isNaN(hysteresisNum) ? DEFAULT_HYSTERESIS : hysteresisNum) / 2
+                if (tempMeasurement > thermoEventArgs.targetTemperature + hysteresis) {
                     thermoEventArgs.targetTemperatureMode = 'above'
-                } else if (tempMeasurement < thermoEventArgs.targetTemperature - hysteris) {
+                } else if (tempMeasurement < thermoEventArgs.targetTemperature - hysteresis) {
                     thermoEventArgs.targetTemperatureMode = 'below'
                 } else {
                     thermoEventArgs.targetTemperatureMode = 'on'
@@ -136,6 +151,7 @@ module.exports = (RED) => {
             }
 
             if (
+                this.config.enableTwoPointController2 &&
                 this.config.hasSecondTargetTemperature === true &&
                 tempMeasurement2 != null &&
                 !Number.isNaN(tempMeasurement2)
@@ -145,14 +161,16 @@ module.exports = (RED) => {
                     type: 'thermostat',
                     source: this.config.name,
                     event: 'measurement',
-                    tempUnit: this.config.temperatureUnit == 'C' ? 'C' : 'F',
+                    tempUnit,
                     targetTemperature2: tempMeasurement2 ?? this.config.targetTemperature2,
                     temperature2: this.data.currentTemperature2,
                 }
 
-                if (tempMeasurement2 > thermoEventArgs.targetTemperature2 + hysteris) {
+                const hysteresisNum = Number(this.config.hysteresis2 ?? DEFAULT_HYSTERESIS)
+                const hysteresis = (Number.isNaN(hysteresisNum) ? DEFAULT_HYSTERESIS : hysteresisNum) / 2
+                if (tempMeasurement2 > thermoEventArgs.targetTemperature2 + hysteresis) {
                     thermoEventArgs.targetTemperatureMode2 = 'above'
-                } else if (tempMeasurement2 < thermoEventArgs.targetTemperature2 - hysteris) {
+                } else if (tempMeasurement2 < thermoEventArgs.targetTemperature2 - hysteresis) {
                     thermoEventArgs.targetTemperatureMode2 = 'below'
                 } else {
                     thermoEventArgs.targetTemperatureMode2 = 'on'
@@ -178,6 +196,7 @@ module.exports = (RED) => {
                         const triggeredRelay = hwEventArgs?.source
                         const triggeredRelayActive = hwEventArgs?.active
                         const mappedEntities = this.data.relayMapping.get(triggeredRelay)
+
                         mappedEntities?.forEach((entity) => {
                             const entityData: PageEntityData = this.getEntityData(entity.entityId) ?? {}
                             entityData.value = triggeredRelayActive ? '1' : '0'
