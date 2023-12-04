@@ -165,7 +165,7 @@ module.exports = (RED) => {
                           'text',
                           `${item.index}`,
                           (item.prefix ?? '') + NSPanelUtils.getIcon(item.icon),
-                          NSPanelColorUtils.toHmiColor(NaN),
+                          NSPanelColorUtils.toHmiColor(item.iconColor),
                           null,
                           item.text ?? ''
                       )

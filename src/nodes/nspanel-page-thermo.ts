@@ -119,24 +119,38 @@ module.exports = (RED) => {
         }
 
         protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number): void {
+            if (tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
+                this.data.currentTemperature = Number(tempMeasurement)
+            }
+
+            if (
+                this.config.hasSecondTargetTemperature === true &&
+                tempMeasurement2 != null &&
+                !Number.isNaN(tempMeasurement2)
+            ) {
+                this.data.currentTemperature2 = Number(tempMeasurement2)
+            }
+        }
+
+        protected updateTwoPointControllers(): void {
             const tempUnit = this.config.temperatureUnit === 'C' ? 'C' : 'F'
 
-            if (this.config.enableTwoPointController && tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
-                this.data.currentTemperature = Number(tempMeasurement)
+            if (this.config.enableTwoPointController) {
+                const currentTemp = this.data.currentTemperature
                 const thermoEventArgs: ThermostatEventArgs = {
                     type: 'thermostat',
                     source: this.config.name,
                     event: 'measurement',
                     tempUnit,
                     targetTemperature: this.data.targetTemperature ?? this.config.targetTemperature,
-                    temperature: this.data.currentTemperature,
+                    temperature: currentTemp,
                 }
 
                 const hysteresisNum = Number(this.config.hysteresis ?? DEFAULT_HYSTERESIS)
                 const hysteresis = (Number.isNaN(hysteresisNum) ? DEFAULT_HYSTERESIS : hysteresisNum) / 2
-                if (tempMeasurement > thermoEventArgs.targetTemperature + hysteresis) {
+                if (currentTemp > thermoEventArgs.targetTemperature + hysteresis) {
                     thermoEventArgs.targetTemperatureMode = 'above'
-                } else if (tempMeasurement < thermoEventArgs.targetTemperature - hysteresis) {
+                } else if (currentTemp < thermoEventArgs.targetTemperature - hysteresis) {
                     thermoEventArgs.targetTemperatureMode = 'below'
                 } else {
                     thermoEventArgs.targetTemperatureMode = 'on'
@@ -150,33 +164,28 @@ module.exports = (RED) => {
                 this.emit('input', outMsg)
             }
 
-            if (
-                this.config.enableTwoPointController2 &&
-                this.config.hasSecondTargetTemperature === true &&
-                tempMeasurement2 != null &&
-                !Number.isNaN(tempMeasurement2)
-            ) {
-                this.data.currentTemperature2 = Number(tempMeasurement2)
+            if (this.config.enableTwoPointController2) {
+                const currentTemp = this.data.currentTemperature2
                 const thermoEventArgs: ThermostatEventArgs = {
                     type: 'thermostat',
                     source: this.config.name,
                     event: 'measurement',
                     tempUnit,
-                    targetTemperature2: tempMeasurement2 ?? this.config.targetTemperature2,
-                    temperature2: this.data.currentTemperature2,
+                    targetTemperature: this.data.targetTemperature2 ?? this.config.targetTemperature2,
+                    temperature: currentTemp,
                 }
 
-                const hysteresisNum = Number(this.config.hysteresis2 ?? DEFAULT_HYSTERESIS)
+                const hysteresisNum = Number(this.config.hysteresis ?? DEFAULT_HYSTERESIS)
                 const hysteresis = (Number.isNaN(hysteresisNum) ? DEFAULT_HYSTERESIS : hysteresisNum) / 2
-                if (tempMeasurement2 > thermoEventArgs.targetTemperature2 + hysteresis) {
-                    thermoEventArgs.targetTemperatureMode2 = 'above'
-                } else if (tempMeasurement2 < thermoEventArgs.targetTemperature2 - hysteresis) {
-                    thermoEventArgs.targetTemperatureMode2 = 'below'
+                if (currentTemp > thermoEventArgs.targetTemperature + hysteresis) {
+                    thermoEventArgs.targetTemperatureMode = 'above'
+                } else if (currentTemp < thermoEventArgs.targetTemperature - hysteresis) {
+                    thermoEventArgs.targetTemperatureMode = 'below'
                 } else {
-                    thermoEventArgs.targetTemperatureMode2 = 'on'
+                    thermoEventArgs.targetTemperatureMode = 'on'
                 }
+                thermoEventArgs.event2 = `thermo.${thermoEventArgs.targetTemperatureMode}Target2`
 
-                thermoEventArgs.event2 = `thermo.${thermoEventArgs.targetTemperatureMode2}Target2`
                 const outMsg: PageOutputMessage = {
                     topic: 'event',
                     payload: thermoEventArgs,
@@ -227,10 +236,31 @@ module.exports = (RED) => {
                     case NSPanelConstants.STR_MSG_TOPIC_THERMO: {
                         if (!Array.isArray(msg.payload)) {
                             const thermoData: ThermostatData = msg.payload as ThermostatData
+                            const tempUnit = thermoData?.tempUnit
 
+                            // handle new target temperatures
+                            const targetTemperature: number = Number(thermoData?.targetTemperature ?? Number.NaN)
+                            const targetTemperature2: number = Number(thermoData?.targetTemperature2 ?? Number.NaN)
+                            if (!Number.isNaN(targetTemperature)) {
+                                this.data.targetTemperature = NSPanelUtils.convertTemperature(
+                                    targetTemperature,
+                                    tempUnit ?? this.config.temperatureUnit,
+                                    this.config.temperatureUnit
+                                )
+                                dirty = true
+                            }
+                            if (!Number.isNaN(targetTemperature2)) {
+                                this.data.targetTemperature2 = NSPanelUtils.convertTemperature(
+                                    targetTemperature2,
+                                    tempUnit ?? this.config.temperatureUnit,
+                                    this.config.temperatureUnit
+                                )
+                                dirty = true
+                            }
+
+                            // handle temperature measurements
                             const currentTemperature: number = Number(thermoData?.temperature ?? Number.NaN)
                             const currentTemperature2: number = Number(thermoData?.temperature2 ?? Number.NaN)
-                            const tempUnit = thermoData?.tempUnit
 
                             let temp
                             let temp2
@@ -256,8 +286,11 @@ module.exports = (RED) => {
                                     dirty = true
                                 }
                             }
-
                             this.onNewTemperatureReading(temp, temp2)
+
+                            if (dirty) {
+                                this.updateTwoPointControllers()
+                            }
                         }
                         break
                     }

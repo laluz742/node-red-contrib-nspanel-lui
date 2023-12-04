@@ -161,6 +161,9 @@ export type ThermostatData = PageDataBase & {
     temperature?: number
     temperature2?: number
     tempUnit?: 'C' | 'F'
+
+    targetTemperature?: number
+    targetTemperature2?: number
 }
 
 export type ChartDataItem = {

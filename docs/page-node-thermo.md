@@ -74,15 +74,19 @@ The current measured temperature values are received with the topic `thermo` and
     "payload": {
         "temperature": "number",
         "temperature2": "number",
+        "targetTemperature": "number",
+        "targetTemperature2": "number",
         "tempUnit": "string"
     }
 }
 ```
 
-| Key            | Description                                                                         |
-| -------------- | ----------------------------------------------------------------------------------- |
-| `temperature`  | optional, temperature measured                                                      |
-| `temperature2` | optional, second temperature measured                                               |
-| `tempUnit`     | optional, either `F` for Fahrenheit or `C` for Celsius, defaults to unit configured |
+| Key                  | Description                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `temperature`        | optional, temperature measured                                                      |
+| `temperature2`       | optional, second temperature measured                                               |
+| `targetTemperature`  | optional, new target temperature                                                    |
+| `targetTemperature2` | optional, new target temperature 2                                                  |
+| `tempUnit`           | optional, either `F` for Fahrenheit or `C` for Celsius, defaults to unit configured |
 
 If the unit is not specified, the default unit is assumed. If the specified unit differs from the configured unit, it is converted to the configured unit.
