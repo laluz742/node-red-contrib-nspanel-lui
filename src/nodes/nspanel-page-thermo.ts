@@ -118,7 +118,11 @@ module.exports = (RED) => {
             return this.config?.useOwnTempSensor ?? false
         }
 
-        protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number, updateFlag?: boolean): void {
+        protected onNewTemperatureReading(
+            tempMeasurement: number,
+            tempMeasurement2?: number,
+            updateFlag?: boolean
+        ): void {
             if (tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
                 this.data.currentTemperature = Number(tempMeasurement)
             }
@@ -131,7 +135,7 @@ module.exports = (RED) => {
                 this.data.currentTemperature2 = Number(tempMeasurement2)
             }
 
-            if ( updateFlag ) {
+            if (updateFlag) {
                 this.updateTwoPointControllers()
             }
         }
