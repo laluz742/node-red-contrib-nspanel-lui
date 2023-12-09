@@ -118,17 +118,21 @@ module.exports = (RED) => {
             return this.config?.useOwnTempSensor ?? false
         }
 
-        protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number): void {
+        protected onNewTemperatureReading(tempMeasurement: number, tempMeasurement2?: number, updateFlag?: boolean): void {
             if (tempMeasurement != null && !Number.isNaN(tempMeasurement)) {
                 this.data.currentTemperature = Number(tempMeasurement)
             }
 
             if (
-                this.config.hasSecondTargetTemperature === true &&
                 tempMeasurement2 != null &&
+                this.config.hasSecondTargetTemperature === true &&
                 !Number.isNaN(tempMeasurement2)
             ) {
                 this.data.currentTemperature2 = Number(tempMeasurement2)
+            }
+
+            if ( updateFlag ) {
+                this.updateTwoPointControllers()
             }
         }
 
@@ -227,7 +231,7 @@ module.exports = (RED) => {
                                 if (tempMeasurement !== this.data.currentTemperature) {
                                     dirty = true
                                 }
-                                this.onNewTemperatureReading(tempMeasurement)
+                                this.onNewTemperatureReading(tempMeasurement, null, dirty)
                             }
                         }
                         break
@@ -286,11 +290,7 @@ module.exports = (RED) => {
                                     dirty = true
                                 }
                             }
-                            this.onNewTemperatureReading(temp, temp2)
-
-                            if (dirty) {
-                                this.updateTwoPointControllers()
-                            }
+                            this.onNewTemperatureReading(temp, temp2, dirty)
                         }
                         break
                     }
