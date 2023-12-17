@@ -375,7 +375,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 break
 
             default:
-                log.debug(`UNCATCHED onEvent default ${JSON.stringify(eventArgs)}`)
+                // log.debug(`UNCATCHED onEvent default ${JSON.stringify(eventArgs)}`)
                 // dispatch to active page
                 this.notifyCurrentPageOfEvent('input', eventArgs)
         }
@@ -385,8 +385,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         if (msg.type === 'fw') {
             const fwEventArgs: FirmwareEventArgs = msg as FirmwareEventArgs
             this._panelUpdater?.onFirmwareEvent(fwEventArgs)
-        } else {
-            log.debug(`UNCATCHED msg ${JSON.stringify(msg)}`)
         }
     }
 
