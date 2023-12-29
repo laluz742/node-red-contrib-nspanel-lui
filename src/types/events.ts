@@ -1,5 +1,5 @@
 import { HSVColor, RGBColor } from './colors'
-import { ActiveCharacteristic, TargetTemperatureState as TargetTemperatureMode } from './base'
+import { ActiveCharacteristic, TargetTemperatureState as TargetTemperatureMode, TemperatureUnit } from './base'
 
 export type EventDescriptor = {
     event: string
@@ -62,8 +62,8 @@ export type HardwareEventArgs = EventArgs & {
 
 export type SensorEventArgs = EventArgs & {
     type: 'sensor'
-    temp?: number
-    tempUnit?: 'C' | 'F'
+    temperature?: number
+    tempUnit?: TemperatureUnit
 }
 
 export type ThermostatEventArgs = EventArgs & {
@@ -71,7 +71,7 @@ export type ThermostatEventArgs = EventArgs & {
 
     temperature?: number
     temperature2?: number
-    tempUnit?: 'C' | 'F'
+    tempUnit?: TemperatureUnit
 
     targetTemperature?: number
     targetTemperatureMode?: TargetTemperatureMode

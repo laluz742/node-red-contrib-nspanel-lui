@@ -118,12 +118,20 @@ export class NSPanelMessageUtils {
     }
 
     public static hasProperty(obj: any, propertyName: string, undefinedMeansNoProperty: boolean = false): boolean {
+        // TODO: overlaps with hasOwnProperty
         if (obj === undefined || obj === null) return false
 
         const hasProp = propertyName in obj
         if (undefinedMeansNoProperty === false) return hasProp
 
         return hasProp ? obj[propertyName] !== undefined : false
+    }
+
+    public static objectHasOwnProperty<TObject extends {}, TPropKey extends PropertyKey>(
+        obj: TObject,
+        propName: TPropKey
+    ): obj is TObject & Record<TPropKey, unknown> {
+        return obj !== null && Object.prototype.hasOwnProperty.call(obj, propName)
     }
 
     public static getPropertyOrNull(obj: any, propertyName: string): any {

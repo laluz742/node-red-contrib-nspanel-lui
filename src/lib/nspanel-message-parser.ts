@@ -76,7 +76,7 @@ export class NSPanelMessageParser {
                     type: 'sensor',
                     source: 'temperature1',
                     event: 'measurement',
-                    temp: Number(temp) ?? null,
+                    temperature: Number(temp) ?? null,
                     tempUnit: tempUnit ?? null,
                 }
                 if (NSPanelMessageUtils.hasProperty(input, 'Time')) {

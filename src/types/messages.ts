@@ -1,4 +1,4 @@
-import { ActiveCharacteristic } from './base'
+import { ActiveCharacteristic, TemperatureUnit } from './base'
 import { PanelColor } from './colors'
 import { EventArgs } from './events'
 import { NodeMessageInFlow } from './nodered'
@@ -160,7 +160,7 @@ export type StatusItemData = PageEntityDataBase & {
 export type ThermostatData = PageDataBase & {
     temperature?: number
     temperature2?: number
-    tempUnit?: 'C' | 'F'
+    tempUnit?: TemperatureUnit
 
     targetTemperature?: number
     targetTemperature2?: number

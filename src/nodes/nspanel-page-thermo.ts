@@ -226,9 +226,9 @@ module.exports = (RED) => {
                     case NSPanelConstants.STR_MSG_TOPIC_SENSOR: {
                         if (this.isUseOwnSensorData()) {
                             const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
-                            if (sensorEventArgs.temp) {
+                            if (sensorEventArgs.temperature) {
                                 const tempMeasurement = NSPanelUtils.convertTemperature(
-                                    sensorEventArgs.temp,
+                                    sensorEventArgs.temperature,
                                     sensorEventArgs.tempUnit?.toString() ?? '',
                                     this.config.temperatureUnit
                                 )

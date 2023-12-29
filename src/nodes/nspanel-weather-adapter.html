@@ -1,0 +1,89 @@
+<script type="text/javascript" src="resources/node-red-contrib-nspanel-lui/nspanel-weather-adapter.html.js"></script>
+
+<script type="text/html" data-template-name="nspanel-weather-adapter">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="common.label.name"></span>
+        </label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name" />
+    </div>
+
+    <br />
+    <div class="form-row">
+        <i class="fa fa-cloud"></i>
+        <span data-i18n="nspanel-weather-adapter.label.forecasts"></span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-weatherSource">
+            <span data-i18n="nspanel-weather-adapter.label.weatherSource"></span>
+        </label>
+        <select class="node-input-weatherSource" style="width: 10em;">
+            <option value="owm">OpenWeather</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-numberOfForecasts">
+            <span data-i18n="nspanel-weather-adapter.label.numberOfForecasts"></span>
+        </label>
+        <input type="number" id="node-input-numberOfForecasts" style="width: 10em" />
+    </div>
+    <div class="form-row">
+        <input
+            type="checkbox"
+            id="node-input-includeCurrentWeather"
+            style="display:inline-block; width:auto; vertical-align:top;"
+        />
+        <span data-i18n="nspanel-weather-adapter.label.includeCurrentWeather" style="width:auto"></span>
+    </div>
+
+    <br />
+    <div class="form-row">
+        <label for="node-input-forecastTitle">
+            <span data-i18n="nspanel-weather-adapter.label.forecastTitle"></span>
+        </label>
+        <select id="node-input-forecastTitle" style="width: 10em;">
+            <option value="weekday" data-i18n="nspanel-weather-adapter.label.forecastTitleWeekday">Weekday</option>
+            <option value="dateShort" data-i18n="nspanel-weather-adapter.label.forecastTitleDateShort">
+                Date, short
+            </option>
+            <option value="custom" data-i18n="nspanel-weather-adapter.label.forecastTitleCustom">Custom</option>
+        </select>
+    </div>
+    <div class="form-row" id="nspanel-option-forecastTitleCustomFormat">
+        <label>
+            <span data-i18n="nspanel-weather-adapter.label.forecastTitleCustomFormat"></span>
+        </label>
+        <input type="text" id="node-input-forecastTitleCustomFormat" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-forecastTitleToday">
+            <span data-i18n="nspanel-weather-adapter.label.forecastTitleToday"></span>
+        </label>
+        <input type="text" id="node-input-forecastTitleToday" />
+    </div>
+
+    <br />
+    <div class="form-row">
+        <i class="fa fa-cloud"></i>
+        <span data-i18n="nspanel-weather-adapter.label.languageSettings"></span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-dateLanguage">
+            <i class="fa fa-language"></i>
+            <span data-i18n="nspanel-weather-adapter.label.dateLanguage"></span>
+        </label>
+        <select id="node-input-dateLanguage" style="width: 10em;">
+            <option value="" data-i18n="nspanel-weather-adapter.i18n.sys">System default</option>
+            <option value="zh-TW" data-i18n="nspanel-weather-adapter.i18n.zh-TW">Chinese (Traditional)</option>
+            <option value="zh-CN" data-i18n="nspanel-weather-adapter.i18n.zh-CN">Chinese(Simplified)</option>
+            <option value="de" data-i18n="nspanel-weather-adapter.i18n.de">German</option>
+            <option value="en-US" data-i18n="nspanel-weather-adapter.i18n.en-US">English</option>
+            <option value="fr" data-i18n="nspanel-weather-adapter.i18n.fr">French</option>
+            <option value="ja" data-i18n="nspanel-weather-adapter.i18n.ja">Japanese</option>
+            <option value="ko" data-i18n="nspanel-weather-adapter.i18n.ko">Korean</option>
+            <option value="pt-BR" data-i18n="nspanel-weather-adapter.i18n.pt-BR">Portuguese</option>
+            <option value="ru" data-i18n="nspanel-weather-adapter.i18n.ru">Russian</option>
+        </select>
+    </div>
+</script>

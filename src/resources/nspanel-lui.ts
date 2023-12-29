@@ -123,14 +123,17 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     const normalizeLabel = (node: any) => {
         return NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(node.name) ? node.name : `[${node.type}:${node.id}]`
     }
-    const getNodeLabel = (node: any) => {
+    const getNodeLabel = (node: any, noPanel = false) => {
         const panelNode = RED.nodes.node(node.nsPanel)
         const nodeName = NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(node.name)
             ? node.name
             : NSPanelLui._('defaults.name', node.type)
 
         const label =
-            `[${panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')}] ${nodeName}` || nodeName
+            noPanel === false
+                ? `[${panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')}] ${nodeName}` ||
+                  nodeName
+                : nodeName
 
         return label
     }
