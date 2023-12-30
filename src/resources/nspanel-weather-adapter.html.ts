@@ -15,10 +15,29 @@
                 name: { value: '' },
                 weatherSource: { value: 'owm', required: true },
                 includeCurrentWeather: { value: true },
-                numberOfForecasts: { value: 4 },
+                numberOfForecasts: {
+                    value: 5,
+                    validate(v) {
+                        const vNum = Number(v)
+                        if (Number.isNaN(vNum) === true) return false
+
+                        const result = NSPanelLui.Editor.validate.isNumberInRange(v, 0, 8)
+                        return result
+                    },
+                },
                 forecastTitle: { value: 'weekday' },
                 forecastTitleToday: { value: '' },
                 forecastTitleCustomFormat: { value: '' },
+                forecastTemperatureDigits: {
+                    value: 1,
+                    validate(v) {
+                        const vNum = Number(v)
+                        if (Number.isNaN(vNum) === true) return false
+
+                        const result = NSPanelLui.Editor.validate.isNumberInRange(v, 0, 2)
+                        return result
+                    },
+                },
                 dateLanguage: { value: '' },
             },
 

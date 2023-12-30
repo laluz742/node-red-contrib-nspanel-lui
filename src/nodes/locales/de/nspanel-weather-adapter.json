@@ -19,7 +19,8 @@
             "forecastTitleDateShort": "Datum kurz",
             "forecastTitleWeekday": "Wochentag",
             "forecastTitleCustom": "Benutzerdefiniert",
-            "forecastTitleCustomFormat": "Benutzerdefiniertes Format",
+            "forecastTitleCustomFormat": "Eigenes Format",
+            "forecastTemperatureDigits": "Dezimalstellen für Temperatur",
             "languageSettings": "Spracheinstellungen",
             "dateLanguage": "Sprache"
         },

@@ -23,7 +23,6 @@
             "nspanel-config": "nodes/nspanel-config.js",
             "nspanel-panel": "nodes/nspanel-panel.js",
             "nspanel-controller": "nodes/nspanel-controller.js",
-            "nspanel-hmi-control": "nodes/nspanel-hmi-control.js",
             "nspanel-page-alarm": "nodes/nspanel-page-alarm.js",
             "nspanel-page-chart": "nodes/nspanel-page-chart.js",
             "nspanel-page-entities": "nodes/nspanel-page-entities.js",
@@ -36,6 +35,7 @@
             "nspanel-screensaver2": "nodes/nspanel-screensaver2.js",
             "nspanel-page-thermo": "nodes/nspanel-page-thermo.js",
             "nspanel-page-unlock": "nodes/nspanel-page-unlock.js",
+            "nspanel-hmi-control": "nodes/nspanel-hmi-control.js",
             "nspanel-weather-adapter": "nodes/nspanel-weather-adapter.js"
         }
     },

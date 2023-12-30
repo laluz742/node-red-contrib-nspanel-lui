@@ -16,7 +16,7 @@ import * as NSPanelConstants from '../lib/nspanel-constants'
 import { NSPanelDateUtils } from '../lib/nspanel-date-utils'
 import { NSPanelUtils } from '../lib/nspanel-utils'
 
-const STR_DEGREE = '°'
+const FORECAST_TITLE_FORMAT_WEEKDAY = 'ddd'
 const DEFAULT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
     month: 'numeric',
     day: 'numeric',
@@ -30,6 +30,7 @@ interface NSPanelWeatherAdapterConfig extends INodeConfig {
     forecastTitle: string
     forecastTitleToday: string
     forecastTitleCustomFormat: string
+    forecastTemperatureDigits: number
 
     dateLanguage: string
 }
@@ -122,18 +123,28 @@ module.exports = (RED) => {
                         }
                         break
 
+                    case NSPanelConstants.WEATHER_FORECAST_TITLE_CUSTOM:
+                        title = NSPanelDateUtils.format(
+                            date,
+                            this.config.forecastTitleCustomFormat,
+                            this.config.dateLanguage
+                        )
+                        break
+
                     case NSPanelConstants.WEATHER_FORECAST_TITLE_WEEKDAY:
-                        title = NSPanelDateUtils.format(date, 'ddd', this.config.dateLanguage)
+                    default:
+                        title = NSPanelDateUtils.format(date, FORECAST_TITLE_FORMAT_WEEKDAY, this.config.dateLanguage)
                         break
                 }
             }
 
             const temperature =
                 'temperature' in fCast ? fCast.temperature : (fCast as WeatherForecastDay).temperatures?.day
+            const temperatureFixed = Number.prototype.toFixed.call(temperature, this.config.forecastTemperatureDigits)
 
             const result: PageEntityData = {
                 entityId: '',
-                value: temperature + STR_DEGREE,
+                value: temperatureFixed + NSPanelConstants.STR_TEMPERATURE_DEGREE,
                 text: title,
                 icon: fCast.condition.icon,
                 iconColor: '#abcabc',

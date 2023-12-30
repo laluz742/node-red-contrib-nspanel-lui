@@ -121,3 +121,7 @@ export const DEFAULT_FORECAST_TITLE = 'weekday'
 export const WEATHER_SOURCE_OWM = 'owm'
 export const WEATHER_FORECAST_TITLE_WEEKDAY = 'weekday'
 export const WEATHER_FORECAST_TITLE_DATESHORT = 'dateShort'
+export const WEATHER_FORECAST_TITLE_CUSTOM = 'custom'
+
+// temperature
+export const STR_TEMPERATURE_DEGREE = '°'
