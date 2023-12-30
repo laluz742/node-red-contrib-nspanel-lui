@@ -8,7 +8,8 @@
             inputs: 1,
             outputs: 1,
 
-            icon: 'font-awesome/fa-television',
+            icon: 'font-awesome/fa-sign-in',
+            align: 'right',
             color: 'rgb( 50, 120, 190)',
 
             defaults: {

@@ -226,9 +226,9 @@ module.exports = (RED) => {
                     case NSPanelConstants.STR_MSG_TOPIC_SENSOR: {
                         if (this.isUseOwnSensorData()) {
                             const sensorEventArgs: SensorEventArgs = msg.payload as SensorEventArgs
-                            if (sensorEventArgs.temp) {
+                            if (sensorEventArgs.temperature) {
                                 const tempMeasurement = NSPanelUtils.convertTemperature(
-                                    sensorEventArgs.temp,
+                                    sensorEventArgs.temperature,
                                     sensorEventArgs.tempUnit?.toString() ?? '',
                                     this.config.temperatureUnit
                                 )
@@ -348,7 +348,8 @@ module.exports = (RED) => {
             const currTemp =
                 this.data.currentTemperature == null || Number.isNaN(this.data.currentTemperature)
                     ? ''
-                    : `${this.data.currentTemperature.toFixed(1)} °${this.config?.temperatureUnit}`
+                    : `${this.data.currentTemperature.toFixed(1)} ${NSPanelConstants.STR_TEMPERATURE_DEGREE}${this
+                          .config?.temperatureUnit}`
 
             const targetTemp = this.data.targetTemperature * TEMPERATURE_RESOLUTION_FACTOR ?? 0
             const targetTemp2 = this.data.targetTemperature2 * TEMPERATURE_RESOLUTION_FACTOR ?? 0
@@ -374,7 +375,7 @@ module.exports = (RED) => {
             result.push(this.config?.currentTemperatureLabel ?? NSPanelConstants.STR_EMPTY)
             result.push(this.config?.statusLabel ?? NSPanelConstants.STR_EMPTY)
             result.push(NSPanelConstants.STR_EMPTY)
-            result.push(`°${this.config?.temperatureUnit}`)
+            result.push(`${NSPanelConstants.STR_TEMPERATURE_DEGREE}${this.config?.temperatureUnit}`)
 
             result.push(
                 (this.config?.hasSecondTargetTemperature ? targetTemp2.toString() : NSPanelConstants.STR_EMPTY) ??

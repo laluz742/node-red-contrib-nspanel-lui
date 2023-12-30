@@ -1,0 +1,44 @@
+{
+    "common": {
+        "label": {
+            "name": "Name"
+        },
+        "placeholder": {
+            "name": "Name"
+        }
+    },
+    "nspanel-weather-adapter": {
+        "label": {
+            "palette": "Wetter-Adapter",
+            "weatherSource": "Quelle",
+            "forecasts": "Vorhersagen",
+            "numberOfForecasts": "Anzahl der Vorhersagen",
+            "includeCurrentWeather": "Aktuelles Wetter einbeziehen",
+            "forecastTitle": "Titel",
+            "forecastTitleToday": "abweichender Titel für Heute",
+            "forecastTitleDateShort": "Datum kurz",
+            "forecastTitleWeekday": "Wochentag",
+            "forecastTitleCustom": "Benutzerdefiniert",
+            "forecastTitleCustomFormat": "Eigenes Format",
+            "forecastTemperatureDigits": "Dezimalstellen für Temperatur",
+            "languageSettings": "Spracheinstellungen",
+            "dateLanguage": "Sprache"
+        },
+        "placeholder": {},
+        "defaults": {
+            "name": "Wetter-Adapter"
+        },
+        "i18n": {
+            "sys": "Systemvorgabe",
+            "zh-CN": "Chinesisch (Vereinfacht)",
+            "zh-TW": "Chinesisch (Traditionell)",
+            "en-US": "Englisch",
+            "fr": "Französisch",
+            "de": "Deutsch",
+            "ja": "Japanisch",
+            "ko": "Koreanisch",
+            "pt-BR": "Portugiesisch",
+            "ru": "Russisch"
+        }
+    }
+}

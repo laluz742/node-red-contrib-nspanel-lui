@@ -32,7 +32,7 @@
         },
         "panel": {
             "offline": "Offline",
-            "serverStopped": "Server stopped",
+            "serverStopped": "Server stopped at",
             "newFirmwareTitle": "Firmware Update Available",
             "currentFirmwareVersionPrefix": "Installed version: ",
             "newFirmwareVersionPrefix": "Available version: ",
