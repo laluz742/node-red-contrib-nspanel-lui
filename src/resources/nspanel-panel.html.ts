@@ -44,6 +44,7 @@
                     },
                 },
 
+                panelType: { value: 'eu', required: true },
                 panelTimeout: {
                     value: 10,
                     required: true,

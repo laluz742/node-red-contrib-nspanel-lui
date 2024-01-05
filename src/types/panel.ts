@@ -35,6 +35,8 @@ export interface PanelMqttConfig {
 }
 
 export interface PanelParameters {
+    panelType: string
+
     topic: string
     fullTopic: string
 

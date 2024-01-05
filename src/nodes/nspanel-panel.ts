@@ -15,6 +15,8 @@ import {
 interface NSPanelConfig extends INodeConfig {
     nsPanelConfig: string
 
+    panelType: string
+
     topic: string
     fullTopic: string
 
@@ -61,7 +63,6 @@ module.exports = (RED) => {
 
         constructor(config: NSPanelConfig) {
             super(config, RED)
-
             this.nsPanelConfigNode = <IPanelConfigNode>(<unknown>RED.nodes.getNode(config.nsPanelConfig))
             this.config = config
             this.on('close', (done: VoidCallback) => this.onClose(done))
@@ -84,6 +85,8 @@ module.exports = (RED) => {
         getPanelConfig(): PanelConfig {
             const cfg: PanelConfig = {
                 panel: {
+                    panelType: this.config.panelType,
+
                     topic: this.config.topic,
                     fullTopic: this.config.fullTopic,
                     detachRelays: this.config.detachRelays,
