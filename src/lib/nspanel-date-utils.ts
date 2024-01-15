@@ -8,6 +8,7 @@ import 'dayjs/locale/ja'
 import 'dayjs/locale/ko'
 import 'dayjs/locale/pt-br'
 import 'dayjs/locale/ru'
+import 'dayjs/locale/nl'
 
 import { Logger } from './logger'
 import * as NSPanelConstants from './nspanel-constants'
