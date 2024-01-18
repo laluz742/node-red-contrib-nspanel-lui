@@ -13,6 +13,7 @@ import {
     TasmotaEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
+import { NSPanelDateUtils } from './nspanel-date-utils'
 
 const log = Logger('NSPanelMessageParser')
 
@@ -80,7 +81,7 @@ export class NSPanelMessageParser {
                     tempUnit: tempUnit ?? null,
                 }
                 if (NSPanelMessageUtils.hasProperty(input, 'Time')) {
-                    const date = NSPanelMessageUtils.toDate(input['Time'])
+                    const date = NSPanelDateUtils.toDate(input['Time'])
                     if (date !== null) {
                         result.date = date
                     }

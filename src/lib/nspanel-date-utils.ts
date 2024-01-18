@@ -96,4 +96,13 @@ export class NSPanelDateUtils {
 
         return dateStr
     }
+
+    public static toDate(input: any): Date | null {
+        const date = new Date(input)
+        if (Number.isNaN(date.getTime()) === false) {
+            return date
+        }
+
+        return null
+    }
 }
