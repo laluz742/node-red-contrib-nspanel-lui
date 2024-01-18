@@ -1,6 +1,6 @@
 # node-red-contrib-nspanel-lui
 
-![Project Development](https://img.shields.io/badge/under-Development-blue) [![GitHub Release](https://img.shields.io/badge/alpha-releases-blue)](https://github.com/laluz742/node-red-contrib-nspanel-lui/releases) [![GitHub Activity](https://img.shields.io/github/commit-activity/m/laluz742/node-red-contrib-nspanel-lui)](https://github.com/laluz742/node-red-contrib-nspanel-lui/commits/main)
+![Project Development](https://img.shields.io/badge/under-Development-blue) [![GitHub Release](https://img.shields.io/badge/alpha-releases-blue)](https://github.com/laluz742/node-red-contrib-nspanel-lui/releases) [![GitHub Activity](https://img.shields.io/github/commit-activity/y/laluz742/node-red-contrib-nspanel-lui)](https://github.com/laluz742/node-red-contrib-nspanel-lui/commits/main)
 
 This project is in an earlier stage of development (alpha), so use at your own risk. However, in my personal daily use it runs stable.
 
