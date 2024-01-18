@@ -1,6 +1,6 @@
-import { IControllerCache, IPageHistory, IPageNode, PageId } from '../types/types'
+import { IPageHandlerCache, IPageHistory, IPageNode, PageId } from '../types/types'
 
-export class SimpleControllerCache implements IControllerCache {
+export class SimplePageHandlerCache implements IPageHandlerCache {
     private history: IPageHistory[] = []
 
     private allKnownPages: Map<string, IPageNode> = new Map<string, IPageNode>()

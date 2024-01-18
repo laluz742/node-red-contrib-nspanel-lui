@@ -87,81 +87,85 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
     }
 
     private init(panelConfig: PanelConfig) {
-        // prepare and subscribe to mqtt topics
-        panelConfig.mqtt.reconnectPeriod = 5000
-        panelConfig.mqtt.resubscribe = true
+        if (panelConfig != null) {
+            // prepare and subscribe to mqtt topics
+            panelConfig.mqtt.reconnectPeriod = 5000
+            panelConfig.mqtt.resubscribe = true
 
-        this.panelMqttCommandTopic = MqttUtils.buildFullTopic(
-            panelConfig.panel.fullTopic,
-            panelConfig.panel.topic,
-            'cmnd'
-        )
-
-        this.panelMqttCustomCommandTopic = MqttUtils.buildFullTopic(
-            panelConfig.panel.fullTopic,
-            panelConfig.panel.topic,
-            'cmnd',
-            'CustomSend'
-        )
-        this.panelMqttTeleResultTopic = MqttUtils.buildFullTopic(
-            panelConfig.panel.fullTopic,
-            panelConfig.panel.topic,
-            'tele',
-            'RESULT'
-        )
-        this.panelMqttStatResultTopic = MqttUtils.buildFullTopic(
-            panelConfig.panel.fullTopic,
-            panelConfig.panel.topic,
-            'stat',
-            'RESULT'
-        )
-        this.panelMqttSensorTopic = MqttUtils.buildFullTopic(
-            panelConfig.panel.fullTopic,
-            panelConfig.panel.topic,
-            'tele',
-            'SENSOR'
-        )
-
-        this.panelMqttStatus2Topic = MqttUtils.buildFullTopic(
-            panelConfig.panel.fullTopic,
-            panelConfig.panel.topic,
-            'stat',
-            'STATUS2'
-        )
-        this.panelMqttStatUpgradeTopic = MqttUtils.buildFullTopic(
-            panelConfig.panel.fullTopic,
-            panelConfig.panel.topic,
-            'stat',
-            'UPGRADE'
-        )
-
-        try {
-            const brokerUrl = MqttUtils.getBrokerUrl(
-                panelConfig.mqtt.broker,
-                panelConfig.mqtt.port,
-                panelConfig.mqtt.useTls
+            this.panelMqttCommandTopic = MqttUtils.buildFullTopic(
+                panelConfig.panel.fullTopic,
+                panelConfig.panel.topic,
+                'cmnd'
             )
 
-            this.mqttOptions = this.getMqttOptionsFromPanelConfig(panelConfig)
+            this.panelMqttCustomCommandTopic = MqttUtils.buildFullTopic(
+                panelConfig.panel.fullTopic,
+                panelConfig.panel.topic,
+                'cmnd',
+                'CustomSend'
+            )
+            this.panelMqttTeleResultTopic = MqttUtils.buildFullTopic(
+                panelConfig.panel.fullTopic,
+                panelConfig.panel.topic,
+                'tele',
+                'RESULT'
+            )
+            this.panelMqttStatResultTopic = MqttUtils.buildFullTopic(
+                panelConfig.panel.fullTopic,
+                panelConfig.panel.topic,
+                'stat',
+                'RESULT'
+            )
+            this.panelMqttSensorTopic = MqttUtils.buildFullTopic(
+                panelConfig.panel.fullTopic,
+                panelConfig.panel.topic,
+                'tele',
+                'SENSOR'
+            )
 
-            const mqttClient = mqtt.connect(brokerUrl, this.mqttOptions)
-            this.mqttClient = mqttClient
+            this.panelMqttStatus2Topic = MqttUtils.buildFullTopic(
+                panelConfig.panel.fullTopic,
+                panelConfig.panel.topic,
+                'stat',
+                'STATUS2'
+            )
+            this.panelMqttStatUpgradeTopic = MqttUtils.buildFullTopic(
+                panelConfig.panel.fullTopic,
+                panelConfig.panel.topic,
+                'stat',
+                'UPGRADE'
+            )
 
-            mqttClient.on('connect', () => this.onMqttConnect())
-            mqttClient.on('reconnect', () => this.onMqttReconnect())
-            mqttClient.on('message', (topic: string, payload: Buffer) => this.onMqttMessage(topic, payload))
-            mqttClient.on('close', () => this.onMqttClose())
-            mqttClient.on('error', (err: Error) => this.onMqttError(err))
+            try {
+                const brokerUrl = MqttUtils.getBrokerUrl(
+                    panelConfig.mqtt.broker,
+                    panelConfig.mqtt.port,
+                    panelConfig.mqtt.useTls
+                )
 
-            mqttClient.subscribe(this.panelMqttTeleResultTopic)
-            mqttClient.subscribe(this.panelMqttStatResultTopic)
-            mqttClient.subscribe(this.panelMqttSensorTopic)
-            mqttClient.subscribe(this.panelMqttStatus2Topic)
-            mqttClient.subscribe(this.panelMqttStatUpgradeTopic)
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                log.error(`Could not connect to mqtt broker. Error: ${err.message}`) // TODO: better logging format
+                this.mqttOptions = this.getMqttOptionsFromPanelConfig(panelConfig)
+
+                const mqttClient = mqtt.connect(brokerUrl, this.mqttOptions)
+                this.mqttClient = mqttClient
+
+                mqttClient.on('connect', () => this.onMqttConnect())
+                mqttClient.on('reconnect', () => this.onMqttReconnect())
+                mqttClient.on('message', (topic: string, payload: Buffer) => this.onMqttMessage(topic, payload))
+                mqttClient.on('close', () => this.onMqttClose())
+                mqttClient.on('error', (err: Error) => this.onMqttError(err))
+
+                mqttClient.subscribe(this.panelMqttTeleResultTopic)
+                mqttClient.subscribe(this.panelMqttStatResultTopic)
+                mqttClient.subscribe(this.panelMqttSensorTopic)
+                mqttClient.subscribe(this.panelMqttStatus2Topic)
+                mqttClient.subscribe(this.panelMqttStatUpgradeTopic)
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    log.error(`Could not connect to mqtt broker. Error: ${err.message}`) // TODO: better logging format
+                }
             }
+        } else {
+            log.error(`Internal error: Invalid panel configuration (${panelConfig})`)
         }
     }
 

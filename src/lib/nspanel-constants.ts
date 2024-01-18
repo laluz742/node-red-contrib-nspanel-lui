@@ -115,6 +115,10 @@ export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE
 export const DEFAULT_FONTSIZE: number = 1
 export const DEFAULT_DATE_LOCALE: string = 'en'
 
+// date and time
+export const STR_TIME_AM = 'AM'
+export const STR_TIME_PM = 'PM'
+
 // weather
 export const DEFAULT_FORECAST_COUNT = 5
 export const DEFAULT_FORECAST_TITLE = 'weekday'

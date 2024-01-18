@@ -143,7 +143,7 @@ module.exports = (RED) => {
         protected updateTwoPointControllers(): void {
             const tempUnit = this.config.temperatureUnit === 'C' ? 'C' : 'F'
 
-            if (this.config.enableTwoPointController) {
+            if (this.config.enableTwoPointController && this.data?.currentTemperature != null) {
                 const currentTemp = this.data.currentTemperature
                 const thermoEventArgs: ThermostatEventArgs = {
                     type: 'thermostat',
@@ -172,7 +172,7 @@ module.exports = (RED) => {
                 this.emit('input', outMsg)
             }
 
-            if (this.config.enableTwoPointController2) {
+            if (this.config.enableTwoPointController2 && this.data?.currentTemperature2 != null) {
                 const currentTemp = this.data.currentTemperature2
                 const thermoEventArgs: ThermostatEventArgs = {
                     type: 'thermostat',

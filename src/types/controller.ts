@@ -1,4 +1,4 @@
-import { IDisposable, PageId } from './base'
+import { IDisposable } from './base'
 import { CommandData, NotifyData } from './messages'
 import { VoidCallback } from './nodered'
 import { IPageNode } from './page-nodes'
@@ -19,23 +19,6 @@ export interface IPageHistory {
 export type PanelControllerConfig = PanelBasedConfig & {
     screenSaverOnStartup: boolean
     beepOnNotifications: boolean
-}
-
-export interface IControllerCache {
-    // history management
-    getCurrentPage(): IPageHistory | null
-    addToHistory(pageHistory: IPageHistory): void
-    resetHistory(): void
-    findLastPageInHistory(): IPageHistory | null
-    removeLastFromHistory(): void
-    getLastFromHistory(): IPageHistory
-
-    // page management
-    isPageKnown(pageId: PageId): boolean
-    getPage(pageId: PageId): IPageNode | null
-    addPage(pageId: PageId, pageNode: IPageNode): void
-    removePage(pageNode: IPageNode): void
-    getAllKnownPages(): IPageNode[]
 }
 
 export interface IPanelController extends IDisposable {
