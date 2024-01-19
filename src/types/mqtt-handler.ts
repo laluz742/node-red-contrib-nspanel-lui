@@ -11,6 +11,7 @@ export interface IPanelMqttHandler extends IDisposable {
     sendToPanel(data: HMICommand[] | HMICommand): void
 
     on(event: 'mqtt:connect', listener: OnMqttConnectCallback): void
+    on(event: 'mqtt:disconnect', listener: OnMqttConnectCallback): void
     on(event: 'mqtt:reconnect', listener: OnMqttConnectCallback): void
     on(event: 'mqtt:close', listener: OnMqttCloseCallback): void
     on(event: 'mqtt:error', listener: OnMqttErrorCallback): void

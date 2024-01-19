@@ -8,6 +8,16 @@ export const STR_HTTP_USER_AGENT_VALUE: string = 'node-red-contrib-nspanel-lui'
 export const STR_NAV_ID_PREVIOUS: string = 'nav.prev'
 export const STR_NAV_ID_NEXT: string = 'nav.next'
 
+// mqtt
+export const STR_MQTT_PREFIX_CMND: string = 'cmnd'
+export const STR_MQTT_PREFIX_STAT: string = 'stat'
+export const STR_MQTT_PREFIX_TELE: string = 'tele'
+export const STR_MQTT_TOPIC_CUSTOMSEND: string = 'CustomSend'
+export const STR_MQTT_TOPIC_RESULT: string = 'RESULT'
+export const STR_MQTT_TOPIC_SENSOR: string = 'SENSOR'
+export const STR_MQTT_TOPIC_STATUS2: string = 'STATUS2'
+export const STR_MQTT_TOPIC_UPGRADE: string = 'UPGRADE'
+
 // messages
 export const STR_MSG_TOPIC_COMMAND: string = 'cmd'
 export const STR_MSG_TOPIC_DATA: string = 'data'
@@ -73,11 +83,13 @@ export const STR_TASMOTA_PARAM_RESTART_SAVE_TO_FLASH: string = '1'
 export const STR_TASMOTA_UPGRADE_SUCCESSFUL: string = 'Successful'
 export const STR_TASMOTA_UPGRADE_FAILED: string = 'Failed'
 export const STR_TASMOTA_MSG_UPGRADE: string = 'Upgrade'
+export const STR_TASMOTA_MSG_STATUSFWR: string = 'StatusFWR'
 
 // berry driver
 export const STR_BERRYDRIVER_CMD_GETVERSION: string = 'GetDriverVersion'
 export const STR_BERRYDRIVER_CMD_UPDATEDRIVER: string = 'UpdateDriverVersion'
 export const STR_BERRYDRIVER_CMD_FLASHNEXTION: string = 'FlashNextion'
+export const STR_BERRYDRIVER_CMD_CUSTOMSEND: string = 'CustomSend'
 
 // page/card types
 export const STR_PAGE_TYPE_CARD_ALARM: string = 'cardAlarm'
