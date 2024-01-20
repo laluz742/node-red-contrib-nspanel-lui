@@ -22,6 +22,7 @@ const DEFAULT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
 const DEFAULT_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
+    hourCycle: 'h23',
 }
 
 const log = Logger('NSPanelDateUtils')
@@ -51,19 +52,26 @@ export class NSPanelDateUtils {
     public static formatTime(
         date: Date,
         locale: string,
-        timeFormatHour: 'numeric' | '2-digit',
-        timeFormatMinute: 'numeric' | '2-digit',
+        timeFormatHour?: 'numeric' | '2-digit',
+        _timeFormatMinute?: 'numeric' | '2-digit',
         use12HourClock: boolean = false
     ): string {
-        const timeOptions: Intl.DateTimeFormatOptions = { ...DEFAULT_TIME_OPTIONS }
+        const timeMinuteFormat = 'mm'
+        let timeHourFormat
         let timeStr
 
         try {
-            if (timeFormatHour != null) timeOptions.hour = timeFormatHour
-            if (timeFormatMinute != null) timeOptions.minute = timeFormatMinute
-            if (use12HourClock) timeOptions.hour12 = use12HourClock
+            timeHourFormat = timeFormatHour === '2-digit' ? 'hh' : 'h'
+            if (use12HourClock === false) {
+                timeHourFormat = timeHourFormat.toUpperCase()
+            }
 
-            timeStr = date.toLocaleTimeString(locale, timeOptions).replace(/ AM| PM| am| pm/, '')
+            let day = dayjs(date)
+            if (locale != null) {
+                day = day.locale(locale)
+            }
+
+            timeStr = day.format(`${timeHourFormat}:${timeMinuteFormat}`)
         } catch {
             log.error('Invalid time format configuration, using default settings')
             timeStr = date.toLocaleTimeString(undefined, DEFAULT_TIME_OPTIONS)
