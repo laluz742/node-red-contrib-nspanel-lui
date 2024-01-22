@@ -16,8 +16,9 @@
 
     const PANEL_TIMEOUT_MIN = 0
     const PANEL_TIMEOUT_MAX = 65
+
     const MAX_ENTITIES = 4
-    const MAX_ENTITIES_USP = 6
+    const MAX_ENTITIES_US_P = 6
 
     let maxEntities = MAX_ENTITIES
     let editableEventList
@@ -63,7 +64,7 @@
                 const nsPanelInputFieldLastVal = this.nsPanel
 
                 const onPanelChanged = (nsPanelNode) => {
-                    maxEntities = nsPanelNode.panelType == 'us-p' ? MAX_ENTITIES_USP : MAX_ENTITIES
+                    maxEntities = nsPanelNode.panelType == 'us-p' ? MAX_ENTITIES_US_P : MAX_ENTITIES
                     editableEntitiesList?.setMaxEntities(maxEntities)
                 }
 

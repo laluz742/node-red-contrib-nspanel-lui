@@ -6,6 +6,7 @@ import { EntityBasedPageConfig, IPanelNodeEx } from '../types/types'
 interface PageEntitiesConfig extends EntityBasedPageConfig {}
 
 const MAX_ENTITIES = 4
+const MAX_ENTITIES_US_P = 6
 
 module.exports = (RED) => {
     class PageEntitiesNode extends EntitiesPageNode<PageEntitiesConfig> {
@@ -16,7 +17,7 @@ module.exports = (RED) => {
             if (panelNode !== null) {
                 const panelType = panelNode.getPanelConfig()?.panel?.panelType
                 if (panelType === 'us-p') {
-                    super.setMaxEntities(6)
+                    super.setMaxEntities(MAX_ENTITIES_US_P)
                 }
             }
         }
