@@ -56,14 +56,6 @@ export class NSPanelUtils {
         return { hours: h, minutes: m }
     }
 
-    public static isString(e: any): boolean {
-        return typeof e === 'string'
-    }
-
-    public static stringIsNullOrEmpty(str: string): boolean {
-        return str === undefined || str === null ? true : str.trim().length === 0
-    }
-
     public static toHmiState(active: ActiveCharacteristic): string {
         if (typeof active === 'string') {
             return active === '1' ? '1' : '0'
@@ -113,5 +105,40 @@ export class NSPanelUtils {
         }
 
         return result
+    }
+
+    public static isString(e: any): boolean {
+        return typeof e === 'string'
+    }
+
+    public static stringIsNullOrEmpty(str: string): boolean {
+        return str === undefined || str === null ? true : str.trim().length === 0
+    }
+
+    public static isObject(object): boolean {
+        return object != null && typeof object === 'object'
+    }
+
+    public static deepEqual(obj1: Object, obj2: Object): boolean {
+        if (!NSPanelUtils.isObject(obj1) || !NSPanelUtils.isObject(obj2)) return false
+
+        const keys1 = Object.keys(obj1)
+        const keys2 = Object.keys(obj2)
+
+        if (keys1.length !== keys2.length) {
+            return false
+        }
+
+        for (const key of keys1) {
+            const val1 = obj1[key]
+            const val2 = obj2[key]
+            const areObjects = NSPanelUtils.isObject(val1) && NSPanelUtils.isObject(val2)
+
+            if ((areObjects && !NSPanelUtils.deepEqual(val1, val2)) || (!areObjects && val1 !== val2)) {
+                return false
+            }
+        }
+
+        return true
     }
 }
