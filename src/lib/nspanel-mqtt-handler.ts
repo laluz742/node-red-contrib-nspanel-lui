@@ -131,43 +131,49 @@ export class NSPanelMqttHandler extends nEvents.EventEmitter implements IPanelMq
     }
 
     private buildMqttTopics(fullTopic: string, panelTopic: string): MqttTopics {
-        const mqttTopics = {
-            commandTopic: MqttUtils.buildFullTopic(fullTopic, panelTopic, NSPanelConstants.STR_MQTT_PREFIX_CMND),
+        // TODO: throw error
+        const tmpFullTopic = NSPanelUtils.isStringNullOrEmpty(fullTopic)
+            ? NSPanelConstants.DEFAULT_MQTT_TOPIC
+            : fullTopic.trim()
+        const tmpPanelTopic = NSPanelUtils.isStringNullOrEmpty(panelTopic) ? '' : panelTopic.trim()
 
-            customCommandTopic: MqttUtils.buildFullTopic(
-                fullTopic,
-                panelTopic,
+        const mqttTopics = {
+            commandTopic: MqttUtils.buildMqttTopic(tmpFullTopic, tmpPanelTopic, NSPanelConstants.STR_MQTT_PREFIX_CMND),
+
+            customCommandTopic: MqttUtils.buildMqttTopic(
+                tmpFullTopic,
+                tmpPanelTopic,
                 NSPanelConstants.STR_MQTT_PREFIX_CMND,
                 NSPanelConstants.STR_MQTT_TOPIC_CUSTOMSEND
             ),
-            teleResultTopic: MqttUtils.buildFullTopic(
-                fullTopic,
-                panelTopic,
+            teleResultTopic: MqttUtils.buildMqttTopic(
+                tmpFullTopic,
+                tmpPanelTopic,
                 NSPanelConstants.STR_MQTT_PREFIX_TELE,
                 NSPanelConstants.STR_MQTT_TOPIC_RESULT
             ),
-            statResultTopic: MqttUtils.buildFullTopic(
-                fullTopic,
-                panelTopic,
+            statResultTopic: MqttUtils.buildMqttTopic(
+                tmpFullTopic,
+                tmpPanelTopic,
                 NSPanelConstants.STR_MQTT_PREFIX_STAT,
                 NSPanelConstants.STR_MQTT_TOPIC_RESULT
             ),
-            sensorTopic: MqttUtils.buildFullTopic(
-                fullTopic,
-                panelTopic,
+            sensorTopic: MqttUtils.buildMqttTopic(
+                tmpFullTopic,
+                tmpPanelTopic,
                 NSPanelConstants.STR_MQTT_PREFIX_TELE,
                 NSPanelConstants.STR_MQTT_TOPIC_SENSOR
             ),
 
-            status2Topic: MqttUtils.buildFullTopic(
-                fullTopic,
-                panelTopic,
+            status2Topic: MqttUtils.buildMqttTopic(
+                tmpFullTopic,
+                tmpPanelTopic,
                 NSPanelConstants.STR_MQTT_PREFIX_STAT,
                 NSPanelConstants.STR_MQTT_TOPIC_STATUS2
             ),
-            statUpgradeTopic: MqttUtils.buildFullTopic(
-                fullTopic,
-                panelTopic,
+            statUpgradeTopic: MqttUtils.buildMqttTopic(
+                tmpFullTopic,
+                tmpPanelTopic,
                 NSPanelConstants.STR_MQTT_PREFIX_STAT,
                 NSPanelConstants.STR_MQTT_TOPIC_UPGRADE
             ),

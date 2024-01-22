@@ -470,7 +470,7 @@ export class NSPanelController extends AbstractNSPanelController {
             { cmd: 'statusUpdate', params: null },
             { cmd: NSPanelConstants.STR_LUI_CMD_TIME, params: offline },
             { cmd: NSPanelConstants.STR_LUI_CMD_DATE, params: stopped + timeStr },
-            //{ cmd: NSPanelConstants.STR_LUI_CMD_NOTIFY, params: timeStr },
+            // { cmd: NSPanelConstants.STR_LUI_CMD_NOTIFY, params: timeStr },
         ] // TODO: reattach relays?
         this.getCommandHandler()?.sendHMICommand(cmds)
     }

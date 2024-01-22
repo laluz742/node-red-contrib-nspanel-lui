@@ -84,8 +84,8 @@ export class NSPanelUtils {
     public static convertTemperature(temperature: number, sourceUnit: string, targetUnit: string): number | null {
         if (
             sourceUnit === targetUnit ||
-            NSPanelUtils.stringIsNullOrEmpty(sourceUnit) ||
-            NSPanelUtils.stringIsNullOrEmpty(targetUnit)
+            NSPanelUtils.isStringNullOrEmpty(sourceUnit) ||
+            NSPanelUtils.isStringNullOrEmpty(targetUnit)
         )
             return temperature
 
@@ -111,15 +111,15 @@ export class NSPanelUtils {
         return typeof e === 'string'
     }
 
-    public static stringIsNullOrEmpty(str: string): boolean {
-        return str === undefined || str === null ? true : str.trim().length === 0
+    public static isStringNullOrEmpty(str: string): boolean {
+        return str == null || typeof str !== 'string' ? true : str.trim().length === 0
     }
 
     public static isObject(object): boolean {
         return object != null && typeof object === 'object'
     }
 
-    public static deepEqual(obj1: Object, obj2: Object): boolean {
+    public static deepEqual(obj1: object, obj2: object): boolean {
         if (!NSPanelUtils.isObject(obj1) || !NSPanelUtils.isObject(obj2)) return false
 
         const keys1 = Object.keys(obj1)

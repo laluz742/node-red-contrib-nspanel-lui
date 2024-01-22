@@ -556,7 +556,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                                 this._domControlList?.editableList('removeItem', $(listItem).data().data)
                             }
                         }
-                    } catch (e) {}
+                    } catch {}
                 }
 
                 this._maxEntities = n
@@ -1089,7 +1089,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         try {
                             const nsPanelNode = RED.nodes.node(nsPanelId)
                             onPanelChangedCallback(nsPanelNode)
-                        } catch (e) {}
+                        } catch {}
                     }
                 }
             })

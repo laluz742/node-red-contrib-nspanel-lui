@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-nspanel-lui",
-    "version": "0.0.1-alpha.51",
+    "version": "0.0.1-alpha.52.1",
     "description": "Node-RED based backend for NSPanel Lovelace UI custom firmware.",
     "license": "Apache-2.0",
     "keywords": [
@@ -56,6 +56,7 @@
         "postpack": "rimraf lib nodes resources"
     },
     "devDependencies": {
+        "@types/jest": "^29.5.11",
         "@types/node": "^14.14.7",
         "@types/node-red": "^1.2.1",
         "eslint": "^8.51.0",

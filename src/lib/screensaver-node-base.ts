@@ -65,7 +65,7 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
                 ) as StatusItemData
                 const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', i)
                 if (idx === 0 || idx === 1) {
-                    //const changed: boolean = this.hasStatusItemDataChanged(item, statusItems[idx])
+                    // const changed: boolean = this.hasStatusItemDataChanged(item, statusItems[idx])
                     statusItems[idx] = item
                     // dirty ||= changed
                 }
@@ -75,12 +75,12 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         this.statusData = statusItems
     }
 
-    /*private hasStatusItemDataChanged(data: StatusItemData, old: StatusItemData): boolean {
+    /* private hasStatusItemDataChanged(data: StatusItemData, old: StatusItemData): boolean {
         if (data == null || old == null) return true // fast assumption
 
         const result = NSPanelUtils.deepEqual(data, old)
         return result
-    }*/
+    } */
 
     private handleNotifyInput(msg: PageInputMessage): void {
         // notify~head~text~1234~5432
@@ -91,7 +91,7 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         const text: string = data?.text
         const textColor: PanelColor = NSPanelColorUtils.toHmiColor(data?.textColor)
 
-        if (NSPanelUtils.stringIsNullOrEmpty(heading) && NSPanelUtils.stringIsNullOrEmpty(text)) return
+        if (NSPanelUtils.isStringNullOrEmpty(heading) && NSPanelUtils.isStringNullOrEmpty(text)) return
 
         const hmiCmdParams: HMICommandParameters = []
         hmiCmdParams.push(heading)

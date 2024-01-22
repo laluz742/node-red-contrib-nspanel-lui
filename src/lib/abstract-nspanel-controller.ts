@@ -22,13 +22,17 @@ import * as NSPanelConstants from './nspanel-constants'
 
 export abstract class AbstractNSPanelController extends nEvents.EventEmitter implements IPanelController {
     private _ctrlConfig: PanelControllerConfig
+
     private _panelNode: IPanelNodeEx
+
     private _panelConfig: PanelConfig
 
     private _dateLocale: string
+
     private _regionSettings: RegionalSettings
 
     private _panelMqttHandler: IPanelMqttHandler
+
     private _commandHandler: IPanelCommandHandler
 
     constructor(config: PanelControllerConfig, panelNode: IPanelNodeEx) {
@@ -132,7 +136,7 @@ export abstract class AbstractNSPanelController extends nEvents.EventEmitter imp
 
     protected setLocale(locale: string): void {
         const sysLocale = Intl.DateTimeFormat().resolvedOptions().locale
-        const dateLocale = NSPanelUtils.stringIsNullOrEmpty(locale) ? sysLocale : locale
+        const dateLocale = NSPanelUtils.isStringNullOrEmpty(locale) ? sysLocale : locale
 
         NSPanelDateUtils.setGlobalLocale(dateLocale)
         this._dateLocale = dateLocale?.toLowerCase() ?? NSPanelConstants.DEFAULT_DATE_LOCALE

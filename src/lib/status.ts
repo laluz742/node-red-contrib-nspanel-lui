@@ -2,15 +2,19 @@ import { IStatus, StatusCode } from '../types/types'
 
 export class Status implements IStatus {
     private _code: StatusCode = StatusCode.OK
+
     private _message: string
+
     private _error: Error
 
     public static Ok(): IStatus {
         return new Status(StatusCode.OK)
     }
+
     public static Error(msg: string): IStatus {
         return new Status(StatusCode.ERROR, msg)
     }
+
     public static Warning(msg: string): IStatus {
         return new Status(StatusCode.WARNING, msg)
     }
@@ -24,6 +28,7 @@ export class Status implements IStatus {
     public getStatus(): StatusCode {
         return this._code
     }
+
     public getMessage(): string {
         return this._message
     }

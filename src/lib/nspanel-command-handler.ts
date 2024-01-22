@@ -14,8 +14,9 @@ export type IPanelCommandHandlerOptions = {
 }
 
 export class NSPanelCommandHandler implements IPanelCommandHandler {
-    _panelMqttHandler: IPanelMqttHandler
-    _options: IPanelCommandHandlerOptions
+    private _panelMqttHandler: IPanelMqttHandler
+
+    private _options: IPanelCommandHandlerOptions
 
     constructor(mqttHandler: IPanelMqttHandler, options: IPanelCommandHandlerOptions) {
         this._panelMqttHandler = mqttHandler

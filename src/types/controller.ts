@@ -6,16 +6,6 @@ import { PanelBasedConfig } from './pages'
 
 export type PageMap = Map<string, IPageNode>
 
-export type IPageHistoryType = 'page' | 'popup' | 'notify'
-
-export interface IPageHistory {
-    historyType: IPageHistoryType
-    pageNode?: IPageNode
-    popupType?: string
-    entityId?: string
-    notifyData?: NotifyData
-}
-
 export type PanelControllerConfig = PanelBasedConfig & {
     screenSaverOnStartup: boolean
     beepOnNotifications: boolean

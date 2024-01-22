@@ -9,6 +9,8 @@ export const STR_NAV_ID_PREVIOUS: string = 'nav.prev'
 export const STR_NAV_ID_NEXT: string = 'nav.next'
 
 // mqtt
+export const STR_MQTT_PLACEHOLDER_PREFIX = '%prefix%'
+export const STR_MQTT_PLACEHOLDER_TOPIC = '%topic%'
 export const STR_MQTT_PREFIX_CMND: string = 'cmnd'
 export const STR_MQTT_PREFIX_STAT: string = 'stat'
 export const STR_MQTT_PREFIX_TELE: string = 'tele'
@@ -123,6 +125,7 @@ export const STR_UPDATE_NOTIFY_ICON: string = 'reload-alert'
 export const STR_UPDATE_ERROR_ICON: string = 'exclamation-thick'
 
 // defaults
+export const DEFAULT_MQTT_TOPIC: string = '%prefix%/%topic%'
 export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE
 export const DEFAULT_FONTSIZE: number = 1
 export const DEFAULT_DATE_LOCALE: string = 'en'

@@ -4,7 +4,6 @@ import { HMICommand } from './commands'
 import { NotifyData, PageEntityData } from './messages'
 import { INodeConfig } from './nodered'
 import { IStatus, PageId } from './base'
-import { IPageHistory } from './controller'
 import { IPageNode } from './page-nodes'
 
 export type ConfiguredEventsMap = Map<string, EventMapping>
@@ -14,6 +13,16 @@ export interface IPageCache {
     put(data: HMICommand | HMICommand[] | null): void
     containsData(): boolean
     clear()
+}
+
+export type IPageHistoryType = 'page' | 'popup' | 'notify'
+
+export interface IPageHistory {
+    historyType: IPageHistoryType
+    pageNode?: IPageNode
+    popupType?: string
+    entityId?: string
+    notifyData?: NotifyData
 }
 
 export interface IPageHandlerCache {

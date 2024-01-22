@@ -52,7 +52,7 @@
                 const nsPanelInputFieldLastVal = this.nsPanel
 
                 const onPanelChanged = (nsPanelNode) => {
-                    maxEntities = nsPanelNode.panelType == 'us-p' ? MAX_ENTITIES_US_P : MAX_ENTITIES
+                    maxEntities = nsPanelNode.panelType === 'us-p' ? MAX_ENTITIES_US_P : MAX_ENTITIES
                     editableEntitiesList?.setMaxEntities(maxEntities)
                 }
 

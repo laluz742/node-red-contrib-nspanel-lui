@@ -247,8 +247,8 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     public onUpdateNotificationResult(notifyId: string, action: string): void {
         if (
-            !NSPanelUtils.stringIsNullOrEmpty(notifyId) &&
-            !NSPanelUtils.stringIsNullOrEmpty(action) &&
+            !NSPanelUtils.isStringNullOrEmpty(notifyId) &&
+            !NSPanelUtils.isStringNullOrEmpty(action) &&
             NSPanelConstants.STR_LUI_NOTIFY_ACTION_YES === action
         ) {
             const confirmedFirmware =
@@ -344,7 +344,7 @@ export class NSPanelUpdater extends nEvents.EventEmitter implements IPanelUpdate
 
     private _updateHmi(): void {
         // sanity checks
-        if (NSPanelUtils.stringIsNullOrEmpty(this._updateVersionData.versions.current.hmi?.model)) {
+        if (NSPanelUtils.isStringNullOrEmpty(this._updateVersionData.versions.current.hmi?.model)) {
             log.error(
                 `HMI firmware cannot be updated, since the model of the NSPanel ${this._options.panelNodeTopic} is unknown`
             )
@@ -405,7 +405,7 @@ UNCATCHED msg {"type":"","event":"","event2":"","source":"","data":{"Flashing":{
 onEvent default {"type":"hw","date":"2023-10-16T15:15:05.211Z","event":"","source":"","data":{"Upgrade":"Version 13.1.0 from http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin"}}        
         */
 
-        if (NSPanelUtils.stringIsNullOrEmpty(this._options.tasmotaOtaUrl)) {
+        if (NSPanelUtils.isStringNullOrEmpty(this._options.tasmotaOtaUrl)) {
             log.error(`Cannot update tasmota, OTA Url is not set for panel ${this._options.panelNodeTopic}`)
             return
         }

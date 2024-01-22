@@ -172,7 +172,7 @@ export class NSPanelMessageParser {
 
         if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_TASMOTA_MSG_UPGRADE)) {
             const statusValue = input[NSPanelConstants.STR_TASMOTA_MSG_UPGRADE]
-            if (NSPanelUtils.isString(statusValue) && !NSPanelUtils.stringIsNullOrEmpty(statusValue)) {
+            if (NSPanelUtils.isString(statusValue) && !NSPanelUtils.isStringNullOrEmpty(statusValue)) {
                 const statusResult = String.prototype.startsWith.call(
                     statusValue,
                     NSPanelConstants.STR_TASMOTA_UPGRADE_SUCCESSFUL
@@ -332,7 +332,7 @@ export class NSPanelMessageParser {
                         lightEventArgs.event2 = 'color'
 
                         const colorDataStr = parts[4]
-                        const colorDataArr = NSPanelUtils.stringIsNullOrEmpty(colorDataStr)
+                        const colorDataArr = NSPanelUtils.isStringNullOrEmpty(colorDataStr)
                             ? []
                             : colorDataStr.split('|')
                         if (colorDataArr.length === 3) {

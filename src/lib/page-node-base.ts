@@ -216,7 +216,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
 
         // TODO: handle other data
         outMsg[eventConfig.value] = data
-        if (!NSPanelUtils.stringIsNullOrEmpty(eventConfig.msgTopic)) {
+        if (!NSPanelUtils.isStringNullOrEmpty(eventConfig.msgTopic)) {
             outMsg['topic'] = eventConfig.msgTopic
         }
 

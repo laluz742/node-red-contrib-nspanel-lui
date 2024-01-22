@@ -26,6 +26,7 @@ export class NSPanelPageHandler implements IPageHandler {
     private _options: IPageHandlerOptions
 
     private _cache: IPageCache
+
     private _cmdHandler: IPanelCommandHandler
 
     constructor(cmdHandler: IPanelCommandHandler, options: IPageHandlerOptions) {
@@ -161,7 +162,7 @@ export class NSPanelPageHandler implements IPageHandler {
                 historyType: 'popup',
                 pageNode: currentPage.pageNode,
                 popupType: source,
-                entityId: entityId,
+                entityId,
             }
             this.setCurrentPage(popupHistory)
         }

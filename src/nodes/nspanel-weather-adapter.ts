@@ -111,7 +111,7 @@ module.exports = (RED) => {
             const date = new Date(fCast.date)
 
             let title = ''
-            if (!NSPanelUtils.stringIsNullOrEmpty(this.config.forecastTitleToday) && NSPanelDateUtils.isToday(date)) {
+            if (!NSPanelUtils.isStringNullOrEmpty(this.config.forecastTitleToday) && NSPanelDateUtils.isToday(date)) {
                 title = this.config.forecastTitleToday
             } else {
                 switch (forecastTitle) {
