@@ -80,6 +80,7 @@ export type PageOptions = {
 }
 
 export type PageData = {
+    dirty: boolean
     entities: PageEntityData[]
 }
 

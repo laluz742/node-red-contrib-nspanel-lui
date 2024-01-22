@@ -1,5 +1,7 @@
 import { PageNodeBase } from './page-node-base'
 import { NSPanelUtils } from './nspanel-utils'
+import { NSPanelMessageUtils } from './nspanel-message-utils'
+import { NSPanelColorUtils } from './nspanel-colorutils'
 import {
     PageOptions,
     NodeAPI,
@@ -16,8 +18,6 @@ import {
     HMICommandParameters,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
-import { NSPanelMessageUtils } from './nspanel-message-utils'
-import { NSPanelColorUtils } from './nspanel-colorutils'
 
 const CMD_STATUSUPDATE: string = 'statusUpdate'
 
@@ -41,7 +41,6 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         switch (msg.topic) {
             case NSPanelConstants.STR_MSG_TOPIC_STATUS:
                 this.handleStatusInput(msg)
-                this.requestUpdate()
                 return { handled: true, requestUpdate: true }
 
             case NSPanelConstants.STR_MSG_TOPIC_NOTIFY:
@@ -56,29 +55,32 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         if (msg.payload === undefined) return
 
         // TODO: take msg.parts into account to allow to set specific status
-        const statusInputData = msg.payload
         const statusItems: StatusItemData[] = this.statusData.map((item) => item)
+        const statusInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
 
-        if (Array.isArray(statusInputData)) {
-            for (let i = 0; i < 2; i += 1) {
-                if (statusInputData[i] != null) {
-                    const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
-                        statusInputData[i]
-                    ) as StatusItemData
-                    const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', i)
-                    if (idx === 0 || idx === 1) {
-                        statusItems[idx] = item
-                    }
+        for (let i = 0; i < 2; i += 1) {
+            if (statusInputData[i] != null) {
+                const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
+                    statusInputData[i]
+                ) as StatusItemData
+                const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', i)
+                if (idx === 0 || idx === 1) {
+                    //const changed: boolean = this.hasStatusItemDataChanged(item, statusItems[idx])
+                    statusItems[idx] = item
+                    // dirty ||= changed
                 }
             }
-        } else if (statusInputData != null) {
-            const item = NSPanelMessageUtils.convertToStatusItemData(statusInputData) as StatusItemData
-            const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', 0)
-            statusItems[idx] = item
         }
 
         this.statusData = statusItems
     }
+
+    /*private hasStatusItemDataChanged(data: StatusItemData, old: StatusItemData): boolean {
+        if (data == null || old == null) return true // fast assumption
+
+        const result = NSPanelUtils.deepEqual(data, old)
+        return result
+    }*/
 
     private handleNotifyInput(msg: PageInputMessage): void {
         // notify~head~text~1234~5432

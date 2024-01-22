@@ -39,6 +39,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
     private _cache: IPageCache = null
 
     private pageData: PageData = {
+        dirty: false,
         entities: [],
     }
 
@@ -293,6 +294,7 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
 
     private handleDataInputInternal(msg: PageInputMessage, _send: NodeRedSendCallback): InputHandlingResult {
         const result: PageEntityData[] = []
+        let dirty: boolean = false
 
         // TODO: take msg.parts or index into account to allow to set specific status
         const entityInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
@@ -300,9 +302,11 @@ export class PageNodeBase<TConfig extends PageConfig> extends NodeBase<TConfig> 
         entityInputData.forEach((item, _idx) => {
             const conversionResult = NSPanelMessageUtils.convertToEntityItemData(item)
             result.push(conversionResult)
+            dirty = true
         })
 
         this.pageData.entities = result.slice(0, this.options?.maxEntities ?? 0)
+        this.pageData.dirty = dirty
         return { handled: true }
     }
 

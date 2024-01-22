@@ -169,10 +169,10 @@ export class NSPanelController extends AbstractNSPanelController {
     private onEvent(eventArgs: EventArgs) {
         switch (eventArgs.event) {
             case NSPanelConstants.STR_LUI_EVENT_STARTUP: {
+                this.getPageHandler()?.clearActiveStatusOfAllPages()
                 const startupEventArgs: StartupEventArgs = eventArgs as StartupEventArgs
                 this.onPanelStartup(startupEventArgs)
                 this.notifyControllerNode(eventArgs)
-                this.getPageHandler()?.clearActiveStatusOfAllPages()
                 break
             }
 
