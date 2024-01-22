@@ -27,7 +27,19 @@
                 detachRelays: { value: false },
                 enableUpdates: { value: true },
                 autoUpdate: { value: false },
-                timeToCheckForUpdates: { value: '04:00' },
+                timeToCheckForUpdates: {
+                    value: '04:00',
+                    validate(v) {
+                        const isEnableUpdates = $('#node-config-input-enableUpdates').is(':checked')
+
+                        if (isEnableUpdates) {
+                            const isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(v)
+                            return isValid
+                        }
+
+                        return true
+                    },
+                },
                 tasmotaOtaUrl: { value: 'http://ota.tasmota.com/tasmota32/release/tasmota32.bin' },
                 telePeriod: {
                     value: 1,
@@ -44,6 +56,7 @@
                     },
                 },
 
+                panelType: { value: 'eu', required: true },
                 panelTimeout: {
                     value: 10,
                     required: true,

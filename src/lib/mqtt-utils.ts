@@ -1,14 +1,16 @@
 import { isIPv6 } from 'node:net'
 
+import * as NSPanelConstants from './nspanel-constants'
+
 export const MqttUtils = {
-    buildFullTopic(fullTopic: string, topic: string, prefix: string, command?: string) {
+    buildMqttTopic(fullTopic: string, topic: string, prefix: string, command?: string) {
         let result = fullTopic
 
-        result = result.replace('%topic%', topic)
-        result = result.replace('%prefix%', prefix)
+        result = result.replace(NSPanelConstants.STR_MQTT_PLACEHOLDER_TOPIC, topic)
+        result = result.replace(NSPanelConstants.STR_MQTT_PLACEHOLDER_PREFIX, prefix)
         result += result.endsWith('/') ? '' : '/'
 
-        if (command !== undefined && command !== null) {
+        if (command != null) {
             result += command
         }
 

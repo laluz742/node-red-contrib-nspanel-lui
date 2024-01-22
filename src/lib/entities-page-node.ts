@@ -110,6 +110,10 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
         this.entityData.set(entityId, data)
     }
 
+    protected setMaxEntities(n: number): void {
+        this.options.maxEntities = n
+    }
+
     protected generateEntities(): string {
         const resultEntities: string[] = []
 

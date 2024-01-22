@@ -1,7 +1,8 @@
 export type EventDescriptor = import('../types/types').EventDescriptor
 export type EventMapping = import('../types/types').EventMapping
 export type PanelEntity = import('../types/types').PanelEntity
-export type IPageConfig = import('../types/types').PageConfig
+export type INodeConfig = import('../types/types').INodeConfig
+export type PageConfig = import('../types/types').PageConfig
 export type PanelBasedConfig = import('../types/types').PanelBasedConfig
 
 export type EventTypeAttrs = {

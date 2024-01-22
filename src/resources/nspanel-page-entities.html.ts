@@ -1,7 +1,6 @@
 // eslint-disable-next-line func-names
 ;(function (RED, $) {
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
-    const MAX_ENTITIES = 4
     const ALLOWED_ENTITIES = [
         'delete',
         'shutter',
@@ -18,6 +17,10 @@
     const PANEL_TIMEOUT_MIN = 0
     const PANEL_TIMEOUT_MAX = 65
 
+    const MAX_ENTITIES = 4
+    const MAX_ENTITIES_US_P = 6
+
+    let maxEntities = MAX_ENTITIES
     let editableEventList
     let editableEntitiesList
 
@@ -60,10 +63,15 @@
                 const nsPanelInputField = $('#node-input-nsPanel')
                 const nsPanelInputFieldLastVal = this.nsPanel
 
+                const onPanelChanged = (nsPanelNode) => {
+                    maxEntities = nsPanelNode.panelType?.toLowerString() === 'us-p' ? MAX_ENTITIES_US_P : MAX_ENTITIES
+                    editableEntitiesList?.setMaxEntities(maxEntities)
+                }
+
                 editableEntitiesList = NSPanelLui.Editor.create.editableEntitiesList(
                     this,
                     '#node-input-entities-control',
-                    MAX_ENTITIES,
+                    maxEntities,
                     this.entities,
                     ALLOWED_ENTITIES
                 )
@@ -81,7 +89,8 @@
                     eventInputControl,
                     editableEventList,
                     ALL_VALID_EVENTS_BASE,
-                    nsPanelInputFieldLastVal
+                    nsPanelInputFieldLastVal,
+                    onPanelChanged
                 )
 
                 const tabs = RED.tabs.create({

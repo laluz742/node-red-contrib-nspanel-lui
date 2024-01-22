@@ -1,40 +1,31 @@
-import * as nEvents from 'events'
-import { v4 as uuidv4 } from 'uuid'
 import { scheduleTask, CronosTask } from 'cronosjs'
 
 import { Logger } from './logger'
-import { NSPanelMqttHandler } from './nspanel-mqtt-handler'
+import { AbstractNSPanelController } from './abstract-nspanel-controller'
+import { NSPanelPageHandler } from './nspanel-page-handler'
 import { NSPanelUpdater } from './nspanel-updater'
-import { SimpleControllerCache } from './nspanel-controller-cache'
-import { NSPanelPopupHelpers } from './nspanel-popup-helpers'
-import { NSPanelUtils } from './nspanel-utils'
-import { NSPanelDateUtils } from './nspanel-date-utils'
 
 import {
-    PanelConfig,
     EventArgs,
     SplitTime,
     PageMap,
     IPageNode,
     PageId,
-    IPanelController,
-    IPanelMqttHandler,
     NodeRedI18nResolver,
     IPanelUpdater,
     StartupEventArgs,
     CommandData,
-    SwitchCommandParams,
-    BuzzerCommandParams,
     IPageHistory,
-    IControllerCache,
-    NotifyData,
     FirmwareEventArgs,
     StatusLevel,
     NodeStatus,
     PanelControllerConfig,
     HMICommand,
-    TasmotaCommand,
     IPanelNodeEx,
+    IPageHandler,
+    IStatus,
+    StatusCode,
+    NotifyData,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
 
@@ -53,20 +44,12 @@ type PanelDimModes = {
     night: PanelDimMode
 }
 
-export class NSPanelController extends nEvents.EventEmitter implements IPanelController {
-    private _panelMqttHandler: IPanelMqttHandler
-
+export class NSPanelController extends AbstractNSPanelController {
     private _panelUpdater: IPanelUpdater
 
-    private _ctrlConfig: PanelControllerConfig
-
-    private _panelConfig: PanelConfig
+    private _pageHandler: IPageHandler
 
     private _i18n: NodeRedI18nResolver
-
-    private _dateLocale: string
-
-    private _cache: IControllerCache
 
     private _panelDimModes: PanelDimModes = {
         isNight: false,
@@ -75,47 +58,14 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     constructor(ctrlConfig: PanelControllerConfig, panelNode: IPanelNodeEx, i18n: NodeRedI18nResolver) {
-        super()
-        this._ctrlConfig = ctrlConfig
+        super(ctrlConfig, panelNode)
         this._i18n = i18n
-        this._cache = new SimpleControllerCache()
 
-        this.init(panelNode)
+        this.init()
     }
 
-    private onPageIdNavigationRequest(pageId: PageId): void {
-        if (this._cache.isPageKnown(pageId)) {
-            const pageNode: IPageNode | null = this._cache.getPage(pageId)
-            if (pageNode !== null) {
-                const pageHistory: IPageHistory = {
-                    historyType: 'page',
-                    pageNode,
-                }
-                this.setCurrentPage(pageHistory)
-            }
-        }
-    }
-
-    private onPageNavigationRequest(page: string): void {
-        // is id?
-        if (this._cache.isPageKnown(page)) {
-            this.onPageIdNavigationRequest(page)
-            return
-        }
-
-        const allKnownPages: IPageNode[] = this._cache.getAllKnownPages()
-        let pageNodeId: string | null = null
-        for (let i = 0; i < allKnownPages.length; i += 1) {
-            // eslint-disable-next-line eqeqeq
-            if (allKnownPages[i].name == page) {
-                pageNodeId = allKnownPages[i].id
-                break
-            }
-        }
-
-        if (pageNodeId != null) {
-            this.onPageIdNavigationRequest(pageNodeId)
-        }
+    public onPageIdNavigationRequest(pageId: PageId): void {
+        this.getPageHandler()?.onPageIdNavigationRequest(pageId)
     }
 
     registerPages(pages: PageMap) {
@@ -126,63 +76,25 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     registerPage(page: IPageNode) {
-        this._cache.addPage(page.id, page)
-
-        page.on('page:update', (pageToUpdate: IPageNode) => this.onPageUpdateRequest(pageToUpdate))
-        page.on('page:send', (pageOfSend: IPageNode, cmds: HMICommand | HMICommand[]) =>
-            this.onPageSendRequest(pageOfSend, cmds)
-        )
-        page.on('page:cmd', (_pageOfCmd: IPageNode, cmds: CommandData | CommandData[]) => this.executeCommand(cmds))
-        page.on('nav:pageId', (pageIdToNavTo: PageId) => this.onPageIdNavigationRequest(pageIdToNavTo))
-        page.on('nav:page', (pageToNavTo: string) => this.onPageNavigationRequest(pageToNavTo))
+        this.getPageHandler()?.registerPage(page)
     }
 
     deregisterPage(page: IPageNode) {
-        if (page === undefined) return
-
-        this._cache.removePage(page)
-        const currentPage: IPageHistory | null = this.getCurrentPage()
-        const currentPageNode: IPageNode | null = currentPage?.pageNode ?? null
-
-        if (currentPage != null && page.id === currentPageNode?.id) {
-            // TODO: check if all pages have bExit events... so long... restart panel
-            this.activateStartupPage() // TODO: navigate to bExit or activate scrensaver?
-        }
+        this.getPageHandler()?.deregisterPage(page)
     }
 
-    executeCommand(commands: CommandData | CommandData[]) {
+    public executeCommand(commands: CommandData | CommandData[]) {
         const cmds: CommandData[] = Array.isArray(commands) ? commands : [commands]
 
         cmds.forEach((cmdData) => {
             switch (cmdData.cmd) {
-                case 'switch': {
-                    const switchParams = cmdData.params as SwitchCommandParams
-                    const switchRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (switchParams.id + 1)
-                    this.sendCommandToPanel({ cmd: switchRelayCmd, data: switchParams.active?.toString() ?? '' })
-
-                    break
-                }
-
-                case 'toggle': {
-                    const toggleParams = cmdData.params as SwitchCommandParams
-                    const toggleRelayCmd: string = NSPanelConstants.STR_TASMOTA_CMD_RELAY + (toggleParams.id + 1)
-                    this.sendCommandToPanel({
-                        cmd: toggleRelayCmd,
-                        data: NSPanelConstants.STR_TASMOTA_PARAM_RELAY_TOGGLE,
-                    })
-                    break
-                }
-
-                case 'beep': {
-                    const params = cmdData.params as BuzzerCommandParams
-                    this.sendBuzzerCommand(params.count, params.beepDuration, params.silenceDuration, params.tune)
-                    break
-                }
-
                 case 'checkForUpdates': {
                     this._panelUpdater?.checkForUpdates()
                     break
                 }
+
+                default:
+                    this.getCommandHandler()?.executeCommand(cmdData)
             }
         })
     }
@@ -190,32 +102,6 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     public setNodeStatus(statusLevel: StatusLevel, msg: string): void {
         const nodeStatus: NodeStatus = { statusLevel, msg }
         this.emit('status', nodeStatus)
-    }
-
-    public showNotification(notifyData: NotifyData): void {
-        if (notifyData == null || typeof notifyData !== 'object') {
-            return
-        }
-
-        const notifyHistory: IPageHistory = {
-            historyType: 'notify',
-            entityId: notifyData.notifyId ?? `notify.${uuidv4()}`,
-            notifyData,
-        }
-
-        this.setCurrentPage(notifyHistory)
-        if (this._ctrlConfig.beepOnNotifications || notifyData.beep) {
-            this.sendBuzzerCommand(3, 2, 1)
-        }
-    }
-
-    private sendBuzzerCommand(count: number, beepDuration?: number, silenceDuration?: number, tune?: number) {
-        const params = [count]
-        if (beepDuration != null) params.push(beepDuration)
-        if (silenceDuration != null) params.push(silenceDuration)
-        if (tune != null) params.push(tune)
-
-        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_BUZZER, data: params.join(',') })
     }
 
     public dispose() {
@@ -226,16 +112,15 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         this.cronTaskDimModeNight?.stop()
         this.cronTaskCheckForUpdates?.stop()
         this._panelUpdater?.dispose()
-        this._panelMqttHandler?.dispose()
+        super.dispose()
     }
 
-    private init(panelNode: IPanelNodeEx) {
-        const panelConfig = panelNode.getPanelConfig()
-        this._panelConfig = panelConfig
+    private init() {
+        const panelConfig = this.getPanelConfig()
 
         log.info(`Starting panel controller for panel ${panelConfig.panel.topic}`)
 
-        this.initLocale(panelConfig.panel.dateLanguage)
+        this.setLocale(panelConfig.panel.dateLanguage)
 
         // preparing dim modes
         let tempStartTime = panelConfig.panel.panelDimLowStartTime
@@ -254,39 +139,38 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
 
         // initializing mqtt
-        const mqttHandler = new NSPanelMqttHandler(panelConfig)
-        this._panelMqttHandler = mqttHandler
-        mqttHandler.on('event', (eventArgs) => this.onEvent(eventArgs))
-        mqttHandler.on('msg', (msg) => this.onMessage(msg))
-        mqttHandler.on('sensor', (msg) => this.onSensorData(msg))
+        const mqttHandler = this.getMqttHandler()
+        if (mqttHandler != null) {
+            mqttHandler.on('event', (eventArgs) => this.onEvent(eventArgs))
+            mqttHandler.on('msg', (msg) => this.onMessage(msg))
+            mqttHandler.on('sensor', (msg) => this.onSensorData(msg))
+        }
+
+        // initialize page handling
+        const pageHandler = new NSPanelPageHandler(this.getCommandHandler(), {
+            beepOnNotifications: this.getConfig().beepOnNotifications,
+        })
+        this._pageHandler = pageHandler
 
         // initialize updater
         const panelUpdater = new NSPanelUpdater(this, mqttHandler, this._i18n, {
-            panelNodeTopic: this._panelConfig.panel.topic,
-            autoUpdate: this._panelConfig.panel.autoUpdate,
-            tasmotaOtaUrl: this._panelConfig.panel.tasmotaOtaUrl,
+            panelNodeTopic: panelConfig.panel.topic,
+            autoUpdate: panelConfig.panel.autoUpdate,
+            tasmotaOtaUrl: panelConfig.panel.tasmotaOtaUrl,
         })
         panelUpdater.on('update', (fwEventArgs: FirmwareEventArgs) => this.onUpdateEvent(fwEventArgs))
         this._panelUpdater = panelUpdater
 
         // notify controller node about state
         this.setNodeStatus('info', this._i18n('common.status.waitForPages'))
-        this.activateStartupPage()
-    }
-
-    private initLocale(locale: string): void {
-        const sysLocale = Intl.DateTimeFormat().resolvedOptions().locale
-        const dateLocale = NSPanelUtils.stringIsNullOrEmpty(locale) ? sysLocale : locale
-
-        NSPanelDateUtils.setGlobalLocale(dateLocale)
-        this._dateLocale = dateLocale?.toLowerCase() ?? NSPanelConstants.DEFAULT_DATE_LOCALE
+        pageHandler?.activateStartupPage()
     }
 
     private onEvent(eventArgs: EventArgs) {
         switch (eventArgs.event) {
             case NSPanelConstants.STR_LUI_EVENT_STARTUP: {
+                this.getPageHandler()?.clearActiveStatusOfAllPages()
                 const startupEventArgs: StartupEventArgs = eventArgs as StartupEventArgs
-                this.clearActiveStatusOfAllPages()
                 this.onPanelStartup(startupEventArgs)
                 this.notifyControllerNode(eventArgs)
                 break
@@ -301,16 +185,18 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
                 if (eventArgs.type === 'hw') {
                     this.notifyControllerNode(eventArgs)
                 }
-                const currentPage: IPageHistory | null = this.getCurrentPage()
+                const currentPage: IPageHistory | null = this.getPageHandler()?.getCurrentPage()
                 let currentPageIncluded: boolean = false
 
                 // send relay state to page nodes requesting relay states
                 const pageNodesNeedingRelayStates: IPageNode[] =
-                    this._cache.getAllKnownPages()?.filter((pageNode) => pageNode.needsRelayStates() === true) ?? []
+                    this.getPageHandler()
+                        ?.getAllKnownPages()
+                        ?.filter((pageNode) => pageNode.needsRelayStates() === true) ?? []
                 if (pageNodesNeedingRelayStates.length >= 1) {
                     for (const pageNode of pageNodesNeedingRelayStates) {
                         this.notifyPageNode(pageNode, 'input', eventArgs)
-                        if (pageNode.id === currentPage.pageNode?.id) {
+                        if (pageNode.id === currentPage?.pageNode?.id) {
                             currentPageIncluded = true
                         }
                     }
@@ -383,7 +269,9 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
         // send sensor data to pages requesting sensor data
         const pageNodesNeedingSensorData: IPageNode[] =
-            this._cache.getAllKnownPages()?.filter((pageNode) => pageNode.needsSensorData() === true) ?? []
+            this.getPageHandler()
+                ?.getAllKnownPages()
+                ?.filter((pageNode) => pageNode.needsSensorData() === true) ?? []
         if (pageNodesNeedingSensorData.length >= 1) {
             for (const pageNode of pageNodesNeedingSensorData) {
                 this.notifyPageNode(pageNode, 'input', eventArgs)
@@ -391,34 +279,12 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
 
-    private onPageUpdateRequest(page: IPageNode): void {
-        const currentPage = this.getCurrentPage()
-        const currentPageNode = currentPage?.pageNode
-        if (currentPage != null && currentPageNode?.id === page.id) {
-            this.renderPage(currentPage)
-        }
-    }
-
-    private onPageSendRequest(page: IPageNode, cmds: HMICommand | HMICommand[]): void {
-        if (page == null || !this._cache.isPageKnown(page.id)) return
-
-        this.sendToPanel(cmds)
-    }
-
-    private delayPanelStartupFlag = true
-
-    public onFlowsStarting(): void {
-        this.delayPanelStartupFlag = true
-    }
-
-    public onFlowsStarted(): void {
-        this.delayPanelStartupFlag = false
-    }
-
     private onPanelStartup(startupEventArgs: StartupEventArgs) {
+        const panelConfig = this.getPanelConfig()
+
         // delay startup until pages had time to register
-        if (this.delayPanelStartupFlag) return
-        this._cache.resetHistory()
+        if (this.getPanelStartupDelayFlag()) return
+        this.getPageHandler()?.resetHistory()
 
         this._panelUpdater?.setHmiVersion(startupEventArgs.hmiVersion)
         this.setNodeStatus('info', this._i18n('common.status.panelInit'))
@@ -431,12 +297,23 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this._panelDimModes.isNight = true
         }
 
-        this.sendTimeoutToPanel()
+        this.getCommandHandler()?.sendTimeoutToPanel()
         this.sendDimModeToPanel()
         this.sendTimeToPanel()
         this.sendDateToPanel()
-        this.sendTelePeriod(this._panelConfig.panel.telePeriod)
-        this.configureRelays(this._panelConfig.panel.detachRelays)
+        this.sendTelePeriod(panelConfig.panel.telePeriod)
+        this.configureRelays(panelConfig.panel.detachRelays)
+
+        this.scheduleTasks()
+
+        if (this.getConfig().screenSaverOnStartup) {
+            this.activateScreenSaver()
+        }
+        this.setNodeStatus('info', this._i18n('common.status.panelStarted'))
+    }
+
+    private scheduleTasks(): void {
+        const panelConfig = this.getPanelConfig()
 
         if (this.cronTaskHourly === null) {
             this.cronTaskHourly = scheduleTask('@hourly', () => this.onCronHourly(), {})
@@ -445,116 +322,88 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             this.cronTaskEveryMinute = scheduleTask('0 */1 * * * *', () => this.onCronEveryMinute(), {})
         }
 
-        if (this._panelConfig.panel.enableUpdates && this.cronTaskCheckForUpdates == null) {
-            this.cronTaskCheckForUpdates = scheduleTask(
-                `0 ${this._panelConfig.panel.timeToCheckForUpdates.minutes} ${this._panelConfig.panel.timeToCheckForUpdates.hours} * * *`,
-                () => this.onCronCheckForUpdates(),
-                {}
-            )
+        if (panelConfig.panel.enableUpdates && this.cronTaskCheckForUpdates == null) {
+            const checkForUpdatesMinutes = panelConfig.panel.timeToCheckForUpdates.minutes
+            const checkForUpdatesHours = panelConfig.panel.timeToCheckForUpdates.hours
+
+            if (Number.isNaN(checkForUpdatesHours) || Number.isNaN(checkForUpdatesMinutes)) {
+                log.error(`Invalid update time specified: ${checkForUpdatesHours}:${checkForUpdatesMinutes}`)
+            } else {
+                try {
+                    this.cronTaskCheckForUpdates = scheduleTask(
+                        `0 ${checkForUpdatesMinutes} ${checkForUpdatesHours} * * *`,
+                        () => this.onCronCheckForUpdates(),
+                        {}
+                    )
+                } catch (err: unknown) {
+                    if (err instanceof Error) {
+                        log.error(`Error scheduling update task: ${err.message}`)
+                    }
+                }
+            }
         }
 
         if (this.cronTaskDimModeDay === null && this._panelDimModes.day.isConfigured) {
-            this.cronTaskDimModeDay = scheduleTask(
-                `0 ${this._panelDimModes.day.start.minutes} ${this._panelDimModes.day.start.hours} * * *`,
-                () => {
-                    this._panelDimModes.isNight = false
-                    this.sendDimModeToPanel()
-                },
-                {}
-            )
+            const dayStartMinutes = this._panelDimModes.day.start.minutes
+            const dayStartHours = this._panelDimModes.day.start.hours
+            if (Number.isNaN(dayStartHours) || Number.isNaN(dayStartMinutes)) {
+                log.error(`Invalid day start time specified for dim mode: ${dayStartHours}:${dayStartMinutes}`)
+            } else {
+                try {
+                    this.cronTaskDimModeDay = scheduleTask(
+                        `0 ${dayStartHours} ${dayStartHours} * * *`,
+                        () => {
+                            this._panelDimModes.isNight = false
+                            this.sendDimModeToPanel()
+                        },
+                        {}
+                    )
+                } catch (err: unknown) {
+                    if (err instanceof Error) {
+                        log.error(`Error scheduling panel dim mode day task: ${err.message}`)
+                    }
+                }
+            }
         }
         if (this.cronTaskDimModeNight === null && this._panelDimModes.night.isConfigured) {
-            this.cronTaskDimModeNight = scheduleTask(
-                `0 ${this._panelDimModes.night.start.minutes} ${this._panelDimModes.night.start.hours} * * *`,
-                () => {
-                    this._panelDimModes.isNight = true
-                    this.sendDimModeToPanel()
-                },
-                {}
-            )
-        }
+            const nightStartMinutes = this._panelDimModes.night.start.minutes
+            const nightStartHours = this._panelDimModes.night.start.hours
 
-        if (this._ctrlConfig.screenSaverOnStartup) {
-            this.activateScreenSaver()
-        }
-        this.setNodeStatus('info', this._i18n('common.status.panelStarted'))
-    }
-
-    private getCurrentPage(): IPageHistory | null {
-        return this._cache.getCurrentPage()
-    }
-
-    private setCurrentPage(pageHistory: IPageHistory) {
-        const lastPage = this.getCurrentPage()
-        lastPage?.pageNode?.setActive(false)
-
-        this._cache.addToHistory(pageHistory)
-
-        pageHistory.pageNode?.setActive(true)
-        this.renderPage(pageHistory, true)
-    }
-
-    private renderPage(pageHistory: IPageHistory, fullUpdate: boolean = false) {
-        const pageNode = pageHistory?.pageNode
-
-        switch (pageHistory?.historyType) {
-            case 'page':
-                if (pageNode != null) {
-                    if (fullUpdate) {
-                        const hmiCmd: HMICommand = {
-                            cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
-                            params: pageNode.getPageType(),
-                        }
-                        this.sendToPanel(hmiCmd)
-                        this.sendTimeoutToPanel(pageNode.getTimeout())
+            if (Number.isNaN(nightStartHours) || Number.isNaN(nightStartMinutes)) {
+                log.error(`Invalid night start time specified for dim mode: ${nightStartHours}:${nightStartMinutes}`)
+            } else {
+                try {
+                    this.cronTaskDimModeNight = scheduleTask(
+                        `0 ${nightStartMinutes} ${nightStartHours} * * *`,
+                        () => {
+                            this._panelDimModes.isNight = true
+                            this.sendDimModeToPanel()
+                        },
+                        {}
+                    )
+                } catch (err: unknown) {
+                    if (err instanceof Error) {
+                        log.error(`Error scheduling panel dim mode night task: ${err.message}`)
                     }
-
-                    this.updatePage(pageNode)
                 }
-                break
-
-            case 'popup':
-                if (pageNode != null && pageHistory.popupType && pageHistory.entityId) {
-                    this.updatePopup(pageNode, pageHistory.popupType, pageHistory.entityId)
-                }
-                break
-
-            case 'notify':
-                this.updateNotification(pageHistory)
-                break
+            }
         }
+    }
+
+    public showNotification(notifyData: NotifyData): void {
+        this.getPageHandler()?.showNotification(notifyData)
     }
 
     private onPopupOpen(eventArgs: EventArgs) {
-        const currentPage = this.getCurrentPage()
-
-        if (currentPage !== null) {
-            const popupHistory: IPageHistory = {
-                historyType: 'popup',
-                pageNode: currentPage.pageNode,
-                popupType: eventArgs.source,
-                entityId: eventArgs.entityId,
-            }
-            this.setCurrentPage(popupHistory)
-        }
+        this.getPageHandler().showPopup(eventArgs.source, eventArgs.entityId)
     }
 
     private onPopupClose() {
-        this._cache.removeLastFromHistory()
-
-        const currentPage: IPageHistory = this._cache.getLastFromHistory()
-        this.renderPage(currentPage, true)
-    }
-
-    private clearActiveStatusOfAllPages(): void {
-        this._cache.getAllKnownPages()?.forEach((pageNode) => {
-            pageNode.setActive(false)
-        })
+        this.getPageHandler()?.closePopup()
     }
 
     private notifyCurrentPageOfEvent(event: string, eventArgs: EventArgs) {
-        const currentPage: IPageHistory | null = this.getCurrentPage()
-
+        const currentPage = this.getPageHandler()?.getCurrentPage()
         this.notifyPageNode(currentPage?.pageNode, event, eventArgs)
     }
 
@@ -567,7 +416,7 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
             // when hw buttons do not control power outputs translate to event
             if (
-                this._panelConfig.panel.detachRelays &&
+                this.getPanelConfig().panel.detachRelays &&
                 eventArgs.type === 'hw' &&
                 eventArgs.event === 'button' &&
                 eventArgs.event2 === 'press'
@@ -589,95 +438,21 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
     }
 
     private activateScreenSaver() {
-        this._cache.resetHistory()
+        const result: IStatus = this.getPageHandler().activateScreenSaver()
 
-        const screenSaverPageNodes: IPageNode[] =
-            this._cache.getAllKnownPages()?.filter((pageNode) => pageNode.isScreenSaver()) ?? []
-
-        if (screenSaverPageNodes.length >= 1) {
-            const firstScreenSaver: IPageNode = screenSaverPageNodes[0]
-            const pageHistory: IPageHistory = {
-                historyType: 'page',
-                pageNode: firstScreenSaver,
+        switch (result.getStatus()) {
+            case StatusCode.WARNING: {
+                this.setNodeStatus('warn', this._i18n('common.status.tooManyScreenSaver'))
+                log.warn(result.getMessage())
+                break
             }
-            this.setCurrentPage(pageHistory)
 
-            if (screenSaverPageNodes.length >= 2) {
-                log.warn(`More than one screensaver attached. Found ${screenSaverPageNodes.length}`)
-                // eslint-disable-next-line prefer-const
-                for (let i in screenSaverPageNodes) {
-                    const node = screenSaverPageNodes[i]
-                    if (node.id !== firstScreenSaver.id) {
-                        node.setNodeStatus('warn', this._i18n('common.status.tooManyScreenSaver'))
-                    }
-                }
-            }
-        } else {
-            this.setNodeStatus('warn', this._i18n('common.status.noScreenSaverPage'))
-            log.warn('No screensaver found.')
-
-            const hmiCmd: HMICommand = {
-                cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
-                params: NSPanelConstants.STR_PAGE_TYPE_CARD_SCREENSAVER,
-            }
-            this.sendToPanel(hmiCmd)
-        }
-    }
-
-    private activateStartupPage() {
-        const hmiCmd: HMICommand = {
-            cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE,
-            params: NSPanelConstants.STR_PAGE_TYPE_CARD_STARTUP,
-        }
-        this.sendToPanel(hmiCmd)
-    }
-
-    private updatePage(page: IPageNode) {
-        const data: HMICommand[] = []
-        if (page.isForceRedraw()) {
-            data.push({ cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: page.getPageType() })
-        }
-
-        const pageData = page.generatePage()
-        if (Array.isArray(pageData)) {
-            data.push(...pageData)
-        } else {
-            data.push(pageData)
-        }
-
-        this.sendToPanel(data)
-    }
-
-    private updatePopup(page: IPageNode, popupType: string, entityId: string) {
-        const pageData = page.generatePopupDetails(popupType, entityId)
-        if (pageData !== null) {
-            this.sendToPanel(pageData)
-        } else {
-            // close popup, if it cannot be generated, thus is not supported yet
-            this.onPopupClose()
-        }
-    }
-
-    private updateNotification(history: IPageHistory) {
-        const notifyHmiCmd = NSPanelPopupHelpers.generatePopupNotify(history.notifyData)
-
-        if (notifyHmiCmd !== null) {
-            const cmds: HMICommand[] = [
-                { cmd: NSPanelConstants.STR_LUI_CMD_PAGETYPE, params: NSPanelConstants.STR_PAGE_TYPE_POPUP_NOTIFY },
-                notifyHmiCmd,
-            ]
-            this.sendToPanel(cmds)
-
-            if (this._ctrlConfig.beepOnNotifications || history.notifyData.beep) {
-                this.sendBuzzerCommand(3, 2, 1)
+            case StatusCode.ERROR: {
+                this.setNodeStatus('warn', this._i18n('common.status.noScreenSaverPage'))
+                log.warn(result.getMessage())
+                break
             }
         }
-    }
-
-    private sendToPanel(cmds: HMICommand | HMICommand[] | null) {
-        if (cmds == null || this._panelMqttHandler === null) return
-
-        this._panelMqttHandler.sendToPanel(cmds)
     }
 
     private sendLWTToPanel() {
@@ -695,18 +470,18 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
             { cmd: 'statusUpdate', params: null },
             { cmd: NSPanelConstants.STR_LUI_CMD_TIME, params: offline },
             { cmd: NSPanelConstants.STR_LUI_CMD_DATE, params: stopped + timeStr },
-            //{ cmd: NSPanelConstants.STR_LUI_CMD_NOTIFY, params: timeStr },
+            // { cmd: NSPanelConstants.STR_LUI_CMD_NOTIFY, params: timeStr },
         ] // TODO: reattach relays?
-        this.sendToPanel(cmds)
-    }
-
-    private sendCommandToPanel(cmd: TasmotaCommand) {
-        this._panelMqttHandler?.sendCommandToPanel(cmd)
+        this.getCommandHandler()?.sendHMICommand(cmds)
     }
 
     private configureRelays(detach: boolean = false) {
+        // TODO: move to command handler
         const state = detach ? '1' : '0'
-        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS, data: state })
+        this.getCommandHandler()?.sendTasmotaCommand({
+            cmd: NSPanelConstants.STR_TASMOTA_CMD_DETACH_RELAYS,
+            data: state,
+        })
 
         // query relay states
         this.executeCommand([
@@ -717,91 +492,31 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
 
     // #region basic panel commands
     private sendTelePeriod(telePeriod: number = 1) {
+        // TODO: move to command handler
         const telePeriodStr = `${telePeriod}`
-        this.sendCommandToPanel({ cmd: NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD, data: telePeriodStr })
-    }
-
-    private sendTimeToPanel() {
-        const useCustomDate = this._panelConfig.panel.useCustomDateTimeFormat
-        const timeFormatShowAmPm = this._panelConfig.panel.timeFormatShowAmPm
-        const use12HourClock = this._panelConfig.panel.timeFormatTimeNotation === '12'
-        const date = new Date()
-        const amPmStr: string = date.getHours() >= 12 ? 'PM' : 'AM'
-
-        let timeStr: string
-        if (useCustomDate === true) {
-            timeStr = NSPanelDateUtils.format(date, this._panelConfig.panel.timeCustomFormat, this._dateLocale)
-        } else {
-            timeStr = NSPanelDateUtils.formatTime(
-                date,
-                this._dateLocale,
-                this._panelConfig.panel.timeFormatHour,
-                this._panelConfig.panel.timeFormatMinute,
-                use12HourClock
-            )
-        }
-
-        if (use12HourClock && timeFormatShowAmPm) {
-            timeStr += `   ?${amPmStr}`
-        }
-
-        const hmiCmd: HMICommand = {
-            cmd: NSPanelConstants.STR_LUI_CMD_TIME,
-            params: timeStr,
-        }
-        this.sendToPanel(hmiCmd)
-    }
-
-    private sendDateToPanel() {
-        const useCustomDate = this._panelConfig.panel.useCustomDateTimeFormat
-        const date = new Date()
-        let dateStr: string
-
-        if (useCustomDate === true) {
-            dateStr = NSPanelDateUtils.format(date, this._panelConfig.panel.dateCustomFormat, this._dateLocale)
-        } else {
-            dateStr = NSPanelDateUtils.formatDate(
-                date,
-                this._dateLocale,
-                this._panelConfig.panel.dateFormatYear,
-                this._panelConfig.panel.dateFormatMonth,
-                this._panelConfig.panel.dateFormatDay,
-                this._panelConfig.panel.dateFormatWeekday
-            )
-        }
-
-        const hmiCmd: HMICommand = {
-            cmd: NSPanelConstants.STR_LUI_CMD_DATE,
-            params: dateStr,
-        }
-        this.sendToPanel(hmiCmd)
+        this.getCommandHandler()?.sendTasmotaCommand({
+            cmd: NSPanelConstants.STR_TASMOTA_CMD_TELEPERIOD,
+            data: telePeriodStr,
+        })
     }
 
     private sendDimModeToPanel() {
+        // TODO: move to command handler
+        const panelConfig = this.getPanelConfig()
         // TODO: could panelDimLow/high be empty
-        const dimLow = this._panelDimModes.isNight
-            ? this._panelConfig.panel.panelDimLowNight
-            : this._panelConfig.panel.panelDimLow
+        const dimLow = this._panelDimModes.isNight ? panelConfig.panel.panelDimLowNight : panelConfig.panel.panelDimLow
         const dimHigh = this._panelDimModes.isNight
-            ? this._panelConfig.panel.panelDimHighNight
-            : this._panelConfig.panel.panelDimHigh
+            ? panelConfig.panel.panelDimHighNight
+            : panelConfig.panel.panelDimHigh
 
         const hmiCmd: HMICommand = {
             cmd: NSPanelConstants.STR_LUI_CMD_DIMMODE,
             params: [dimLow, dimHigh],
         }
 
-        this.sendToPanel(hmiCmd)
+        this.getCommandHandler()?.sendHMICommand(hmiCmd)
     }
 
-    private sendTimeoutToPanel(timeout: number | null = null) {
-        const tempTimeout = timeout === null ? this._panelConfig.panel.panelTimeout : timeout
-        const hmiCmd: HMICommand = {
-            cmd: NSPanelConstants.STR_LUI_CMD_TIMEOUT,
-            params: tempTimeout,
-        }
-        this.sendToPanel(hmiCmd)
-    }
     // #endregion basic panel commands
 
     // #region cron jobs
@@ -846,4 +561,8 @@ export class NSPanelController extends nEvents.EventEmitter implements IPanelCon
         }
     }
     // #endregion cron jobs
+
+    protected getPageHandler(): IPageHandler {
+        return this._pageHandler
+    }
 }

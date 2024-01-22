@@ -83,6 +83,7 @@ module.exports = (RED) => {
                 params: hmiCmdParams,
             }
 
+            pageData.dirty = false
             return hmiCmd
         }
 

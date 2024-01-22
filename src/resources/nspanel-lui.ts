@@ -6,7 +6,8 @@ type EventDescriptor = import('../types/nspanel-lui-editor').EventDescriptor
 type EventMapping = import('../types/nspanel-lui-editor').EventMapping
 type PanelEntity = import('../types/nspanel-lui-editor').PanelEntity
 type PanelEntityListItem = import('../types/nspanel-lui-editor').PanelEntityListItem
-type IPageConfig = import('../types/nspanel-lui-editor').IPageConfig
+type INodeConfig = import('../types/nspanel-lui-editor').INodeConfig
+type IPageConfig = import('../types/nspanel-lui-editor').PageConfig
 type PanelBasedConfig = import('../types/nspanel-lui-editor').PanelBasedConfig
 type EventTypeAttrs = import('../types/nspanel-lui-editor').EventTypeAttrs
 type PanelEntityContainer = import('../types/nspanel-lui-editor').PanelEntityContainer
@@ -20,6 +21,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 ;(function (RED, $) {
     if (NSPanelLui.Editor != null) return
 
+    const PACKAGE_NAME: string = 'node-red-contrib-nspanel-lui'
     const I18N_DICT: string = 'nspanel-panel'
     const I18N_GROUP: string = 'editor'
     const I18N_PREFIX_EVENTS: string = 'events'
@@ -82,7 +84,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         return new Date().getMilliseconds() + Math.floor(Math.random() * 10000).toString()
     }
 
-    class NSPanelLuiEditorValidate {
+    class NSPanelLuiEditorValidation {
         public static numberInRange(v: any, min: number, max: number): boolean {
             const n = Number(v)
             return Number.isNaN(n) === false && n >= min && n <= max
@@ -104,38 +106,44 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     }
 
     // #region i18n and labels
-    const i18n = (key: string, dict: string, group?: string) => {
-        return RED._(`node-red-contrib-nspanel-lui/${dict}:${group ?? dict}.${key}`)
-    }
+    class NSPanelLuiEditorI18n {
+        public static translate(key: string, dict: string, group?: string) {
+            return RED._(`${PACKAGE_NAME}/${dict}:${group ?? dict}.${key}`)
+        }
 
-    const i18nEditor = (key: string) => {
-        return RED._(`node-red-contrib-nspanel-lui/${I18N_DICT}:${I18N_GROUP}.${key}`)
-    }
+        public static translateForEditor(key: string) {
+            return NSPanelLuiEditorI18n.translate(key, I18N_DICT, I18N_GROUP)
+            // return RED._(`${PACKAGE_NAME}/${I18N_DICT}:${I18N_GROUP}.${key}`)
+        }
 
-    const i18nTpl = (rel: JQuery<HTMLElement>, dict: string, group?: string) => {
-        rel.find('[data-i18n]').each((_i, el) => {
-            const attr = $(el).attr('data-i18n')
-            const val = i18n(attr, dict, group)
-            $(el).text(val)
-        })
-    }
+        public static translateTemplate(rel: JQuery<HTMLElement>, dict: string, group?: string) {
+            rel.find('[data-i18n]').each((_i, el) => {
+                const attr = $(el).attr('data-i18n')
+                const val = NSPanelLuiEditorI18n.translate(attr, dict, group)
+                $(el).text(val)
+            })
+        }
 
-    const normalizeLabel = (node: any) => {
-        return NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(node.name) ? node.name : `[${node.type}:${node.id}]`
-    }
-    const getNodeLabel = (node: any, noPanel = false) => {
-        const panelNode = RED.nodes.node(node.nsPanel)
-        const nodeName = NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(node.name)
-            ? node.name
-            : NSPanelLui._('defaults.name', node.type)
+        public static normalizeLabel(node: any) {
+            return NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(node.name)
+                ? node.name
+                : `[${node.type}:${node.id}]`
+        }
 
-        const label =
-            noPanel === false
-                ? `[${panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')}] ${nodeName}` ||
-                  nodeName
-                : nodeName
+        public static getNodeLabel(node: any, noPanel = false) {
+            const panelNode = RED.nodes.node(node.nsPanel)
+            const nodeName = NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(node.name)
+                ? node.name
+                : NSPanelLui._('defaults.name', node.type)
 
-        return label
+            const label =
+                noPanel === false
+                    ? `[${panelNode?.name ?? NSPanelLui._('label.unassigned', node.type, 'common')}] ${nodeName}` ||
+                      nodeName
+                    : nodeName
+
+            return label
+        }
     }
     // #endregion i18n and labels
 
@@ -167,7 +175,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     value: 'page',
                     icon: 'fa fa-desktop',
                     type: 'page',
-                    label: i18nEditor(`${I18N_PREFIX_EVENTS}.page`),
+                    label: NSPanelLuiEditorI18n.translateForEditor(`${I18N_PREFIX_EVENTS}.page`),
                     options: [],
                 }
                 // TODO: update on panel changed
@@ -184,28 +192,58 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 }
                 typedInputParams.types.push(pageNodeType)
 
-                const relay1Str = i18nEditor(`${I18N_PREFIX_EVENTS}.relay1`)
+                const relay1Str = NSPanelLuiEditorI18n.translateForEditor(`${I18N_PREFIX_EVENTS}.relay1`)
                 const relay1EventType: TypedInputTypeParams = {
                     value: 'relay1',
                     icon: 'fa fa-toggle-on',
                     type: 'relay1',
                     label: relay1Str,
                     options: [
-                        { value: 'on', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.on`)} (${relay1Str})` },
-                        { value: 'off', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.off`)} (${relay1Str})` },
-                        { value: 'toggle', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.toggle`)} (${relay1Str})` },
+                        {
+                            value: 'on',
+                            label: `${NSPanelLuiEditorI18n.translateForEditor(
+                                `${I18N_PREFIX_EVENTS}.on`
+                            )} (${relay1Str})`,
+                        },
+                        {
+                            value: 'off',
+                            label: `${NSPanelLuiEditorI18n.translateForEditor(
+                                `${I18N_PREFIX_EVENTS}.off`
+                            )} (${relay1Str})`,
+                        },
+                        {
+                            value: 'toggle',
+                            label: `${NSPanelLuiEditorI18n.translateForEditor(
+                                `${I18N_PREFIX_EVENTS}.toggle`
+                            )} (${relay1Str})`,
+                        },
                     ],
                 }
-                const relay2Str = i18nEditor(`${I18N_PREFIX_EVENTS}.relay2`)
+                const relay2Str = NSPanelLuiEditorI18n.translateForEditor(`${I18N_PREFIX_EVENTS}.relay2`)
                 const relay2EventType: TypedInputTypeParams = {
                     value: 'relay2',
                     icon: 'fa fa-toggle-on',
                     type: 'relay2',
                     label: relay2Str,
                     options: [
-                        { value: 'on', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.on`)} (${relay2Str})` },
-                        { value: 'off', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.off`)} (${relay2Str})` },
-                        { value: 'toggle', label: `${i18nEditor(`${I18N_PREFIX_EVENTS}.toggle`)} (${relay2Str})` },
+                        {
+                            value: 'on',
+                            label: `${NSPanelLuiEditorI18n.translateForEditor(
+                                `${I18N_PREFIX_EVENTS}.on`
+                            )} (${relay2Str})`,
+                        },
+                        {
+                            value: 'off',
+                            label: `${NSPanelLuiEditorI18n.translateForEditor(
+                                `${I18N_PREFIX_EVENTS}.off`
+                            )} (${relay2Str})`,
+                        },
+                        {
+                            value: 'toggle',
+                            label: `${NSPanelLuiEditorI18n.translateForEditor(
+                                `${I18N_PREFIX_EVENTS}.toggle`
+                            )} (${relay2Str})`,
+                        },
                     ],
                 }
                 typedInputParams.types.push(relay1EventType)
@@ -283,7 +321,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #region create DOM
                     const template = $('#nspanel-lui-tpl-entitieslist').contents().clone()
                     const tpl = $(container[0]).append($(template))
-                    i18nTpl(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
+                    NSPanelLuiEditorI18n.translateTemplate(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
 
                     const ROW1_2 = tpl.find('.nlui-row-1-2')
                     const ROW1_3 = tpl.find('.nlui-row-1-3')
@@ -305,7 +343,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     const selectTypeField = tpl.find('.node-input-entity-type')
 
                     self._validEntities.forEach((item) => {
-                        const label = i18n(`label.${item}`, 'nspanel-panel', 'common')
+                        const label = NSPanelLuiEditorI18n.translate(`label.${item}`, 'nspanel-panel', 'common')
                         $('<option/>').val(item).text(label).appendTo(selectTypeField)
                     })
                     const entityIdField = tpl.find('.node-input-entity-id')
@@ -505,6 +543,27 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             }
         }
 
+        public setMaxEntities(n: number): void {
+            if (n != null && !Number.isNaN(n) && n !== this._maxEntities) {
+                if (n < this._maxEntities) {
+                    try {
+                        const entityItems = this._domControlList?.editableList('items')
+                        if (entityItems?.length > n - 1) {
+                            const numToRemove = entityItems.length - n
+                            for (let i = 0; i < numToRemove; i += 1) {
+                                const idx = entityItems.length - 1 - i
+                                const listItem = entityItems[idx]
+                                this._domControlList?.editableList('removeItem', $(listItem).data().data)
+                            }
+                        }
+                    } catch {}
+                }
+
+                this._maxEntities = n
+                this._updateListAddButton()
+            }
+        }
+
         public getEntities(): PanelEntityListItem[] {
             const entityItems = this._domControlList?.editableList('items')
 
@@ -524,7 +583,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                 entity.iconColor = listItem.find('.node-input-entity-iconcolor').val().toString()
                 const optionalValue = listItem.find('.node-input-entity-optionalvalue').val().toString()
 
-                if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(optionalValue)) {
+                if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(optionalValue)) {
                     entity.optionalValue = optionalValue
                 }
 
@@ -539,26 +598,26 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                         const iconTiltStop = listItem.find('.node-input-entity-shutter-icontiltstop').val().toString()
                         const iconTiltRight = listItem.find('.node-input-entity-shutter-icontiltright').val().toString()
 
-                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconDown)) {
+                        if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(iconDown)) {
                             entity.iconDown = iconDown
                         }
-                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconUp)) {
+                        if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(iconUp)) {
                             entity.iconUp = iconUp
                         }
-                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconStop)) {
+                        if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(iconStop)) {
                             entity.iconStop = iconStop
                         }
 
                         entity.hasTilt = hasTilt
-                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltLeft)) {
+                        if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(iconTiltLeft)) {
                             entity.iconTiltLeft = iconTiltLeft
                         }
 
-                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltStop)) {
+                        if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(iconTiltStop)) {
                             entity.iconTiltStop = iconTiltStop
                         }
 
-                        if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(iconTiltRight)) {
+                        if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(iconTiltRight)) {
                             entity.iconTiltRight = iconTiltRight
                         }
 
@@ -761,7 +820,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     // #region create DOM
                     const template = $('#nspanel-lui-tpl-eventslist').contents().clone()
                     const tpl = $(container[0]).append($(template))
-                    i18nTpl(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
+                    NSPanelLuiEditorI18n.translateTemplate(tpl, I18N_DICT, I18N_GROUP) // TODO: run on template load from server
 
                     const iconContainer = tpl.find('.nlui-event-icon')
                     iconContainer.hide()
@@ -799,7 +858,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
                         const currentIcon = iconField.val()
                         if (
-                            !NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(currentIcon) ||
+                            !NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(currentIcon) ||
                             currentIcon === lastEventDescriptor?.defaultIcon
                         ) {
                             iconField.val(eventDescriptor?.defaultIcon ?? '')
@@ -875,10 +934,10 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             })
             const allEvents = this._pageEvents.all.map((x) => x)
             this._pageEvents.entities.forEach((e) => {
-                if (NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(e.entityId)) {
-                    const labelPrefix: string = i18nEditor(`${I18N_PREFIX_EVENTS}.entity`)
-                    const idPrefix: string = i18nEditor(`${I18N_PREFIX_EVENTS}.id`)
-                    const label: string = NSPanelLuiEditorValidate.stringIsNotNullOrEmpty(e.text)
+                if (NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(e.entityId)) {
+                    const labelPrefix: string = NSPanelLuiEditorI18n.translateForEditor(`${I18N_PREFIX_EVENTS}.entity`)
+                    const idPrefix: string = NSPanelLuiEditorI18n.translateForEditor(`${I18N_PREFIX_EVENTS}.id`)
+                    const label: string = NSPanelLuiEditorValidation.stringIsNotNullOrEmpty(e.text)
                         ? `${e.text} (${idPrefix}: ${e.entityId})`
                         : e.entityId
                     allEvents.push({ event: e.entityId, label: `${labelPrefix}: ${label}` })
@@ -996,7 +1055,8 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
             eventInputControl: JQuery<HTMLElement>,
             eventList: EditableEventListWrapper,
             validEventsBase: EventDescriptor[],
-            originalPanelId: string
+            originalPanelId: string,
+            onPanelChangedCallback?: (panelNode: INodeConfig) => void
         ): void {
             const eventListLastVal = eventList?.getEvents()
             let panelChangedFlag = false
@@ -1024,6 +1084,13 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
                     }
 
                     eventInputControl.show()
+
+                    if (onPanelChangedCallback != null) {
+                        try {
+                            const nsPanelNode = RED.nodes.node(nsPanelId)
+                            onPanelChangedCallback(nsPanelNode)
+                        } catch {}
+                    }
                 }
             })
             panelInputField.trigger('change')
@@ -1034,17 +1101,17 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
 
     // load templates
 
-    $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-entitieslist.html').done((tpl) => {
+    $.get(`resources/${PACKAGE_NAME}/nspanel-lui-tpl-entitieslist.html`).done((tpl) => {
         $('body').append($(tpl))
     })
-    $.get('resources/node-red-contrib-nspanel-lui/nspanel-lui-tpl-eventslist.html').done((tpl) => {
+    $.get(`resources/${PACKAGE_NAME}/nspanel-lui-tpl-eventslist.html`).done((tpl) => {
         $('body').append($(tpl))
     })
 
     // i18n processing // TODO: should be done when template loaded
     // eslint-disable-next-line prefer-const
     for (let i in ALL_VALID_NAVIGATION_EVENTS) {
-        ALL_VALID_NAVIGATION_EVENTS[i].label = i18n(
+        ALL_VALID_NAVIGATION_EVENTS[i].label = NSPanelLuiEditorI18n.translate(
             `${I18N_PREFIX_EVENTS}.${ALL_VALID_NAVIGATION_EVENTS[i].event}`,
             I18N_DICT,
             I18N_GROUP
@@ -1052,7 +1119,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     }
     // eslint-disable-next-line prefer-const
     for (let i in ALL_VALID_BUTTON_EVENTS) {
-        ALL_VALID_BUTTON_EVENTS[i].label = i18n(
+        ALL_VALID_BUTTON_EVENTS[i].label = NSPanelLuiEditorI18n.translate(
             `${I18N_PREFIX_EVENTS}.${ALL_VALID_BUTTON_EVENTS[i].event}`,
             I18N_DICT,
             I18N_GROUP
@@ -1060,19 +1127,19 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
     }
 
     // #region API generation
-    NSPanelLui['_'] = i18n
+    NSPanelLui['_'] = NSPanelLuiEditorI18n.translate
 
     NSPanelLui.Editor = NSPanelLui.Editor || {
-        _: i18n,
+        _: NSPanelLuiEditorI18n.translate,
         validate: {
-            isNumberInRange: NSPanelLuiEditorValidate.numberInRange,
-            limitNumberToRange: NSPanelLuiEditorValidate.limitNumberToRange,
-            stringIsNotNullOrEmpty: NSPanelLuiEditorValidate.stringIsNotNullOrEmpty,
+            isNumberInRange: NSPanelLuiEditorValidation.numberInRange,
+            limitNumberToRange: NSPanelLuiEditorValidation.limitNumberToRange,
+            stringIsNotNullOrEmpty: NSPanelLuiEditorValidation.stringIsNotNullOrEmpty,
         },
         create: NSPanelWidgetFactory,
         util: {
-            normalizeLabel,
-            getNodeLabel,
+            normalizeLabel: NSPanelLuiEditorI18n.normalizeLabel,
+            getNodeLabel: NSPanelLuiEditorI18n.getNodeLabel,
         },
     }
     NSPanelLui.Events = NSPanelLui.Events || {

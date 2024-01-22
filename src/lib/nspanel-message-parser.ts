@@ -13,6 +13,7 @@ import {
     TasmotaEventArgs,
 } from '../types/types'
 import * as NSPanelConstants from './nspanel-constants'
+import { NSPanelDateUtils } from './nspanel-date-utils'
 
 const log = Logger('NSPanelMessageParser')
 
@@ -80,7 +81,7 @@ export class NSPanelMessageParser {
                     tempUnit: tempUnit ?? null,
                 }
                 if (NSPanelMessageUtils.hasProperty(input, 'Time')) {
-                    const date = NSPanelMessageUtils.toDate(input['Time'])
+                    const date = NSPanelDateUtils.toDate(input['Time'])
                     if (date !== null) {
                         result.date = date
                     }
@@ -171,7 +172,7 @@ export class NSPanelMessageParser {
 
         if (NSPanelMessageUtils.hasProperty(input, NSPanelConstants.STR_TASMOTA_MSG_UPGRADE)) {
             const statusValue = input[NSPanelConstants.STR_TASMOTA_MSG_UPGRADE]
-            if (NSPanelUtils.isString(statusValue) && !NSPanelUtils.stringIsNullOrEmpty(statusValue)) {
+            if (NSPanelUtils.isString(statusValue) && !NSPanelUtils.isStringNullOrEmpty(statusValue)) {
                 const statusResult = String.prototype.startsWith.call(
                     statusValue,
                     NSPanelConstants.STR_TASMOTA_UPGRADE_SUCCESSFUL
@@ -331,7 +332,7 @@ export class NSPanelMessageParser {
                         lightEventArgs.event2 = 'color'
 
                         const colorDataStr = parts[4]
-                        const colorDataArr = NSPanelUtils.stringIsNullOrEmpty(colorDataStr)
+                        const colorDataArr = NSPanelUtils.isStringNullOrEmpty(colorDataStr)
                             ? []
                             : colorDataStr.split('|')
                         if (colorDataArr.length === 3) {

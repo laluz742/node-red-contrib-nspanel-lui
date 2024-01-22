@@ -8,6 +8,18 @@ export const STR_HTTP_USER_AGENT_VALUE: string = 'node-red-contrib-nspanel-lui'
 export const STR_NAV_ID_PREVIOUS: string = 'nav.prev'
 export const STR_NAV_ID_NEXT: string = 'nav.next'
 
+// mqtt
+export const STR_MQTT_PLACEHOLDER_PREFIX = '%prefix%'
+export const STR_MQTT_PLACEHOLDER_TOPIC = '%topic%'
+export const STR_MQTT_PREFIX_CMND: string = 'cmnd'
+export const STR_MQTT_PREFIX_STAT: string = 'stat'
+export const STR_MQTT_PREFIX_TELE: string = 'tele'
+export const STR_MQTT_TOPIC_CUSTOMSEND: string = 'CustomSend'
+export const STR_MQTT_TOPIC_RESULT: string = 'RESULT'
+export const STR_MQTT_TOPIC_SENSOR: string = 'SENSOR'
+export const STR_MQTT_TOPIC_STATUS2: string = 'STATUS2'
+export const STR_MQTT_TOPIC_UPGRADE: string = 'UPGRADE'
+
 // messages
 export const STR_MSG_TOPIC_COMMAND: string = 'cmd'
 export const STR_MSG_TOPIC_DATA: string = 'data'
@@ -73,11 +85,13 @@ export const STR_TASMOTA_PARAM_RESTART_SAVE_TO_FLASH: string = '1'
 export const STR_TASMOTA_UPGRADE_SUCCESSFUL: string = 'Successful'
 export const STR_TASMOTA_UPGRADE_FAILED: string = 'Failed'
 export const STR_TASMOTA_MSG_UPGRADE: string = 'Upgrade'
+export const STR_TASMOTA_MSG_STATUSFWR: string = 'StatusFWR'
 
 // berry driver
 export const STR_BERRYDRIVER_CMD_GETVERSION: string = 'GetDriverVersion'
 export const STR_BERRYDRIVER_CMD_UPDATEDRIVER: string = 'UpdateDriverVersion'
 export const STR_BERRYDRIVER_CMD_FLASHNEXTION: string = 'FlashNextion'
+export const STR_BERRYDRIVER_CMD_CUSTOMSEND: string = 'CustomSend'
 
 // page/card types
 export const STR_PAGE_TYPE_CARD_ALARM: string = 'cardAlarm'
@@ -111,9 +125,14 @@ export const STR_UPDATE_NOTIFY_ICON: string = 'reload-alert'
 export const STR_UPDATE_ERROR_ICON: string = 'exclamation-thick'
 
 // defaults
+export const DEFAULT_MQTT_TOPIC: string = '%prefix%/%topic%'
 export const DEFAULT_LUI_COLOR: number = STR_LUI_COLOR_WHITE
 export const DEFAULT_FONTSIZE: number = 1
 export const DEFAULT_DATE_LOCALE: string = 'en'
+
+// date and time
+export const STR_TIME_AM = 'AM'
+export const STR_TIME_PM = 'PM'
 
 // weather
 export const DEFAULT_FORECAST_COUNT = 5
