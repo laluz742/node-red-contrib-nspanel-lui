@@ -26,6 +26,7 @@ Configuration for a specific NSPanel device.
 
 -   **Name**: Name used to identify the panel<br/>
 -   **NSPanel MQTT Config**: MQTT configuration for the panel<br/>
+-   **Panel type**: Type of panel (EU, US landscape, or US portrait)<br/>
 -   **Device Topic**: device topic as configured in `Configure MQTT` section of the panel<br/>
 -   **Full Topic**: full topic as configured in `Configure MQTT` section of the panel using the `%prefix%` and `%topic%` placeholder<br/>
 -   **Standby timeout**: Default timeout in seconds for activating the screensaver<br/>
