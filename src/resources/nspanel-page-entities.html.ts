@@ -1,7 +1,7 @@
 // eslint-disable-next-line func-names
 ;(function (RED, $) {
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
-    const ALLOWED_ENTITIES = [
+    const ALL_VALID_ENTITIES = [
         'delete',
         'shutter',
         'light',
@@ -73,7 +73,7 @@
                     '#node-input-entities-control',
                     maxEntities,
                     this.entities,
-                    ALLOWED_ENTITIES
+                    ALL_VALID_ENTITIES
                 )
 
                 // assignable event list editor

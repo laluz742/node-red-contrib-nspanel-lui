@@ -1,7 +1,7 @@
 // eslint-disable-next-line func-names
 ;(function ($) {
     const MAX_ENTITIES = 8
-    const ALLOWED_ENTITIES = ['delete', 'hvac_action']
+    const ALL_VALID_ENTITIES = ['delete', 'hvac_action']
     const ALL_VALID_EVENTS_BASE: EventDescriptor[] = NSPanelLui.Events.allNavigationEvents.concat(
         { event: 'thermo.belowTarget', label: NSPanelLui._('events.belowTarget', 'nspanel-page-thermo') },
         { event: 'thermo.onTarget', label: NSPanelLui._('events.onTarget', 'nspanel-page-thermo') },
@@ -184,7 +184,7 @@
                     '#node-input-entities-control',
                     MAX_ENTITIES,
                     self.entities,
-                    ALLOWED_ENTITIES
+                    ALL_VALID_ENTITIES
                 )
 
                 editableEventList = NSPanelLui.Editor.create.editableEventList(
