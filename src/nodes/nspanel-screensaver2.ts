@@ -107,7 +107,7 @@ module.exports = (RED) => {
 
         private generateWeatherUpdate(): HMICommand {
             const pageData: PageData = this.getPageData()
-            if (pageData.entities.length === 0) {
+            if (pageData.entities.length === 0 && this.status2Data.length === 0) {
                 return null
             }
 
