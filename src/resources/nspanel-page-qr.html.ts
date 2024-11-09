@@ -1,6 +1,7 @@
 // eslint-disable-next-line func-names
 ;(function ($) {
     const ALL_VALID_EVENTS_BASE = NSPanelLui.Events.allNavigationEvents
+    const ALL_VALID_ENTITIES = ['text']
 
     const PANEL_TIMEOUT_MIN = 0
     const PANEL_TIMEOUT_MAX = 65
@@ -54,7 +55,7 @@
                     '#node-input-entities-control',
                     MAX_ENTITIES,
                     this.entities,
-                    ['text']
+                    ALL_VALID_ENTITIES
                 )
 
                 editableEventList = NSPanelLui.Editor.create.editableEventList(

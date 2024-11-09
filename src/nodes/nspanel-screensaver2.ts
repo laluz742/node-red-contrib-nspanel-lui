@@ -19,7 +19,7 @@ import * as NSPanelConstants from '../lib/nspanel-constants'
 type ScreenSaverConfig = ScreenSaverBaseConfig & {}
 
 const MAX_ENTITIES = 6
-const MAX_STATUS2_ITEMS = 8
+const MAX_STATUS2_ITEMS = 9
 const CMD_WEATHERUPDATE: string = 'weatherUpdate'
 const BLANK_ENTITY = NSPanelUtils.makeEntity(NSPanelConstants.STR_LUI_ENTITY_NONE)
 
@@ -107,7 +107,7 @@ module.exports = (RED) => {
 
         private generateWeatherUpdate(): HMICommand {
             const pageData: PageData = this.getPageData()
-            if (pageData.entities.length === 0) {
+            if (pageData.entities.length === 0 && this.status2Data.length === 0) {
                 return null
             }
 
