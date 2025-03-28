@@ -64,7 +64,7 @@ type EventMappingContainer = import('../types/nspanel-lui-editor').EventMappingC
         ['timer', { hasId: true, hasLabel: true, hasIcon: true, isTimer: true }],
         ['switch', { hasId: true, hasLabel: true, hasIcon: true }],
         ['number', { hasId: true, hasLabel: true, hasIcon: true, isNumber: true }],
-        ['button', { hasId: true, hasLabel: true, hasIcon: true }],
+        ['button', { hasId: true, hasLabel: true, hasIcon: true, hasOptionalValue: true }],
         ['text', { hasId: true, hasLabel: true, hasIcon: true }],
         ['hvac_action', { hasId: true, hasLabel: false, hasIcon: true, mappableToRelay: true }],
         ['alarm_action', { hasId: true, hasLabel: true, hasIcon: false }],
