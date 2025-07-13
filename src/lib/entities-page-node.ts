@@ -122,8 +122,7 @@ export class EntitiesPageNode<TConfig extends EntityBasedPageConfig> extends Pag
             ? Math.min(this.options.maxEntities, entities.length)
             : entities.length
 
-        for (let i = 0; i < maxEntities; i += 1) {
-            const entityConfig = entities[i]
+        for (const entityConfig of entities.slice(0, maxEntities)) {
             const entityData = this.getEntityData(entityConfig.entityId)
 
             const icon = entityData?.icon ?? entityConfig.icon
