@@ -293,10 +293,10 @@ export class NSPanelPageHandler implements IPageHandler {
 
         const allKnownPages: IPageNode[] = this.getCache().getAllKnownPages()
         let pageNodeId: string | null = null
-        for (let i = 0; i < allKnownPages.length; i += 1) {
+        for (const pageNode of allKnownPages) {
             // eslint-disable-next-line eqeqeq
-            if (allKnownPages[i].name == page) {
-                pageNodeId = allKnownPages[i].id
+            if (pageNode.name == page) {
+                pageNodeId = pageNode.id
                 break
             }
         }

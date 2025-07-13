@@ -7,7 +7,7 @@ export class SimplePageHandlerCache implements IPageHandlerCache {
 
     // #region history management
     public getCurrentPage(): IPageHistory | null {
-        return this.history.length === 0 ? null : this.history.slice(-1)[0] ?? null
+        return this.history.at(-1) ?? null
     }
 
     public addToHistory(pageHistory: IPageHistory): void {
@@ -35,18 +35,10 @@ export class SimplePageHandlerCache implements IPageHandlerCache {
     }
 
     public findLastPageInHistory(): IPageHistory | null {
-        if (this.history.length > 0) {
-            const currentHistory: IPageHistory[] = this.history.map((x) => x)
-
-            let lastHistoryOfTypePage: IPageHistory | null = null
-            for (let i = currentHistory.length - 1; i >= 0; i -= 1) {
-                if (currentHistory[i].historyType === 'page') {
-                    lastHistoryOfTypePage = currentHistory[i]
-                    break
-                }
+        for (let i = this.history.length - 1; i >= 0; i -= 1) {
+            if (this.history[i].historyType === 'page') {
+                return this.history[i]
             }
-
-            return lastHistoryOfTypePage
         }
 
         return null

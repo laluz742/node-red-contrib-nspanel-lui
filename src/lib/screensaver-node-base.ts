@@ -55,22 +55,18 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
         if (msg.payload === undefined) return
 
         // TODO: take msg.parts into account to allow to set specific status
-        const statusItems: StatusItemData[] = this.statusData.map((item) => item)
+        const statusItems: StatusItemData[] = this.statusData.slice()
         const statusInputData = Array.isArray(msg.payload) ? msg.payload : [msg.payload]
 
-        for (let i = 0; i < 2; i += 1) {
-            if (statusInputData[i] != null) {
-                const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(
-                    statusInputData[i]
-                ) as StatusItemData
+        statusInputData.slice(0, 2).forEach((dataItem, i) => {
+            if (dataItem != null) {
+                const item: StatusItemData = NSPanelMessageUtils.convertToStatusItemData(dataItem) as StatusItemData
                 const idx = NSPanelMessageUtils.getPropertyOrDefault(item, 'index', i)
                 if (idx === 0 || idx === 1) {
-                    // const changed: boolean = this.hasStatusItemDataChanged(item, statusItems[idx])
                     statusItems[idx] = item
-                    // dirty ||= changed
                 }
             }
-        }
+        })
 
         this.statusData = statusItems
     }
@@ -114,8 +110,7 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
 
         const hmiCmdParams: HMICommandParameters = []
 
-        for (let idx = 0; idx < 2; idx += 1) {
-            const item = this.statusData[idx]
+        this.statusData.slice(0, 2).forEach((item) => {
             const tmp: string =
                 item != null
                     ? NSPanelUtils.makeIcon(
@@ -124,6 +119,10 @@ export class ScreenSaverNodeBase<TConfig extends ScreenSaverBaseConfig>
                       )
                     : NSPanelUtils.makeIcon(null, null)
             hmiCmdParams.push(tmp)
+        })
+
+        while (hmiCmdParams.length < 2) {
+            hmiCmdParams.push(NSPanelUtils.makeIcon(null, null))
         }
 
         const hmiCmd: HMICommand = {
