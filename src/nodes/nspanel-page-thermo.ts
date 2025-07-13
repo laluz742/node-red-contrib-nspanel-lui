@@ -305,7 +305,7 @@ module.exports = (RED) => {
                             for (let key in msg.payload) {
                                 if (Object.prototype.hasOwnProperty.call(this.data, key)) {
                                     this.data[key] = msg.payload[key]
-                                    inputHandled.handled = true // TODO: there might be undhandled data
+                                    inputHandled.handled = true // TODO: there might be unhandled data
                                     dirty = true
                                 }
                             }

@@ -2,13 +2,13 @@
 
 ## Installation and First Steps
 
-To install the packackage either use the [_Palette Manager_](https://nodered.org/docs/user-guide/editor/palette/manager) or the npm package manager:
+To install the package either use the [_Palette Manager_](https://nodered.org/docs/user-guide/editor/palette/manager) or the npm package manager:
 
 ```
     npm install node-red-contrib-nspanel-lui
 ```
 
-To start usign the nodes please ensure you have prepared your NSPanel as described in the NSPanel Lovelace UI documentation. For further instructions, please see section _Prepare NsPanel_ of the [NsPanel Lovelace UI Docs](https://docs.nspanel.pky.eu/).
+To start using the nodes please ensure you have prepared your NSPanel as described in the NSPanel Lovelace UI documentation. For further instructions, please see section _Prepare NsPanel_ of the [NsPanel Lovelace UI Docs](https://docs.nspanel.pky.eu/).
 
 The _Panel Controller_ node is required to manage your NSPanel with Node-RED and adding your custom pages. It can be found under the NSPanel section of your node palette.
 
